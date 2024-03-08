@@ -1,0 +1,16 @@
+{% extends 'delivery/base.html' %}
+
+{% block content %}
+<div class="container">
+<div class="mt-5 pt-5 mb-5 pb-5">
+	<h1 class="text-capitalize text-success">Remove Hospital</h1>
+</div>
+	<form method="POST" enctype="multipart/form-data">
+		{% csrf_token %}
+		<h5 class="text-capitalize text-success alert alert-success">Delete item</h5>
+			<button class="btn btn-danger mb-5" type="submit">delete</button>
+		</div>
+		<hr>
+	</form>
+</div>
+{% endblock content %}

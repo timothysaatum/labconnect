@@ -1,0 +1,21 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block title %}
+Sign in
+{% endblock title %}
+
+{% block content %} 
+<div>
+	<form method="POST">
+		{% csrf_token %}
+		{{form.as_p}}
+		<div class="form-group text-center mt-3">
+            <button class="btn btn-outline-danger" type="submit">Sign In</button>
+            <small class="text-muted ml-2">
+                <a href="{% url 'user:password-reset' %}">Forgot Password</a>
+            </small>
+        </div>
+	</form>
+</div>
+{% endblock content %}

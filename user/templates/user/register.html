@@ -1,0 +1,17 @@
+{% extends 'user/base.html' %}
+{% load static %}
+{% load socialaccount %}
+{% block title %}
+Create account
+{% endblock title %}
+
+{% block content %} 
+	<div class="container">
+		<form method="POST">
+			{% csrf_token %}
+			{{form.as_p}}
+			<button class="btn btn-md-success">Create</button>
+			<a href="{% provider_login_url 'google' %}?next=/homePage/viewList/">Login with google</a>
+		</form>
+	</div>
+{% endblock content %}

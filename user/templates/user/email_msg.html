@@ -1,0 +1,17 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block title %}
+Account Created Successfully
+{% endblock title %}
+
+{% block content %} 
+<p>Hello {user_full_name}, welcome to unarcom. We sent you this email to let you know
+	that your account was created successfully. Do not hesitate to contact us regarding
+	any information you might need explanation to. We do not have any other contact lines
+	apart from the ones that will be provided in this email.
+</p>
+<p>Be cautioned that, scammers will try to use every opportunity to fraud people. Do not do any
+	transaction to contacted you with an address or contacts different from these.
+</p>
+{% endblock content %}
