@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from delivery import views
+#from user import views
  
 # create a router object
 router = routers.DefaultRouter()
@@ -28,5 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('delivery/', include('delivery.urls')),
     path('', include('hospital.urls')),
+    path('users/', include('user.urls')),
     path('api/', include(router.urls))
 ]

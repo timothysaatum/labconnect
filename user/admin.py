@@ -17,7 +17,7 @@ class ClientAdmin(UserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'middle_name', 'last_name', 'gender', 'phone_number')}),
         ('Other details', {'fields': ('digital_address', 'emmergency_number', 'staff_id','date_joined')}),
-        ('Permissions', {'fields': ('is_admin', 'is_active', 'is_staff', 'has_lab')}),
+        ('Permissions', {'fields': ('is_admin', 'is_active', 'is_staff', 'has_lab', 'is_superuser')}),
     )
 
     add_fieldsets = (

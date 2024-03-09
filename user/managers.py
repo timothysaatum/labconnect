@@ -1,9 +1,12 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
+#from django.core.exceptions import ValidationError
+#from django.core.validatorsimport validate_email
 
 
 
 class ClientManager(BaseUserManager):
+
 
     def create_user(self, email, password=None, **extra_fields):
         """
@@ -11,14 +14,16 @@ class ClientManager(BaseUserManager):
         birth and password.
         """
         if not email:
-            raise ValueError('Users must have an email address')
+            raise ValueError(_('User must have an email address'))
 
+  
         user = self.model(
             email=self.normalize_email(email),
             **extra_fields,
         )
 
         user.set_password(password)
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -34,6 +39,7 @@ class ClientManager(BaseUserManager):
         )
         user.is_admin = True
         user.is_staff = True
-        is_active = True
+        user.is_active = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
