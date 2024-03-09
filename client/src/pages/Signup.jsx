@@ -5,7 +5,7 @@ import StepThree from "../components/clinician/StepThree.signup";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { DevTool } from "@hookform/devtools";
 import { useForm } from "react-hook-form";
-
+import { useNavigate } from "react-router-dom";
 const StepOne = ({ form }) => {
   const { register } = form;
   return (
@@ -28,7 +28,7 @@ const StepOne = ({ form }) => {
   );
 };
 const StepFour = ({ form }) => {
-  const { register } = form;
+  const { register, validate, getValues } = form;
   return (
     <div className="flex flex-col gap-3">
       <div>
@@ -50,8 +50,8 @@ const StepFour = ({ form }) => {
         <Label htmlFor="password" value="confirm password" />
         <TextInput
           type="password"
-          id="password"
-          {...register("confirmPassword", {
+          id="confirmPassword"
+          {...register("password_confirmation", {
             required: "This field is required",
             validate: (value) =>
               value === getValues("password") || "The passwords do not match",
@@ -65,7 +65,25 @@ const StepFour = ({ form }) => {
 export default function SignUp() {
   const [step, setStep] = useState(1);
   const form = useForm();
-  const { control } = form;
+  const { control, handleSubmit } = form;
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await fetch("http://localhost:8000/users/create-account/", {
+        method: "POST",
+        headers: { "content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      console.log(result);
+      if (res.ok) {
+        navigate("/sign-in");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // awaiting backend
   const currentUser = "clinician";
@@ -73,7 +91,7 @@ export default function SignUp() {
     setStep((prevStep) => prevStep + 1);
   };
   return (
-    <div className="min-h-dvh mt-16">
+    <div className="min-h-dvh mt-12">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row gap-5 md:items-center">
         <div className="flex-1">
           <h2 className="text-5xl text-green-400 font-semibold drop-shadow-xl"></h2>
@@ -88,7 +106,11 @@ export default function SignUp() {
               onClick={() => setStep((prevStep) => prevStep - 1)}
             />
           )}
-          <form className="flex flex-col gap-4 mt-2">
+          <form
+            className="flex flex-col gap-4 mt-2"
+            noValidate
+            onSubmit={handleSubmit(onSubmit)}
+          >
             {step === 1 && <StepOne form={form} />}
             {currentUser === "clinician" && step === 2 && (
               <StepTwo form={form} />
@@ -97,11 +119,15 @@ export default function SignUp() {
               <StepThree form={form} />
             )}
             {step === 4 && <StepFour form={form} />}
-            <Button gradientDuoTone="greenToBlue" onClick={handleNextStep}>
-              Proceed
+            <Button
+              gradientDuoTone="greenToBlue"
+              onClick={step === 4 ? undefined : handleNextStep}
+              type={step === 4 ? "submit" : "button"}
+            >
+              {step === 4 ? "Submit" : "Proceed"}
             </Button>
           </form>
-          <DevTool control={control} />
+          <DevTool control={control} placement="top-left"/>
         </div>
       </div>
       <div></div>
