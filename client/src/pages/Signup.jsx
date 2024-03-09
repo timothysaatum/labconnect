@@ -3,28 +3,60 @@ import { useState } from "react";
 import StepTwo from "../components/clinician/StepTwo.signup";
 import StepThree from "../components/clinician/StepThree.signup";
 import { IoArrowBackCircleOutline } from "react-icons/io5";
+import { DevTool } from "@hookform/devtools";
+import { useForm } from "react-hook-form";
 
-const StepOne = () => {
+const StepOne = ({ form }) => {
+  const { register } = form;
   return (
     <div>
       <Label htmlFor="account" value="How do you intend to use our services" />
-      <Select id="account" className="mt-4">
+      <Select
+        id="account"
+        className="mt-4"
+        {...register("accountType", {
+          required: "This field is required",
+        })}
+        shadow
+        defaultValue={"clinician"}
+      >
         <option value="clinician">As a clinician</option>
         <option value="laboratory">As a laboratory</option>
+        <option value="delivery">As a delivery Agent</option>
       </Select>
     </div>
   );
 };
-const StepFour = () => {
+const StepFour = ({ form }) => {
+  const { register } = form;
   return (
     <div className="flex flex-col gap-3">
       <div>
         <Label htmlFor="password" value="Choose a strong password" />
-        <TextInput type="password" id="password" />
+        <TextInput
+          shadow
+          type="password"
+          id="password"
+          {...register("password", {
+            required: "This field is required",
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long",
+            },
+          })}
+        />
       </div>
       <div>
         <Label htmlFor="password" value="confirm password" />
-        <TextInput type="password" id="password" />
+        <TextInput
+          type="password"
+          id="password"
+          {...register("confirmPassword", {
+            required: "This field is required",
+            validate: (value) =>
+              value === getValues("password") || "The passwords do not match",
+          })}
+        />
       </div>
     </div>
   );
@@ -32,6 +64,8 @@ const StepFour = () => {
 
 export default function SignUp() {
   const [step, setStep] = useState(1);
+  const form = useForm();
+  const { control } = form;
 
   // awaiting backend
   const currentUser = "clinician";
@@ -48,19 +82,26 @@ export default function SignUp() {
           </p>
         </div>
         <div className="flex-1">
-          {step !== 1 && <IoArrowBackCircleOutline
-            className="text-4xl text-green-400 cursor-pointer"
-            onClick={() => setStep((prevStep) => prevStep - 1)}
-          />}
+          {step !== 1 && (
+            <IoArrowBackCircleOutline
+              className="text-4xl text-green-400 cursor-pointer"
+              onClick={() => setStep((prevStep) => prevStep - 1)}
+            />
+          )}
           <form className="flex flex-col gap-4 mt-2">
-            {step === 1 && <StepOne />}
-            {currentUser === "clinician" && step === 2 && <StepTwo />}
-            {currentUser === "clinician" && step === 3 && <StepThree />}
-            {step === 4 && <StepFour/>}
+            {step === 1 && <StepOne form={form} />}
+            {currentUser === "clinician" && step === 2 && (
+              <StepTwo form={form} />
+            )}
+            {currentUser === "clinician" && step === 3 && (
+              <StepThree form={form} />
+            )}
+            {step === 4 && <StepFour form={form} />}
             <Button gradientDuoTone="greenToBlue" onClick={handleNextStep}>
               Proceed
             </Button>
           </form>
+          <DevTool control={control} />
         </div>
       </div>
       <div></div>

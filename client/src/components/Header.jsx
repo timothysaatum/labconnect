@@ -35,11 +35,9 @@ export default function Header() {
       </Link>
       <div className="flex gap-2 md:order-2">
         <ThemeToggler />
-        <Link to={path==='/sign-in'?"/sign-up":"/sign-in"}>
+        <Link to={path === "/sign-in" ? "/sign-up" : "/sign-in"}>
           <Button gradientDuoTone="greenToBlue" outline>
-           {
-            path === "/sign-in" ? "Sign Up" : "Sign In"
-           }
+            {path === "/sign-in" ? "Sign Up" : "Sign In"}
           </Button>
         </Link>
         <Navbar.Toggle />
@@ -52,10 +50,10 @@ export default function Header() {
           <Link to="/services">Services</Link>
         </Navbar.Link>
         <Navbar.Link as={"div"} active={path === "/About"}>
-          About
+          <Link to="/about">About us</Link>
         </Navbar.Link>
         <Navbar.Link as={"div"} active={path === "/contact"}>
-          contact us
+          <Link to="/contact">Contact</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>

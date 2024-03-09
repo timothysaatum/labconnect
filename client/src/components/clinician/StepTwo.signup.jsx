@@ -1,15 +1,31 @@
-import { Label, TextInput } from 'flowbite-react'
+import { Label, TextInput } from "flowbite-react";
+import Oauth from "../Oauth";
 
-export default function StepTwo() {
+export default function StepTwo({ form }) {
+  const { register } = form;
   return (
     <div className="flex flex-col gap-3">
       <div>
         <Label htmlFor="firstname" value="firstname" />
-        <TextInput type="text" id="firstname"/>
+        <TextInput
+          type="text"
+          id="firstname"
+          {...register("firstname", {
+            required: "This field is required",
+            pattern: /^[A-Za-z]+$/i,
+          })}
+        />
       </div>
       <div>
         <Label htmlFor="lastname" value="lastname" />
-        <TextInput type="text" id="lastname" />
+        <TextInput
+          type="text"
+          id="lastname"
+          {...register("lastname", {
+            required: "This field is required",
+            pattern: /^[A-Za-z]+$/i,
+          })}
+        />
       </div>
       <div>
         <Label htmlFor="email" value="email" />
@@ -17,12 +33,9 @@ export default function StepTwo() {
       </div>
       <div>
         <Label htmlFor="phone" value="phone number" />
-        <TextInput type="text" id="phone" />
+        <TextInput type="text" id="phone" addon='+233'/>
       </div>
-      <div>
-        <Label htmlFor="facilty" value="name of current facility" />
-        <TextInput type="text" id="facilty" />
-      </div>
+      <Oauth />
     </div>
   );
 }
