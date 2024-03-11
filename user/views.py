@@ -61,8 +61,6 @@ class CreateUserView(GenericAPIView):
 			serializer.save()
 			user = serializer.data
 
-			return Response(
-					{'data': user}
-				)
+			return Response('Account created successfully.')
 
 		return Response(serializer.erros, status.HTTP_400_BAD_REQUEST)
