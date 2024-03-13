@@ -2,58 +2,73 @@ import { Label, Select, TextInput } from "flowbite-react";
 import Oauth from "../Oauth";
 
 export default function StepTwo({ form }) {
-  const { register } = form;
+  const { register, formState, clearErrors } = form;
+  const { errors } = formState;
+
+  const handleInputChange = (e) => {
+    const { name } = e.target;
+    clearErrors(name);
+  };
+
   return (
     <div className="flex flex-col gap-3">
       <div>
         <Label htmlFor="firstname" value="first name" />
         <TextInput
+        placeholder="Enter your first name"
           type="text"
           id="firstname"
           {...register("first_name", {
             required: "This field is required",
-            pattern: /^[A-Za-z]+$/i,
           })}
+          onChange={handleInputChange}
+          color={errors.first_name && "failure"}
+          helperText={<small>{errors.first_name?.message}</small>}
         />
       </div>
       <div>
-        <Label htmlFor="lastname" value="lastname" />
+        <Label value="last name" htmlFor="lastname" />
         <TextInput
-          type="text"
+        placeholder="Enter your last name"
           id="lastname"
           {...register("last_name", {
             required: "This field is required",
-            pattern: /^[A-Za-z]+$/i,
           })}
+          color={errors.last_name && "failure"}
+          onChange={handleInputChange}
+          helperText={<small>{errors.first_name?.message}</small>}
         />
       </div>
       <div>
         <Label htmlFor="email" value="email" />
         <TextInput
+        placeholder="Enter your email"
           type="email"
           id="email"
           {...register("email", {
-            required: "This field is required",
+            required: "email is required",
             pattern: {
               value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
               message: "Invalid email address",
             },
           })}
+          onChange={handleInputChange}
+          color={errors.email && "failure"}
+          helperText={<small>{errors.email?.message}</small>}
         />
       </div>
       <div>
-        <Label
-          htmlFor="gender"
-          value="Choose your gender"
-        />
+        <Label htmlFor="gender" value="Choose your gender" />
         <Select
           id="gender"
-          className="mt-4"
-          {...register("gender",{
-            required: "This field is required",
+          {...register("gender", {
+            required: "please select your gender",
           })}
-          shadow
+          onChange={handleInputChange}
+          color={errors.gender && "failure"}
+          helperText={<small>{errors.first_name?.message}</small>}
         >
+          <option value="">Select gender</option>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </Select>
@@ -61,13 +76,15 @@ export default function StepTwo({ form }) {
       <div>
         <Label htmlFor="phone" value="phone number" />
         <TextInput
+        placeholder="Enter your phone number"
           type="text"
           id="phone"
-          addon="+233"
           {...register("phone_number", {
-            required: "This field is required",
-            pattern: /^[0-9]{9}$/i,
+            required: "phone number is required",
           })}
+          onChange={handleInputChange}
+          color={errors.phone_number && "failure"}
+          helperText={<small>{errors.first_name?.message}</small>}
         />
       </div>
       <Oauth />
