@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Permission
 from django.utils import timezone
 from .managers import ClientManager
 from django.urls import reverse
@@ -25,7 +25,7 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	emmergency_number = models.CharField(max_length=13)
 	facility_affiliated_with = models.CharField(max_length=200)
 	staff_id = models.CharField(max_length=50)
-	#profile_picture = models.ImageField(upload_to='clients/profile/picture')
+	profile_picture = models.ImageField(upload_to='clients/profile/picture', default='default.png')
 	has_a_lab = models.BooleanField(default=False)
 	has_a_delivery = models.BooleanField(default=False)
 	is_a_clinician = models.BooleanField(default=False)
@@ -41,6 +41,17 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
 	#mapping object manager
 	objects = ClientManager()
+
+	def save(self, *args, **kwargs):
+		
+		if self.has_a_lab == True:
+			
+			self.is_admin = True
+			permission = Permission.objects.get(codename='add_client')
+			self.user_permissions.add(permission)
+			
+		super().save(*args, **kwargs)
+
 
 	def __str__(self):
 		return f'{self.last_name} {self.first_name}'

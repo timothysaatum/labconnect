@@ -26,7 +26,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 		fields = (
 					'email','first_name', 'last_name', 'gender', 'phone_number', 'digital_address', 'emmergency_number', 
-					'facility_affiliated_with', 'staff_id', 'password', 'password_confirmation'
+					'facility_affiliated_with', 'staff_id', 'has_a_lab', 'is_a_clinician', 'has_a_delivery', 'profile_picture', 
+					'password', 'password_confirmation'
 				)
 
 	def validate(self, attrs):
@@ -52,6 +53,9 @@ class UserSerializer(serializers.ModelSerializer):
 				digital_address=validated_data.get('digital_address'),
 				emmergency_number=validated_data.get('emmergency_number'),
 				facility_affiliated_with=validated_data.get('facility_affiliated_with'),
+				has_a_lab=validated_data.get('has_a_lab'),
+				is_a_clinician=validated_data.get('is_a_clinician'),
+				has_a_delivery=validated_data.get('has_a_delivery'),
 				staff_id=validated_data.get('staff_id'),
 				password=validated_data.get('password')
 

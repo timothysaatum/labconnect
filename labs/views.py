@@ -4,10 +4,12 @@ from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, R
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+#from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class CreateLaboratoryView(CreateAPIView):
 
+	#authentication_classes = [JWTAuthentication]
 	#permission_classes = [IsAuthenticated]
 	serializer_class = LaboratorySerializer
 
@@ -15,7 +17,7 @@ class CreateLaboratoryView(CreateAPIView):
 
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
-			#print(serializer.created_by)
+			print(self.request.user)
 			serializer.save()
 			#serializer.save(created_by=self.request.user)
 

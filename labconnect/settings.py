@@ -148,6 +148,8 @@ USE_TZ = True
 AUTH_USER_MODEL = 'user.Client'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':(
+            #'rest_framework.authentication.BasicAuthentication',
+            #'rest_framework.authentication.SessionAuthentication',
             'rest_framework_simplejwt.authentication.JWTAuthentication',
         )
 }
