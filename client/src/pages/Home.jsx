@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+
 export default function Home() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["deliveries"],
