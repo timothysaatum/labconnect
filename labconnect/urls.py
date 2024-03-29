@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 #from rest_framework import routers
 #from delivery import views
 #from user import views
+
  
 # create a router object
 #router = routers.DefaultRouter()
@@ -34,3 +37,12 @@ urlpatterns = [
     path('api/laboratory/', include('labs.urls'))
 
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+
+admin.site.site_header  =  "LabConnect Management"  
+admin.site.site_title  =  "LabConnect Administration"
+admin.site.index_title  =  "LabConnect Administration"

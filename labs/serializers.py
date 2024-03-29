@@ -4,12 +4,13 @@ from .models import Laboratory, Department, Test, TestResult
 
 
 class LaboratorySerializer(serializers.ModelSerializer):
+	logo = serializers.ImageField(required=False)
 
 	class Meta:
 
 		model = Laboratory
 		fields = ('created_by', 'name', 'herfra_id', 'digital_address', 'phone', 'email', 'website', 
-			'description', 'date_modified', 'date_added')
+			'description', 'date_modified', 'date_added', 'logo')
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -25,7 +26,7 @@ class TestSerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = Test
-		fields = ('laboratory', 'department_name', 'tests', 'date_modified', 'date_added')
+		fields = ('laboratory', 'department', 'name', 'price', 'discount_price', 'date_modified', 'date_added')
 
 
 class TestResultSerializer(serializers.ModelSerializer):

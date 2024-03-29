@@ -43,14 +43,12 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	objects = ClientManager()
 
 	def save(self, *args, **kwargs):
+		super().save(*args, **kwargs)
 		
 		if self.has_a_lab == True:
-			
-			self.is_admin = True
+
 			permission = Permission.objects.get(codename='add_client')
 			self.user_permissions.add(permission)
-			
-		super().save(*args, **kwargs)
 
 
 	def __str__(self):

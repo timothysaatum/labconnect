@@ -59,6 +59,7 @@ class VerifyUserEmail(GenericAPIView):
 			if not user.is_verified:
 
 				user.is_verified = True
+				user.is_admin = True
 				user.save()
 
 				return Response(

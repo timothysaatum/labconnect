@@ -19,6 +19,7 @@ class Laboratory(BaseModel):
 	phone = models.CharField(max_length=15)
 	email = models.EmailField()
 	name = models.CharField(max_length=200)
+	logo = models.ImageField(upload_to='labs/logo', default='logo.png')
 	herfra_id = models.CharField('HERFRA ID', max_length=100)
 	website = models.URLField()
 	description = models.TextField()
@@ -29,6 +30,19 @@ class Laboratory(BaseModel):
 
 	class Meta:
 		verbose_name_plural = 'Laboratories'
+
+
+	def departments(self):
+
+		labs = Laboratory.objects.filter(id=self.id)
+			
+		deptm = []
+
+		for lab in labs:
+
+			deptm = [department for department in lab.department_set.all()]
+
+		return deptm
 
 
 DEPARTMENT_NAME = [
