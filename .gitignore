@@ -1,1 +1,4 @@
-*/migrations
+/delivery/migrations
+/hospital/migrations
+/labs/migrations
+/user/migrations
