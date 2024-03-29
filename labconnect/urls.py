@@ -16,19 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from delivery import views
+#from rest_framework import routers
+#from delivery import views
 #from user import views
  
 # create a router object
-router = routers.DefaultRouter()
-router.register(r'deliveries',views.ListDeliveryView, 'delivery')
+#router = routers.DefaultRouter()
+#router.register(r'deliveries',views.CreateDeliveryView, 'delivery')
 
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
-    path('delivery/', include('delivery.urls')),
+    path('api/delivery/', include('delivery.urls')),
     path('', include('hospital.urls')),
-    path('users/', include('user.urls')),
-    path('api/', include(router.urls))
+    path('api/user/', include('user.urls')),
+    path('api/laboratory/', include('labs.urls'))
+
 ]

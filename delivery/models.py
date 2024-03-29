@@ -23,3 +23,6 @@ class Delivery(models.Model):
 
 	def delivery_phone(self):
 		return self.created_by.phone_number
+
+	class Meta:
+		verbose_name_plural = 'Deliveries'

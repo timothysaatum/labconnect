@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,18 +32,21 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_simplejwt.token_blacklist',
     'user',
     'hospital',
     'labs',
     'delivery',
     'corsheaders',
     'rest_framework',
+
 ]
 
 
@@ -116,6 +120,20 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:5173',
 )
 
+
+LOGIN_URL = 'user:login'
+LOGIN_REDIRECT_URL = 'hospital:home'
+LOGOUT_REDIRECT_URL = 'hospital:home'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.trustunarcom.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'admin@trustunarcom.com'
+EMAIL_HOST_PASSWORD = '9sg6b4z5hz5@Tim'
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
+#ClientID = '1002265369673-b1i1p7c5kv7l9kejfmv1ej097cvk834n.apps.googleusercontent.com'
+#lintID = '1002265369673-b1i1p7c5kv7l9kejfmv1ej097cvk834n.apps.googleusercontent.com'
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -128,6 +146,17 @@ USE_I18N = True
 USE_TZ = True
 
 AUTH_USER_MODEL = 'user.Client'
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':(
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
+        )
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer', ),
+}
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
@@ -137,3 +166,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#AUTHENTICATION_BACKENDS = (
+#        'django.contrib.auth.backends.ModelBackend',
+#        'allauth.account.auth_backends.AuthenticationBackend'
+#    )

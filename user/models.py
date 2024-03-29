@@ -4,9 +4,14 @@ from django.utils import timezone
 from .managers import ClientManager
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+
+
+
 
 SEX = [('Male', 'Male'), ('Female', 'Female')]
-
 class Client(AbstractBaseUser, PermissionsMixin):
 
 	#setting the paramaters
@@ -20,10 +25,14 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	emmergency_number = models.CharField(max_length=13)
 	facility_affiliated_with = models.CharField(max_length=200)
 	staff_id = models.CharField(max_length=50)
-	has_lab = models.BooleanField(default=False)
+	#profile_picture = models.ImageField(upload_to='clients/profile/picture')
+	has_a_lab = models.BooleanField(default=False)
+	has_a_delivery = models.BooleanField(default=False)
+	is_a_clinician = models.BooleanField(default=False)
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
 	is_admin = models.BooleanField(default=False)
+	is_verified = models.BooleanField(default=False)
 	date_joined = models.DateTimeField(default=timezone.now)
 	last_login = models.DateTimeField(auto_now=True)
 
@@ -46,4 +55,27 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
 
 	def tokens(self):
-		pass
+
+		refresh = RefreshToken.for_user(self)
+
+		return {
+
+			'refresh': str(refresh),
+			'access': str(refresh.access_token)
+		}
+
+
+	@property
+	def full_name(self):
+
+		return f'{self.first_name} {self.last_name}'
+
+
+class OneTimePassword(models.Model):
+
+	user = models.OneToOneField(Client, on_delete=models.CASCADE)#
+	code = models.CharField(max_length=6, unique=True)
+
+	def __str__(self):
+
+		return f'{self.user.last_name} => passcode'
