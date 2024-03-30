@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import HomeView, CreateHospital, HospitalUpdate
+from .views import HospitalSerializerView, WardSerializerView, SampleSerializerView
 
 
 app_name = 'hospital'
 urlpatterns = [
 
-	path('', HomeView.as_view(), name='home'),
-	path('hospital/create/', CreateHospital.as_view(), name='hospital-create'),
-	path('hospital/update/<int:pk>/', CreateHospital.as_view(), name='hospital-update'),
+	path('create/', HospitalSerializerView.as_view(), name='home'),
+	path('ward/add/', WardSerializerView.as_view(), name='add-ward'),
+	path('clinician/sample/add/', SampleSerializerView.as_view(), name='add-sample'),
 
 ]

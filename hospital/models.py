@@ -26,9 +26,10 @@ HOSPITAL_TYPES = [
 
 class Hospital(BaseModel):
 
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	hospital_type = models.CharField(max_length=50, choices=HOSPITAL_TYPES)
+	region_of_location = models.CharField(max_length=255)
 	digital_address = models.CharField(max_length=15)
+	mailing_address = models.CharField(max_length=255)
 	phone = models.CharField(max_length=15)
 	email = models.EmailField()
 	website = models.URLField()

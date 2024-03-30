@@ -1,52 +1,61 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
-from .models import Hospital
-from django.contrib.auth.mixins import LoginRequiredMixin
+from .serializers import (HospitalSerializer, WardSerializer, SampleSerializer)
+from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
+#from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
-
-class HomeView(TemplateView):
-	
-	template_name = 'hospital/index.html'
+class HospitalSerializerView(CreateAPIView):
 
 
+	#permission_classes = [IsAuthenticated]
+	parser_classes = (MultiPartParser, FormParser)
+	serializer_class = HospitalSerializer
 
-class CreateHospital(LoginRequiredMixin, CreateView):
+	def post(self, request):
 
-	model = Hospital
-	template_name = 'hospital/hospital-form.html'
-	fields = ['name', 'hospital_type', 'digital_address', 'phone', 'email', 'website']
-	success_url = '/'
+		serializer = self.serializer_class(data=request.data)
+		if serializer.is_valid(raise_exception=True):
+			print(self.request.user)
+			serializer.save()
+			#serializer.save(created_by=self.request.user)
 
-	def form_valid(self, form):
-
-		form.instance.created_by = self.request.user
-
-		return super().form_valid(form)
-
-
-class HospitalUpdate(UpdateView):
-
-	model = Hospital
-	template_name = 'hospital/delivery_form.html'
-	success_url = '/'
-
-	fields = ['name', 'hospital_type', 'digital_address', 'phone', 'email', 'website']
-
-	def get_queryset(self):
-		queryset = super().get_queryset()
-
-		return queryset.filter(created_by=self.request.user)
+		return Response({
+					'message': 'Hospital created successfully.'},
+					status=status.HTTP_200_OK)
 
 
+class WardSerializerView(CreateAPIView):
 
-class DeleteHospital(LoginRequiredMixin ,DeleteView):
+	serializer_class = WardSerializer
 
-	model = Hospital
-	template_name = 'hospital/delete.html'
-	success_url = '/'
+	def post(self, request):
 
-	def get_queryset(self):
-		queryset = super().get_queryset()
+		serializer = self.serializer_class(data=request.data)
+		if serializer.is_valid(raise_exception=True):
+			
+			serializer.save()
 
-		return queryset.filter(created_by=self.request.user)
+		return Response(
+					{'message': 'Ward added successfully.'},
+					status=status.HTTP_200_OK)
+
+
+class SampleSerializerView(CreateAPIView):
+
+	serializer_class = SampleSerializer
+
+	def post(self, request):
+
+		serializer = self.serializer_class(data=request.data)
+		if serializer.is_valid(raise_exception=True):
+
+			serializer.save()
+
+		return Response(
+				{'message': 'Sample added successfully.'},
+				status=status.HTTP_200_OK
+			)

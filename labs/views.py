@@ -10,7 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 class CreateLaboratoryView(CreateAPIView):
 
-	#authentication_classes = [JWTAuthentication]
+
 	#permission_classes = [IsAuthenticated]
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = LaboratorySerializer

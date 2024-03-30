@@ -3,7 +3,7 @@ from .models import Hospital, Ward, Sample
 
 
 class HospitalAdmin(admin.ModelAdmin):
-	list_display = ('name', 'created_by', 'date_created', 'date_modified')
+	list_display = ('name', 'region_of_location', 'mailing_address', 'digital_address', 'phone', 'email', 'website', 'date_created', 'date_modified')
 
 
 
