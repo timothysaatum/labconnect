@@ -2,3 +2,4 @@
 ./hospital/migrations
 ./labs/migrations
 ./user/migrations
+./client/node_modules

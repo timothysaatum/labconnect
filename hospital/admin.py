@@ -13,7 +13,7 @@ class WardAdmin(admin.ModelAdmin):
 
 
 class SampleAdmin(admin.ModelAdmin):
-	list_display = ('send_by', 'name_of_patient', 'sample_type', 'sender_phone', 'hospital')
+	list_display = ('send_by', 'name_of_patient', 'sample_type', 'sender_phone', 'hospital', 'delivery', 'delivery_phone')
 
 
 

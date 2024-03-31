@@ -5,7 +5,7 @@ from .views import (
 		TestAuthenticationView, PasswordResetView, PasswordResetConfirm, LogoutView,
 		SetNewPassword
 	)
-from django.contrib.auth import views as auth_views
+from rest_framework_simplejwt import views
 
 
 app_name='user'
@@ -18,6 +18,7 @@ urlpatterns = [
 	path('set-new-password/', SetNewPassword.as_view(), name='password-reset-complete'),
 	path('verify-email/', VerifyUserEmail.as_view(), name='verify'),
 	path('logout/', LogoutView.as_view(), name='logout'),
-	path('test/', TestAuthenticationView.as_view(), name='test')
+	path('refresh/token/', views.TokenRefreshView.as_view(), name='token-refresh')
+
 	
 ]

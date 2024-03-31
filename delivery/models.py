@@ -21,7 +21,7 @@ class Delivery(models.Model):
 		return f'{self.name} @ {self.cost_per_delivery}ghs'
 
 
-	def delivery_phone(self):
+	def owner_phone(self):
 		return self.created_by.phone_number
 
 	class Meta:

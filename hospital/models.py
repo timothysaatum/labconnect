@@ -91,3 +91,9 @@ class Sample(models.Model):
 		phone = self.send_by.phone_number
 
 		return phone
+
+	def delivery_phone(self):
+
+		del_phone = Delivery.objects.get(id=self.delivery.id).phone
+
+		return del_phone
