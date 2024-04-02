@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { HiArrowCircleLeft, HiOutlinePlus } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import StepOneRequest from "./stepone.makerequest";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import {handlenextStep, handleprevStep,resetStep} from '../../../redux/requestStep/RequestStepSlice'
 import StepTwoRequest from "./steptwo.makerequest";
