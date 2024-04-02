@@ -1,6 +1,5 @@
 import { Label, Select, TextInput } from "flowbite-react";
 import { motion } from "framer-motion";
-import TestSelect from "../../ui/select";
 
 export default function StepOneRequest() {
   const container = {
@@ -57,7 +56,6 @@ export default function StepOneRequest() {
           />
         </div>
       </motion.div>
-     <TestSelect/>
     </motion.div>
   );
 }

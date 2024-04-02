@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { HiArrowCircleLeft, HiOutlinePlus } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import StepOneRequest from "./stepone.makerequest";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import {handlenextStep, handleprevStep,resetStep} from '../../../redux/requestStep/RequestStepSlice'
 import StepTwoRequest from "./steptwo.makerequest";
@@ -13,11 +13,11 @@ export default function MakeRequest() {
   const { step } = useSelector((state) => state.step);
   const dispatch = useDispatch()
 
-  // useEffect(()=>{
-  //   if(openForm===false){
-  //     dispatch(resetStep())
-  //   }
-  // },[openForm])
+  useEffect(()=>{
+    if(openForm===false){
+      dispatch(resetStep())
+    }
+  },[openForm])
   return (
     <motion.div
       className=" md:m-6"
