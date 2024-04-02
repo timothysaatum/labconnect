@@ -126,11 +126,11 @@ LOGIN_URL = 'user:login'
 LOGIN_REDIRECT_URL = 'hospital:home'
 #LOGOUT_REDIRECT_URL = 'hospital:home'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.trustunarcom.com'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'admin@trustunarcom.com'
-EMAIL_HOST_PASSWORD = '9sg6b4z5hz5@Tim'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'timothysaatum@gmail.com'
+EMAIL_HOST_PASSWORD = 'kscnzqcdtpmewpxz'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 #ClientID = '1002265369673-b1i1p7c5kv7l9kejfmv1ej097cvk834n.apps.googleusercontent.com'
@@ -156,10 +156,16 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer', ),
+    'AUTH_COOKIE': 'refresh_token',
+    'AUTH_COOKIE_SECURE': True,
+    'AUTH_COOKIE_HTTP_ONLY': True,
+    'AUTH_COOKIE_SAMESITE': 'Lax'
 }
+COOKIE_VALUE=None
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 

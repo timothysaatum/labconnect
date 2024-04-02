@@ -26,7 +26,7 @@ class ClientAdmin(UserAdmin):
         (None, {
             'classes': ('wide', 'extrapretty'),
             'fields': ('email', 'phone_number', 'password1', 'password2', 'first_name', 'middle_name', 'last_name', 'gender', 
-            'digital_address', 'emmergency_number', 'staff_id', 'has_a_lab', 'has_a_delivery', 'is_a_clinician', 'is_admin', 'is_active', 'is_staff', 'is_superuser'),
+            'digital_address', 'emmergency_number', 'staff_id', 'account_type', 'is_admin', 'is_active', 'is_staff', 'is_superuser'),
         }),
     )
 

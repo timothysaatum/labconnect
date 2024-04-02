@@ -53,7 +53,7 @@ class ClientChangeForm(forms.ModelForm):
         model = Client
         fields = ('email', 'first_name', 'middle_name', 'last_name', 
             'phone_number', 'digital_address', 'emmergency_number',
-            'has_a_lab', 'has_a_delivery', 'is_a_clinician', 'password', 'is_active', 'is_admin')
+            'account_type', 'password', 'is_active', 'is_admin')
 
 
 
@@ -97,5 +97,5 @@ class ClientRegisterationForm(UserCreationForm):
         fields = [
             'email', 'first_name', 'middle_name', 'last_name', 'gender' 
             ,'phone_number', 'digital_address', 
-            'emmergency_number', 'id_number', 'has_a_lab', 'has_a_delivery', 'is_a_clinician'
+            'emmergency_number', 'id_number', 'account_type'
         ]

@@ -12,6 +12,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 SEX = [('Male', 'Male'), ('Female', 'Female')]
+USER_TYPE = [
+	('Laboratory', 'Laboratory'),
+	('Clinician', 'Clinician'),
+	('Delivery', 'Delivery')
+]
 class Client(AbstractBaseUser, PermissionsMixin):
 
 	#setting the paramaters
@@ -26,9 +31,7 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	facility_affiliated_with = models.CharField(max_length=200)
 	staff_id = models.CharField(max_length=50)
 	profile_picture = models.ImageField(upload_to='clients/profile/picture', default='default.png')
-	has_a_lab = models.BooleanField(default=False)
-	has_a_delivery = models.BooleanField(default=False)
-	is_a_clinician = models.BooleanField(default=False)
+	account_type = models.CharField(max_length=100, choices=USER_TYPE)
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
 	is_admin = models.BooleanField(default=False)
@@ -45,9 +48,10 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	def save(self, *args, **kwargs):
 		super().save(*args, **kwargs)
 		
-		if self.has_a_lab == True:
+		if self.account_type == 'Laboratory':
 
 			permission = Permission.objects.get(codename='add_client')
+			
 			self.user_permissions.add(permission)
 
 

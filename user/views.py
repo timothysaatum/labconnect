@@ -7,6 +7,7 @@ from .serializers import (UserSerializer, LoginSerializer,VerifyEmailSerializer,
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from .models import OneTimePassword
 from .utils import send_code_to_user
@@ -90,14 +91,26 @@ class VerifyUserEmail(GenericAPIView):
 
 class LoginUserView(GenericAPIView):
 
+	response = Response()
 	serializer_class = LoginSerializer
 
 	def post(self, request):
-
+		
 		serializer = self.serializer_class(data=request.data, context={'request': request})
 		serializer.is_valid(raise_exception=True)
 
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		self.response.set_cookie(
+
+				key='refresh_token',
+				value=settings.COOKIE_VALUE,
+				httponly=True,
+				secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+				samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+			)
+		
+		self.response.data = {'data': serializer.data, 'status' :status.HTTP_200_OK}
+
+		return self.response
 
 
 class TestAuthenticationView(GenericAPIView):

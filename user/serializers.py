@@ -26,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 		fields = (
 					'email','first_name', 'last_name', 'gender', 'phone_number', 'digital_address', 'emmergency_number', 
-					'facility_affiliated_with', 'staff_id', 'has_a_lab', 'is_a_clinician', 'has_a_delivery', 'profile_picture', 
+					'facility_affiliated_with', 'staff_id', 'account_type', 'profile_picture', 
 					'password', 'password_confirmation'
 				)
 
@@ -53,9 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
 				digital_address=validated_data.get('digital_address'),
 				emmergency_number=validated_data.get('emmergency_number'),
 				facility_affiliated_with=validated_data.get('facility_affiliated_with'),
-				has_a_lab=validated_data.get('has_a_lab'),
-				is_a_clinician=validated_data.get('is_a_clinician'),
-				has_a_delivery=validated_data.get('has_a_delivery'),
+				account_type=validated_data.get('account_type'),
 				staff_id=validated_data.get('staff_id'),
 				password=validated_data.get('password')
 
@@ -85,13 +83,26 @@ class LoginSerializer(serializers.ModelSerializer):
 	email = serializers.EmailField(max_length=200, min_length=5)
 	password = serializers.CharField(max_length=200, write_only=True)
 	access_token = serializers.CharField(max_length=255, read_only=True)
-	refresh_token = serializers.CharField(max_length=255, read_only=True)
 	full_name = serializers.CharField(max_length=255, read_only=True)
+	facility_affiliated_with = serializers.CharField(max_length=255, read_only=True)
+	staff_id = serializers.CharField(max_length=255, read_only=True)
+	profile_picture = serializers.CharField(max_length=255, read_only=True)
+	account_type = serializers.CharField(max_length=255, read_only=True)
+	is_staff = serializers.CharField(max_length=255, read_only=True)
+	is_active = serializers.CharField(max_length=255, read_only=True)
+	is_admin = serializers.CharField(max_length=255, read_only=True)
+	is_verified = serializers.CharField(max_length=255, read_only=True)
+
 
 	class Meta:
 
 		model = Client
-		fields = ['email', 'password', 'full_name', 'access_token', 'refresh_token']
+		fields = [
+
+			'email', 'password', 'full_name', 'access_token',
+			'facility_affiliated_with', 'staff_id', 'profile_picture', 
+			'account_type', 'is_staff', 'is_verified', 'is_active', 'is_admin',
+		]
 
 	def validate(self, attrs):
 
@@ -111,15 +122,24 @@ class LoginSerializer(serializers.ModelSerializer):
 			raise AuthenticationFailed('Email is not verified!')
 
 		user_tokens = user.tokens()
-
+		settings.COOKIE_VALUE = user_tokens.get('refresh')
+		
 		return {
 
-			'email':user.email,
 			'full_name': user.full_name,
+			'facility_affiliated_with': user.facility_affiliated_with,
+			'staff_id': user.staff_id,
+			'is_staff': user.is_staff,
+			'is_verified': user.is_verified,
+			'is_active': user.is_active,
+			'is_admin': user.is_admin,
+			'profile_picture': user.profile_picture.url,
+			'account_type': user.account_type,
+			'first_name': user.first_name,
+			'email':user.email,
 			'access_token': user_tokens.get('access'),
-			'refresh_token': user_tokens.get('refresh')
-
 		}
+
 
 
 class VerifyEmailSerializer(serializers.ModelSerializer):
