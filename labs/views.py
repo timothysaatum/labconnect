@@ -11,7 +11,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 class CreateLaboratoryView(CreateAPIView):
 
 
-	#permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated]
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = LaboratorySerializer
 
