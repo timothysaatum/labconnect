@@ -3,7 +3,7 @@ from .models import Test, Department, Laboratory
 
 class TestAdmin(admin.ModelAdmin):
 	list_display = ('id', 'name', 'laboratory', 'price', 'current_price', 'discount_price', 'discount_percent', 'date_added', 'date_modified')
-	list_display_links = ('date_added', 'id')
+	list_display_links = ('id', 'name')
 	#list_editable = ('name', 'price', 'discount_price')
 	ordering = ('id',)
 

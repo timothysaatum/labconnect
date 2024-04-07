@@ -76,6 +76,7 @@ class Sample(models.Model):
 	hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
 	ward = models.ForeignKey(Ward, on_delete=models.CASCADE)
 	brief_description = models.TextField()
+	attachment = models.FileField(upload_to='sample/attachments', blank=True, null=True)
 	is_received_by_delivery = models.BooleanField(default=False)
 	is_delivered_to_lab = models.BooleanField(default=False)
 	is_access_by_lab = models.BooleanField(default=False)

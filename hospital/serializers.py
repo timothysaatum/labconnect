@@ -21,10 +21,11 @@ class WardSerializer(serializers.ModelSerializer):
 
 
 class SampleSerializer(serializers.ModelSerializer):
+	attachment = serializers.FileField(required=False)
 
 	class Meta:
 
 		model = Sample
 		fields = ('send_by', 'name_of_patient', 'patient_age', 'patient_sex', 
 			'sample_type', 'sample_container', 'delivery', 'lab', 'tests', 
-			'hospital', 'ward', 'brief_description', 'date_modified', 'date_created')
+			'hospital', 'ward', 'brief_description', 'attachment', 'date_modified', 'date_created')

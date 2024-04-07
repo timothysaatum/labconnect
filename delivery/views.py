@@ -18,7 +18,7 @@ class CreateDeliveryView(CreateAPIView):
 	serializer_class = DeliverySerializer
 
 	def post(self, request):
-		print(self.request.user)
+		print(request.user)
 		serializer = self.serializer_class(data=request.data, context={'request': request})
 		if serializer.is_valid(raise_exception=True):
 			serializer.save()

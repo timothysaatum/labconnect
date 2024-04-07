@@ -47,6 +47,7 @@ class WardSerializerView(CreateAPIView):
 class SampleSerializerView(CreateAPIView):
 
 	serializer_class = SampleSerializer
+	parser_classes = (MultiPartParser, FormParser)
 
 	def post(self, request):
 

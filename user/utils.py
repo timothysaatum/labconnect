@@ -23,16 +23,18 @@ def send_code_to_user(email):
 	user = Client.objects.get(email=email)
 
 	current_site = 'labconnect.com'
-	email_body = f'Hi {user.first_name}, thanks for creating an account with us on {current_site}. Use this code to verify your account with the code {otp_code}'
-	to_email = email
+	html_message = f'Hi {user.first_name}, thanks for creating an account with us on {current_site}. Use this code to verify your account with the code {otp_code}'
+	to_email = user.email
 
+	
 	OneTimePassword.objects.create(user=user, code=otp_code)
+	from_email = settings.EMAIL_HOST_USER
+	message = EmailMessage(subject, html_message, from_email, [to_email])
 
 	try:
 
-		from_email = settings.EMAIL_HOST_USER
-		message = EmailMessage(subject, email_body, from_email, [to_email])
 		message.send(fail_silently=True)
+		print('Hi')
 
 	except Exception as e:
 

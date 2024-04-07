@@ -84,25 +84,34 @@ class Test(BaseModel):
 	department = models.ForeignKey(Department, on_delete=models.CASCADE)
 	name = models.CharField(max_length=200)
 	price = models.FloatField()
-	discount_price = models.FloatField()
+	discount_price = models.FloatField(blank=True, null=True)
 
 	def __str__(self):
+
 		return f'{self.name} = {self.price}ghs'
 
 	def laboratory(self):
+
 		return self.department.laboratory
 
 	def current_price(self):
+	
+		if self.discount_price is not None:
 
-		c_price = self.price - self.discount_price
+			return (self.price - self.discount_price)
 
-		return c_price
+		else:
+
+			return self.price
+
 
 	def discount_percent(self):
 
-		percentage = round((self.discount_price / self.price) * 100)
+		if self.discount_price is not None:
 
-		return f'{percentage}%'
+			percentage = round((self.discount_price / self.price) * 100)
+
+			return f'{percentage}%'
 
 
 class TestResult(BaseModel):

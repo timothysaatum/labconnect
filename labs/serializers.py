@@ -13,6 +13,8 @@ class LaboratorySerializer(serializers.ModelSerializer):
 			'description', 'date_modified', 'date_added', 'logo')
 
 
+
+
 class DepartmentSerializer(serializers.ModelSerializer):
 
 	class Meta:
@@ -26,7 +28,9 @@ class TestSerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = Test
-		fields = ('laboratory', 'department', 'name', 'price', 'discount_price', 'date_modified', 'date_added')
+		fields = ('department', 'name', 'price', 'discount_price', 'date_modified', 'date_added')
+
+
 
 
 class TestResultSerializer(serializers.ModelSerializer):
@@ -34,5 +38,14 @@ class TestResultSerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = TestResult
-		fields = ('created_by','send_by', 'department', 'laboratory', 'test', 'result', 
+		fields = ('send_by', 'department', 'laboratory', 'test', 'result', 
 			'comments', 'is_verified', 'is_received', 'date_modified', 'date_added')
+
+
+
+class LaboratoryDetailViewSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Laboratory
+		fields = ('created_by', 'name', 'herfra_id', 'digital_address', 'phone', 'email', 'website', 
+			'description', 'date_modified', 'date_added', 'logo')

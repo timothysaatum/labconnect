@@ -25,8 +25,8 @@ class UserSerializer(serializers.ModelSerializer):
 		model = Client
 
 		fields = (
-					'email','first_name', 'last_name', 'gender', 'phone_number', 'digital_address', 'emmergency_number', 
-					'facility_affiliated_with', 'staff_id', 'account_type', 'profile_picture', 
+					'email', 'first_name', 'last_name', 'gender', 'phone_number', 'digital_address', 'emmergency_number', 
+					'current_facility', 'staff_id', 'account_type', 'profile_picture', 
 					'password', 'password_confirmation'
 				)
 
@@ -52,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 				phone_number=validated_data.get('phone_number'),
 				digital_address=validated_data.get('digital_address'),
 				emmergency_number=validated_data.get('emmergency_number'),
-				facility_affiliated_with=validated_data.get('facility_affiliated_with'),
+				current_facility=validated_data.get('current_facility'),
 				account_type=validated_data.get('account_type'),
 				staff_id=validated_data.get('staff_id'),
 				password=validated_data.get('password')
@@ -61,22 +61,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 		return user
 
-	def send_email(self, to_email, first_name, last_name):
-
-		from_email = settings.EMAIL_HOST_USER
-		to_email = to_email
-
-		user_full_name = f'{first_name} {last_name}'
-		context = {'user_full_name': user_full_name}
-
-		html_template = 'user/email_msg.html'
-		html_message = render_to_string(html_template, context=context)
-		subject = 'Account created successfully'
-		plain_message = strip_tags(html_message)
-		message = EmailMessage(subject, html_message, from_email, [to_email])
-		message.content_type = 'html'
-		message.send()
-
 
 class LoginSerializer(serializers.ModelSerializer):
 
@@ -84,7 +68,7 @@ class LoginSerializer(serializers.ModelSerializer):
 	password = serializers.CharField(max_length=200, write_only=True)
 	access_token = serializers.CharField(max_length=255, read_only=True)
 	full_name = serializers.CharField(max_length=255, read_only=True)
-	facility_affiliated_with = serializers.CharField(max_length=255, read_only=True)
+	current_facility = serializers.CharField(max_length=255, read_only=True)
 	staff_id = serializers.CharField(max_length=255, read_only=True)
 	profile_picture = serializers.CharField(max_length=255, read_only=True)
 	account_type = serializers.CharField(max_length=255, read_only=True)
@@ -100,7 +84,7 @@ class LoginSerializer(serializers.ModelSerializer):
 		fields = [
 
 			'email', 'password', 'full_name', 'access_token',
-			'facility_affiliated_with', 'staff_id', 'profile_picture', 
+			'current_facility', 'staff_id', 'profile_picture', 
 			'account_type', 'is_staff', 'is_verified', 'is_active', 'is_admin',
 		]
 
@@ -127,7 +111,7 @@ class LoginSerializer(serializers.ModelSerializer):
 		return {
 
 			'full_name': user.full_name,
-			'facility_affiliated_with': user.facility_affiliated_with,
+			'current_facility': user.current_facility,
 			'staff_id': user.staff_id,
 			'is_staff': user.is_staff,
 			'is_verified': user.is_verified,
