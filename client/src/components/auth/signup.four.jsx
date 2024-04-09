@@ -44,7 +44,7 @@ export default function SetPasswords() {
             <FormControl>
               <Input
                 {...field}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="confirm password..."
               />
             </FormControl>
