@@ -1,29 +1,20 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-
-import Home from "./pages/Home";
-import ClinicationDashboard from "./pages/ClinicationDashboard";
-import SignIn from "./pages/signIn";
-import Signup from "./pages/Signup";
+import { Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
-import PrivateRoute from "./components/privateRoute";
-import NotFound from "./components/clinician/not-found";
+import Signin from "./pages/Signin";
+import { Dashboard } from "./pages/Dashboard";
+import Home from "./pages/Home";
+import Signup from "./pages/Signup";
 
-export default function App() {
+export default function ModeToggle() {
   return (
-    <BrowserRouter>
+    <>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="sign-in" element={<SignIn />} />
+        <Route path="sign-in" element={<Signin />} />
         <Route path="sign-up" element={<Signup />} />
-        
-        <Route element={<PrivateRoute />}>
-          <Route path="dashboard" element={<ClinicationDashboard />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
+        <Route path="dashboard" element={<Dashboard />} />
       </Routes>
-      <Footer />
-    </BrowserRouter>
+    </>
   );
 }

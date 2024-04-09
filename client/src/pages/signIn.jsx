@@ -1,32 +1,63 @@
-import { Alert, Button, Label, TextInput } from "flowbite-react";
-import { Link,useLocation,useNavigate } from "react-router-dom";
-import {useForm } from "react-hook-form";
-import Motion from "../components/motion";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { setAuth } from "../redux/auth/authSlice";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import TestSelect from "../components/ui/select";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
-export default function SignIn() {
-  const form = useForm();
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch } from "react-redux";
+import {  useState } from "react";
+
+import { AlertCircle, Loader2 } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import axios from "axios";
+import { setAccess, setAuth } from "@/redux/auth/authSlice";
+
+const SigninSchema = z.object({
+  email: z.string().email({ message: "Invalid email" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
+
+export default function Signin() {
   const [serverErrors, setServerErrors] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
-  const from = location.state?.from?.pathname || "/";  
+  const dispatch = useDispatch();
 
-  const { auth } = useSelector((state) => state.auth);
-  const dispatch  = useDispatch();
+  const from = location.state?.from?.pathname || "/";
+
+  const form = useForm({
+    resolver: zodResolver(SigninSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   const {
-    register,
-    handleSubmit,
     formState: { errors, isSubmitting },
   } = form;
 
   const onSubmit = async (data) => {
     try {
+      setServerErrors(null);
       const response = await axios.post(
         "/api/user/login/",
         JSON.stringify(data),
@@ -37,85 +68,104 @@ export default function SignIn() {
           withCredentials: true,
         }
       );
-      console.log(JSON.stringify(response?.data));
+      // console.log(JSON.stringify(response))
+      const accessToken = response?.data?.data?.access_token;
+      dispatch(setAccess(accessToken));
+      const user = {
+        accountType: response?.data?.data?.account_type || null,
+        isAdmin_: response?.data?.data?.is_admin || null,
+        isVerified_: response?.data?.data?.is_verified || null,
+        isStaff: response?.data?.data?.is_staff || null,
+        isActive_: response?.data?.data?.is_active || null,
+      };
       setServerErrors(null);
-      const { access_token, refresh_token } = response?.data;
-      dispatch(setAuth({ access_token, refresh_token }));
-      navigate(from,{replace:true});
+      dispatch(setAuth(user));
+      form.reset();
+      navigate(from, { replace: true });
     } catch (error) {
-      setServerErrors(error.response.data);
+      const errorValues = [Object.values(error?.response?.data || {})];
+      if (errorValues.length > 0) {
+        console.log(errorValues[0]);
+        setServerErrors(errorValues[0]);
+      }
     }
   };
-  useEffect(() => {
-    console.log(auth);
-  },[auth])
+
   return (
-    <Motion className="min-h-dvh mt-20">
-      <article className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row gap-5 md:items-center">
-        <div className="flex-1">
-          <h2 className="text-5xl text-green-400 font-semibold drop-shadow-xl"></h2>
-          <p className="text-sm text-gray-400">
-            Sign in the continue using our services
-          </p>
-        </div>
-        <section className="flex-1">
-          <form
-            className="flex flex-col gap-4"
-            noValidate
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <div>
-              <Label value="Your email" />
-              <TextInput
-                placeholder="Enter your email"
-                autoFocus
-                color={errors.email && "failure"}
-                helperText={errors?.email?.message}
-                type="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                    message: "Invalid email address",
-                  },
-                })}
-              />
-            </div>
-            <div className=" flex flex-col justify-end">
-              <Label value="Your password" />
-              <TextInput
-                placeholder="Enter password"
-                color={errors.password && "failure"}
-                helperText={errors?.password?.message}
-                type="password"
-                {...register("password", {
-                  required: "Password is required",
-                })}
-              />
-              <Link className="text-right text-xs mt-2">forgot password?</Link>
-            </div>
+    <Card className="mx-auto max-w-sm mt-16">
+      <CardHeader>
+        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardDescription>
+          Enter your email below to login to your account
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Enter your email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="email..."
+                      error={errors?.email}
+                      autoFocus
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Enter your password</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="password..."
+                      error={errors?.password}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              Login
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+            </Button>
             <Button
-              gradientDuoTone="greenToBlue"
-              type="submit"
-              isProcessing={isSubmitting}
+              variant="outline"
+              className="w-full"
               disabled={isSubmitting}
             >
-              Sign In
+              Login with Google
             </Button>
-            <span className="text-xs">
-              Don't have an account?{" "}
-              <Link to={"/sign-up"} className="text-green-400 hover:underline">
-                Sign up here
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link href="#" className="underline">
+                Sign up
               </Link>
-              <button onClick={()=>{dispatch(setAuth("confici"))}}>hhhh</button>
-            </span>
-            {serverErrors && (
-              <Alert color={"failure"}>{serverErrors.detail}</Alert>
-            )}
+            </div>
           </form>
-        </section>
-      </article>
-      <div></div>
-    </Motion>
+        </Form>
+        {serverErrors && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{serverErrors}</AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+    </Card>
   );
 }

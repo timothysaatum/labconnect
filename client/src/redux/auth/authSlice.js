@@ -9,9 +9,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setAuth: (state, action) => {
-      state.auth = action.payload;
+      state.user = action.payload;
+    },
+    setAccess: (state, action) => {
+      state.accessToken = action.payload;
     },
   },
 });
-export const { setAuth } = authSlice.actions;
+export const { setAuth, setAccess } = authSlice.actions;
 export default authSlice.reducer;

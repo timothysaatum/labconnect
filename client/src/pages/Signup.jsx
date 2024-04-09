@@ -1,110 +1,65 @@
-import { Alert, Button, Toast } from "flowbite-react";
-import { useEffect, useState } from "react";
-import StepTwo from "../components/clinician/StepTwo.signup";
-import StepThree from "../components/clinician/StepThree.signup";
-import StepFour from "../components/clinician/stepFour.signup";
-import { IoArrowBackCircleOutline } from "react-icons/io5";
-import { DevTool } from "@hookform/devtools";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import StepOne from "../components/clinician/stepOne.signup";
-import { AnimatePresence, motion } from "framer-motion";
-import Motion from "../components/motion";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DevTool } from "@hookform/devtools";
+import { useRef, useState } from "react";
+import { AlertCircle, CircleChevronLeft, Loader2 } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import AccountType from "@/components/auth/signup.one";
+import Personal from "@/components/auth/signup.two";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
-export default function SignUp() {
-  const [notify, setNotify] = useState(false);
+const SignupSchema = z.object({
+  AccountType: z.string().min(1, "Please select an account type"),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
+  gender: z.string().min(1, "please select a gender"),
+});
+
+export default function Signup() {
+  const [serverErrors] = useState(null);
+  const [step, setStep] = useState(1); // 1 for account type, 2 for personal details
   
-  const [step, setStep] = useState(1);
-  const form = useForm();
+  const form = useForm({
+    resolver: zodResolver(SignupSchema),
+    defaultValues: {
+      AccountType: "",
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      gender: "",
+    },
+  });
+
   const {
-    control,
-    handleSubmit,
     trigger,
-    watch,
-    formState: { isSubmitting, errors, isSubmit },
-    setError,
+    formState: { errors, isSubmitting },
   } = form;
-  
-    const fieldToStep = {
-      has_laboratory: 1,
-      first_name: 2,
-      last_name: 2,
-      email: 2,
-      gender: 2,
-      phone_number: 2,
-      facility_affiliated_with: 3,
-      staff_id: 3,
-      emmergency_number: 3,
-      digital_address: 3,
-      password: 4,
-      password_confirmation: 4,
-    };
+  function onSubmit(data) {
+    console.log(data);
+  }
+  const loginbtnref = useRef();
 
-  const onSubmit = async (data) => {
-    let has_laboratory = false;
-    let is_clinician = false;
-    let is_delivery = false;
-
-    // Set the selected field to true
-    switch (data.has_laboratory) {
-      case "laboratory":
-        has_laboratory = true;
-        break;
-      case "clinician":
-        is_clinician = true;
-        break;
-      case "delivery":
-        is_delivery = true;
-        break;
-    }
-
-    // Add the fields to the data
-    data = { ...data, has_laboratory, is_clinician, is_delivery };
-    try {
-      console.log(data)
-      const response = await fetch(
-        "http://localhost:8000/users/create-account/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-      const result = await response.json();
-      if (response.ok) {
-        console.log(result);
-        setNotify(true);
-        setTimeout(() => {
-          setNotify(false); // Hide the alert after 3 seconds
-        }, 3000);
-      } else {
-        // If the response is not ok (status code is not 2xx), set the error messages
-        for (const field in result) {
-          setError(field, {
-            type: "manual",
-            message: result[field][0],
-          });
-          // Look up the step associated with the field and set the current step
-          const step = fieldToStep[field];
-          if (step !== undefined) {
-            setStep(step);
-            break; // Exit the loop after finding the first error
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const has_laboratory = watch("has_laboratory");
   const handlenextStep = async () => {
     let fieldsToValidate;
 
     switch (step) {
       case 1:
-        fieldsToValidate = ["has_laboratory"];
+        fieldsToValidate = ["AccountType"];
         break;
       case 2:
         fieldsToValidate = [
@@ -132,63 +87,86 @@ export default function SignUp() {
     const isValid = await trigger(fieldsToValidate);
 
     if (isValid) {
-      setStep((prevStep) => prevStep + 1);
+      setStep((prev) => prev + 1);
     }
   };
-
+  const handlePrevStep = () => {
+    if (step > 1) {
+      setStep((prev) => prev - 1);
+    }
+  };
+  const MultistepFormState = () => {
+    switch (step) {
+      case 1:
+        return <AccountType form={form} errors={errors} />;
+      case 2:
+        return <Personal form={form} errors={errors} />;
+      default:
+        return <AccountType form={form} errors={errors} />;
+    }
+  };
   return (
-    <Motion className=" signup min-h-dvh mt-12">
-      <div className="flex p-3 max-w-4xl mx-auto flex-col md:flex-row gap-10 md:items-center">
-        <div className="flex-1">
-          <h2 className="text-5xl text-green-400 font-semibold drop-shadow-xl"></h2>
-          <p className="text-sm text-gray-400">
-            Sign up the continue using our services
-          </p>
-        </div>
-        <div className="flex-1">
-          {step !== 1 && (
-            <IoArrowBackCircleOutline
-              className="text-4xl  cursor-pointer "
-              onClick={() => setStep((prevStep) => prevStep - 1)}
-            />
-          )}
-          <AnimatePresence>
-            <motion.form
-              className="flex flex-col gap-4 mt-2 max-h-[30rem] overflow-y-auto pr-8"
-              noValidate
-              onSubmit={handleSubmit(onSubmit)}
+    <div className="px-2">
+      <Card className="mx-auto max-w-[34rem] mt-10 ">
+        <CardHeader className="px-2 sm:px-6">
+          <CardTitle className="text-2xl flex gap-2 item-center">
+            <CircleChevronLeft
+              className="text-gray-400 self-center"
+              onClick={handlePrevStep}
+            />{" "}
+            Create Account
+          </CardTitle>
+          <CardDescription>
+            Enter your details below to create an account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="px-2 sm:px-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="grid gap-4  overflow-y-auto pb-4 px-2"
             >
-              {step === 1 && <StepOne form={form} />}
-              {has_laboratory === "clinician" && step === 2 && (
-                <StepTwo form={form} />
-              )}
-              {has_laboratory === "clinician" && step === 3 && (
-                <StepThree form={form} />
-              )}
-              {step === 4 && <StepFour form={form} />}
+              <>{MultistepFormState()}</>
               <Button
-                gradientDuoTone="greenToBlue"
-                onClick={step ===4 ? undefined : handlenextStep}
+                className="hidden"
+                ref={loginbtnref}
                 type={step === 4 ? "submit" : "button"}
-                isProcessing={isSubmitting}
-                disabled={isSubmitting}
-              >
-                {step === 4 ? "Submit" : "Proceed"}
-              </Button>
-            </motion.form>
-          </AnimatePresence>
-          {notify && (
-            <Alert
-              color="success"
-              className="mt-4"
-              onDismiss={() => setNotify(false)}
-            >
-              <h3>Account created Successfully</h3>
+              ></Button>
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter className="flex-col bg-muted/50 pt-5 my-auto !px-2 sm:px-6">
+          <Button
+            onClick={() => {
+              if (loginbtnref.current) {
+                loginbtnref.current.click();
+              }
+              if (step !== 4) {
+                handlenextStep();
+              }
+            }}
+            className="w-full"
+            disabled={isSubmitting}
+          >
+            {step === 4 ? "Submit" : "Proceed"}
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          </Button>
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link to="/sign-in" className="underline">
+              Sign up
+            </Link>
+          </div>
+          {serverErrors && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{serverErrors}</AlertDescription>
             </Alert>
           )}
-          <DevTool control={control} placement="top-left" />
-        </div>
-      </div>
-    </Motion>
+        </CardFooter>
+      </Card>
+      {/* <DevTool control={form.control} /> */}
+    </div>
   );
 }
