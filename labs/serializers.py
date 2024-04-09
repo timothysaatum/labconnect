@@ -23,6 +23,8 @@ class DepartmentSerializer(serializers.ModelSerializer):
 		fields = ('laboratory', 'department_name', 'heard_of_department', 'phone', 'email', 'date_modified', 'date_added')
 
 
+
+
 class TestSerializer(serializers.ModelSerializer):
 
 	class Meta:
@@ -40,6 +42,7 @@ class TestResultSerializer(serializers.ModelSerializer):
 		model = TestResult
 		fields = ('send_by', 'department', 'laboratory', 'test', 'result', 
 			'comments', 'is_verified', 'is_received', 'date_modified', 'date_added')
+
 
 
 

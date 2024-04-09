@@ -2,16 +2,22 @@ import random
 from django.core.mail import EmailMessage
 from .models import Client, OneTimePassword
 from django.conf import settings
+import pyotp
+import time
 
+
+
+# OTP verified for current time
+#totp.verify('492039') # => True
+#
+#
 
 
 def generateotp():
 
-	otp = ''
-
-	for _ in range(10):
-
-		otp += str(random.randint(1, 9))
+	secret_key = pyotp.random_base32()
+	totp = pyotp.TOTP(secret_key, interval=180, digits=10)
+	otp = totp.now()
 
 	return otp
 
@@ -20,6 +26,7 @@ def send_code_to_user(email):
 
 	subject = 'Your one time verification code'
 	otp_code = generateotp()
+
 	user = Client.objects.get(email=email)
 
 	current_site = 'labconnect.com'
@@ -27,14 +34,13 @@ def send_code_to_user(email):
 	to_email = user.email
 
 	
-	OneTimePassword.objects.create(user=user, code=otp_code)
+	OneTimePassword.objects.create(user=user, code=otp_code, secrete=pyotp.random_base32())
 	from_email = settings.EMAIL_HOST_USER
 	message = EmailMessage(subject, html_message, from_email, [to_email])
 
 	try:
 
 		message.send(fail_silently=True)
-		print('Hi')
 
 	except Exception as e:
 
@@ -49,10 +55,14 @@ def send_normal_email(data):
 			from_email=settings.EMAIL_HOST_USER,
 			to=[data['to_email']]
 		)
-	
+
 	try:
 
 		email.send()
 
 	except Exception as e:
 		print(e)
+
+
+
+		

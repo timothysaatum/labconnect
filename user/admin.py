@@ -36,7 +36,7 @@ class ClientAdmin(UserAdmin):
 
 
 class OneTimePasswordAdmin(admin.ModelAdmin):
-    list_display = ('code', )
+    list_display = ('code', 'user', 'email_for')
 
 
 # Now register the new UserAdmin...

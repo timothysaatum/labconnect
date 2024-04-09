@@ -15,7 +15,7 @@ from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserCreationSerializer(serializers.ModelSerializer):
 
 	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
 	password_confirmation = serializers.CharField(max_length=68, min_length=8, write_only=True)
@@ -44,7 +44,6 @@ class UserSerializer(serializers.ModelSerializer):
 	def create(self, validated_data):
 
 		user = Client.objects.create_user(
-
 				email=validated_data.get('email'),
 				first_name=validated_data.get('first_name'),
 				last_name=validated_data.get('last_name'),
@@ -56,7 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
 				account_type=validated_data.get('account_type'),
 				staff_id=validated_data.get('staff_id'),
 				password=validated_data.get('password')
-
 			)
 
 		return user
@@ -106,7 +104,7 @@ class LoginSerializer(serializers.ModelSerializer):
 			raise AuthenticationFailed('Email is not verified!')
 
 		user_tokens = user.tokens()
-		settings.COOKIE_VALUE = user_tokens.get('refresh')
+		settings.SIMPLE_JWT['AUTH_COOKIE'] = user_tokens.get('refresh')
 		
 		return {
 
@@ -149,6 +147,11 @@ class PasswordResetViewSerializer(serializers.Serializer):
 		if Client.objects.filter(email=email).exists():
 
 			user = Client.objects.get(email=email)
+			
+			if not user.is_verified:
+
+				raise AuthenticationFailed("You cannot iniated password reset because you didn't verify your email")
+
 			uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
 			token = PasswordResetTokenGenerator().make_token(user)
 
@@ -168,7 +171,7 @@ class PasswordResetViewSerializer(serializers.Serializer):
 			}
 
 			send_normal_email(data)
-			print(abslink, email_body)
+			print(abslink)
 			return {
 
 				'user': user,

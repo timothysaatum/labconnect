@@ -85,9 +85,17 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
 class OneTimePassword(models.Model):
 
-	user = models.OneToOneField(Client, on_delete=models.CASCADE)#
+	user = models.OneToOneField(Client, on_delete=models.CASCADE)
 	code = models.CharField(max_length=6, unique=True)
+	secrete = models.CharField(max_length=100)
 
 	def __str__(self):
 
-		return f'{self.user.last_name} => passcode'
+		return f'{self.user.last_name} => {self.code}'
+
+	def user_for(self):
+		return self.user
+
+
+	def email_for(self):
+		return self.user.email

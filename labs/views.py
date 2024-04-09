@@ -22,7 +22,7 @@ class CreateLaboratoryView(CreateAPIView):
 
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
-			print(self.request.user)
+			#print(self.request.user)
 			serializer.save()
 			#serializer.save(created_by=self.request.user)
 
