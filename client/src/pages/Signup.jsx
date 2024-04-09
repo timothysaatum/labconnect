@@ -24,7 +24,7 @@ import { SignupSchema } from "@/lib/schema";
 
 export default function Signup() {
   const [serverErrors] = useState(null);
-  const [step, setStep] = useState(5); // 1 for account type, 2 for personal details
+  const [step, setStep] = useState(1); // 1 for account type, 2 for personal details
 
   const form = useForm({
     resolver: zodResolver(SignupSchema),
