@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 
-const Personal = ({ errors, form }) => {
+const Personal = ({ form }) => {
   return (
     <>
       <div className="grid md:grid-cols-2 md:gap-2">
@@ -31,7 +31,6 @@ const Personal = ({ errors, form }) => {
                   {...field}
                   type="text"
                   placeholder="firstname..."
-                  // error={errors?.first_name}
                   autoFocus
                   
                 />

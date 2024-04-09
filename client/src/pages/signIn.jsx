@@ -22,11 +22,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
 import {  useState } from "react";
-
+import BaseUrl from '../api/axios'
 import { AlertCircle, Loader2 } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import axios from "axios";
+import axios from "./../api/axios";
 import { setAccess, setAuth } from "@/redux/auth/authSlice";
 
 const SigninSchema = z.object({

@@ -120,6 +120,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:5173',
 )
+CORS_ALLOW_CREDENTIALS = True
+
 
 
 LOGIN_URL = 'user:login'
@@ -158,7 +160,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
 
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=25),
     'AUTH_HEADER_TYPES': ('Bearer', ),
     'AUTH_COOKIE': 'refresh_token',
     'AUTH_COOKIE_SECURE': True,

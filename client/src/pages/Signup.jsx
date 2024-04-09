@@ -19,6 +19,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import AccountType from "@/components/auth/signup.one";
 import Personal from "@/components/auth/signup.two";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import Facility from "@/components/auth/signup.three";
+import SetPasswords from "@/components/auth/signup.four";
 
 const SignupSchema = z.object({
   AccountType: z.string().min(1, "Please select an account type"),
@@ -27,12 +29,24 @@ const SignupSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
   gender: z.string().min(1, "please select a gender"),
+  staff_id: z.string().min(1, "Staff ID is required"),
+  facility_affiliated_with: z.string().min(1, "Facility is required"),
+  emmergency_number: z
+    .string()
+    .refine(isValidPhoneNumber, "Invalid phone number"),
+  digital_address: z.string().min(1, "Digital address is required"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirm_password: z
+    .string()
+}).refine((data) => data.password === data.confirm_password, {
+  message: "Passwords do not match",
+  path: ["confirm_password"],
 });
 
 export default function Signup() {
   const [serverErrors] = useState(null);
-  const [step, setStep] = useState(1); // 1 for account type, 2 for personal details
-  
+  const [step, setStep] = useState(4); // 1 for account type, 2 for personal details
+
   const form = useForm({
     resolver: zodResolver(SignupSchema),
     defaultValues: {
@@ -42,6 +56,12 @@ export default function Signup() {
       email: "",
       phone: "",
       gender: "",
+      staff_id: "",
+      facility_affiliated_with: "",
+      emmergency_number: "",
+      digital_address: "",
+      password: "",
+      confirm_password: "",
     },
   });
 
@@ -78,6 +98,9 @@ export default function Signup() {
           "digital_address",
         ];
         break;
+      case 4:
+        fieldsToValidate = ["password", "confirm_password"];
+        break;
       default:
         fieldsToValidate = [];
         break;
@@ -101,6 +124,10 @@ export default function Signup() {
         return <AccountType form={form} errors={errors} />;
       case 2:
         return <Personal form={form} errors={errors} />;
+      case 3:
+        return <Facility form={form} errors={errors} />;
+      case 4:
+        return <SetPasswords form={form} errors={errors} />;
       default:
         return <AccountType form={form} errors={errors} />;
     }
@@ -152,9 +179,9 @@ export default function Signup() {
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           </Button>
           <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Already have an account?{" "}
             <Link to="/sign-in" className="underline">
-              Sign up
+              Sign in
             </Link>
           </div>
           {serverErrors && (
