@@ -14,7 +14,7 @@ from django.http import Http404
 class CreateLaboratoryView(CreateAPIView):
 
 
-	#permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated]
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = LaboratorySerializer
 
