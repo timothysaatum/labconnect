@@ -86,9 +86,6 @@ const Personal = ({ form }) => {
                   international
                 />
               </FormControl>
-              <FormDescription>
-                format: +233 ** *** ****
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -112,8 +109,8 @@ const Personal = ({ form }) => {
                   </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
                   </SelectContent>
                 </Select>
               <FormMessage />

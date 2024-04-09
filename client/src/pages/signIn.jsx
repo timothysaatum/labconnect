@@ -65,7 +65,6 @@ export default function Signin() {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true,
         }
       );
       // console.log(JSON.stringify(response))

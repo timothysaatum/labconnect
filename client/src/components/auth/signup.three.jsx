@@ -31,7 +31,7 @@ const Facility = () => {
         )}
       />
       <FormField
-        name="facility_affiliated_with"
+        name="current_facility"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Name of institution</FormLabel>
@@ -47,7 +47,7 @@ const Facility = () => {
         )}
       />
       <FormField
-        name="emmergency_phone_number"
+        name="emmergency_number"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Enter your phone number for urgent cases</FormLabel>
@@ -59,13 +59,12 @@ const Facility = () => {
                 international
               />
             </FormControl>
-            <FormDescription>format: +233 ** *** ****</FormDescription>
             <FormMessage />
           </FormItem>
         )}
       />
       <FormField
-        name="digital address"
+        name="digital_address"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Digital address</FormLabel>

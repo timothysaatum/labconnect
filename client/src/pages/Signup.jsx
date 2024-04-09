@@ -10,68 +10,88 @@ import {
 } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DevTool } from "@hookform/devtools";
 import { useRef, useState } from "react";
 import { AlertCircle, CircleChevronLeft, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import AccountType from "@/components/auth/signup.one";
 import Personal from "@/components/auth/signup.two";
-import { isValidPhoneNumber } from "react-phone-number-input";
 import Facility from "@/components/auth/signup.three";
 import SetPasswords from "@/components/auth/signup.four";
-
-const SignupSchema = z.object({
-  AccountType: z.string().min(1, "Please select an account type"),
-  first_name: z.string().min(1, "First name is required"),
-  last_name: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
-  gender: z.string().min(1, "please select a gender"),
-  staff_id: z.string().min(1, "Staff ID is required"),
-  facility_affiliated_with: z.string().min(1, "Facility is required"),
-  emmergency_number: z
-    .string()
-    .refine(isValidPhoneNumber, "Invalid phone number"),
-  digital_address: z.string().min(1, "Digital address is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  confirm_password: z
-    .string()
-}).refine((data) => data.password === data.confirm_password, {
-  message: "Passwords do not match",
-  path: ["confirm_password"],
-});
+import axios from "@/api/axios";
+import { TermsandConditions } from "@/components/auth/T&c";
+import { SignupSchema } from "@/lib/schema";
 
 export default function Signup() {
   const [serverErrors] = useState(null);
-  const [step, setStep] = useState(4); // 1 for account type, 2 for personal details
+  const [step, setStep] = useState(5); // 1 for account type, 2 for personal details
 
   const form = useForm({
     resolver: zodResolver(SignupSchema),
     defaultValues: {
-      AccountType: "",
+      account_type: "",
       first_name: "",
       last_name: "",
       email: "",
       phone: "",
       gender: "",
       staff_id: "",
-      facility_affiliated_with: "",
+      current_facility: "",
       emmergency_number: "",
       digital_address: "",
       password: "",
-      confirm_password: "",
+      password_confirmation: "",
+      tc: false,
     },
   });
 
   const {
     trigger,
+    setError,
     formState: { errors, isSubmitting },
   } = form;
-  function onSubmit(data) {
-    console.log(data);
-  }
+  const fieldToStep = {
+    account_type: 1,
+    first_name: 2,
+    last_name: 2,
+    email: 2,
+    phone: 2,
+    gender: 2,
+    staff_id: 3,
+    current_facility: 3,
+    emmergency_number: 3,
+    digital_address: 3,
+    password: 4,
+    password_confirmation: 4,
+    tc: 5,
+  };
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post(
+        "/api/user/create-account/",
+        JSON.stringify(data),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+    } catch (error) {
+      for (const field in error.response.data) {
+        setError(field, {
+          type: "manual",
+          message: error.response.data[field][0],
+        });
+        // Look up the step associated with the field and set the current step
+        const step = fieldToStep[field];
+        if (step !== undefined) {
+          setStep(step);
+          break; // Exit the loop after finding the first error
+        }
+      }
+    }
+  };
   const loginbtnref = useRef();
 
   const handlenextStep = async () => {
@@ -79,7 +99,7 @@ export default function Signup() {
 
     switch (step) {
       case 1:
-        fieldsToValidate = ["AccountType"];
+        fieldsToValidate = ["account_type"];
         break;
       case 2:
         fieldsToValidate = [
@@ -93,13 +113,16 @@ export default function Signup() {
       case 3:
         fieldsToValidate = [
           "staff_id",
-          "facility_affiliated_with",
+          "current_facility",
           "emmergency_number",
           "digital_address",
         ];
         break;
       case 4:
-        fieldsToValidate = ["password", "confirm_password"];
+        fieldsToValidate = ["password", "password_confirmation"];
+        break;
+      case 5:
+        fieldsToValidate = ["tc"];
         break;
       default:
         fieldsToValidate = [];
@@ -108,7 +131,7 @@ export default function Signup() {
     }
 
     const isValid = await trigger(fieldsToValidate);
-
+    
     if (isValid) {
       setStep((prev) => prev + 1);
     }
@@ -123,11 +146,13 @@ export default function Signup() {
       case 1:
         return <AccountType form={form} errors={errors} />;
       case 2:
-        return <Personal form={form} errors={errors} />;
+        return <Personal form={form} />;
       case 3:
-        return <Facility form={form} errors={errors} />;
+        return <Facility form={form} />;
       case 4:
-        return <SetPasswords form={form} errors={errors} />;
+        return <SetPasswords form={form} />;
+      case 5:
+        return <TermsandConditions form={form} errors={errors} />;
       default:
         return <AccountType form={form} errors={errors} />;
     }
@@ -157,7 +182,7 @@ export default function Signup() {
               <Button
                 className="hidden"
                 ref={loginbtnref}
-                type={step === 4 ? "submit" : "button"}
+                type={step === 5 ? "submit" : "button"}
               ></Button>
             </form>
           </Form>
@@ -168,14 +193,14 @@ export default function Signup() {
               if (loginbtnref.current) {
                 loginbtnref.current.click();
               }
-              if (step !== 4) {
+              if (step !== 5) {
                 handlenextStep();
               }
             }}
             className="w-full"
             disabled={isSubmitting}
           >
-            {step === 4 ? "Submit" : "Proceed"}
+            {step === 5 ? "Submit" : "Proceed"}
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           </Button>
           <div className="mt-4 text-center text-sm">
@@ -193,7 +218,6 @@ export default function Signup() {
           )}
         </CardFooter>
       </Card>
-      {/* <DevTool control={form.control} /> */}
     </div>
   );
 }

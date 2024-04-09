@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "../ui/checkbox";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
 export default function SetPasswords() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,9 +15,7 @@ export default function SetPasswords() {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-  useEffect(() => {
-    console.log(showPassword);
-  }, [showPassword]);
+
   return (
     <>
       <FormField
@@ -37,7 +35,7 @@ export default function SetPasswords() {
         )}
       />
       <FormField
-        name="confirm_password"
+        name="password_confirmation"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Confirm password</FormLabel>
