@@ -29,8 +29,9 @@ def generate_token(user):
 class CheckRefreshToken(APIView):
 
 	def get(self, request):
-
+		
 		cookie_token = request.COOKIES.get('refresh_token')
+		
 		
 		if not 'refresh_token':
 
@@ -47,7 +48,7 @@ class CheckRefreshToken(APIView):
 			return Response({'error': 'stale request'}, status=status.HTTP_404_NOT_FOUND)
 
 		except user.DoesNotExist:
-			return Response({'error': 'user does expired'}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)
 
 		refresh_token = generate_token(user)
 
@@ -147,17 +148,26 @@ class LoginUserView(GenericAPIView):
 
 		serializer = self.serializer_class(data=request.data, context={'request': request})
 		serializer.is_valid(raise_exception=True)
+		
+		user = Client.objects.get(id=serializer.data['user_id'])
+		user_tokens = user.tokens()
+
+		refresh = user_tokens.get('refresh')
 
 		self.response.set_cookie(
-				key='refresh_token',
-				value=settings.SIMPLE_JWT['AUTH_COOKIE'],
+				key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+				value=refresh,
+				domain=settings.SIMPLE_JWT['AUTH_COOKIE_DOMAIN'],
+				path=settings.SIMPLE_JWT['AUTH_COOKIE_PATH'],
+				expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
 				httponly=True,
 				secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
 				samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
 			)
 
 		csrf.get_token(request)
-		self.response.data = {'data': serializer.data, 'status' :status.HTTP_200_OK}
+		
+		self.response.data = {'data': serializer.data, 'access_token': user_tokens.get('access'), 'status' :status.HTTP_200_OK}
 
 		return self.response
 
