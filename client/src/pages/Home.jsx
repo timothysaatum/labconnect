@@ -1,9 +1,13 @@
-const Home = () => {
-  return (
-    <div>
-        <h1 className="text-red-500">Homjdjsjsde</h1>
-    </div>
-  )
-}
+import { toast } from "sonner";
+import useRefreshToken from "@/hooks/useRefreshToken";
 
-export default Home
+import { Button } from "@/components/ui/button";
+
+export default function Home() {
+  const refresh = useRefreshToken()
+  return (
+    <Button onClick={()=>refresh()}>
+      refresh
+    </Button>
+  );
+}

@@ -17,7 +17,7 @@ const Header = () => {
       </div>
       <ul className="hidden gap-5 lg:gap-10 md:flex">
         <NavLink
-          to="/home"
+          to="/"
           className={({ isActive }) => (isActive ? "text-blue-500" : "")}
         >
           <li>Home</li>

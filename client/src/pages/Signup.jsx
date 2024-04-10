@@ -21,6 +21,7 @@ import SetPasswords from "@/components/auth/signup.four";
 import axios from "@/api/axios";
 import { TermsandConditions } from "@/components/auth/T&c";
 import { SignupSchema } from "@/lib/schema";
+import { AnimatePresence } from "framer-motion";
 
 export default function Signup() {
   const [serverErrors] = useState(null);
@@ -131,7 +132,7 @@ export default function Signup() {
     }
 
     const isValid = await trigger(fieldsToValidate);
-    
+
     if (isValid) {
       setStep((prev) => prev + 1);
     }
@@ -144,11 +145,23 @@ export default function Signup() {
   const MultistepFormState = () => {
     switch (step) {
       case 1:
-        return <AccountType form={form} errors={errors} />;
+        return (
+          <AnimatePresence mode="wait">
+            <AccountType form={form} errors={errors} />
+          </AnimatePresence>
+        );
       case 2:
-        return <Personal form={form} />;
+        return (
+          <AnimatePresence>
+            <Personal form={form} />
+          </AnimatePresence>
+        );
       case 3:
-        return <Facility form={form} />;
+        return (
+          <AnimatePresence>
+            <Facility form={form} />
+          </AnimatePresence>
+        );
       case 4:
         return <SetPasswords form={form} />;
       case 5:
@@ -162,10 +175,12 @@ export default function Signup() {
       <Card className="mx-auto max-w-[34rem] mt-10 ">
         <CardHeader className="px-2 sm:px-6">
           <CardTitle className="text-2xl flex gap-2 item-center">
-            <CircleChevronLeft
-              className="text-gray-400 self-center"
-              onClick={handlePrevStep}
-            />{" "}
+            {step !== 1 && (
+              <CircleChevronLeft
+                className="text-gray-400 self-center"
+                onClick={handlePrevStep}
+              />
+            )}{" "}
             Create Account
           </CardTitle>
           <CardDescription>
@@ -177,6 +192,7 @@ export default function Signup() {
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="grid gap-4  overflow-y-auto pb-4 px-2"
+              noValidate
             >
               <>{MultistepFormState()}</>
               <Button

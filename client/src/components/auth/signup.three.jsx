@@ -9,10 +9,11 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
+import FormWrapper from "../FormWrapper";
 
 const Facility = () => {
   return (
-    <>
+    <FormWrapper>
       <FormField
         name="staff_id"
         render={({ field }) => (
@@ -75,7 +76,7 @@ const Facility = () => {
           </FormItem>
         )}
       />
-    </>
+    </FormWrapper>
   );
 };
 

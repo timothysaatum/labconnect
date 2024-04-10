@@ -8,6 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "../ui/checkbox";
 import {  useState } from "react";
+import FormWrapper from "../FormWrapper";
 
 export default function SetPasswords() {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +18,7 @@ export default function SetPasswords() {
   };
 
   return (
-    <>
+    <FormWrapper>
       <FormField
         name="password"
         render={({ field }) => (
@@ -60,9 +61,9 @@ export default function SetPasswords() {
           htmlFor="showPassword"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
         >
-          Accept terms and conditions
+            show password
         </label>
       </div>
-    </>
+    </FormWrapper>
   );
 }
