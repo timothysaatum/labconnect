@@ -64,7 +64,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 	email = serializers.EmailField(max_length=200, min_length=5)
 	password = serializers.CharField(max_length=200, write_only=True)
-	access_token = serializers.CharField(max_length=255, read_only=True)
+	#access_token = serializers.CharField(max_length=255, read_only=True)
 	full_name = serializers.CharField(max_length=255, read_only=True)
 	current_facility = serializers.CharField(max_length=255, read_only=True)
 	staff_id = serializers.CharField(max_length=255, read_only=True)
@@ -74,6 +74,7 @@ class LoginSerializer(serializers.ModelSerializer):
 	is_active = serializers.CharField(max_length=255, read_only=True)
 	is_admin = serializers.CharField(max_length=255, read_only=True)
 	is_verified = serializers.CharField(max_length=255, read_only=True)
+	user_id = serializers.IntegerField(read_only=True)
 
 
 	class Meta:
@@ -81,9 +82,8 @@ class LoginSerializer(serializers.ModelSerializer):
 		model = Client
 		fields = [
 
-			'email', 'password', 'full_name', 'access_token',
-			'current_facility', 'staff_id', 'profile_picture', 
-			'account_type', 'is_staff', 'is_verified', 'is_active', 'is_admin',
+			'email', 'password', 'full_name', 'current_facility', 'staff_id', 'profile_picture', 
+			'account_type', 'is_staff', 'is_verified', 'is_active', 'is_admin','user_id'
 		]
 
 	def validate(self, attrs):
@@ -103,8 +103,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
 			raise AuthenticationFailed('Email is not verified!')
 
-		user_tokens = user.tokens()
-		settings.SIMPLE_JWT['AUTH_COOKIE'] = user_tokens.get('refresh')
+		#user_tokens = user.tokens()
+		#settings.COOKIE_VALUE = user_tokens.get('refresh')
 		
 		return {
 
@@ -119,7 +119,8 @@ class LoginSerializer(serializers.ModelSerializer):
 			'account_type': user.account_type,
 			'first_name': user.first_name,
 			'email':user.email,
-			'access_token': user_tokens.get('access'),
+			#'access_token': None,#user_tokens.get('access'),
+			'user_id': user.id
 		}
 
 
