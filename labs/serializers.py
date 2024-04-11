@@ -9,7 +9,7 @@ class LaboratorySerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = Laboratory
-		fields = ('created_by', 'name', 'herfra_id', 'digital_address', 'phone', 'email', 'website', 
+		fields = ('name', 'herfra_id', 'digital_address', 'phone', 'email', 'website', 
 			'description', 'date_modified', 'date_added', 'logo')
 
 

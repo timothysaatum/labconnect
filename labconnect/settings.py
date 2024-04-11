@@ -164,7 +164,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer', ),
     'AUTH_COOKIE': 'refresh_token',
     'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_COOKIE_DOMAIN': 'http://localhost:5173',
+    'AUTH_COOKIE_DOMAIN': None,
     'AUTH_COOKIE_PATH': '/',
     'AUTH_COOKIE_SECURE': True,
     'AUTH_COOKIE_HTTP_ONLY': True,
