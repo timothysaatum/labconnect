@@ -1,6 +1,5 @@
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,10 +15,11 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
+import FormWrapper from "../FormWrapper";
 
 const Personal = ({ form }) => {
   return (
-    <>
+    <FormWrapper>
       <div className="grid md:grid-cols-2 md:gap-2">
         <FormField
           name="first_name"
@@ -118,7 +118,7 @@ const Personal = ({ form }) => {
           )}
         />
       </div>
-    </>
+    </FormWrapper>
   );
 };
 

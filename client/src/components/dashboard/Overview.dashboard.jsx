@@ -64,6 +64,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import RequestDialog from "./requestdialog";
 
 export default function DashboardOverview() {
   return (
@@ -185,7 +186,7 @@ export default function DashboardOverview() {
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <Button>Create New Request</Button>
+                <RequestDialog/>
               </CardFooter>
             </Card>
             <Card x-chunk="dashboard-05-chunk-1">

@@ -100,7 +100,7 @@ export default function Signin() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4" noValidate>
             <FormField
               name="email"
               render={({ field }) => (
