@@ -153,7 +153,7 @@ class LoginUserView(GenericAPIView):
 		user_tokens = user.tokens()
 
 		refresh = user_tokens.get('refresh')
-
+		serializer.data['access_token'] = user_tokens.get('access')
 		self.response.set_cookie(
 				key=settings.SIMPLE_JWT['AUTH_COOKIE'],
 				value=refresh,

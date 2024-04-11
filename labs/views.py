@@ -38,35 +38,39 @@ Since the pk of the object is need to perform update and delete action, it is re
 to do so in the detail view
 '''
 class LaboratoryDetailView(APIView):
+	permission_classes = [IsAuthenticated]
 
-	def get_object(self, pk):
+	def get_object(self, created_by):
 
 		try:
-			return Laboratory.objects.get(pk=pk)
+			return Laboratory.objects.get(created_by=created_by)
 		except Laboratory.DoesNotExist:
 			raise Http404
 
-	def get(self, request, pk, format=None):
+	def get(self, request, format=None):
 
-		lab = self.get_object(pk)
+		lab = self.get_object(created_by=self.request.user)
 		serializer = LaboratorySerializer(lab)
 
 		return Response(serializer.data)
 
 
-	def put(self, request, pk, format=None):
+	def put(self, request, format=None):
 
-		lab = self.get_object(pk)
+		lab = self.get_object(self.request.user)
 		serializer = LaboratorySerializer(lab, data=request.data)
+		print(self.request.user.account_type)
 
 		if serializer.is_valid():
-			serializer.save()
-			return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
+			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+				serializer.save()
+				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
+			return Response({'error': 'You are no authorized to edit labaratory details!'})
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def delete(self, request, pk, format=None):
+	def delete(self, request, format=None):
 
-		lab = self.get_object(pk)
+		lab = self.get_object(self.request.user)
 		lab.delete()
 		return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -74,6 +78,8 @@ class LaboratoryDetailView(APIView):
 
 
 class DepartmentSerializerView(CreateAPIView):
+	
+	permission_classes = [IsAuthenticated]
 
 	serializer_class = DepartmentSerializer
 
@@ -82,7 +88,9 @@ class DepartmentSerializerView(CreateAPIView):
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
 			
-			serializer.save()
+			#serializer.save()
+			lab = Laboratory.objects.get(created_by=self.request.user)
+			serializer.save(laboratory=lab)
 
 		return Response(
 					{'message': 'Department added successfully.'},

@@ -83,7 +83,7 @@ class LoginSerializer(serializers.ModelSerializer):
 		fields = [
 
 			'email', 'password', 'full_name', 'current_facility', 'staff_id', 'profile_picture', 
-			'account_type', 'is_staff', 'is_verified', 'is_active', 'is_admin','user_id'
+			'account_type', 'is_staff', 'is_verified', 'is_active', 'is_admin','user_id',
 		]
 
 	def validate(self, attrs):
@@ -119,7 +119,7 @@ class LoginSerializer(serializers.ModelSerializer):
 			'account_type': user.account_type,
 			'first_name': user.first_name,
 			'email':user.email,
-			#'access_token': None,#user_tokens.get('access'),
+			#'access_token': user_tokens.get('access'),
 			'user_id': user.id
 		}
 
