@@ -19,13 +19,15 @@ class Laboratory(BaseModel):
 	phone = models.CharField(max_length=15)
 	email = models.EmailField()
 	name = models.CharField(max_length=200)
+	region_of_location = models.CharField(max_length=255)
+	town_of_location = models.CharField(max_length=255)
 	logo = models.ImageField(upload_to='labs/logo', default='logo.png')
 	herfra_id = models.CharField('HERFRA ID', max_length=100)
 	website = models.URLField()
 	description = models.TextField()
 
 	def __str__(self):
-		return self.name
+		return f'{self.name} {self.region_of_location}({self.town_of_location})'
 
 
 	class Meta:

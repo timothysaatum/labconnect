@@ -153,7 +153,7 @@ class LoginUserView(GenericAPIView):
 		user_tokens = user.tokens()
 
 		refresh = user_tokens.get('refresh')
-		serializer.data['access_token'] = user_tokens.get('access')
+		#serializer.data['access_token'] = user_tokens.get('access')
 		self.response.set_cookie(
 				key=settings.SIMPLE_JWT['AUTH_COOKIE'],
 				value=refresh,
@@ -203,7 +203,7 @@ class PasswordResetConfirm(GenericAPIView):
 
 				return Response({
 						'message': 'Token is invalid',
-					},status=status.HTTP_401_NOT_UNAUTHORIZED)
+					},status=status.HTTP_401_UNAUTHORIZED)
 
 			return Response({
 						'success': True,
@@ -216,7 +216,7 @@ class PasswordResetConfirm(GenericAPIView):
 
 			return Response(
 					{'message': 'Decode Error'},
-					status=status.HTTP_401_NOT_UNAUTHORIZED)
+					status=status.HTTP_401_UNAUTHORIZED)
 
 
 

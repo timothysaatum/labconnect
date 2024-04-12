@@ -38,28 +38,40 @@ Since the pk of the object is need to perform update and delete action, it is re
 to do so in the detail view
 '''
 class LaboratoryDetailView(APIView):
+
 	permission_classes = [IsAuthenticated]
 
-	def get_object(self, created_by):
+	def get_object_list(self, created_by):
 
 		try:
-			return Laboratory.objects.get(created_by=created_by)
+			return Laboratory.objects.filter(created_by=created_by)
+		except Laboratory.DoesNotExist:
+			raise Http404
+
+	def get_object(self, pk, user):
+
+		try:
+			return Laboratory.objects.filter(created_by=user).get(pk=pk)
 		except Laboratory.DoesNotExist:
 			raise Http404
 
 	def get(self, request, format=None):
+		
+		labs = self.get_object_list(created_by=self.request.user)
+		data = []
 
-		lab = self.get_object(created_by=self.request.user)
-		serializer = LaboratorySerializer(lab)
+		for lab in labs:
 
-		return Response(serializer.data)
+			serializer = LaboratorySerializer(lab)
+			data.append(serializer.data)
+
+		return Response(data)
 
 
-	def put(self, request, format=None):
+	def put(self, request, pk, format=None):
 
-		lab = self.get_object(self.request.user)
+		lab = get_object(pk, self.request.user)
 		serializer = LaboratorySerializer(lab, data=request.data)
-		print(self.request.user.account_type)
 
 		if serializer.is_valid():
 			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
@@ -68,9 +80,9 @@ class LaboratoryDetailView(APIView):
 			return Response({'error': 'You are no authorized to edit labaratory details!'})
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def delete(self, request, format=None):
+	def delete(self, request, pk, format=None):
 
-		lab = self.get_object(self.request.user)
+		lab = Laboratory.objects.filter(created_by=self.request.user).get(pk=pk)
 		lab.delete()
 		return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -78,7 +90,7 @@ class LaboratoryDetailView(APIView):
 
 
 class DepartmentSerializerView(CreateAPIView):
-	
+
 	permission_classes = [IsAuthenticated]
 
 	serializer_class = DepartmentSerializer
