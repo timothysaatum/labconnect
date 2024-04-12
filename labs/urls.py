@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (CreateLaboratoryView, DepartmentSerializerView, CreateTestView, CreateTestResultView,
 	LaboratoryDetailView, DepartmentDetailView, TestUpdateView, DepartmentDetailView,
 	LaboratoryListView, LaboratoryUpdateView, LaboratoryDeleteView, DepartmentListView, DepartmentUpdateView,
-	DepartmentDeleteView, TestListView,TestDeleteView)
+	DepartmentDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView)
 
 
 app_name = 'laboratory'
@@ -25,12 +25,13 @@ urlpatterns = [
 	path('department/update/<int:pk>/', DepartmentUpdateView.as_view(), name='department-update'),
 	path('department/delete/<int:pk>/', DepartmentDeleteView.as_view(), name='department-delete'),
 	
-	#creating, reading, updating and deleting laboratory routes
+	#creating, reading, updating and deleting test & results routes
 
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/', TestListView.as_view(), name='test-list'),
 	path('test/update/<int:pk>/', TestUpdateView.as_view(), name='test-update'),
 	path('test/delete/<int:pk>/', TestDeleteView.as_view(), name='test-delete'),
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
-	#path('test/results/<int:pk>/', TestResultDetailView.as_view(), name='results-details'),
+	path('test/result/list/', TestResultListView.as_view(), name='results-list'),
+	path('test/result/details/<int:pk>/', TestResultDetailView.as_view(), name='results-details')
 ]

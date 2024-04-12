@@ -42,7 +42,7 @@ class CheckRefreshToken(APIView):
 			user = Client.objects.get(id=payload['user_id'])
 
 		except jwt.ExpiredSignatureError:
-			return Response({'error': 'token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+			return Response({'error': 'token has expired'}, status=status.HTTP_400_BAD_REQUEST)
 
 		except jwt.DecodeError:
 			return Response({'error': 'stale request'}, status=status.HTTP_403_FORBIDDEN)
@@ -101,7 +101,7 @@ class VerifyUserEmail(GenericAPIView):
 
 			if is_valid == False:
 
-				return Response({'message': 'Invalid or expired code'})
+				return Response({'message': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
 
 			user = user_code_obj.user
 
@@ -148,12 +148,16 @@ class LoginUserView(GenericAPIView):
 
 		serializer = self.serializer_class(data=request.data, context={'request': request})
 		serializer.is_valid(raise_exception=True)
-		
-		user = Client.objects.get(id=serializer.data['user_id'])
+		try:
+			user = Client.objects.get(id=serializer.data['user_id'])
+
+		except Client.DoesNotExist:
+			return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
 		user_tokens = user.tokens()
 
 		refresh = user_tokens.get('refresh')
-		#serializer.data['access_token'] = user_tokens.get('access')
+		
 		self.response.set_cookie(
 				key=settings.SIMPLE_JWT['AUTH_COOKIE'],
 				value=refresh,

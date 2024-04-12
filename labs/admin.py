@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Test, Department, Laboratory
+from .models import Test, Department, Laboratory, TestResult
 
 class TestAdmin(admin.ModelAdmin):
 	list_display = ('id', 'name', 'laboratory', 'price', 'current_price', 'discount_price', 
@@ -26,6 +26,13 @@ class LaboratoryAdmin(admin.ModelAdmin):
 	ordering = ('id',)
 
 
+
+class TestResultAdmin(admin.ModelAdmin):
+	list_display = ('id', 'send_by', 'department', 'laboratory', 'test', 'result', 
+		'comments', 'is_verified', 'is_received' ,'date_added', 'date_modified')
+	list_editable = ('is_verified', 'is_received')
+
 admin.site.register(Test, TestAdmin)
+admin.site.register(TestResult, TestResultAdmin)
 admin.site.register(Laboratory, LaboratoryAdmin)
 admin.site.register(Department, DepartmentAdmin)

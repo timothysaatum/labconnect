@@ -22,13 +22,12 @@ class CreateLaboratoryView(CreateAPIView):
 
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
-			#print(self.request.user)
-			#serializer.save()
+
 			serializer.save(created_by=self.request.user)
 
-		return Response({
-					'message': 'Laboratory created successfully.'},
-					status=status.HTTP_200_OK)
+			return Response({'message': 'Laboratory created successfully.'},
+							status=status.HTTP_200_OK)
+		return Response({'error': 'An error occured', 'details': serializer.errors})
 
 
 
@@ -38,7 +37,12 @@ class LaboratoryListView(ListAPIView):
 	serializer_class = LaboratorySerializer
 
 	def get_queryset(self):
-		return Laboratory.objects.filter(created_by=self.request.user)
+
+		try:
+			return Laboratory.objects.filter(created_by=self.request.user)
+			
+		except Laboratory.DoesNotExist:
+			return Response({'error': 'Laboratory not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -54,19 +58,24 @@ class LaboratoryDetailView(RetrieveAPIView):
 
 		except Laboratory.DoesNotExist:
 
-			raise Http404('Laboratory does not exist')
+			raise Http404
 
 		except Exception as e:
 
-			raise 'You are not allowed to view this laboratory.'
+			raise Http404
 
 
 	def get(self, request, pk, format=None):
-		
-		lab = self.get_queryset(pk, self.request.user)
-		serialized_data = LaboratorySerializer(lab)
 
-		return Response(serialized_data.data)
+		try:
+
+			lab = self.get_queryset(pk, self.request.user)
+			serialized_data = LaboratorySerializer(lab)
+
+			return Response(serialized_data.data)
+
+		except Exception as e:
+			return Response({'error': e}, status=status.HTTP_404_NOT_FOUND)
 		
 
 
@@ -84,7 +93,8 @@ class LaboratoryUpdateView(UpdateAPIView):
 			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 				serializer.save()
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-			return Response({'error': 'You are no authorized to edit labaratory details!'}, status=status.HTTP_401_UNAUTHORIZED)
+			return Response({'error': 'You are no authorized to edit labaratory details!'},
+							status=status.HTTP_401_UNAUTHORIZED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -93,7 +103,6 @@ class LaboratoryUpdateView(UpdateAPIView):
 class LaboratoryDeleteView(DestroyAPIView):
 
 	permission_classes = [IsAuthenticated]
-	#serializer_class = LaboratorySerializer
 
 	def delete(self, request, pk, format=None):
 
@@ -101,6 +110,7 @@ class LaboratoryDeleteView(DestroyAPIView):
 		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 			lab.delete()
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
+
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -115,8 +125,7 @@ class DepartmentSerializerView(CreateAPIView):
 
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
-			
-			#serializer.save()
+
 			lab = Laboratory.objects.get(created_by=self.request.user)
 			serializer.save(laboratory=lab)
 
@@ -132,7 +141,12 @@ class DepartmentListView(ListAPIView):
 	serializer_class = DepartmentSerializer
 
 	def get_queryset(self):
-		return Department.objects.filter(laboratory__created_by=self.request.user)
+
+		try:
+			return Department.objects.filter(laboratory__created_by=self.request.user)
+
+		except Department.DoesNotExist:
+			return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -170,14 +184,15 @@ class DepartmentUpdateView(UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 
-		lab = Department.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
-		serializer = DepartmentSerializer(lab, data=request.data)
+		department = Department.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
+		serializer = DepartmentSerializer(department, data=request.data)
 
 		if serializer.is_valid():
 			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 				serializer.save()
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-			return Response({'error': 'You are no authorized to edit labaratory details!'}, status=status.HTTP_401_UNAUTHORIZED)
+			return Response({'error': 'You are no authorized to edit labaratory details!'}, 
+				status=status.HTTP_401_UNAUTHORIZED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -225,7 +240,12 @@ class TestListView(ListAPIView):
 	serializer_class = TestSerializer
 
 	def get_queryset(self):
-		return Test.objects.filter(department__laboratory__created_by=self.request.user)
+
+		try:
+			return Test.objects.filter(department__laboratory__created_by=self.request.user)
+
+		except Test.DoesNotExist:
+			return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -243,7 +263,8 @@ class TestUpdateView(UpdateAPIView):
 			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 				serializer.save()
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-			return Response({'error': 'You are no authorized to edit labaratory details!'}, status=status.HTTP_401_UNAUTHORIZED)
+			return Response({'error': 'You are no authorized to edit labaratory details!'}, 
+							status=status.HTTP_401_UNAUTHORIZED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -265,6 +286,7 @@ class TestDeleteView(DestroyAPIView):
 
 class CreateTestResultView(CreateAPIView):
 
+	permission_classes = [IsAuthenticated]
 	serializer_class = TestResultSerializer
 
 	def post(self, request):
@@ -278,3 +300,83 @@ class CreateTestResultView(CreateAPIView):
 				{'message': 'Test results added successfully.'},
 				status=status.HTTP_200_OK
 			)
+
+
+class TestResultListView(ListAPIView):
+
+	permission_classes = [IsAuthenticated]
+	serializer_class = TestResultSerializer
+
+	def get_queryset(self):
+
+		try:
+			return TestResult.objects.filter(department__laboratory__created_by=self.request.user)
+
+		except TestResult.DoesNotExist:
+			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class TestResultDetailView(RetrieveAPIView):
+
+	permission_classes = [IsAuthenticated]
+	serializer_class = TestSerializer
+
+	def get_queryset(self, pk, user):
+
+		try:
+			return TestResult.objects.filter(laboratory__created_by=user).get(pk=pk)
+
+		except TestResult.DoesNotExist:
+
+			raise Http404('result not found')
+
+		except Exception as e:
+
+			raise Http404('You are not allowed to view this result.')
+
+
+	def get(self, request, pk, format=None):
+		
+		test_result = self.get_queryset(pk, self.request.user)
+		serialized_data = TestSerializer(test_result)
+
+		return Response(serialized_data.data)
+		
+
+class TestResultUpdateView(UpdateAPIView):
+
+	permission_classes = [IsAuthenticated]
+	serializer_class = TestSerializer
+
+	def put(self, request, pk, format=None):
+
+		result = TestResult.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
+		serializer = TestSerializer(result, data=request.data)
+
+		if serializer.is_valid():
+			if self.request.user.is_staff and self.request.user.account_type == 'Laboratory':
+				serializer.save()
+				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
+			return Response({'error': 'You are no authorized to edit result details!'}, 
+				status=status.HTTP_401_UNAUTHORIZED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class TestResultDeleteView(DestroyAPIView):
+
+	permission_classes = [IsAuthenticated]
+
+	def delete(self, request, pk, format=None):
+
+		result = TestResult.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
+
+		if self.request.user.is_staff and self.request.user.account_type == 'Laboratory':
+
+			result.delete()
+			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
+
+		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)

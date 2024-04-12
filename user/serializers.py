@@ -64,7 +64,6 @@ class LoginSerializer(serializers.ModelSerializer):
 
 	email = serializers.EmailField(max_length=200, min_length=5)
 	password = serializers.CharField(max_length=200, write_only=True)
-	#access_token = serializers.CharField(max_length=255, read_only=True)
 	full_name = serializers.CharField(max_length=255, read_only=True)
 	current_facility = serializers.CharField(max_length=255, read_only=True)
 	staff_id = serializers.CharField(max_length=255, read_only=True)
@@ -103,9 +102,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 			raise AuthenticationFailed('Email is not verified!')
 
-		#user_tokens = user.tokens()
-		#settings.COOKIE_VALUE = user_tokens.get('refresh')
-		
+	
 		return {
 
 			'full_name': user.full_name,
@@ -119,7 +116,6 @@ class LoginSerializer(serializers.ModelSerializer):
 			'account_type': user.account_type,
 			'first_name': user.first_name,
 			'email':user.email,
-			#'access_token': user_tokens.get('access'),
 			'user_id': user.id
 		}
 
