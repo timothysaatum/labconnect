@@ -113,6 +113,8 @@ class DepartmentSerializerView(CreateAPIView):
 
 class DepartmentDetailView(APIView):
 
+	permission_classes = [IsAuthenticated]
+
 	def get_object(self, pk):
 
 		try:
