@@ -42,10 +42,10 @@ class CheckRefreshToken(APIView):
 			user = Client.objects.get(id=payload['user_id'])
 
 		except jwt.ExpiredSignatureError:
-			return Response({'error': 'token has expired'}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'error': 'token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		except jwt.DecodeError:
-			return Response({'error': 'stale request'}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'error': 'stale request'}, status=status.HTTP_403_FORBIDDEN)
 
 		except user.DoesNotExist:
 			return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)

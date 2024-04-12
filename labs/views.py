@@ -32,60 +32,76 @@ class CreateLaboratoryView(CreateAPIView):
 
 
 
-'''
-A detail, update and delete view that allows the user to perform multiple action,
-Since the pk of the object is need to perform update and delete action, it is reasonable
-to do so in the detail view
-'''
-class LaboratoryDetailView(APIView):
+class LaboratoryListView(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
+	serializer_class = LaboratorySerializer
 
-	def get_object_list(self, created_by):
+	def get_queryset(self):
+		return Laboratory.objects.filter(created_by=self.request.user)
 
-		try:
-			return Laboratory.objects.filter(created_by=created_by)
-		except Laboratory.DoesNotExist:
-			raise Http404
 
-	def get_object(self, pk, user):
+
+class LaboratoryDetailView(RetrieveAPIView):
+
+	permission_classes = [IsAuthenticated]
+	serializer_class = LaboratorySerializer
+
+	def get_queryset(self, pk, user):
 
 		try:
 			return Laboratory.objects.filter(created_by=user).get(pk=pk)
+
 		except Laboratory.DoesNotExist:
-			raise Http404
 
-	def get(self, request, format=None):
+			raise Http404('Laboratory does not exist')
+
+		except Exception as e:
+
+			raise 'You are not allowed to view this laboratory.'
+
+
+	def get(self, request, pk, format=None):
 		
-		labs = self.get_object_list(created_by=self.request.user)
-		data = []
+		lab = self.get_queryset(pk, self.request.user)
+		serialized_data = LaboratorySerializer(lab)
 
-		for lab in labs:
+		return Response(serialized_data.data)
+		
 
-			serializer = LaboratorySerializer(lab)
-			data.append(serializer.data)
 
-		return Response(data)
+class LaboratoryUpdateView(UpdateAPIView):
 
+	permission_classes = [IsAuthenticated]
+	serializer_class = LaboratorySerializer
 
 	def put(self, request, pk, format=None):
 
-		lab = get_object(pk, self.request.user)
+		lab = Laboratory.objects.filter(created_by=self.request.user).get(pk=pk)
 		serializer = LaboratorySerializer(lab, data=request.data)
 
 		if serializer.is_valid():
 			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 				serializer.save()
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-			return Response({'error': 'You are no authorized to edit labaratory details!'})
+			return Response({'error': 'You are no authorized to edit labaratory details!'}, status=status.HTTP_401_UNAUTHORIZED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class LaboratoryDeleteView(DestroyAPIView):
+
+	permission_classes = [IsAuthenticated]
+	#serializer_class = LaboratorySerializer
 
 	def delete(self, request, pk, format=None):
 
 		lab = Laboratory.objects.filter(created_by=self.request.user).get(pk=pk)
-		lab.delete()
-		return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
-
+		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+			lab.delete()
+			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
+		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 
@@ -110,42 +126,75 @@ class DepartmentSerializerView(CreateAPIView):
 
 
 
-
-class DepartmentDetailView(APIView):
+class DepartmentListView(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
+	serializer_class = DepartmentSerializer
 
-	def get_object(self, pk):
+	def get_queryset(self):
+		return Department.objects.filter(laboratory__created_by=self.request.user)
+
+
+
+class DepartmentDetailView(RetrieveAPIView):
+
+	permission_classes = [IsAuthenticated]
+	serializer_class = DepartmentSerializer
+
+	def get_queryset(self, pk, user):
 
 		try:
-			return Department.objects.get(pk=pk)
+			return Department.objects.filter(laboratory__created_by=user).get(pk=pk)
+
 		except Department.DoesNotExist:
-			raise Http404
+
+			raise Http404('Laboratory does not exist')
+
+		except Exception as e:
+
+			raise Http404('You are not allowed to view this department.')
+
 
 	def get(self, request, pk, format=None):
+		
+		department = self.get_queryset(pk, self.request.user)
+		serialized_data = DepartmentSerializer(department)
 
-		department = self.get_object(pk)
-		serializer = DepartmentSerializer(department)
+		return Response(serialized_data.data)
+		
 
-		return Response(serializer.data)
+class DepartmentUpdateView(UpdateAPIView):
 
+	permission_classes = [IsAuthenticated]
+	serializer_class = DepartmentSerializer
 
 	def put(self, request, pk, format=None):
 
-		department = self.get_object(pk)
-		serializer = DepartmentSerializer(department, data=request.data)
+		lab = Department.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
+		serializer = DepartmentSerializer(lab, data=request.data)
 
 		if serializer.is_valid():
-			serializer.save()
-			return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
+			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+				serializer.save()
+				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
+			return Response({'error': 'You are no authorized to edit labaratory details!'}, status=status.HTTP_401_UNAUTHORIZED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class DepartmentDeleteView(DestroyAPIView):
+
+	permission_classes = [IsAuthenticated]
 
 	def delete(self, request, pk, format=None):
 
-		department = self.get_object(pk)
-		department.delete()
-
-		return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
+		lab = Department.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
+		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+			lab.delete()
+			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
+		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 
@@ -153,6 +202,7 @@ class DepartmentDetailView(APIView):
 class CreateTestView(CreateAPIView):
 
 	serializer_class = TestSerializer
+	permission_classes = [IsAuthenticated]
 
 	def post(self, request):
 
@@ -169,41 +219,47 @@ class CreateTestView(CreateAPIView):
 
 
 
-class TestDetailView(APIView):
+class TestListView(ListAPIView):
 
-	def get_object(self, pk):
+	permission_classes = [IsAuthenticated]
+	serializer_class = TestSerializer
 
-		try:
-			return Test.objects.get(pk=pk)
-		except Test.DoesNotExist:
-			raise Http404
+	def get_queryset(self):
+		return Test.objects.filter(department__laboratory__created_by=self.request.user)
 
-	def get(self, request, pk, format=None):
 
-		test = self.get_object(pk)
-		serializer = TestSerializer(test)
 
-		return Response(serializer.data)
+class TestUpdateView(UpdateAPIView):
 
+	permission_classes = [IsAuthenticated]
+	serializer_class = TestSerializer
 
 	def put(self, request, pk, format=None):
 
-		test = self.get_object(pk)
+		test = Test.objects.filter(department__laboratory__created_by=self.request.user).get(pk=pk)
 		serializer = TestSerializer(test, data=request.data)
 
 		if serializer.is_valid():
-
-			serializer.save()
-			return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-
+			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+				serializer.save()
+				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
+			return Response({'error': 'You are no authorized to edit labaratory details!'}, status=status.HTTP_401_UNAUTHORIZED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class TestDeleteView(DestroyAPIView):
+
+	permission_classes = [IsAuthenticated]
 
 	def delete(self, request, pk, format=None):
 
-		test = self.get_object(pk)
-		test.delete()
+		test = Test.objects.filter(department__laboratory__created_by=self.request.user).get(pk=pk)
+		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+			test.delete()
+			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
+		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
 
 
@@ -222,41 +278,3 @@ class CreateTestResultView(CreateAPIView):
 				{'message': 'Test results added successfully.'},
 				status=status.HTTP_200_OK
 			)
-
-
-
-class TestResultDetailView(APIView):
-
-	def get_object(self, pk):
-
-		try:
-			return TestResult.objects.get(pk=pk)
-		except TestResult.DoesNotExist:
-			raise Http404
-
-	def get(self, request, pk, format=None):
-
-		result = self.get_object(pk)
-		serializer = TestResultSerializer(result)
-
-		return Response(serializer.data)
-
-
-	def put(self, request, pk, format=None):
-
-		result = self.get_object(pk)
-		serializer = TestResultSerializer(result, data=request.data)
-
-		if serializer.is_valid():
-
-			serializer.save()
-			return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-	def delete(self, request, pk, format=None):
-
-		result = self.get_object(pk)
-		result.delete()
-
-		return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
