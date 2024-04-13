@@ -21,7 +21,7 @@ const labels = ["Year(s)", "Month(s)", "Day(s)"];
 const PatientDetails = ({ form,label,setLabel }) => {
 
   return (
-    <FormWrapper>
+    <div className="flex flex-col gap-4">
       <FormField
         name="name_of_patient"
         render={({ field }) => (
@@ -74,7 +74,7 @@ const PatientDetails = ({ form,label,setLabel }) => {
           />
         </div>
       </div>
-    </FormWrapper>
+    </div>
   );
 };
 
