@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (CreateLaboratoryView, DepartmentSerializerView, CreateTestView, CreateTestResultView,
 	LaboratoryDetailView, DepartmentDetailView, TestUpdateView, DepartmentDetailView,
 	LaboratoryListView, LaboratoryUpdateView, LaboratoryDeleteView, DepartmentListView, DepartmentUpdateView,
-	DepartmentDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView)
+	DepartmentDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView, TestResultUpdateView,
+	TestResultDeleteView)
 
 
 app_name = 'laboratory'
@@ -33,5 +34,7 @@ urlpatterns = [
 	path('test/delete/<int:pk>/', TestDeleteView.as_view(), name='test-delete'),
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
 	path('test/result/list/', TestResultListView.as_view(), name='results-list'),
-	path('test/result/details/<int:pk>/', TestResultDetailView.as_view(), name='results-details')
+	path('test/result/details/<int:pk>/', TestResultDetailView.as_view(), name='results-details'),
+	path('test/result/update/<int:pk>/', TestResultUpdateView.as_view(), name='result-update'),
+	path('test/result/delete/<int:pk>/', TestResultDeleteView.as_view(), name='result-delete')
 ]

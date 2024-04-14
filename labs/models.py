@@ -12,6 +12,25 @@ class BaseModel(models.Model):
 		abstract = True
 
 
+
+
+#REGIONS = [
+#	('NR', 'Northern Region')
+#]
+#class Branch(BaseModel):
+#
+#	name = models.CharField(max_length=255)
+#	manager = models.ForeignKey(user, on_delete=models.CASCADE)
+#	location = models.CharField(max_length=255)
+#	region = models.CharField(choices=REGIONS, max_length=100)
+#	laboratory = models.ForeignKey('Laboratory', on_delete=models.CASCADE)
+#
+#
+#	def __str__(self):
+#		return self.branch_name
+
+
+
 class Laboratory(BaseModel):
 
 	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
@@ -27,7 +46,7 @@ class Laboratory(BaseModel):
 	description = models.TextField()
 
 	def __str__(self):
-		return f'{self.name} {self.region_of_location}({self.town_of_location})'
+		return f'{self.name} {self.town_of_location}({self.region_of_location})'
 
 
 	class Meta:
@@ -45,6 +64,8 @@ class Laboratory(BaseModel):
 			deptm = [department for department in lab.department_set.all()]
 
 		return deptm
+
+
 
 
 DEPARTMENT_NAME = [

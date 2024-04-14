@@ -102,7 +102,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
 			raise AuthenticationFailed('Email is not verified!')
 
-	
+		site_domain = get_current_site(request).domain
+		profile_picture_url = f'http://{site_domain}{user.profile_picture.url}'
 		return {
 
 			'full_name': user.full_name,
@@ -112,7 +113,7 @@ class LoginSerializer(serializers.ModelSerializer):
 			'is_verified': user.is_verified,
 			'is_active': user.is_active,
 			'is_admin': user.is_admin,
-			'profile_picture': user.profile_picture.url,
+			'profile_picture': profile_picture_url,
 			'account_type': user.account_type,
 			'first_name': user.first_name,
 			'email':user.email,

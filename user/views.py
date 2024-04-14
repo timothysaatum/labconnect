@@ -17,6 +17,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.views import APIView
 import jwt
+from django.contrib.sites.shortcuts import get_current_site
+
+
+
 
 
 def generate_token(user):
@@ -27,6 +31,8 @@ def generate_token(user):
 
 
 class CheckRefreshToken(APIView):
+
+	#serializer_class = LoginSerializer
 
 	def get(self, request):
 		
@@ -53,8 +59,21 @@ class CheckRefreshToken(APIView):
 		refresh_token = generate_token(user)
 
 		access_token = str(refresh_token.access_token)
-
-		return Response({'access_token': access_token}, status=status.HTTP_200_OK)
+		site_domain = get_current_site(request).domain
+		profile_picture_url = f'http://{site_domain}{user.profile_picture.url}'
+		
+		return Response({'access_token': access_token,
+			'full_name': user.full_name,
+			'current_facility': user.current_facility, 
+			'staff_id': user.staff_id,
+			'is_staff': user.is_staff, 
+			'is_verified': user.is_verified, 
+			'is_active': user.is_active, 
+			'is_admin': user.is_admin, 
+			'profile_picture': profile_picture_url,
+			'account_type': user.account_type, 
+			'email':user.email,
+			'user_id': user.id}, status=status.HTTP_200_OK)
 
 
 

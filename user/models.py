@@ -83,6 +83,8 @@ class Client(AbstractBaseUser, PermissionsMixin):
 		return f'{self.first_name} {self.last_name}'
 
 
+
+
 class OneTimePassword(models.Model):
 
 	user = models.OneToOneField(Client, on_delete=models.CASCADE)
