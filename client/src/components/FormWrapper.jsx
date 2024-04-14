@@ -25,6 +25,7 @@ const FormWrapper = ({ children }) => {
       initial="hidden"
       animate="visible"
       exit="exit"
+      className="flex flex-col gap-2"
     >
       {children}
     </motion.div>

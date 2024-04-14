@@ -2,9 +2,30 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import ThemeToggler from "./ThemeToggler";
 import { Sidebar } from "./sidebar";
+import { logOut, selectCurrentUser } from "@/redux/auth/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
+
+  const user = useSelector(selectCurrentUser);
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const Logout = ()=>{
+    dispatch(logOut());
+    localStorage.removeItem('user');
+  }
+
   return (
     <nav
       aria-label="main navigation bar"
@@ -42,14 +63,39 @@ const Header = () => {
         </NavLink>
       </ul>
       <div className=" flex items-center gap-2">
-        <div className="md:flex gap-2 hidden">
-          <Link to={"/sign-in"}>
-            <Button variant="outline">Sign in</Button>
-          </Link>
-          <Link to={"/sign-up"}>
-            <Button variant="gradient">Sign up</Button>
-          </Link>
-        </div>
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="overflow-hidden rounded-full"
+              >
+                <Avatar>
+                  <AvatarImage src={user.profile_picture} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={Logout}>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="md:flex gap-2 hidden">
+            <Link to={"/sign-in"}>
+              <Button variant="outline">Sign in</Button>
+            </Link>
+            <Link to={"/sign-up"}>
+              <Button variant="gradient">Sign up</Button>
+            </Link>
+          </div>
+        )}
         <div className="hidden sm:block">
           <ThemeToggler />
         </div>

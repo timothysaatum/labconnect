@@ -16,7 +16,6 @@ import {
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import { useEffect, useState } from "react";
-import { useGetLabsQuery } from "@/redux/labs/labsApiSlice";
 
 export default function Dashboard() {
   const [tab, setTab] = useState(null);
