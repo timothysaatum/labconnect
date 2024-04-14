@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
@@ -26,8 +25,9 @@ import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import axios from "./../api/axios";
-import { setAccess, setAuth } from "@/redux/auth/authSlice";
 import { SigninSchema } from "@/lib/schema";
+import { setCredentials } from "@/redux/auth/authSlice";
+import { useLoginMutation } from "@/redux/auth/authApiSlice";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,45 +49,64 @@ export default function Signin() {
     },
   });
 
+  const [login] = useLoginMutation(); //{is loading} is posible}
+
   const {
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = form;
 
   const onSubmit = async (data) => {
     try {
-      setServerErrors(null);
-      const response = await axios.post(
-        "/api/user/login/",
-        JSON.stringify(data),
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      // console.log(JSON.stringify(response))
-      const accessToken = response?.data?.data?.access_token;
-      dispatch(setAccess(accessToken));
-      const user = {
-        accountType: response?.data?.data?.account_type || null,
-        isAdmin_: response?.data?.data?.is_admin || null,
-        isVerified_: response?.data?.data?.is_verified || null,
-        isStaff: response?.data?.data?.is_staff || null,
-        isActive_: response?.data?.data?.is_active || null,
-      };
-      setServerErrors(null);
-      dispatch(setAuth(user));
-      form.reset();
-      navigate(from, { replace: true });
+      const userData = await login(data).unwrap();
+      dispatch(setCredentials({ ...userData, token: userData.access_token }));
     } catch (error) {
-      const errorValues = [Object.values(error?.response?.data || {})];
-      if (errorValues.length > 0) {
-        console.log(errorValues[0]);
-        setServerErrors(errorValues[0]);
+      console.log(error);
+      if (error?.status === 401 || error?.status === 403) {
+        const errorValues = [Object.values(error?.data || {})];
+        if (errorValues.length > 0) {
+          console.log(errorValues[0]);
+          setServerErrors(errorValues[0]);
+        }
+      } else if (error?.status === 400) {
+        setServerErrors("All fields are required");
+      } else {
+        setServerErrors("An error occurred, please try again later");
       }
     }
   };
+  // const onSubmit = async (data) => {
+  //   try {
+  //     setServerErrors(null);
+  //     const response = await axios.post(
+  //       "/api/user/login/",
+  //       JSON.stringify(data),
+  //       {
+  //         withCredentials: true,
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  //     // console.log(JSON.stringify(response))
+  //     const accessToken = response?.data?.data?.access_token;
+  //     console.log(response.data)
+  //     const user = {
+  //       accountType: response?.data?.data?.account_type || null,
+  //       isAdmin_: response?.data?.data?.is_admin || null,
+  //       isVerified_: response?.data?.data?.is_verified || null,
+  //       isStaff: response?.data?.data?.is_staff || null,
+  //       isActive_: response?.data?.data?.is_active || null,
+  //     };
+  //     form.reset();
+  //     navigate(from, { replace: true });
+  //   } catch (error) {
+  //     const errorValues = [Object.values(error?.response?.data || {})];
+  //     if (errorValues.length > 0) {
+  //       console.log(errorValues[0]);
+  //       setServerErrors(errorValues[0]);
+  //     }
+  //   }
+  // };
 
   return (
     <Card className="mx-auto max-w-sm mt-16">
@@ -111,11 +130,10 @@ export default function Signin() {
                   <FormLabel>Enter your email</FormLabel>
                   <FormControl>
                     <Input
+                      autoFocus
                       {...field}
                       type="email"
                       placeholder="email..."
-                      error={errors?.email}
-                      autoFocus
                     />
                   </FormControl>
                   <FormMessage />
@@ -133,13 +151,18 @@ export default function Signin() {
                         {...field}
                         type={showPassword ? "text" : "password"}
                         placeholder="password..."
-                        error={errors?.password}
                       />
 
                       {showPassword ? (
-                        <EyeOff className="absolute right-0 top-0 h-full mr-2 cursor-pointer" onClick={togglePassword}/>
+                        <EyeOff
+                          className="absolute right-0 top-0 h-full mr-2 cursor-pointer"
+                          onClick={togglePassword}
+                        />
                       ) : (
-                        <Eye className="absolute right-0 top-0 h-full mr-2 cursor-pointer" onClick={togglePassword}/>
+                        <Eye
+                          className="absolute right-0 top-0 h-full mr-2 cursor-pointer"
+                          onClick={togglePassword}
+                        />
                       )}
                     </div>
                   </FormControl>

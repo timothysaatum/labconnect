@@ -65,8 +65,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import RequestDialog from "./requestdialog";
+import { useGetLabsQuery } from "@/redux/labs/labsApiSlice";
 
 export default function DashboardOverview() {
+  const { data: labs, isLoading, isError } = useGetLabsQuery();
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -186,7 +188,7 @@ export default function DashboardOverview() {
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <RequestDialog/>
+                <RequestDialog />
               </CardFooter>
             </Card>
             <Card x-chunk="dashboard-05-chunk-1">
@@ -204,18 +206,24 @@ export default function DashboardOverview() {
               </CardFooter>
             </Card>
             <Card x-chunk="dashboard-05-chunk-2">
-              <CardHeader className="pb-2">
-                <CardDescription>This Month</CardDescription>
-                <CardTitle className="text-4xl">$5,329</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-xs text-muted-foreground">
-                  +10% from last month
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Progress value={12} aria-label="12% increase" />
-              </CardFooter>
+              {isLoading ? (
+                "loading..."
+              ) : (
+                <>
+                  <CardHeader className="pb-2">
+                    <CardDescription>labs</CardDescription>
+                    <CardTitle className="text-4xl"></CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-xs text-muted-foreground">
+                      +10% from last month
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Progress value={12} aria-label="12% increase" />
+                  </CardFooter>
+                </>
+              )}
             </Card>
           </div>
           <Tabs defaultValue="week">
