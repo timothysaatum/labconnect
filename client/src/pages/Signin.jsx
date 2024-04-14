@@ -27,6 +27,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import axios from "./../api/axios";
 import { SigninSchema } from "@/lib/schema";
 import { logOut, setCredentials } from "@/redux/auth/authSlice";
+import { toast } from "sonner";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -66,6 +67,7 @@ export default function Signin() {
           accessToken: response?.data?.access_token,
         })
       );
+      toast.success('sign in sucess')
       navigate(from, { replace: true });
     } catch (error) {
       console.log(error);

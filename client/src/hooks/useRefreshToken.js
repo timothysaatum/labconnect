@@ -3,6 +3,7 @@ import axios from "./../api/axios";
 import { useDispatch } from "react-redux";
 import {logOut } from "@/redux/auth/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 
 
@@ -22,7 +23,7 @@ const useRefreshToken = () => {
       return accessToken;
     } catch (error) {
       dispatch(logOut());
-      navigate("/sign-in",{state :{from:location},replace:true});
+      toast.error("Session expired, Please login again");
     }
   };
   return refresh;

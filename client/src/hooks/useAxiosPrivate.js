@@ -1,16 +1,12 @@
 import { axiosPrivate } from "@/api/axios";
 import { useEffect } from "react";
 import useRefreshToken from "./useRefreshToken";
-import { selectCurrenttoken,selectCurrentUser, setCredentials} from "@/redux/auth/authSlice";
-import { useSelector,useDispatch } from "react-redux";
-
+import { selectCurrenttoken} from "@/redux/auth/authSlice";
+import { useSelector } from "react-redux";
 
 const useAxiosPrivate = () => {
     const refresh = useRefreshToken();
     const token = useSelector(selectCurrenttoken);
-    const user = useSelector(selectCurrentUser)
-
-    const dispatch = useDispatch()
 
     useEffect(()=>{
         const requestIntercept = axiosPrivate.interceptors.request.use(
