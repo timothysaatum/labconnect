@@ -82,6 +82,11 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
 		return f'{self.first_name} {self.last_name}'
 
+	@property
+	def profile_picture_url(self):
+		
+		return f'http://127.0.0.1:8000{self.profile_picture.url}'
+
 
 
 

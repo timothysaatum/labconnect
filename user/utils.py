@@ -16,7 +16,7 @@ import time
 def generateotp():
 
 	secret_key = pyotp.random_base32()
-	totp = pyotp.TOTP(secret_key, interval=180, digits=10)
+	totp = pyotp.TOTP(secret_key, interval=180, digits=6)
 	otp = totp.now()
 
 	return otp
@@ -29,8 +29,8 @@ def send_code_to_user(email):
 
 	user = Client.objects.get(email=email)
 
-	current_site = 'labconnect.com'
-	html_message = f'Hi {user.first_name}, thanks for creating an account with us on {current_site}. Use this code to verify your account with the code {otp_code}'
+	verifcation_url = 'http://127.0.0.1:8000/api/user/verify-email/'
+	html_message = f'Hi {user.first_name}, thanks for creating an account with us on {verifcation_url}. Use this code {otp_code} to verify your email.'
 	to_email = user.email
 
 	

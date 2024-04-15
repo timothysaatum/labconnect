@@ -17,7 +17,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.views import APIView
 import jwt
-from django.contrib.sites.shortcuts import get_current_site
 
 
 
@@ -30,37 +29,41 @@ def generate_token(user):
 	return refresh
 
 
-class CheckRefreshToken(APIView):
+def verify_token(refresh_token):
 
-	#serializer_class = LoginSerializer
+	if not 'refresh_token':
+
+		raise InvalidToken('Unauthorized')
+
+	try:
+		payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
+		user = Client.objects.get(id=payload['user_id'])
+
+	except jwt.ExpiredSignatureError:
+		return Response({'error': 'token has expired'}, status=status.HTTP_400_BAD_REQUEST)
+
+	except jwt.DecodeError:
+		return Response({'error': 'stale request'}, status=status.HTTP_403_FORBIDDEN)
+
+	except Client.DoesNotExist:
+		return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)
+
+	return user
+
+
+
+
+class CheckRefreshToken(APIView):
 
 	def get(self, request):
 		
 		cookie_token = request.COOKIES.get('refresh_token')
 		
-		
-		if not 'refresh_token':
-
-			raise InvalidToken('Unauthorized')
-
-		try:
-			payload = jwt.decode(cookie_token, settings.SECRET_KEY, algorithms=['HS256'])
-			user = Client.objects.get(id=payload['user_id'])
-
-		except jwt.ExpiredSignatureError:
-			return Response({'error': 'token has expired'}, status=status.HTTP_400_BAD_REQUEST)
-
-		except jwt.DecodeError:
-			return Response({'error': 'stale request'}, status=status.HTTP_403_FORBIDDEN)
-
-		except user.DoesNotExist:
-			return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)
+		user = verify_token(cookie_token)
 
 		refresh_token = generate_token(user)
 
 		access_token = str(refresh_token.access_token)
-		site_domain = get_current_site(request).domain
-		profile_picture_url = f'http://{site_domain}{user.profile_picture.url}'
 		
 		return Response({
 			'access_token': access_token,
@@ -68,17 +71,23 @@ class CheckRefreshToken(APIView):
 			'full_name': user.full_name,
 			'current_facility': user.current_facility, 
 			'staff_id': user.staff_id,
-			'is_staff': user.is_staff, 
+			'is_staff': user.is_staff,
+			'email': user.email,
+			'gender': user.gender,
+			'phone_number': user.phone_number,
+			'digital_address': user.digital_address,
 			'is_verified': user.is_verified, 
 			'is_active': user.is_active, 
 			'is_admin': user.is_admin, 
-			'profile_picture': profile_picture_url,
+			'profile_picture': user.profile_picture_url,
 			'account_type': user.account_type, 
 			'email':user.email,
-			'user_id': user.id
+			'user_id': user.id,
+			'date_joined': user.date_joined,
+			'last_login': user.last_login,
 			}
 			}, status=status.HTTP_200_OK)
-
+		
 
 
 class CreateUserView(GenericAPIView):
@@ -206,9 +215,13 @@ class PasswordResetView(GenericAPIView):
 	serializer_class = PasswordResetViewSerializer
 
 	def post(self, request):
+		try:
+			serializer = self.serializer_class(data=request.data, context={'request': request})
+			serializer.is_valid(raise_exception=True)
 
-		serializer = self.serializer_class(data=request.data, context={'request': request})
-		serializer.is_valid(raise_exception=True)
+		except AssertionError:
+			return Response({'error': 'You cannot request password reset with a different email'}, 
+				status=status.HTTP_400_BAD_REQUEST)
 
 		return Response({
 					'message': 'A link has been sent to your email to reset your password'},
@@ -276,3 +289,38 @@ class LogoutView(GenericAPIView):
 		 serializer.save()
 
 		 return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+class FetchUserData(APIView):
+	
+	def get(self, request):
+
+		user_cookie_token = request.COOKIES.get('refresh_token')
+
+		try:
+			user = verify_token(user_cookie_token)
+
+		except Exception as e:
+			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+		return Response({'full_name': user.full_name,
+			'current_facility': user.current_facility, 
+			'staff_id': user.staff_id,
+			'is_staff': user.is_staff, 
+			'is_verified': user.is_verified, 
+			'is_active': user.is_active, 
+			'is_admin': user.is_admin,
+			'profile_picture': user.profile_picture_url, 
+			'account_type': user.account_type, 
+			'email': user.email,
+			'gender': user.gender,
+			'phone_number': user.phone_number,
+			'digital_address': user.digital_address,
+			'emmergency_number': user.emmergency_number,
+			'current_facility': user.current_facility,
+			'date_joined': user.date_joined,
+			'last_login': user.last_login,
+			'user_id': user.id
+			}, status=status.HTTP_200_OK)
