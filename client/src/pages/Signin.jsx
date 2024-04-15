@@ -20,14 +20,14 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import axios from "./../api/axios";
 import { SigninSchema } from "@/lib/schema";
-import { setCredentials } from "@/redux/auth/authSlice";
-import { useLoginMutation } from "@/redux/auth/authApiSlice";
+import { logOut, setCredentials } from "@/redux/auth/authSlice";
+import { toast } from "sonner";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -40,7 +40,6 @@ export default function Signin() {
   const from = location.state?.from?.pathname || "/";
 
   const togglePassword = () => setShowPassword((prev) => !prev);
-
   const form = useForm({
     resolver: zodResolver(SigninSchema),
     defaultValues: {
@@ -49,65 +48,46 @@ export default function Signin() {
     },
   });
 
-  const [login] = useLoginMutation(); //{is loading} is posible}
-
   const {
     formState: { isSubmitting },
   } = form;
 
   const onSubmit = async (data) => {
     try {
-      const userData = await login(data).unwrap();
-      dispatch(setCredentials({ ...userData, token: userData.access_token }));
+      setServerErrors(null);
+      const response = await axios.post("/user/login/", JSON.stringify(data), {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      dispatch(
+        setCredentials({
+          data: response?.data?.data,
+          accessToken: response?.data?.access_token,
+        })
+      );
+      toast.success('sign in sucess')
+      navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
-      if (error?.status === 401 || error?.status === 403) {
-        const errorValues = [Object.values(error?.data || {})];
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        const errorValues = [Object.values(error?.response?.data || {})];
         if (errorValues.length > 0) {
           console.log(errorValues[0]);
           setServerErrors(errorValues[0]);
         }
-      } else if (error?.status === 400) {
+      } else if (error?.response?.status === 400) {
         setServerErrors("All fields are required");
       } else {
-        setServerErrors("An error occurred, please try again later");
+        setServerErrors("Something went wrong, try again");
       }
     }
   };
-  // const onSubmit = async (data) => {
-  //   try {
-  //     setServerErrors(null);
-  //     const response = await axios.post(
-  //       "/api/user/login/",
-  //       JSON.stringify(data),
-  //       {
-  //         withCredentials: true,
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     // console.log(JSON.stringify(response))
-  //     const accessToken = response?.data?.data?.access_token;
-  //     console.log(response.data)
-  //     const user = {
-  //       accountType: response?.data?.data?.account_type || null,
-  //       isAdmin_: response?.data?.data?.is_admin || null,
-  //       isVerified_: response?.data?.data?.is_verified || null,
-  //       isStaff: response?.data?.data?.is_staff || null,
-  //       isActive_: response?.data?.data?.is_active || null,
-  //     };
-  //     form.reset();
-  //     navigate(from, { replace: true });
-  //   } catch (error) {
-  //     const errorValues = [Object.values(error?.response?.data || {})];
-  //     if (errorValues.length > 0) {
-  //       console.log(errorValues[0]);
-  //       setServerErrors(errorValues[0]);
-  //     }
-  //   }
-  // };
 
+  useEffect(()=>{
+    dispatch(logOut())
+  })
   return (
     <Card className="mx-auto max-w-sm mt-16">
       <CardHeader>
@@ -173,7 +153,7 @@ export default function Signin() {
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               Login
               {isSubmitting && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
             </Button>
             <Button

@@ -49,24 +49,8 @@ export const labRequestSchema = z.object({
   // attachment: z.string().nullable(),
   // tests: z.array(z.string()).nonempty("Please select at least one test"),
 });
-
-
-//request model
-// 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
-// name_of_patient = models.CharField(max_length=200)
-// patient_age = models.PositiveIntegerField()
-// patient_sex = models.CharField(max_length=20, choices=SEX)
-// sample_type = models.CharField(max_length=200)
-// sample_container = models.CharField(max_length=100)
-// delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE)
-// lab = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
-// tests = models.ManyToManyField(Test)
-// hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
-// ward = models.ForeignKey(Ward, on_delete=models.CASCADE)
-// brief_description = models.TextField()
-// attachment = models.FileField(upload_to='sample/attachments', blank=True, null=True)
-// is_received_by_delivery = models.BooleanField(default=False)
-// is_delivered_to_lab = models.BooleanField(default=False)
-// is_access_by_lab = models.BooleanField(default=False)
-// date_created = models.DateField(auto_now_add=True)
-// date_modified = models.DateField(auto_now=True)
+export const OTPSchema = z.object({
+  code: z.string().min(10, {
+    message: "Your one-time password must be 10 characters.",
+  }),
+});

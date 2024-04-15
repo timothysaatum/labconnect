@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,6 +26,8 @@ import { AnimatePresence } from "framer-motion";
 export default function Signup() {
   const [serverErrors] = useState(null);
   const [step, setStep] = useState(1); // 1 for account type, 2 for personal details
+
+  const navigate = useNavigate();
 
   const form = useForm({
     resolver: zodResolver(SignupSchema),
@@ -69,7 +71,7 @@ export default function Signup() {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "/api/user/create-account/",
+        "/user/create-account/",
         JSON.stringify(data),
         {
           headers: {
@@ -77,9 +79,11 @@ export default function Signup() {
           },
         }
       );
-      console.log(response);
+      if (response.status === 201) {
+        navigate("/verify-email");
+      }
     } catch (error) {
-      for (const field in error.response.data) {
+      for (const field in error?.response?.data) {
         setError(field, {
           type: "manual",
           message: error.response.data[field][0],

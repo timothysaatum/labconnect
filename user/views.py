@@ -62,7 +62,9 @@ class CheckRefreshToken(APIView):
 		site_domain = get_current_site(request).domain
 		profile_picture_url = f'http://{site_domain}{user.profile_picture.url}'
 		
-		return Response({'access_token': access_token,
+		return Response({
+			'access_token': access_token,
+			'user':{
 			'full_name': user.full_name,
 			'current_facility': user.current_facility, 
 			'staff_id': user.staff_id,
@@ -73,7 +75,9 @@ class CheckRefreshToken(APIView):
 			'profile_picture': profile_picture_url,
 			'account_type': user.account_type, 
 			'email':user.email,
-			'user_id': user.id}, status=status.HTTP_200_OK)
+			'user_id': user.id
+			}
+			}, status=status.HTTP_200_OK)
 
 
 

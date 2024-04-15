@@ -63,12 +63,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import RequestDialog from "./requestdialog";
-import { useGetLabsQuery } from "@/redux/labs/labsApiSlice";
+import { useEffect } from "react";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export default function DashboardOverview() {
-  const { data: labs, isLoading, isError } = useGetLabsQuery();
+
+  const axiosPrivate = useAxiosPrivate()
+
+
+  useEffect(() => {
+    const fetchlab = async () => {
+      try {
+        const res = await axiosPrivate.get("/laboratory/details/5/",{
+          Credentials:true
+        });
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchlab();
+  },[]);
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -153,28 +169,6 @@ export default function DashboardOverview() {
             className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
           />
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="overflow-hidden rounded-full"
-            >
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </header>
       <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
         <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2 ">
@@ -206,9 +200,7 @@ export default function DashboardOverview() {
               </CardFooter>
             </Card>
             <Card x-chunk="dashboard-05-chunk-2">
-              {isLoading ? (
-                "loading..."
-              ) : (
+             
                 <>
                   <CardHeader className="pb-2">
                     <CardDescription>labs</CardDescription>
@@ -218,12 +210,12 @@ export default function DashboardOverview() {
                     <div className="text-xs text-muted-foreground">
                       +10% from last month
                     </div>
+                    {/* {data?.name} */}
                   </CardContent>
                   <CardFooter>
                     <Progress value={12} aria-label="12% increase" />
                   </CardFooter>
                 </>
-              )}
             </Card>
           </div>
           <Tabs defaultValue="week">

@@ -1,19 +1,30 @@
+import { setCredentials } from "@/redux/auth/authSlice";
 import axios from "./../api/axios";
-import { useDispatch, useSelector } from "react-redux";
-import { setAccess } from "../redux/auth/authSlice";
+import { useDispatch } from "react-redux";
+import {logOut } from "@/redux/auth/authSlice";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+
+
 
 const useRefreshToken = () => {
-  const { accessToken } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
+  
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const refresh = async () => {
-    const response = await axios.get("/api/user/refresh/token/", {
-      withCredentials: true,
-    });
-    const accessToken = response?.data?.access_token;
-    dispatch(setAccess(accessToken));
-    return accessToken;
+    try {
+      const response = await axios.get("/user/refresh/token/", {
+        withCredentials: true,
+      });
+      const accessToken = response?.data?.access_token;
+      dispatch(setCredentials({ data:response.data.user, accessToken: accessToken }));
+      return accessToken;
+    } catch (error) {
+      dispatch(logOut());
+      toast.error("Session expired, Please login again");
+    }
   };
   return refresh;
 };
