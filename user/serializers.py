@@ -226,9 +226,14 @@ class LogoutSerializer(serializers.Serializer):
 
 	def validate(self, attrs):
 
+		#print(attrs)
 		self.token = attrs.get('refresh_token')
+		request = self.context.get('request')
+		user_refresh_token = request.COOKIES.get('refresh_token')
+		print(user_refresh_token)
 
-		return attrs
+		#return user_refresh_token
+		return self.token
 
 
 	def save(self, **kwargs):

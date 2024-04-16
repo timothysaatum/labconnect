@@ -281,16 +281,26 @@ class SetNewPassword(GenericAPIView):
 
 class LogoutView(GenericAPIView):
 
-	serializer_class = LogoutSerializer
 	permission_classes = [IsAuthenticated]
 
 	def post(self, request):
-		response = Response()
-		serializer = self.serializer_class(data=request.data)
-		serializer.is_valid(raise_exception=True)
-		serializer.save()
-		response.set_cookie(key=settings.SIMPLE_JWT['AUTH_COOKIE'], expires=datetime.utcnow() - timedelta(second=9999))
-		return response.data(status=status.HTTP_204_NO_CONTENT)
+		
+		user_cookie_token = request.COOKIES.get('refresh_token')
+		if user_cookie_token:
+
+			try:
+				token = RefreshToken(user_cookie_token)
+				token.blacklist()
+
+			except TokenError as e:
+				raise serializers.ValidationError(str(e))
+
+			response = Response({'message': 'Log out success'},status=status.HTTP_200_OK)
+			response.delete_cookie('refresh_token')
+			response.delete_cookie('csrftoken')
+			return response
+
+		return Response({'message': 'Already logout'})
 
 
 
@@ -300,28 +310,33 @@ class FetchUserData(APIView):
 
 		user_cookie_token = request.COOKIES.get('refresh_token')
 
-		try:
-			user = verify_token(user_cookie_token)
+		if user_cookie_token:
 
-		except Exception as e:
-			return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+			try:
+				user = verify_token(user_cookie_token)
 
-		return Response({'full_name': user.full_name,
-			'current_facility': user.current_facility, 
-			'staff_id': user.staff_id,
-			'is_staff': user.is_staff, 
-			'is_verified': user.is_verified, 
-			'is_active': user.is_active, 
-			'is_admin': user.is_admin,
-			'profile_picture': user.profile_picture_url, 
-			'account_type': user.account_type, 
-			'email': user.email,
-			'gender': user.gender,
-			'phone_number': user.phone_number,
-			'digital_address': user.digital_address,
-			'emmergency_number': user.emmergency_number,
-			'current_facility': user.current_facility,
-			'date_joined': user.date_joined,
-			'last_login': user.last_login,
-			'user_id': user.id
-			}, status=status.HTTP_200_OK)
+			except Exception as e:
+				return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+			return Response({'full_name': user.full_name,
+				'current_facility': user.current_facility, 
+				'staff_id': user.staff_id,
+				'is_staff': user.is_staff, 
+				'is_verified': user.is_verified, 
+				'is_active': user.is_active, 
+				'is_admin': user.is_admin,
+				'profile_picture': user.profile_picture_url, 
+				'account_type': user.account_type, 
+				'email': user.email,
+				'gender': user.gender,
+				'phone_number': user.phone_number,
+				'digital_address': user.digital_address,
+				'emmergency_number': user.emmergency_number,
+				'current_facility': user.current_facility,
+				'date_joined': user.date_joined,
+				'last_login': user.last_login,
+				'user_id': user.id
+				}, status=status.HTTP_200_OK)
+
+		return Response({'error': 'Token is invalid or you have been logged out.'}, status=status.HTTP_400_BAD_REQUEST)
