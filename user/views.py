@@ -17,6 +17,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.views import APIView
 import jwt
+from datetime import timedelta, datetime
 
 
 
@@ -215,18 +216,19 @@ class PasswordResetView(GenericAPIView):
 	serializer_class = PasswordResetViewSerializer
 
 	def post(self, request):
+
 		try:
 			serializer = self.serializer_class(data=request.data, context={'request': request})
 			serializer.is_valid(raise_exception=True)
 
 		except AssertionError:
+
 			return Response({'error': 'You cannot request password reset with a different email'}, 
 				status=status.HTTP_400_BAD_REQUEST)
 
 		return Response({
 					'message': 'A link has been sent to your email to reset your password'},
 					status=status.HTTP_200_OK)
-
 
 
 
@@ -277,19 +279,18 @@ class SetNewPassword(GenericAPIView):
 
 
 
-
 class LogoutView(GenericAPIView):
 
 	serializer_class = LogoutSerializer
 	permission_classes = [IsAuthenticated]
 
 	def post(self, request):
-		 serializer = self.serializer_class(data=request.data)
-		 serializer.is_valid(raise_exception=True)
-		 serializer.save()
-
-		 return Response(status=status.HTTP_204_NO_CONTENT)
-
+		response = Response()
+		serializer = self.serializer_class(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		serializer.save()
+		response.set_cookie(key=settings.SIMPLE_JWT['AUTH_COOKIE'], expires=datetime.utcnow() - timedelta(second=9999))
+		return response.data(status=status.HTTP_204_NO_CONTENT)
 
 
 
