@@ -218,30 +218,3 @@ class SetNewPasswordSerializer(serializers.Serializer):
 		except Exception as e:
 
 			raise AuthenticationFailed("An error occured. Either the link has expired or is invalid")
-
-
-class LogoutSerializer(serializers.Serializer):
-
-	refresh_token = serializers.CharField()
-
-	def validate(self, attrs):
-
-		#print(attrs)
-		self.token = attrs.get('refresh_token')
-		request = self.context.get('request')
-		user_refresh_token = request.COOKIES.get('refresh_token')
-		print(user_refresh_token)
-
-		#return user_refresh_token
-		return self.token
-
-
-	def save(self, **kwargs):
-
-		try:
-			token = RefreshToken(self.token)
-			token.blacklist()
-
-		except TokenError as e:
-			raise serializers.ValidationError(str(e))
-

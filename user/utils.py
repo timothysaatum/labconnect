@@ -7,11 +7,6 @@ import time
 
 
 
-# OTP verified for current time
-#totp.verify('492039') # => True
-#
-#
-
 
 def generateotp():
 

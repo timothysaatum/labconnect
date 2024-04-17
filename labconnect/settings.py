@@ -52,6 +52,8 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+    #'user.middleware.IpAdressMiddleWare.FindUserIpAddress',
+    'user.middleware.validator.PermissionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

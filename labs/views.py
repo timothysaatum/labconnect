@@ -6,6 +6,9 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Laboratory, Department, Test, TestResult
+from rest_framework_simplejwt.exceptions import InvalidToken
+
+
 
 
 
@@ -17,7 +20,7 @@ class CreateLaboratoryView(CreateAPIView):
 	serializer_class = LaboratorySerializer
 
 	def post(self, request):
-
+			
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
 
@@ -42,7 +45,6 @@ class LaboratoryListView(ListAPIView):
 			
 		except Laboratory.DoesNotExist:
 			return Response({'error': 'Laboratory not found'}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 class LaboratoryDetailView(RetrieveAPIView):
@@ -173,7 +175,7 @@ class DepartmentDetailView(RetrieveAPIView):
 
 
 	def get(self, request, pk, format=None):
-		
+	
 		try:
 			department = self.get_queryset(pk, self.request.user)
 			serialized_data = DepartmentSerializer(department)

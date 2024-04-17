@@ -1,4 +1,4 @@
-from .serializers import (UserCreationSerializer, LoginSerializer, VerifyEmailSerializer, LogoutSerializer,
+from .serializers import (UserCreationSerializer, LoginSerializer, VerifyEmailSerializer,
 	PasswordResetViewSerializer, SetNewPasswordSerializer)
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -279,7 +279,7 @@ class SetNewPassword(GenericAPIView):
 
 
 
-class LogoutView(GenericAPIView):
+class LogoutView(APIView):
 
 	permission_classes = [IsAuthenticated]
 
@@ -300,11 +300,13 @@ class LogoutView(GenericAPIView):
 			response.delete_cookie('csrftoken')
 			return response
 
-		return Response({'message': 'Already logout'})
+		return Response({'message': 'Already logged out'})
 
 
 
 class FetchUserData(APIView):
+
+	permission_classes = [IsAuthenticated]
 	
 	def get(self, request):
 
