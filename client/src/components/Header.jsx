@@ -16,49 +16,36 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
-
   const user = useSelector(selectCurrentUser);
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const Logout = ()=>{
+  const Logout = () => {
     dispatch(logOut());
-    localStorage.removeItem('user');
-  }
+    localStorage.removeItem("user");
+  };
 
   return (
     <nav
       aria-label="main navigation bar"
       className={`${
-        location.pathname === "/dashboard" ? "sm:ml-14" : ""
+        location.pathname.includes("/dashboard") ? "sm:ml-14" : ""
       } flex justify-between px-4 md:px-8 items-center py-3 border-b-2 border-gray-200 dark:border-gray-800 shadow-sm`}
     >
       <div className="text-xl w-fit font-bold from-[#6366F1] via-[#D946EF] to-[#FB7185] bg-gradient-to-r bg-clip-text text-transparent">
         <h3>LabConnect</h3>
       </div>
       <ul className="hidden gap-5 lg:gap-10 md:flex">
-        <NavLink
-          to="/"
-          className={({ isActive }) => (isActive ? "text-blue-500" : "")}
-        >
+        <NavLink to="/">
           <li>Home</li>
         </NavLink>
-        <NavLink
-          to="/contact-us"
-          className={({ isActive }) => (isActive ? "text-blue-500" : "")}
-        >
+        <NavLink to="/contact-us">
           <li>Contact us</li>
         </NavLink>
-        <NavLink
-          to="/about"
-          className={({ isActive }) => (isActive ? "text-blue-500" : "")}
-        >
+        <NavLink to="/about">
           <li>About</li>
         </NavLink>
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) => (isActive ? "text-blue-500" : "")}
-        >
+        <NavLink to="dashboard">
           <li>Dashboard</li>
         </NavLink>
       </ul>

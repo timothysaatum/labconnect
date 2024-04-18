@@ -19,48 +19,55 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import RequestForm from "../requests/RequestForm";
+import RequestForm from "./RequestForm";
 import { CircleChevronLeft, PanelBottomClose } from "lucide-react";
+import { useSelector } from "react-redux";
+import { currentStep } from "@/redux/requests/requestStepSlice";
+import { ScrollArea } from "../ui/scroll-area";
 
 export default function RequestDialog() {
   const [open, setOpen] = React.useState(false);
-    const [step, setStep] = React.useState(1);
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
+  const step = useSelector(currentStep);
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={setOpen} >
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button>Create New Request</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[525px]">
+        <DialogContent className="sm:max-w-3xl max-h-[90%]">
           <DialogHeader>
             <DialogTitle>Create New Request</DialogTitle>
             <DialogDescription>
               fill out the form below to create a new request
             </DialogDescription>
           </DialogHeader>
-          <RequestForm step={step}/>
+          <ScrollArea className="h-[70%] max-h-[700px] px-4">
+            <RequestForm />
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     );
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen} onRelease={()=>console.log('released')} onClose={()=>console.log('closed')}>
+    <Drawer
+      open={open}
+      onOpenChange={setOpen}
+      onRelease={() => console.log("released")}
+      onClose={() => console.log("closed")}
+    >
       <DrawerTrigger asChild>
         <Button>Create New Request</Button>
       </DrawerTrigger>
       <DrawerContent className="px-4">
         <DrawerHeader className="flex justify-between text-left items-start">
           <div>
-            <DrawerTitle>
+            <DrawerTitle className="flex gap-4">
               {step !== 1 && (
-                <CircleChevronLeft
-                  className="text-gray-400 self-center"
-                />
+                <CircleChevronLeft className="text-gray-400 self-center" />
               )}
               Create New Request
             </DrawerTitle>
@@ -77,7 +84,7 @@ export default function RequestDialog() {
             />
           </DrawerClose>
         </DrawerHeader>
-        <RequestForm  step={step}/>
+        <RequestForm />
       </DrawerContent>
     </Drawer>
   );

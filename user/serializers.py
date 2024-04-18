@@ -159,7 +159,8 @@ class PasswordResetViewSerializer(serializers.Serializer):
 			site_domain = get_current_site(request).domain
 
 			relative_link = reverse('user:password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
-			abslink = f'http://{site_domain}{relative_link}'
+			# abslink = f'http://{site_domain}{relative_link}'
+			abslink = f'http://localhost:5173{relative_link}'
 			email_body = f'Hi {user.full_name}, use the link below to reset your password \n {abslink}'
 
 			data = {

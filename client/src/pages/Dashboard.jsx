@@ -1,11 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   Home,
   LineChart,
-  Package,
   Package2,
   Settings,
-  ShoppingCart,
+  User,
   Users2,
 } from "lucide-react";
 import {
@@ -15,11 +14,14 @@ import {
 } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
-import { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+const DashboardSettings = React.lazy(() =>
+  import("@/components/dashboard/settings")
+);
 
 export default function Dashboard() {
   const [tab, setTab] = useState(null);
-
+  const location = useLocation();
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
@@ -28,8 +30,29 @@ export default function Dashboard() {
     }
   }, [location.search]);
 
- 
-
+  console.log(location);
+  const DashboardTab = () => {
+    switch (tab) {
+      case "overview":
+        return <DashboardOverview />;
+      case "settings":
+        return (
+          <Suspense>
+            <DashboardSettings />;
+          </Suspense>
+        );
+      // case "requests":
+      //   return <DashboardRequests />;
+      // case "customers":
+      //   return <DashboardCustomers />;
+      // case "analytics":
+      //   return <DashboardAnalytics />;
+      // case "settings":
+      //   return <DashboardSettings />;
+      default:
+        return <DashboardOverview />;
+    }
+  };
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -61,12 +84,12 @@ export default function Dashboard() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="#"
+                  to="/dashboard?tab=profile"
                   className={`${
                     tab === "requests" ? "bg-accent text-accent-foreground" : ""
                   } flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8`}
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  <User className="h-5 w-5" />
                   <span className="sr-only">Orders</span>
                 </Link>
               </TooltipTrigger>
@@ -112,7 +135,7 @@ export default function Dashboard() {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href="#"
+                  to="settings"
                   className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <Settings className="h-5 w-5" />
@@ -124,9 +147,7 @@ export default function Dashboard() {
           </TooltipProvider>
         </nav>
       </aside>
-      <>
-        <DashboardOverview />
-      </>
+      <Outlet />
     </div>
   );
 }

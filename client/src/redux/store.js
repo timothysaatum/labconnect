@@ -3,9 +3,11 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
 import authReducer from "./auth/authSlice";
+import stepReducer from "./requests/requestStepSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  step:stepReducer,
 });
 const persistConfig = {
   key: "root",

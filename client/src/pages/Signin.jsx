@@ -67,8 +67,8 @@ export default function Signin() {
           accessToken: response?.data?.access_token,
         })
       );
-      toast.success('sign in sucess')
       navigate(from, { replace: true });
+      toast.success("sign in sucess");
     } catch (error) {
       console.log(error);
       if (error?.response?.status === 401 || error?.response?.status === 403) {
@@ -85,9 +85,9 @@ export default function Signin() {
     }
   };
 
-  useEffect(()=>{
-    dispatch(logOut())
-  })
+  useEffect(() => {
+    dispatch(logOut());
+  });
   return (
     <Card className="mx-auto max-w-sm mt-16">
       <CardHeader>
@@ -124,11 +124,12 @@ export default function Signin() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Enter your password</FormLabel>
+                  <FormLabel htmlFor="password">Enter your password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Input
                         {...field}
+                        id="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="password..."
                       />
@@ -150,10 +151,21 @@ export default function Signin() {
                 </FormItem>
               )}
             />
+            <div className="text-right">
+              <Link to="/forgot-password">
+                <Button
+                  variant="link"
+                  className="text-sm p-0 h-auto"
+                  type="button"
+                >
+                  Forgot password?
+                </Button>
+              </Link>
+            </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               Login
               {isSubmitting && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
             </Button>
             <Button

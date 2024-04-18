@@ -2,10 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-family: "Inter", sans-serif;
+}
 
+/* main navbar */
+nav ul li {
+  display: inline-block;
+  list-style: none;
+  margin-inline: 20px;
+  white-space: nowrap;
+}
+nav ul a li {
+  text-decoration: none;
+  font-size: 18px;
+  position: relative;
+}
+nav ul a li::after {
+  content: "";
+  width: 0%;
+  height: 3px;
+  background: hsla(217.2 32.6% 17.5%);
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  transition: 0.5s;
+}
+.dark nav ul a li::after {
+  background: hsla(210 40% 96.1%);
+}
+nav ul a li:hover::after {
+  width: 100%;
+}
+nav ul a.active li::after {
+  width: 100%;
+}
 
-html{
-  font-family: 'Inter', sans-serif;
+/* dashbaord settings navbar */
+aside.settings nav a.active {
+  background-color: hsla(210 40% 96.1%);
+}
+aside.settings nav a.active:hover {
+  text-decoration: none;
+}
+.dark aside.settings nav a.active {
+  background-color: hsla(217.2 32.6% 17.5%);
 }
 @layer base {
   :root {
