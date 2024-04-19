@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'user',
     'hospital',
     'labs',
+    'transactions',
     'delivery',
     'corsheaders',
     'rest_framework',
