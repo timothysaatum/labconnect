@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.urls import resolve
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+import jwt
 
 
 

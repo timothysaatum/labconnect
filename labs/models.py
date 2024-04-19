@@ -166,10 +166,10 @@ class TestResult(BaseModel):
 	test(str): The test this results belong to.
 	'''
 	
-	send_by = models.ForeignKey(user, on_delete=models.CASCADE, related_name='sender')
-	department = models.ForeignKey(Department, on_delete=models.CASCADE)
+	send_by = models.ForeignKey(user, on_delete=models.CASCADE, related_name='sender',  db_index=True)
+	department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='results', db_index=True)
 	laboratory = models.CharField(max_length=200)
-	test = models.ForeignKey(Test, on_delete=models.CASCADE)
+	test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='results', db_index=True)
 	result = models.FileField(upload_to='labs/results')
 	comments = models.TextField()
 	is_verified = models.BooleanField(default=False)
