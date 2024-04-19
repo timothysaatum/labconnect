@@ -60,7 +60,12 @@ class CheckRefreshToken(APIView):
 		
 		cookie_token = request.COOKIES.get('refresh_token')
 		
-		user = verify_token(cookie_token)
+		try:
+			user = verify_token(cookie_token)
+
+		except AttributeError:
+			
+			return Response({'error': 'Session expired'}, status=status.HTTP_403_FORBIDDEN)
 
 		refresh_token = generate_token(user)
 

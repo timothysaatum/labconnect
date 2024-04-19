@@ -5,11 +5,13 @@ user = get_user_model()
 
 
 
+
 class Plan(models.Model):
 
 	name = models.CharField(max_length=100, default='Free Plan')
-	duration = models.DurationField()
+	duration = models.DurationField(default='9999 days')
 	price = models.FloatField(default=0.00)
+	date_added = models.DateTimeField(auto_now=True)
 
 
 	def __str__(self):
@@ -21,6 +23,8 @@ class Subscription(models.Model):
 
 	plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
 	subscriber = models.ForeignKey(user, on_delete=models.CASCADE)
+	price = models.FloatField(default=0.00)
+	balance = models.FloatField(default=0.00)
 	is_renewed = models.BooleanField(default=False)
 	is_cancelled = models.BooleanField(default=False)
 	is_paid = models.BooleanField(default=False)
@@ -30,6 +34,13 @@ class Subscription(models.Model):
 
 	def __str__(self):
 		return self.plan.name
+
+
+	def save(self, *args, **kwargs):
+		
+		self.price = self.plan.price
+
+		super().save(*args, **kwargs)
 
 
 

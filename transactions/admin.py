@@ -4,11 +4,11 @@ from .models import Plan, Subscription, Incentive
 
 
 class PlanAdmin(admin.ModelAdmin):
-	list_display = ('name', 'duration', 'price')
+	list_display = ('name', 'duration', 'price', 'date_added')
 
 
 class SubscriptionAdmin(admin.ModelAdmin):
-	list_display = ('plan', 'subscriber', 'is_renewed', 'is_cancelled', 'is_paid', 'has_expired', 'date_of_subscription')
+	list_display = ('plan', 'subscriber', 'price', 'balance', 'is_renewed', 'is_cancelled', 'is_paid', 'has_expired', 'date_of_subscription')
 
 
 class IncentiveAdmin(admin.ModelAdmin):
