@@ -11,7 +11,7 @@ class TestAdmin(admin.ModelAdmin):
 
 class DepartmentAdmin(admin.ModelAdmin):
 	list_display = ('id', 'department_name', 'laboratory_name', 'heard_of_department', 'phone', 
-		'email', 'tests', 'date_added', 'date_modified')
+		'email', 'date_added', 'date_modified')
 	list_display_links = ('department_name', 'date_added', 'id')
 	#list_editable = ('heard_of_department', 'phone', 'email')
 	ordering = ('id',)
@@ -24,6 +24,9 @@ class LaboratoryAdmin(admin.ModelAdmin):
 					)
 	list_display_links = ('created_by', 'name')
 	ordering = ('id',)
+
+	def departments(self, obj):
+		return ", ".join([dept.department_name for dept in obj.departments.all()])
 
 
 

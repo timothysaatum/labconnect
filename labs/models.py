@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 user = get_user_model()
 
 
@@ -33,11 +34,18 @@ class BaseModel(models.Model):
 
 class Laboratory(BaseModel):
 
+	'''
+	A laboratory where tests are conducted.
+
+	Attrs:
+	name(str): the name of the laboratory
+	'''
+
 	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	digital_address = models.CharField(max_length=15)
 	phone = models.CharField(max_length=15)
 	email = models.EmailField()
-	name = models.CharField(max_length=200)
+	name = models.CharField(max_length=200, db_index=True, validators=[MinLengthValidator(10), MaxLengthValidator(200)])
 	region_of_location = models.CharField(max_length=255)
 	town_of_location = models.CharField(max_length=255)
 	logo = models.ImageField(upload_to='labs/logo', default='logo.png')
@@ -51,20 +59,7 @@ class Laboratory(BaseModel):
 
 	class Meta:
 		verbose_name_plural = 'Laboratories'
-
-
-	def departments(self):
-
-		labs = Laboratory.objects.filter(id=self.id)
-			
-		deptm = []
-
-		for lab in labs:
-
-			deptm = [department for department in lab.department_set.all()]
-
-		return deptm
-
+		unique_together = ('name', )
 
 
 
@@ -80,11 +75,22 @@ DEPARTMENT_NAME = [
 
 class Department(BaseModel):
 
-	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
+	'''
+	A department within a laboratory.
+
+	Attrs:
+	laboratory(Laboratory): The laboratory that this department belongs to.
+	department_name(str): The name of the department.
+	'''
+
+	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='departments', db_index=True)
 	heard_of_department = models.CharField(max_length=200)
 	phone = models.CharField(max_length=15)
 	email = models.EmailField()
-	department_name = models.CharField(choices=DEPARTMENT_NAME, max_length=100)
+	department_name = models.CharField(choices=DEPARTMENT_NAME, max_length=100, db_index=True)
+
+	class Meta:
+		unique_together = ('laboratory', 'department_name')
 
 
 	def __str__(self):
@@ -104,10 +110,23 @@ class Department(BaseModel):
 
 class Test(BaseModel):
 
-	department = models.ForeignKey(Department, on_delete=models.CASCADE)
-	name = models.CharField(max_length=200)
+	'''
+	A test than can be conducted in a department.
+	Attrs:
+	department(Department): The department that this test belongs to.
+	name(str): The name of the test.
+	price(float): The price of the test.
+	dicount_price (float, optional): The discounted price of the test.
+	'''
+
+	department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='tests', db_index=True)
+	name = models.CharField(max_length=200, db_index=True)
 	price = models.FloatField()
 	discount_price = models.FloatField(blank=True, null=True)
+
+
+	class Meta:
+		unique_together = ('department', 'name')
 
 	def __str__(self):
 
@@ -138,6 +157,14 @@ class Test(BaseModel):
 
 
 class TestResult(BaseModel):
+
+	'''
+	A test result thatn can be generated in a department withina lab:
+
+	attrs:
+	department(str): The department where this test result belongs to.
+	test(str): The test this results belong to.
+	'''
 	
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE, related_name='sender')
 	department = models.ForeignKey(Department, on_delete=models.CASCADE)
