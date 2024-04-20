@@ -10,8 +10,6 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 
 class HospitalSerializerView(CreateAPIView):
 
-
-	permission_classes = [IsAuthenticated]
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = HospitalSerializer
 
@@ -19,9 +17,7 @@ class HospitalSerializerView(CreateAPIView):
 
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
-			print(self.request.user)
 			serializer.save()
-			#serializer.save(created_by=self.request.user)
 
 		return Response({
 					'message': 'Hospital created successfully.'},

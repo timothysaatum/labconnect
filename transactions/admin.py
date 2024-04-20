@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Plan, Subscription, Incentive
+from .models import Plan, Subscription, Incentive, Transaction
 
 
 
@@ -16,6 +16,12 @@ class IncentiveAdmin(admin.ModelAdmin):
 		'is_withdrawn', 'balance', 'emmergency_contact', 'date_withdrawn')
 
 
+class TransactionAdmin(admin.ModelAdmin):
+	list_display = ('client', 'amount', 'account_number', 'account_name', 'bank', 
+		'payment_mode', 'service_paid', 'account_type', 'email', 'tel', 'date_paid')
+
+
 admin.site.register(Plan, PlanAdmin)
 admin.site.register(Subscription, SubscriptionAdmin)
 admin.site.register(Incentive, IncentiveAdmin)
+admin.site.register(Transaction, TransactionAdmin)

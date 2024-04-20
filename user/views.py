@@ -1,6 +1,6 @@
 from .serializers import (UserCreationSerializer, LoginSerializer, VerifyEmailSerializer,
-	PasswordResetViewSerializer, SetNewPasswordSerializer)
-from rest_framework.generics import GenericAPIView
+	PasswordResetViewSerializer, SetNewPasswordSerializer, UserSerializer)
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
@@ -22,12 +22,6 @@ from datetime import timedelta, datetime
 
 
 
-
-def generate_token(user):
-
-	refresh = RefreshToken.for_user(user)
-
-	return refresh
 
 
 def verify_token(refresh_token):
@@ -62,36 +56,18 @@ class CheckRefreshToken(APIView):
 		
 		try:
 			user = verify_token(cookie_token)
+			refresh_token = RefreshToken.for_user(user)
 
 		except AttributeError:
 			
 			return Response({'error': 'Session expired'}, status=status.HTTP_403_FORBIDDEN)
 
-		refresh_token = generate_token(user)
-
 		access_token = str(refresh_token.access_token)
 		
 		return Response({
+
 			'access_token': access_token,
-			'user':{
-			'full_name': user.full_name,
-			'current_facility': user.current_facility, 
-			'staff_id': user.staff_id,
-			'is_staff': user.is_staff,
-			'email': user.email,
-			'gender': user.gender,
-			'phone_number': user.phone_number,
-			'digital_address': user.digital_address,
-			'is_verified': user.is_verified, 
-			'is_active': user.is_active, 
-			'is_admin': user.is_admin, 
-			'profile_picture': user.profile_picture_url,
-			'account_type': user.account_type, 
-			'email':user.email,
-			'user_id': user.id,
-			'date_joined': user.date_joined,
-			'last_login': user.last_login,
-			}
+
 			}, status=status.HTTP_200_OK)
 		
 
@@ -107,13 +83,15 @@ class CreateUserView(GenericAPIView):
 
 		if serializer.is_valid(raise_exception=True):
 
-			serializer.save()
-			user_data = serializer.data
-			send_code_to_user(user_data['email'])
+			#serializer.save()
+			user = serializer.save()
+			#user_data = serializer.data
+			print(user.email)
+			send_code_to_user(user.email)
 
 			return Response(
 
-					{'data': user_data, 'message': 'Account created successfully, otp was sent, please verify your account.'},
+					{'message': 'Account created successfully, otp was sent, please verify your account.'},
 					status=status.HTTP_201_CREATED
 
 				)
@@ -128,16 +106,15 @@ class VerifyUserEmail(GenericAPIView):
 
 	def post(self, request):
 
-		optcode = request.data.get('code')
+		code = request.data.get('code')
 		
 		try:
 
-			user_code_obj = OneTimePassword.objects.get(code=optcode)
+			user_code_obj = OneTimePassword.objects.get(code=code)
 			secret_key = user_code_obj.secrete
 			totp = pyotp.TOTP(secret_key, interval=180, digits=10)
-			is_valid = totp.verify(totp.now())
 
-			if is_valid == False:
+			if not totp.verify(totp.now()):
 
 				return Response({'message': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -168,7 +145,7 @@ class VerifyUserEmail(GenericAPIView):
 			return Response(
 
 				{
-					'message': 'Passcode not provided is inaccurate'
+					'message': 'Passcode not provided or is inaccurate'
 					}, 
 					status=status.HTTP_404_NOT_FOUND
 
@@ -179,39 +156,37 @@ class VerifyUserEmail(GenericAPIView):
 
 class LoginUserView(GenericAPIView):
 
-	response = Response()
 	serializer_class = LoginSerializer
 
 	def post(self, request):
 
 		serializer = self.serializer_class(data=request.data, context={'request': request})
-		serializer.is_valid(raise_exception=True)
-		try:
-			user = Client.objects.get(id=serializer.data['user_id'])
 
-		except Client.DoesNotExist:
-			return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+		if serializer.is_valid(raise_exception=True):
+			try:
+				user = Client.objects.get(id=serializer.data['user_id'])
 
-		user_tokens = user.tokens()
+			except Client.DoesNotExist:
+				return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-		refresh = user_tokens.get('refresh')
-		
-		self.response.set_cookie(
-				key=settings.SIMPLE_JWT['AUTH_COOKIE'],
-				value=refresh,
-				domain=settings.SIMPLE_JWT['AUTH_COOKIE_DOMAIN'],
-				path=settings.SIMPLE_JWT['AUTH_COOKIE_PATH'],
-				expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
-				httponly=True,
-				secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-				samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
-			)
+			user_tokens = user.tokens()
 
-		csrf.get_token(request)
-		
-		self.response.data = {'data': serializer.data, 'access_token': user_tokens.get('access'), 'status' :status.HTTP_200_OK}
+			response = Response({'data': serializer.data, 'access_token':user_tokens.get('access')}, status=status.HTTP_200_OK)
 
-		return self.response
+			response.set_cookie(
+					key=settings.SIMPLE_JWT['AUTH_COOKIE'],
+					value=user_tokens.get('refresh'),
+					domain=settings.SIMPLE_JWT['AUTH_COOKIE_DOMAIN'],
+					path=settings.SIMPLE_JWT['AUTH_COOKIE_PATH'],
+					expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
+					httponly=True,
+					secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+					samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+				)
+
+			csrf.get_token(request)
+
+			return response
 
 
 
@@ -275,11 +250,11 @@ class SetNewPassword(GenericAPIView):
 	def patch(self, request):
 
 		serializer = self.serializer_class(data=request.data)
-		serializer.is_valid(raise_exception=True)
+		if serializer.is_valid(raise_exception=True):
 
-		return Response({
-				'message': 'Password reset successful'
-			}, status=status.HTTP_200_OK)
+			return Response({
+					'message': 'Password reset successful'
+				}, status=status.HTTP_200_OK)
 
 
 
@@ -312,38 +287,27 @@ class LogoutView(APIView):
 class FetchUserData(APIView):
 
 	permission_classes = [IsAuthenticated]
+	serializer_class = UserSerializer
 	
-	def get(self, request):
+
+	def get(self, request, format=None):
 
 		user_cookie_token = request.COOKIES.get('refresh_token')
 
 		if user_cookie_token:
 
 			try:
+
 				user = verify_token(user_cookie_token)
 
-			except Exception as e:
-				return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+				serialized_data = UserSerializer(user)
 
+				return Response({'data': serialized_data.data}, status=status.HTTP_200_OK)
 
-			return Response({'full_name': user.full_name,
-				'current_facility': user.current_facility, 
-				'staff_id': user.staff_id,
-				'is_staff': user.is_staff, 
-				'is_verified': user.is_verified, 
-				'is_active': user.is_active, 
-				'is_admin': user.is_admin,
-				'profile_picture': user.profile_picture_url, 
-				'account_type': user.account_type, 
-				'email': user.email,
-				'gender': user.gender,
-				'phone_number': user.phone_number,
-				'digital_address': user.digital_address,
-				'emmergency_number': user.emmergency_number,
-				'current_facility': user.current_facility,
-				'date_joined': user.date_joined,
-				'last_login': user.last_login,
-				'user_id': user.id
-				}, status=status.HTTP_200_OK)
+			except AttributeError:
+				return Response({'error': 'User could not be retrieved'}, status=status.HTTP_400_BAD_REQUEST)
+
+			except NameError:
+				return Response({'error': 'Argument provide does not make sense'}, status=status.HTTP_400_BAD_REQUEST)
 
 		return Response({'error': 'Token is invalid or you have been logged out.'}, status=status.HTTP_400_BAD_REQUEST)

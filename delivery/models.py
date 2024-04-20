@@ -14,11 +14,11 @@ class Delivery(models.Model):
 	phone = models.CharField(max_length=15)
 	email = models.CharField(max_length=100)
 	website = models.URLField()
-	cost_per_delivery = models.PositiveIntegerField()
+	service_fee = models.PositiveIntegerField()
 
 
 	def __str__(self):
-		return f'{self.name} @ {self.cost_per_delivery}ghs'
+		return f'{self.name} @ {self.service_fee}ghs'
 
 
 	def owner_phone(self):

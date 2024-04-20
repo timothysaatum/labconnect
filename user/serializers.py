@@ -219,3 +219,15 @@ class SetNewPasswordSerializer(serializers.Serializer):
 		except Exception as e:
 
 			raise AuthenticationFailed("An error occured. Either the link has expired or is invalid")
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Client
+		fields = [
+					'email', 'first_name', 'last_name', 'gender', 'phone_number', 
+					'digital_address', 'emmergency_number', 'current_facility', 
+					'staff_id', 'account_type', 'profile_picture', 'is_staff', 
+					'is_active', 'is_admin', 'is_verified', 'date_joined', 'last_login',
+				]

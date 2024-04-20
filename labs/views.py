@@ -10,8 +10,6 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 
 
 
-
-
 class CreateLaboratoryView(CreateAPIView):
 
 
@@ -201,12 +199,10 @@ class DepartmentUpdateView(UpdateAPIView):
 				serializer.save()
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
 
-			return Response({'error': 'You are no authorized to edit labaratory details!'}, 
+			return Response({'error': 'You are no authorized to edit department details!'}, 
 				status=status.HTTP_401_UNAUTHORIZED)
 
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 class DepartmentDeleteView(DestroyAPIView):

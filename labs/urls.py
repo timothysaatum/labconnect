@@ -11,11 +11,11 @@ urlpatterns = [
 
 	#creating, reading, updating and deleting laboratory routes
 
-	path('create/', CreateLaboratoryView.as_view(), name='laboratory'),
-	path('list/', LaboratoryListView.as_view(), name='labs'),
-	path('details/<int:pk>/', LaboratoryDetailView.as_view(), name='lab-details'),
-	path('update/<int:pk>/', LaboratoryUpdateView.as_view(), name='lab-update'),
-	path('delete/<int:pk>/', LaboratoryDeleteView.as_view(), name='delete'),
+	path('create/', CreateLaboratoryView.as_view(), name='create-laboratory'),
+	path('list/', LaboratoryListView.as_view(), name='laboratory-list'),
+	path('details/<int:pk>/', LaboratoryDetailView.as_view(), name='laboratory-details'),
+	path('update/<int:pk>/', LaboratoryUpdateView.as_view(), name='laboratory-update'),
+	path('delete/<int:pk>/', LaboratoryDeleteView.as_view(), name='laboratory-delete'),
 
 
 	#creating, reading, updating and deleting department routes

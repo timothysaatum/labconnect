@@ -32,7 +32,6 @@ class ClientAdmin(UserAdmin):
 
     search_fields = ('email', 'last_name')
     ordering = ('email',)
-    filter_horizontal = ()
 
 
 class OneTimePasswordAdmin(admin.ModelAdmin):
@@ -42,6 +41,5 @@ class OneTimePasswordAdmin(admin.ModelAdmin):
 # Now register the new UserAdmin...
 admin.site.register(Client, ClientAdmin)
 admin.site.register(OneTimePassword, OneTimePasswordAdmin)
-# ... and, since we're not using Django's built-in permissions,
-# unregister the Group model from admin.
+
 admin.site.register(Permission)
