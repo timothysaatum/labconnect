@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-user = get_user_model()
+user_account = get_user_model()
 
 
 
@@ -10,7 +10,7 @@ class Plan(models.Model):
 
 	name = models.CharField(max_length=100, default='Free Plan')
 	duration = models.DurationField(default='9999 days')
-	price = models.FloatField(default=0.00)
+	price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 	date_added = models.DateTimeField(auto_now=True)
 
 
@@ -22,9 +22,9 @@ class Plan(models.Model):
 class Subscription(models.Model):
 
 	plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='subscription')
-	subscriber = models.ForeignKey(user, on_delete=models.CASCADE, related_name='subscription', db_index=True)
-	price = models.FloatField(default=0.00)
-	balance = models.FloatField(default=0.00)
+	subscriber = models.ForeignKey(user_account, on_delete=models.CASCADE, related_name='subscription', db_index=True)
+	price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+	balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 	is_renewed = models.BooleanField(default=False)
 	is_cancelled = models.BooleanField(default=False)
 	is_paid = models.BooleanField(default=False, db_index=True)
@@ -49,11 +49,11 @@ class Subscription(models.Model):
 
 class Incentive(models.Model):
 
-	beneficient = models.ForeignKey(user, on_delete=models.CASCADE, related_name='Incentives', db_index=True)
+	beneficient = models.ForeignKey(user_account, on_delete=models.CASCADE, related_name='Incentives', db_index=True)
 	number_of_requests = models.PositiveIntegerField(default=0)
-	amortized_amount = models.FloatField(default=0.00)
+	amortized_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 	is_withdrawn = models.BooleanField(default=False)
-	balance = models.FloatField(default=0.00)
+	balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 	date_withdrawn = models.DateTimeField(auto_now=True)
 
 
@@ -88,8 +88,8 @@ PAYMENT_MODE = [
 
 class Transaction(models.Model):
 
-	client = models.ForeignKey(user, on_delete=models.SET_NULL, blank=True ,null=True, db_index=True)
-	amount = models.FloatField()
+	client = models.ForeignKey(user_account, on_delete=models.SET_NULL, blank=True ,null=True, db_index=True)
+	amount = models.DecimalField(max_digits=10, decimal_places=2)
 	account_number = models.CharField(max_length=100)
 	account_name = models.CharField(max_length=100)
 	bank = models.CharField(max_length=200)
