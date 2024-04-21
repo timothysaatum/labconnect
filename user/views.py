@@ -83,10 +83,7 @@ class CreateUserView(GenericAPIView):
 
 		if serializer.is_valid(raise_exception=True):
 
-			#serializer.save()
 			user = serializer.save()
-			#user_data = serializer.data
-			print(user.email)
 			send_code_to_user(user.email)
 
 			return Response(

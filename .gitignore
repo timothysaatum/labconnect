@@ -3,3 +3,5 @@
 ./labs/migrations
 ./user/migrations
 ./client/node_modules
+.env
+db.sqlite3

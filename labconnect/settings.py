@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z)*2p-$krt=xp)j2troq)wn80+e#($#4d*@t2wx@7mx5!t4m$p'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG_STATUS', cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('CURRENT_ALLOWED_HOST', cast = Csv())
 
 
 # Application definition
@@ -127,15 +128,15 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 
-LOGIN_URL = 'user:login'
+LOGIN_URL = 'client:login'
 LOGIN_REDIRECT_URL = 'hospital:home'
 #LOGOUT_REDIRECT_URL = 'hospital:home'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'timothysaatum@gmail.com'
-EMAIL_HOST_PASSWORD = 'kscnzqcdtpmewpxz'
+EMAIL_HOST_USER = config('EMAIL_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_PASS')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 #ClientID = '1002265369673-b1i1p7c5kv7l9kejfmv1ej097cvk834n.apps.googleusercontent.com'
@@ -190,3 +191,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #        'django.contrib.auth.backends.ModelBackend',
 #        'allauth.account.auth_backends.AuthenticationBackend'
 #    )
+
+PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
+PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
