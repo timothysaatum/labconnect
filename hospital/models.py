@@ -38,43 +38,19 @@ class Hospital(BaseModel):
 		return self.name
 
 
-WARD_TYPES = [
-
-	('Male Ward', 'Male Ward'),
-	('Female Ward', 'Female Ward'),
-	('Surgical Ward', 'Surgical Ward'),
-	('Children Ward', 'Children Ward')
-	
-]
-
-class Ward(models.Model):
-
-	hospital  = models.ForeignKey(Hospital, on_delete=models.CASCADE)
-	ward_type = models.CharField(max_length=200, choices=WARD_TYPES)
-	phone = models.CharField(max_length=15)
-	ward_manager = models.CharField(max_length=200)
-	date_created = models.DateField(auto_now_add=True)
-	date_modified = models.DateField(auto_now=True)
-
-	def __str__(self):
-		return self.ward_type
-
-
-SEX = [('Male', 'Male'), ('Female', 'Female')]
 
 class Sample(models.Model):
 
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
 	patient_age = models.PositiveIntegerField()
-	patient_sex = models.CharField(max_length=20, choices=SEX)
+	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	sample_container = models.CharField(max_length=100)
-	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE)
+	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE)#, null=True, blank=True)
 	lab = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
-	tests = models.ManyToManyField(Test)
+	tests = models.ManyToManyField(Test, related_name='tests')
 	hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
-	ward = models.ForeignKey(Ward, on_delete=models.CASCADE)
 	brief_description = models.TextField()
 	attachment = models.FileField(upload_to='sample/attachments', blank=True, null=True)
 	is_paid = models.BooleanField(default=False)

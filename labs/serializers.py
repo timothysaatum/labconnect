@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Laboratory, Department, Test, TestResult
+from .models import Laboratory, Department, Test
+from .results import TestResult
 
 
 

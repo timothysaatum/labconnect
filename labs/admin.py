@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Test, Department, Laboratory, TestResult
+from .models import Test, Department, Laboratory
+from .results import TestResult
 import csv
 from django.http import HttpResponse
 

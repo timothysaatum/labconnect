@@ -1,44 +1,26 @@
-from .serializers import (HospitalSerializer, WardSerializer, SampleSerializer)
+from .serializers import (HospitalSerializer, SampleSerializer)
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Sample
+from .models import Sample, Hospital
 from rest_framework_simplejwt.exceptions import InvalidToken
+from labs.results import TestResult
 
 
-class HospitalSerializerView(CreateAPIView):
 
-	parser_classes = (MultiPartParser, FormParser)
+class HospitalSerializerView(ListAPIView):
+
 	serializer_class = HospitalSerializer
 
-	def post(self, request):
+	def get_queryset(self):
 
-		serializer = self.serializer_class(data=request.data)
-		if serializer.is_valid(raise_exception=True):
-			serializer.save()
-
-		return Response({
-					'message': 'Hospital created successfully.'},
-					status=status.HTTP_200_OK)
-
-
-class WardSerializerView(CreateAPIView):
-
-	serializer_class = WardSerializer
-
-	def post(self, request):
-
-		serializer = self.serializer_class(data=request.data)
-		if serializer.is_valid(raise_exception=True):
+		try:
+			return Hospital.objects.all()
 			
-			serializer.save()
-
-		return Response(
-					{'message': 'Ward added successfully.'},
-					status=status.HTTP_200_OK)
-
+		except Hospital.DoesNotExist:
+			return Response({'error': 'Hospital not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class SampleSerializerView(CreateAPIView):
@@ -147,3 +129,16 @@ class SampleDeleteView(DestroyAPIView):
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class HospitalResultList(ListAPIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = SampleSerializer
+
+	def get_queryset(self):
+
+		try:
+			return TestResult.objects.filter(lab__created_by=self.request.user)
+
+		except TestResult.DoesNotExist:
+			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)

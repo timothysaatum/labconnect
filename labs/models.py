@@ -4,6 +4,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 user = get_user_model()
 
 
+
 class BaseModel(models.Model):
 
 	date_added = models.DateField(auto_now_add=True)
@@ -154,26 +155,3 @@ class Test(BaseModel):
 			percentage = round((self.discount_price / self.price) * 100)
 
 			return f'{percentage}%'
-
-
-class TestResult(BaseModel):
-
-	'''
-	A test result thatn can be generated in a department withina lab:
-
-	attrs:
-	department(str): The department where this test result belongs to.
-	test(str): The test this results belong to.
-	'''
-	
-	send_by = models.ForeignKey(user, on_delete=models.CASCADE, related_name='sender',  db_index=True)
-	department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='results', db_index=True)
-	laboratory = models.CharField(max_length=200)
-	test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='results', db_index=True)
-	result = models.FileField(upload_to='labs/results')
-	comments = models.TextField()
-	is_verified = models.BooleanField(default=False)
-	is_received = models.BooleanField(default=False)
-
-	def __str__(self):
-		return self.laboratory

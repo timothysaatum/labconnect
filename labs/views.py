@@ -5,8 +5,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Laboratory, Department, Test, TestResult
+from .models import Laboratory, Department, Test
+from .results import TestResult
 from rest_framework_simplejwt.exceptions import InvalidToken
+from hospital.models import Sample
+from hospital.serializers import SampleSerializer
 
 
 
@@ -28,7 +31,6 @@ class CreateLaboratoryView(CreateAPIView):
 							status=status.HTTP_200_OK)
 			
 		return Response({'error': 'An error occured', 'details': serializer.errors})
-
 
 
 class LaboratoryListView(ListAPIView):
@@ -78,7 +80,6 @@ class LaboratoryDetailView(RetrieveAPIView):
 			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class LaboratoryUpdateView(UpdateAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -101,7 +102,6 @@ class LaboratoryUpdateView(UpdateAPIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class LaboratoryDeleteView(DestroyAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -115,7 +115,6 @@ class LaboratoryDeleteView(DestroyAPIView):
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 class DepartmentSerializerView(CreateAPIView):
@@ -137,7 +136,6 @@ class DepartmentSerializerView(CreateAPIView):
 					status=status.HTTP_200_OK)
 
 
-
 class DepartmentListView(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -150,7 +148,6 @@ class DepartmentListView(ListAPIView):
 
 		except Department.DoesNotExist:
 			return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 class DepartmentDetailView(RetrieveAPIView):
@@ -219,8 +216,6 @@ class DepartmentDeleteView(DestroyAPIView):
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-
-
 class CreateTestView(CreateAPIView):
 
 	serializer_class = TestSerializer
@@ -239,8 +234,6 @@ class CreateTestView(CreateAPIView):
 			)
 
 
-
-
 class TestListView(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -253,7 +246,6 @@ class TestListView(ListAPIView):
 
 		except Test.DoesNotExist:
 			return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 class TestUpdateView(UpdateAPIView):
@@ -277,7 +269,6 @@ class TestUpdateView(UpdateAPIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class TestDeleteView(DestroyAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -290,8 +281,6 @@ class TestDeleteView(DestroyAPIView):
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-
-
 
 
 class CreateTestResultView(CreateAPIView):
@@ -312,7 +301,6 @@ class CreateTestResultView(CreateAPIView):
 			)
 
 
-
 class TestResultListView(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -325,8 +313,6 @@ class TestResultListView(ListAPIView):
 
 		except TestResult.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
-
-
 
 
 class TestResultDetailView(RetrieveAPIView):
@@ -356,8 +342,6 @@ class TestResultDetailView(RetrieveAPIView):
 		return Response(serialized_data.data)
 		
 
-
-
 class TestResultUpdateView(UpdateAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -379,8 +363,6 @@ class TestResultUpdateView(UpdateAPIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 class TestResultDeleteView(DestroyAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -395,3 +377,18 @@ class TestResultDeleteView(DestroyAPIView):
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+class LaboratorySampleList(ListAPIView):
+
+	permission_classes = [IsAuthenticated]
+	serializer_class = SampleSerializer
+
+	def get_queryset(self):
+
+		try:
+			return Sample.objects.filter(lab__created_by=self.request.user)
+
+		except Sample.DoesNotExist:
+			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)

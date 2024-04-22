@@ -27,6 +27,7 @@ class SubscriptionCreationView(CreateAPIView):
 
 
 class UpdateSubscriptionView(UpdateAPIView):
+
 	permission_classes = [IsAuthenticated]
 	serializer_class = SubscriptionSerializer
 
@@ -59,11 +60,12 @@ class ProcessPaymentView(CreateAPIView):
 
 			if serializer.data['payment_mode'] == 'Bank':
 				return Response({'data': 'bank'}, status=status.HTTP_200_OK)
+
 			try:
 				pay = ProcessPayments(50000, 'timothysaatum@gmail.com')
 				res = pay.initialize_transaction()
 				print(res)
-				
+
 				return Response({'response': 'response'}, status=status.HTTP_200_OK)
 
 			except ConnectionError:
@@ -77,5 +79,3 @@ class ProcessPaymentView(CreateAPIView):
 
 			except TypeError:
 				return Response({'error': 'Object is not json serializeable'}, status=status.HTTP_400_BAD_REQUEST)
-
-			

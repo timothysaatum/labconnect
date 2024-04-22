@@ -8,7 +8,7 @@ from rest_framework import status
 
 class ProcessPayments:
 
-	AUTH_SECRET_KEY = settings.PAYSTACK_SECRET_KEY
+	AUTH_SECRET_KEY = settings.SECRET_KEY
 
 	headers = {
             "Authorization": f"Bearer {AUTH_SECRET_KEY}",

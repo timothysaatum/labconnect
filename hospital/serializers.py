@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Hospital, Ward, Sample
+from .models import Hospital, Sample
+from labs.models import Test
+from labs.serializers import TestSerializer
 
 
 
@@ -12,20 +14,25 @@ class HospitalSerializer(serializers.ModelSerializer):
 		 'digital_address', 'phone', 'email', 'website', 'date_modified', 'date_created')
 
 
-class WardSerializer(serializers.ModelSerializer):
-
-	class Meta:
-
-		model = Ward
-		fields = ('hospital', 'ward_type', 'phone', 'ward_manager', 'date_modified', 'date_created')
-
-
 class SampleSerializer(serializers.ModelSerializer):
+
 	attachment = serializers.FileField(required=False)
 
 	class Meta:
-
 		model = Sample
-		fields = ('send_by', 'name_of_patient', 'patient_age', 'patient_sex', 
-			'sample_type', 'sample_container', 'delivery', 'lab', 'tests', 
-			'hospital', 'ward', 'brief_description', 'attachment', 'date_modified', 'date_created')
+		fields = ('id', 'send_by', 'hospital', 'name_of_patient', 'patient_age', 'patient_sex', 'delivery',
+			'sample_type', 'sample_container', 'delivery', 'lab', 'tests', 'brief_description',	'attachment',
+			 'date_modified', 'date_created')
+
+
+
+	def to_representation(self, instance):
+
+		data = super().to_representation(instance)
+		data['tests'] = [test.name for test in instance.tests.all()]
+		data['send_by'] = instance.send_by.full_name
+		data['hospital'] = instance.hospital.name
+		data['delivery'] = instance.delivery.name
+		data['lab'] = instance.lab.name
+
+		return data
