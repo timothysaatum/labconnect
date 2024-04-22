@@ -8,5 +8,5 @@ class DeliverySerializer(serializers.ModelSerializer):
 
 		model = Delivery
 
-		fields = ('created_by','name', 'digital_address', 'phone', 'email', 'website', 
+		fields = ('id', 'created_by','name', 'digital_address', 'phone', 'email', 'website', 
 			'service_fee', 'date_modified', 'date_added')

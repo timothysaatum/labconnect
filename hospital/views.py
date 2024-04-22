@@ -18,7 +18,7 @@ class HospitalSerializerView(ListAPIView):
 
 		try:
 			return Hospital.objects.all()
-			
+
 		except Hospital.DoesNotExist:
 			return Response({'error': 'Hospital not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -40,8 +40,6 @@ class SampleSerializerView(CreateAPIView):
 				{'message': 'Sample added successfully.'},
 				status=status.HTTP_200_OK
 			)
-
-
 
 
 class SampleListView(ListAPIView):
