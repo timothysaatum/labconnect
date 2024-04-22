@@ -1,5 +1,4 @@
-from .serializers import (LaboratorySerializer, DepartmentSerializer, TestSerializer, TestResultSerializer, 
-	LaboratoryDetailViewSerializer)
+from .serializers import (LaboratorySerializer, DepartmentSerializer, TestSerializer, TestResultSerializer)
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -24,13 +23,16 @@ class CreateLaboratoryView(CreateAPIView):
 			
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
+			if self.request.user.account_type == 'Laboratory':
 
-			serializer.save(created_by=self.request.user)
+				serializer.save(created_by=self.request.user)
 
-			return Response({'message': 'Laboratory created successfully.'},
+				return Response({'message': 'Laboratory created successfully.'},
 							status=status.HTTP_200_OK)
-			
-		return Response({'error': 'An error occured', 'details': serializer.errors})
+
+			return Response({'error': 'Your account does not support labs'}, status=status.HTTP_400_BAD_REQUEST)
+
+		return Response({'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LaboratoryListView(ListAPIView):
@@ -131,9 +133,7 @@ class DepartmentSerializerView(CreateAPIView):
 			lab = Laboratory.objects.get(created_by=self.request.user)
 			serializer.save(laboratory=lab)
 
-		return Response(
-					{'message': 'Department added successfully.'},
-					status=status.HTTP_200_OK)
+		return Response({'message': 'Department added successfully.'}, status=status.HTTP_200_OK)
 
 
 class DepartmentListView(ListAPIView):
@@ -285,20 +285,21 @@ class TestDeleteView(DestroyAPIView):
 
 class CreateTestResultView(CreateAPIView):
 
-	permission_classes = [IsAuthenticated]
+	#permission_classes = [IsAuthenticated]
 	serializer_class = TestResultSerializer
 
 	def post(self, request):
+		if self.request.user.account_type == 'Laboratory':
+			serializer = self.serializer_class(data=request.data)
+			if serializer.is_valid(raise_exception=True):
 
-		serializer = self.serializer_class(data=request.data)
-		if serializer.is_valid(raise_exception=True):
+				serializer.save(send_by=self.request.user)
 
-			serializer.save()
-
-		return Response(
-				{'message': 'Test results added successfully.'},
-				status=status.HTTP_200_OK
-			)
+			return Response(
+					{'message': 'Test results added successfully.'},
+					status=status.HTTP_200_OK
+				)
+		return Response({'error': 'You account does not support result upload'})
 
 
 class TestResultListView(ListAPIView):
@@ -309,7 +310,7 @@ class TestResultListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return TestResult.objects.filter(department__laboratory__created_by=self.request.user)
+			return TestResult.objects.filter(laboratory__created_by=self.request.user)
 
 		except TestResult.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)

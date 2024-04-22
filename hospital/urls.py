@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (HospitalSerializerView, SampleSerializerView, 
-	SampleListView, SampleDetailView, SampleUpdateView, SampleDeleteView)
+	SampleListView, SampleDetailView, SampleUpdateView, SampleDeleteView, ClinicianResultList)
 
 
 app_name = 'hospital'
@@ -12,5 +12,6 @@ urlpatterns = [
 	path('sample/details/<int:pk>/', SampleDetailView.as_view(), name='sample-details'),
 	path('sample/update/<int:pk>/', SampleUpdateView.as_view(), name='sample-update'),
 	path('sample/delete/<int:pk>/', SampleDeleteView.as_view(), name='delete-sample'),
+	path('result-list/', ClinicianResultList.as_view(), name='result-list'),
 
 ]

@@ -7,6 +7,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Sample, Hospital
 from rest_framework_simplejwt.exceptions import InvalidToken
 from labs.results import TestResult
+from labs.serializers import TestResultSerializer
 
 
 
@@ -129,14 +130,15 @@ class SampleDeleteView(DestroyAPIView):
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class HospitalResultList(ListAPIView):
+class ClinicianResultList(ListAPIView):
+
 	permission_classes = [IsAuthenticated]
-	serializer_class = SampleSerializer
+	serializer_class = TestResultSerializer
 
 	def get_queryset(self):
 
 		try:
-			return TestResult.objects.filter(lab__created_by=self.request.user)
+			return TestResult.objects.filter(sample__send_by=self.request.user)
 
 		except TestResult.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
