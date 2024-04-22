@@ -50,6 +50,8 @@ def verify_token(refresh_token):
 
 class CheckRefreshToken(APIView):
 
+	serializer_class = UserSerializer
+
 	def get(self, request):
 		
 		cookie_token = request.COOKIES.get('refresh_token')
@@ -63,10 +65,12 @@ class CheckRefreshToken(APIView):
 			return Response({'error': 'Session expired'}, status=status.HTTP_403_FORBIDDEN)
 
 		access_token = str(refresh_token.access_token)
+		serialized_data = UserSerializer(user)
 		
 		return Response({
 
 			'access_token': access_token,
+			'data': serialized_data.data
 
 			}, status=status.HTTP_200_OK)
 		
