@@ -236,13 +236,12 @@ class CreateTestView(CreateAPIView):
 
 class TestListView(ListAPIView):
 
-	permission_classes = [IsAuthenticated]
 	serializer_class = TestSerializer
 
 	def get_queryset(self):
 
 		try:
-			return Test.objects.filter(department__laboratory__created_by=self.request.user)
+			return Test.objects.filter(department__laboratory__id=self.kwargs.get('pk'))
 
 		except Test.DoesNotExist:
 			return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -393,3 +392,17 @@ class LaboratorySampleList(ListAPIView):
 
 		except Sample.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class AllLaboratories(ListAPIView):
+
+	serializer_class = LaboratorySerializer
+
+	def get_queryset(self):
+
+		try:
+			return Laboratory.objects.all()
+			
+		except Laboratory.DoesNotExist:
+			return Response({'error': 'No labaratory added yet'}, status=status.HTTP_404_NOT_FOUND)

@@ -120,3 +120,18 @@ class DeliveryDeleteView(DestroyAPIView):
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+class AllDelivery(ListAPIView):
+
+	serializer_class = DeliverySerializer
+
+	def get_queryset(self):
+
+		try:
+			return Delivery.objects.all()
+			
+		except Delivery.DoesNotExist:
+			return Response({'error': 'Delivery not found'}, status=status.HTTP_404_NOT_FOUND)
+
