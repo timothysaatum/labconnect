@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "../ui/form";
 import { Input } from "../ui/input";
-import { CardDescription } from "../ui/card";
 import { Button } from "../ui/button";
 import {
   Accordion,
@@ -24,7 +23,7 @@ const SettingProfile = () => {
       <form>
         <div className="mb-10 border-b pb-4">
           <h3 className="text-2xl font-medium">Profile </h3>
-          <CardDescription>Update your laboratory information</CardDescription>
+          <FormDescription>Update your laboratory information</FormDescription>
         </div>
         <div className="flex flex-col gap-8 mb-4">
           <FormField
@@ -35,9 +34,9 @@ const SettingProfile = () => {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
-                <CardDescription>
+                <FormDescription>
                   The name of your laboratory as it will appear on your reports
-                </CardDescription>
+                </FormDescription>
               </FormItem>
             )}
           />
@@ -49,10 +48,10 @@ const SettingProfile = () => {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
-                <CardDescription>
+                <FormDescription>
                   The email address associated with your laboratory. Important
                   notifications will be sent to this address
-                </CardDescription>
+                </FormDescription>
               </FormItem>
             )}
           />

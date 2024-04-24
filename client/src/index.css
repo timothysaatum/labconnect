@@ -48,6 +48,10 @@ aside.settings nav a.active:hover {
 .dark aside.settings nav a.active {
   background-color: hsla(217.2 32.6% 17.5%);
 }
+
+/* landing */
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;

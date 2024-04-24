@@ -15,6 +15,9 @@ const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const DashboardSettings = React.lazy(() =>
   import("@/components/dashboard/settings")
 );
+const Tracking = React.lazy(() =>
+  import("@/pages/tracking")
+);
 
 export default function App() {
   return (
@@ -56,6 +59,14 @@ export default function App() {
                   element={
                     <React.Suspense>
                       <DashboardSettings />
+                    </React.Suspense>
+                  }
+                />
+                <Route
+                  path="tracking"
+                  element={
+                    <React.Suspense>
+                      <Tracking />
                     </React.Suspense>
                   }
                 />

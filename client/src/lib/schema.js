@@ -33,7 +33,6 @@ export const SigninSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z.string().min(1, { message: "Password is required" }),
 });
-
 export const labRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),
   patient_age: z.coerce.number().min(1, "age is required"),
@@ -45,8 +44,11 @@ export const labRequestSchema = z.object({
   hospital: z.string().min(1, "Hospital is required"),
   ward: z.string().min(1, "Ward is required"),
   brief_description: z.string().min(1, "Brief description is required"),
-  attachment: z.string().nullable(),
-  tests: z.array(z.object()).nonempty("Please select at least one test"),
+  attachment: z
+    .instanceof(FileList)
+    .refine((attachment) => attachment?.length == 1, "File is required."),
+
+  // tests: z.array(z.object()).nonempty("Please select at least one test"),
 });
 export const OTPSchema = z.object({
   code: z.string().min(6, {

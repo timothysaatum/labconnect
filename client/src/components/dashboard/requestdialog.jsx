@@ -35,7 +35,7 @@ export default function RequestDialog() {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button>Create New Request</Button>
+          <Button className="">Send New Sample</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-3xl max-h-[90%]">
           <DialogHeader>

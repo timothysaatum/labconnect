@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,20 +27,21 @@ export default function LabelDropdown({
   placeholder,
 }) {
   const [open, setOpen] = React.useState(false);
+const labels = ["Year(s)", "Month(s)", "Day(s)"];
 
   const isMobile = useMediaQuery("(min-width: 640px)");
   return (
     <div>
       <FormField
-        name={name}
+        name="age"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>{formlabel}</FormLabel>
-            <FormControl className="">
+            <FormLabel>Patient's age</FormLabel>
+            <FormControl>
               <div className="relative">
                 <Input
                   type="numeric"
-                  placeholder={placeholder}
+                  placeholder="Patient's age"
                   autoComplete="off"
                   maxLength={3}
                   {...field}
@@ -51,22 +51,7 @@ export default function LabelDropdown({
                     asChild
                     className="absolute right-0 top-0 h-full"
                   >
-                    <Label variant="ghost">
-                      <Badge
-                        variant="outline"
-                        className="min-w-10 h-full text-xs rounded-e-sm"
-                      >
-                        {isMobile ? label : label.charAt(0)}
-                        <ChevronDown
-                          size="1.4em"
-                          className={`${
-                            open
-                              ? "rotate-180 transition-transform ml-2"
-                              : "ml-2"
-                          }`}
-                        />
-                      </Badge>
-                    </Label>
+                    
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="end"

@@ -65,9 +65,26 @@ class CheckRefreshToken(APIView):
 		access_token = str(refresh_token.access_token)
 		
 		return Response({
-
 			'access_token': access_token,
-
+			'user':{
+			'full_name': user.full_name,
+			'current_facility': user.current_facility, 
+			'staff_id': user.staff_id,
+			'is_staff': user.is_staff,
+			'email': user.email,
+			'gender': user.gender,
+			'phone_number': user.phone_number,
+			'digital_address': user.digital_address,
+			'is_verified': user.is_verified, 
+			'is_active': user.is_active, 
+			'is_admin': user.is_admin, 
+			'profile_picture': user.profile_picture_url,
+			'account_type': user.account_type, 
+			'email':user.email,
+			'user_id': user.id,
+			'date_joined': user.date_joined,
+			'last_login': user.last_login,
+			}
 			}, status=status.HTTP_200_OK)
 		
 
