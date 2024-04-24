@@ -16,7 +16,7 @@ const useRefreshToken = () => {
       });
       console.log(response)
       const accessToken = response?.data?.access_token;
-      dispatch(setCredentials({ data:response.data.user, accessToken: accessToken }));
+      dispatch(setCredentials({ data:response.data.data, accessToken: accessToken }));
       return accessToken;
     } catch (error) {
       dispatch(logOut());

@@ -20,11 +20,6 @@ const Header = () => {
   const user = useSelector(selectCurrentUser);
   const location = useLocation();
 const logout = useLogout()
-const initials = user?.full_name.split(" ")
-
-const hey="jdj"
-hey.toLocaleUpperCase
-console.log(initials)
   return (
     <nav
       aria-label="main navigation bar"
@@ -63,8 +58,6 @@ console.log(initials)
                     src={"http://localhost:8000/media/labs/logo/Capture.PNG"}
                   />
                   <AvatarFallback>
-                    {initials[0].charAt(0).toLocaleUpperCase() +
-                      initials[1].charAt(0).toLocaleUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </Button>

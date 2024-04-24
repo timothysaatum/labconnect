@@ -163,7 +163,7 @@ export default function DashboardOverview() {
                         <TableRow
                           className={`${
                             selectedRequest === request ? "bg-accent" : null
-                          }`}
+                          } cursor-pointer`}
                           key={request.id}
                           onClick={() => handleRequestSelect(request)}
                         >
