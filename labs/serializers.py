@@ -41,15 +41,18 @@ class TestResultSerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = TestResult
-		fields = ('id' ,'send_by', 'department', 'laboratory', 'test', 'result', 
+		fields = ('id' ,'send_by', 'department', 'laboratory', 'hospital', 'test', 'result', 'sample',
 			'comments', 'is_verified', 'is_received', 'date_modified', 'date_added')
 
 
+	def to_representation(self, instance):
 
+		data = super().to_representation(instance)
+		data['send_by'] = instance.send_by.full_name
+		data['hospital'] = instance.hospital.name
+		data['sample'] = instance.sample.sample_type
+		data['department'] = instance.department.department_name
+		data['test'] = instance.test.name
+		data['laboratory'] = instance.laboratory.name
 
-class LaboratoryDetailViewSerializer(serializers.ModelSerializer):
-
-	class Meta:
-		model = Laboratory
-		fields = ('created_by', 'name', 'herfra_id', 'digital_address', 'phone', 'email', 'website', 
-			'description', 'date_modified', 'date_added', 'logo')
+		return data

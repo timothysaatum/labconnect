@@ -20,13 +20,17 @@ class CreateDeliveryView(CreateAPIView):
 	def post(self, request):
 
 		serializer = self.serializer_class(data=request.data, context={'request': request})
+
 		if serializer.is_valid(raise_exception=True):
-			serializer.save(created_by=self.request.user)
 
-		return Response({
-					'message': 'Delivery created successfully.'},
-					status=status.HTTP_200_OK)
+			if self.request.user.account_type == 'Delivery':
 
+				serializer.save(created_by=self.request.user)
+				return Response({'message': 'Delivery created successfully.'}, status=status.HTTP_200_OK)
+
+			return Response({'error': 'Your account type does not support addition of a delivery.'})
+
+		return Response({'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 	
 
 
