@@ -2,8 +2,8 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import ThemeToggler from "./ThemeToggler";
 import { Sidebar } from "./sidebar";
-import { logOut, selectCurrentUser } from "@/redux/auth/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import {selectCurrentUser } from "@/redux/auth/authSlice";
+import {  useSelector } from "react-redux";
 
 import {
   DropdownMenu,
@@ -14,17 +14,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import useLogout from "@/hooks/uselogout";
 
 const Header = () => {
   const user = useSelector(selectCurrentUser);
   const location = useLocation();
-  const dispatch = useDispatch();
+const logout = useLogout()
+const initials = user?.full_name.split(" ")
 
-  const Logout = () => {
-    dispatch(logOut());
-    localStorage.removeItem("user");
-  };
-
+const hey="jdj"
+hey.toLocaleUpperCase
+console.log(initials)
   return (
     <nav
       aria-label="main navigation bar"
@@ -59,18 +59,25 @@ const Header = () => {
                 className="overflow-hidden rounded-full"
               >
                 <Avatar>
-                  <AvatarImage src={user.profile_picture} />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage
+                    src={"http://localhost:8000/media/labs/logo/Capture.PNG"}
+                  />
+                  <AvatarFallback>
+                    {initials[0].charAt(0).toLocaleUpperCase() +
+                      initials[1].charAt(0).toLocaleUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{user?.full_name}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={Logout}>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (

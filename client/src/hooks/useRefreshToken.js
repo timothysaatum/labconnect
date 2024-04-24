@@ -9,15 +9,12 @@ import { toast } from "sonner";
 
 const useRefreshToken = () => {
   const dispatch = useDispatch();
-  
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const refresh = async () => {
     try {
       const response = await axios.get("/user/refresh/token/", {
         withCredentials: true,
       });
+      console.log(response)
       const accessToken = response?.data?.access_token;
       dispatch(setCredentials({ data:response.data.user, accessToken: accessToken }));
       return accessToken;

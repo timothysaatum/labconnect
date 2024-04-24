@@ -8,16 +8,30 @@ import { store, persistor } from "./redux/store.js";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "sonner";
+import { QueryClientProvider,QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+
+const queryClient= new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 2,
+    },
+  },
+});
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <PersistGate persistor={persistor}>
-      <Provider store={store}>
-        <BrowserRouter>
+  <PersistGate persistor={persistor}>
+    <Provider store={store}>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
           <ThemeProvider defaultTheme="dark" storageKey="theme_key">
             <App />
-            <Toaster richColors/>
+            <Toaster richColors />
+            <ReactQueryDevtools initialIsOpen={false} />
           </ThemeProvider>
-        </BrowserRouter>
-      </Provider>
-    </PersistGate>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </Provider>
+  </PersistGate>
 );

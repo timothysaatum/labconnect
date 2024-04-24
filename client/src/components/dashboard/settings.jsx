@@ -8,10 +8,13 @@ import {
 } from "../ui/card";
 import { useEffect, useState } from "react";
 import SettingProfile from "./Profile";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
 
 const Sidebar = ({ tab }) => {
   return (
-    <aside className="settings hidden w-60 font-medium md:flex flex-col">
+    <aside className="settings hidden w-36 md:w-60 font-medium sm:flex flex-col">
       <nav className="flex flex-col gap-4">
         <Link
           to="?tab=profile"
@@ -83,17 +86,46 @@ const DashboardSettings = () => {
       //   case "notifications":
       //     return <Notifications />;
       default:
-        return <SettingProfile/>;
+        return <SettingProfile />;
     }
   };
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
       <Card className="mx-10 relative">
+        <div className="mt-4 flex justify-end mr-8 sm:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="min-w-24">
+                {tab === null ? "Profile" : tab} {" "}
+                <ChevronDown    className="ml-2"/>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+                <DropdownMenuItem>
+                    <Link to="?tab=profile">Profile</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link to="?tab=account">Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link to="?tab=preferences">Preferences</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link to="?tab=security">Security</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link to="?tab=notifications">Notifications</Link>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <CardHeader>
-          <CardTitle>Settings</CardTitle>
-          <CardDescription className="border-b pb-5">
-            Manage your Laboratory settings and preferences here
-          </CardDescription>
+          <div>
+            <CardTitle>Settings</CardTitle>
+            <CardDescription className="border-b pb-5">
+              Manage your Laboratory settings and preferences here
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent className="flex">
           <Sidebar tab={tab} />

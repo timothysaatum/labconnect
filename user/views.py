@@ -68,7 +68,6 @@ class CheckRefreshToken(APIView):
 		serialized_data = UserSerializer(user)
 		
 		return Response({
-
 			'access_token': access_token,
 			'data': serialized_data.data
 

@@ -1,5 +1,12 @@
 import React from "react";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { useForm } from "react-hook-form";
 import { labRequestSchema } from "@/lib/schema";
 import { Input } from "../ui/input";
@@ -8,8 +15,24 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import MultipleSelector from "../ui/multi-select";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const RequestForm = () => {
+  const axiosPrivate = useAxiosPrivate();
   const form = useForm({
     // resolver: zodResolver(labRequestSchema),
     defaultValues: {
@@ -23,10 +46,17 @@ const RequestForm = () => {
       hospital: "",
       ward: "",
       brief_description: "",
-      attachment: "",
       tests: [],
     },
   });
+  const fileRef = form.register("attachment");
+
+  const [open, setOpen] = React.useState(false);
+  const [label, setLabel] = React.useState("Year(s)");
+  const labels = ["Year(s)", "Month(s)", "Day(s)"];
+
+  const isMobile = useMediaQuery("(min-width: 640px)");
+
   const OPTIONS = [
     { label: "Full Blood Count (FBC)", value: "fbc" },
     { label: "Urinalysis (U/A)", value: "urinalysis" },
@@ -47,9 +77,27 @@ const RequestForm = () => {
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const onSubmit = (data) => {
-    console.log(data);
-  }
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+      console.log(data);
+
+      for (const key in data) {
+        formData.append(key, data[key]);
+      }
+      const response = await axiosPrivate.post(
+        "/hospital/clinician/sample/add/",
+        data,
+
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      console.log(response?.data);
+    } catch (error) {
+      console.log(error.data);
+    }
+  };
   return (
     <section>
       <Form {...form}>
@@ -71,24 +119,74 @@ const RequestForm = () => {
             )}
           />
           <FormField
-            name="patient_age"
+            name="age"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Patient's Age</FormLabel>
+                <FormLabel>Patient's age</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Patient's age" {...field} />
+                  <div className="relative">
+                    <Input
+                      type="numeric"
+                      placeholder="Patient's age"
+                      autoComplete="off"
+                      maxLength={3}
+                      {...field}
+                    />
+                    <DropdownMenu open={open} onOpenChange={setOpen}>
+                      <DropdownMenuTrigger
+                        asChild
+                        className="absolute right-0 top-0 h-full"
+                      >
+                        <Button variant="ghost" className="text-gray-500">
+                        {label} <ChevronDown size={20} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className={`${
+                          isMobile ? `w-[50px] ` : "w-[20px]"
+                        }`}
+                      >
+                        {labels.map((label) => (
+                          <DropdownMenuItem
+                            key={label}
+                            onClick={() => setLabel(label)}
+                          >
+                            {isMobile ? label : label.charAt(0)}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
           <FormField
+            control={form.control}
             name="patient_sex"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name of Patient</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="Patient's Sex" {...field} />
-                </FormControl>
+                <FormLabel>Patient gender</FormLabel>
+                <Select
+                  onValueChange={(newValue) => {
+                    field.onChange(newValue);
+                    form.clearErrors("gender");
+                  }}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Patient sex" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -143,18 +241,29 @@ const RequestForm = () => {
             )}
           />
           <FormField
+            control={form.control}
             name="lab"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Laboratory</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Laboratory"
-                    {...field}
-                    size="small"
-                  />
-                </FormControl>
+                <FormLabel>Patient gender</FormLabel>
+                <Select
+                  onValueChange={(newValue) => {
+                    field.onChange(newValue);
+                    form.clearErrors("lab");
+                  }}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose laboratory" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -196,14 +305,14 @@ const RequestForm = () => {
               <FormItem>
                 <FormLabel>Attachment</FormLabel>
                 <FormControl>
-                  <Input type="file" placeholder="Attachment" {...field}  />
+                  <Input type="file" placeholder="Attachment" {...fileRef} />
                 </FormControl>
               </FormItem>
             )}
           />
           <FormField
-            name="tests"
             control={form.control}
+            name="tests"
             render={({ field }) => (
               <FormItem className="col-span-2">
                 <FormLabel>Tests</FormLabel>
@@ -212,21 +321,18 @@ const RequestForm = () => {
                     value={field.value}
                     onChange={field.onChange}
                     defaultOptions={OPTIONS}
-                    hidePlaceholderWhenSelected
-                    placeholder="Select frameworks you like..."
                     emptyIndicator={
                       <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                        no results found.
+                        Test not found
                       </p>
                     }
-                    {...field}
                   />
                 </FormControl>
               </FormItem>
             )}
           />
           <FormField
-          control={form.control}
+            control={form.control}
             name="brief_description"
             render={({ field }) => (
               <FormItem className="col-span-2">
@@ -251,16 +357,3 @@ const RequestForm = () => {
 };
 
 export default RequestForm;
-
-//   name_of_patient: z.string().min(1, "Patient name is required"),
-//   patient_age: z.coerce.number().min(1, "age is required"),
-//   patient_sex: z.string().min(1, "Sex is required"),
-//   sample_type: z.string().min(1, "Sample type is required"),
-//   sample_container: z.string().min(1, "Sample container is required"),
-//   delivery: z.string().min(1, "Delivery Service is required"),
-//   lab: z.string().min(1, "Lab is required"),
-//   hospital: z.string().min(1, "Hospital is required"),
-//   ward: z.string().min(1, "Ward is required"),
-//   brief_description: z.string().min(1, "Brief description is required"),
-//   attachment: z.string().nullable(),
-//   tests: z.array(z.string()).nonempty("Please select at least one test"),
