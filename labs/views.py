@@ -14,13 +14,12 @@ from hospital.serializers import SampleSerializer
 
 class CreateLaboratoryView(CreateAPIView):
 
-
 	permission_classes = [IsAuthenticated]
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = LaboratorySerializer
 
 	def post(self, request):
-			
+	
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
 			if self.request.user.account_type == 'Laboratory':
@@ -78,7 +77,7 @@ class LaboratoryDetailView(RetrieveAPIView):
 			return Response(serialized_data.data)
 
 		except Exception as e:
-			
+
 			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -379,7 +378,6 @@ class TestResultDeleteView(DestroyAPIView):
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-
 class LaboratorySampleList(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
@@ -394,7 +392,6 @@ class LaboratorySampleList(ListAPIView):
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class AllLaboratories(ListAPIView):
 
 	serializer_class = LaboratorySerializer
@@ -403,6 +400,6 @@ class AllLaboratories(ListAPIView):
 
 		try:
 			return Laboratory.objects.all()
-			
+
 		except Laboratory.DoesNotExist:
 			return Response({'error': 'No labaratory added yet'}, status=status.HTTP_404_NOT_FOUND)

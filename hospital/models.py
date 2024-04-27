@@ -5,7 +5,6 @@ from delivery.models import Delivery
 
 
 
-
 user = get_user_model()
 
 
@@ -47,7 +46,7 @@ class Sample(models.Model):
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	sample_container = models.CharField(max_length=100)
-	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE)#, null=True, blank=True)
+	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
 	lab = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
 	tests = models.ManyToManyField(Test, related_name='tests')
 	hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
@@ -64,6 +63,12 @@ class Sample(models.Model):
 		return self.sample_type
 
 
+	#def save(self, *args, **kwargs):
+	#	super().save(*args, **kwargs)
+
+	#	self.test.set(self.tests.all() | set(kwargs.get('tests', [])))
+
+
 	def sender_phone(self):
 
 		phone = self.send_by.phone_number
@@ -72,6 +77,7 @@ class Sample(models.Model):
 
 	def delivery_phone(self):
 
-		del_phone = Delivery.objects.get(id=self.delivery.id).phone
+		if self.delivery:
+			del_phone = Delivery.objects.get(id=self.delivery.id).phone
 
-		return del_phone
+			return del_phone

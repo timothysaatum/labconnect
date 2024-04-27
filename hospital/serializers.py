@@ -16,14 +16,16 @@ class HospitalSerializer(serializers.ModelSerializer):
 
 class SampleSerializer(serializers.ModelSerializer):
 
+	tests = TestSerializer(many=True)
 	attachment = serializers.FileField(required=False)
 
 	class Meta:
+
 		model = Sample
+
 		fields = ('id', 'send_by', 'hospital', 'name_of_patient', 'patient_age', 'patient_sex', 'delivery', 'is_paid',
-			'is_received_by_delivery', 'is_delivered_to_lab', 'is_access_by_lab',
-			'sample_type', 'sample_container', 'delivery', 'lab', 'tests', 'brief_description',	'attachment',
-			 'date_modified', 'date_created')
+			'is_received_by_delivery', 'is_delivered_to_lab', 'is_access_by_lab', 'sample_type', 'sample_container', 
+			'delivery', 'lab', 'tests', 'brief_description', 'attachment', 'date_modified', 'date_created')
 
 	def to_representation(self, instance):
 

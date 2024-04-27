@@ -37,10 +37,19 @@ class SampleSerializerView(CreateAPIView):
 
 			serializer.save(send_by=self.request.user)
 
-		return Response(
+			test_ids = request.data.get('tests')
+			print(test_ids)
+			sample = serializer.instance
+			print(sample)
+			for test_id in test_ids:
+				print(test_id)
+				sample.tests.add(test_id)
+
+			return Response(
 				{'message': 'Sample added successfully.'},
-				status=status.HTTP_200_OK
-			)
+				status=status.HTTP_201_CREATED)
+
+		return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SampleListView(ListAPIView):
@@ -106,6 +115,12 @@ class SampleUpdateView(UpdateAPIView):
 			if self.request.user.account_type == 'Client':
 
 				serializer.save()
+				sample.tests.clear()
+				test_ids = request.data.get('tests')
+
+				for test_id in test_ids:
+					sample.tests.add(test_id)
+
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
 
 			return Response({'error': 'You are no authorized to edit sample details!'},
