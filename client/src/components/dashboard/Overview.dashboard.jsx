@@ -125,6 +125,7 @@ export default function DashboardOverview() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
+                    id="search"
                     placeholder="Search Requests..."
                     className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
                   />
@@ -163,7 +164,7 @@ export default function DashboardOverview() {
                         <TableRow
                           className={`${
                             selectedRequest === request ? "bg-accent" : null
-                          }`}
+                          } cursor-pointer`}
                           key={request.id}
                           onClick={() => handleRequestSelect(request)}
                         >
