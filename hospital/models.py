@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from labs.models import Test, Laboratory
 from delivery.models import Delivery
-from django.utils import timezone
+#from django.utils import timezone
 
 
 
@@ -43,7 +43,7 @@ class Sample(models.Model):
 
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
-	patient_age = models.DateField(default=timezone.now)
+	patient_age = models.DateField()
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	sample_container = models.CharField(max_length=100)
@@ -82,3 +82,4 @@ class Sample(models.Model):
 			del_phone = Delivery.objects.get(id=self.delivery.id).phone
 
 			return del_phone
+		return 'Self Sent'
