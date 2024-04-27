@@ -25,7 +25,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CalendarIcon, Check, ChevronDown, ChevronsUpDown } from "lucide-react";
+import {
+  AlertCircle,
+  CalendarIcon,
+  Check,
+  ChevronDown,
+  ChevronsUpDown,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -58,10 +64,11 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
-import { cn } from "@/lib/utils";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import { FormBuilder } from "../formbuilder";
 import { DayPicker } from "react-day-picker";
+import { calculateAge } from "@/utils";
+import { cn } from "@/lib/utils";
 
 const RequestForm = () => {
   const form = useForm({
@@ -140,7 +147,10 @@ const RequestForm = () => {
       console.log(error.data);
     }
   };
-
+  useEffect(() => {
+    const age = calculateAge(form.watch("patient_age"));
+    console.log(age);
+  }, [form.watch("patient_age")]);
   // fetching lab tests
   const [id, setId] = useState(null);
   const {
@@ -203,7 +213,7 @@ const RequestForm = () => {
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            format(field.value, "yyyy:mm:dd")
                           ) : (
                             <span>Pick a date</span>
                           )}
@@ -214,9 +224,9 @@ const RequestForm = () => {
                     <PopoverContent className="w-full p-0" align="start">
                       <DayPicker
                         mode="single"
-                        captionLayout="dropdown"
+                        captionLayout="dropdown-buttons"
                         fromYear={2015}
-                        toYear={2025}
+                        toYear={new Date().getFullYear()}
                         selected={field.value}
                         onSelect={field.onChange}
                       />
@@ -420,19 +430,26 @@ const RequestForm = () => {
               <FormItem className="col-span-2">
                 <FormLabel>Tests</FormLabel>
                 <FormControl>
-                  <MultipleSelector
-                    disabled={!id || testsLoading}
-                    placeholder="select tests to request"
-                    value={field.value.value}
-                    onChange={field.onChange}
-                    options={Options}
-                    emptyIndicator={
-                      <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                        Test not found
-                      </p>
-                    }
-                  />
+                  <div className="relative">
+                    <MultipleSelector
+                      disabled={Options === null}
+                      placeholder="select tests to request"
+                      value={field.value.value}
+                      onChange={field.onChange}
+                      options={Options}
+                      emptyIndicator={
+                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                          Test not found
+                        </p>
+                      }
+                    />
+                    <ChevronsUpDown className=" absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                  </div>
                 </FormControl>
+                <FormDescription className="flex gap-2 items-center">
+                  <AlertCircle className="w-5 h-5" />
+                  Choose a lab to view available tests
+                </FormDescription>
               </FormItem>
             )}
           />
