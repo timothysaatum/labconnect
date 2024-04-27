@@ -14,7 +14,6 @@ const useRefreshToken = () => {
       const response = await axios.get("/user/refresh/token/", {
         withCredentials: true,
       });
-      console.log(response)
       const accessToken = response?.data?.access_token;
       dispatch(setCredentials({ data:response.data.data, accessToken: accessToken }));
       return accessToken;

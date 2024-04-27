@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { format } from "date-fns";
+
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,7 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronDown, ChevronsUpDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -30,9 +33,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  useFetchAllDeliveries,
+  useFetchAllLabs,
+  useFetchLabTests,
+} from "@/api/queries";
+import {
+  selectAllDeliveries,
+  setDeliveries,
+} from "@/redux/deliveries/AlldeliveriesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectAllLabs,
+  selectLabTests,
+  setLabs,
+  setTests,
+} from "@/redux/laboratories/AllLabsSlice";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
+import { cn } from "@/lib/utils";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
+import { FormBuilder } from "../formbuilder";
+import { DayPicker } from "react-day-picker";
 
 const RequestForm = () => {
-  const axiosPrivate = useAxiosPrivate();
   const form = useForm({
     // resolver: zodResolver(labRequestSchema),
     defaultValues: {
@@ -49,41 +80,52 @@ const RequestForm = () => {
       tests: [],
     },
   });
+  const axiosPrivate = useAxiosPrivate();
+  const dispatch = useDispatch();
+  const user = useSelector(selectCurrentUser);
   const fileRef = form.register("attachment");
-
-  const [open, setOpen] = React.useState(false);
-  const [label, setLabel] = React.useState("Year(s)");
-  const labels = ["Year(s)", "Month(s)", "Day(s)"];
-
-  const isMobile = useMediaQuery("(min-width: 640px)");
-
-  const OPTIONS = [
-    { label: "Full Blood Count (FBC)", value: "fbc" },
-    { label: "Urinalysis (U/A)", value: "urinalysis" },
-    { label: "Blood Glucose", value: "bloodGlucose" },
-    { label: "Electrolytes", value: "electrolytes" },
-    { label: "Liver Function Tests (LFTs)", value: "lft" },
-    { label: "Kidney Function Tests (KFTs)", value: "kft" },
-    { label: "Lipid Profile", value: "lipidProfile" },
-    { label: "HIV Test", value: "hivTest" },
-    { label: "Malaria Parasite Detection", value: "malariaParasite" },
-    { label: "Hepatitis B Test", value: "hepatitisB" },
-    { label: "Hepatitis C Test", value: "hepatitisC" },
-    { label: "Urinalysis Culture", value: "urineCulture" },
-    { label: "Stool Occult Blood", value: "stoolOccultBlood" },
-    { label: "Sputum Culture", value: "sputumCulture" },
-    { label: "Widal Test", value: "widalTest" },
-  ];
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  // fetching deliveries
+  const { data: deliveries, isError, isLoading } = useFetchAllDeliveries(); //used deliveries to prevent naming conflicts
+
+  useEffect(() => {
+    if (deliveries) {
+      dispatch(setDeliveries([...deliveries?.data]));
+    }
+  }, [deliveries]);
+
+  const deliveryOptions = useSelector(selectAllDeliveries);
+
+  //fetching labs
+  const {
+    data: labs,
+    isError: labsError,
+    isLoading: labsLoading,
+  } = useFetchAllLabs();
+
+  useEffect(() => {
+    if (labs) {
+      dispatch(setLabs([...labs?.data]));
+    }
+  }, [labs]);
+
+  const LabsOptions = useSelector(selectAllLabs);
+
   const onSubmit = async (data) => {
+    const reformedData = {
+      send_by: user.user_id,
+      ...data,
+      tests: data.tests.map((test) => test.value),
+    };
+
+    console.log(reformedData);
     try {
       const formData = new FormData();
-      console.log(data);
 
-      for (const key in data) {
-        formData.append(key, data[key]);
+      for (const key in reformedData) {
+        formData.append(key, reformedData[key]);
       }
       const response = await axiosPrivate.post(
         "/hospital/clinician/sample/add/",
@@ -98,6 +140,39 @@ const RequestForm = () => {
       console.log(error.data);
     }
   };
+
+  // fetching lab tests
+  const [id, setId] = useState(null);
+  const {
+    data: tests,
+    isError: testsError,
+    isLoading: testsLoading,
+  } = useFetchLabTests(id);
+
+  useEffect(() => {
+    if (tests) {
+      dispatch(setTests([...tests?.data]));
+    }
+  }, [tests]);
+
+  const [Options, setOptions] = useState(null);
+  const testOptions = useSelector(selectLabTests);
+  useEffect(() => {
+    setOptions(
+      testOptions?.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }))
+    );
+    return () => {
+      setOptions(null); // This will be executed when the component unmounts
+    };
+  }, [testOptions]);
+
+  useEffect(() => {
+    const value = form.watch("lab");
+    setId(Number(value));
+  }, [form.watch("lab")]);
   return (
     <section>
       <Form {...form}>
@@ -107,62 +182,51 @@ const RequestForm = () => {
           } px-4 py-2`}
           onSubmit={form.handleSubmit(onSubmit)}
         >
+          <FormBuilder name="name_of_patient" label="Name of patient">
+            <Input type="text" placeholder="Name of patient" />
+          </FormBuilder>
           <FormField
-            name="name_of_patient"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name of Patient</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="Name of patient" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="age"
+            name="patient_age"
+            control={form.control}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Patient's age</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      type="numeric"
-                      placeholder="Patient's age"
-                      autoComplete="off"
-                      maxLength={3}
-                      {...field}
-                    />
-                    <DropdownMenu open={open} onOpenChange={setOpen}>
-                      <DropdownMenuTrigger
-                        asChild
-                        className="absolute right-0 top-0 h-full"
-                      >
-                        <Button variant="ghost" className="text-gray-500">
-                        {label} <ChevronDown size={20} />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full  text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="end"
-                        className={`${
-                          isMobile ? `w-[50px] ` : "w-[20px]"
-                        }`}
-                      >
-                        {labels.map((label) => (
-                          <DropdownMenuItem
-                            key={label}
-                            onClick={() => setLabel(label)}
-                          >
-                            {isMobile ? label : label.charAt(0)}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <DayPicker
+                        mode="single"
+                        captionLayout="dropdown"
+                        fromYear={2015}
+                        toYear={2025}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="patient_sex"
@@ -170,10 +234,7 @@ const RequestForm = () => {
               <FormItem>
                 <FormLabel>Patient gender</FormLabel>
                 <Select
-                  onValueChange={(newValue) => {
-                    field.onChange(newValue);
-                    form.clearErrors("gender");
-                  }}
+                  onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
@@ -206,37 +267,72 @@ const RequestForm = () => {
               </FormItem>
             )}
           />
+          <FormBuilder name={"sample_container"} label={"Sample Container"}>
+            <Input type="text" placeholder="Sample container" />
+          </FormBuilder>
           <FormField
-            name="sample_container"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sample Container</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Sample container"
-                    {...field}
-                    size="small"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
+            control={form.control}
             name="delivery"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Delivery Service <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Delivery Service"
-                    {...field}
-                    size="small"
-                  />
-                </FormControl>
+              <FormItem className="flex flex-col justify-end">
+                <FormLabel>Choose Delivery Service</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? deliveryOptions?.find(
+                              (option) => option.id === field.value
+                            )?.name
+                          : "choose delivery service"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Command>
+                      <CommandInput placeholder="Search delivery service..." />
+                      <CommandEmpty>
+                        {labsLoading?.labs
+                          ? "Loading..."
+                          : labsError
+                          ? "Error loading labs"
+                          : "No laboratories found"}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        <CommandList>
+                          {deliveryOptions?.map((delivery) => (
+                            <CommandItem
+                              value={delivery.id}
+                              key={delivery.id}
+                              onSelect={() => {
+                                form.setValue("delivery", delivery.id);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  delivery.id === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {delivery.name}
+                            </CommandItem>
+                          ))}
+                        </CommandList>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -244,64 +340,71 @@ const RequestForm = () => {
             control={form.control}
             name="lab"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Patient gender</FormLabel>
-                <Select
-                  onValueChange={(newValue) => {
-                    field.onChange(newValue);
-                    form.clearErrors("lab");
-                  }}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose laboratory" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
+              <FormItem className="flex flex-col justify-end">
+                <FormLabel>Choose Labortory</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? LabsOptions?.find(
+                              (option) => option.id === field.value
+                            )?.name
+                          : "choose laboratory"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Command>
+                      <CommandInput placeholder="Search laboratory..." />
+                      <CommandEmpty>
+                        {labsLoading?.labs
+                          ? "Loading..."
+                          : labsError
+                          ? "Error loading labs"
+                          : "No laboratories found"}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        <CommandList>
+                          {LabsOptions?.map((lab) => (
+                            <CommandItem
+                              value={lab.id}
+                              key={lab.id}
+                              onSelect={() => {
+                                form.setValue("lab", lab.id);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  lab.id === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {lab.name}
+                            </CommandItem>
+                          ))}
+                        </CommandList>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
-            name="hospital"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Hospital</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Hospital"
-                    {...field}
-                    size="small"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="ward"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ward</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Ward"
-                    {...field}
-                    size="small"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
             name="attachment"
-            render={({ field }) => (
+            render={() => (
               <FormItem>
                 <FormLabel>Attachment</FormLabel>
                 <FormControl>
@@ -318,9 +421,11 @@ const RequestForm = () => {
                 <FormLabel>Tests</FormLabel>
                 <FormControl>
                   <MultipleSelector
-                    value={field.value}
+                    disabled={!id || testsLoading}
+                    placeholder="select tests to request"
+                    value={field.value.value}
                     onChange={field.onChange}
-                    defaultOptions={OPTIONS}
+                    options={Options}
                     emptyIndicator={
                       <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                         Test not found

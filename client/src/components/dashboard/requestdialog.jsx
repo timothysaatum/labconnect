@@ -21,12 +21,21 @@ import {
 } from "@/components/ui/drawer";
 import RequestForm from "./RequestForm";
 import { CircleChevronLeft, PanelBottomClose } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { currentStep } from "@/redux/requests/requestStepSlice";
 import { ScrollArea } from "../ui/scroll-area";
+import { setTests } from "@/redux/laboratories/AllLabsSlice";
+import { setDeliveries } from "@/redux/deliveries/AlldeliveriesSlice";
 
 export default function RequestDialog() {
   const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if (!open) {
+      dispatch(setTests([]));
+      dispatch(setDeliveries([]))
+    }
+  }, [open]);
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const step = useSelector(currentStep);
