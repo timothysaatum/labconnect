@@ -121,22 +121,29 @@ const RequestForm = () => {
   const LabsOptions = useSelector(selectAllLabs);
 
   const onSubmit = async (data) => {
-    const reformedData = {
-      send_by: user.user_id,
+    const transformedTests = data.tests.map((test) => {
+      const originalTest = testOptions.find((item) => item.id === test.value);
+      return {
+        department: originalTest.department,
+        name: originalTest.name,
+        price: originalTest.price,
+      };
+    });
+    const payload = {
       ...data,
-      tests: data.tests.map((test) => test.value),
+      tests: transformedTests,
     };
 
-    console.log(reformedData);
+    console.log(payload);
     try {
       const formData = new FormData();
 
-      for (const key in reformedData) {
-        formData.append(key, reformedData[key]);
+      for (const key in payload) {
+        formData.append(key, payload[key]);
       }
       const response = await axiosPrivate.post(
         "/hospital/clinician/sample/add/",
-        data,
+        formData,
 
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -179,6 +186,7 @@ const RequestForm = () => {
     };
   }, [testOptions]);
 
+  // id of lab to fetch tests for
   useEffect(() => {
     const value = form.watch("lab");
     setId(Number(value));

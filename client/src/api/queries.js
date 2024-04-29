@@ -46,3 +46,19 @@ export const useFetchLabTests = (id) => {
     enabled:!!id
   });
 };
+export const useFetchLabDepartments = () => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["departments"],
+    queryFn: async () => await axiosPrivate.get(`/laboratory/department/list/`),
+    refetchOnWindowFocus: false,
+  });
+};
+export const useFetchUserLab = () => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["userlabs"],
+    queryFn: async () => await axiosPrivate.get(`/laboratory/list/`),
+    refetchOnWindowFocus: false,
+  });
+};

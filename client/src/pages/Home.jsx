@@ -29,6 +29,8 @@ import { toast } from "@/components/ui/use-toast";
 import { DayPicker } from "react-day-picker";
 import { FormBuilder } from "@/components/formbuilder";
 import { Input } from "@/components/ui/input";
+import { useFetchUserLab } from "@/api/queries";
+import { useEffect } from "react";
 
 const FormSchema = z.object({
   dob: z.date({
@@ -54,7 +56,10 @@ export default function DatePickerForm() {
       ),
     });
   }
-
+  const { data, isLoading, isError } = useFetchUserLab();
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
   return (
     <div>
       <Form {...form}>

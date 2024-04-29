@@ -12,12 +12,11 @@ import Notfound from "./components/notfound";
 import DashboardOverview from "./components/dashboard/Overview.dashboard";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const MyLab = React.lazy(() => import("@/components/mylab"));
 const DashboardSettings = React.lazy(() =>
   import("@/components/dashboard/settings")
 );
-const Tracking = React.lazy(() =>
-  import("@/pages/tracking")
-);
+const Tracking = React.lazy(() => import("@/pages/tracking"));
 
 export default function App() {
   return (
@@ -67,6 +66,14 @@ export default function App() {
                   element={
                     <React.Suspense>
                       <Tracking />
+                    </React.Suspense>
+                  }
+                />
+                <Route
+                  path="my-laboratory"
+                  element={
+                    <React.Suspense>
+                      <MyLab />
                     </React.Suspense>
                   }
                 />

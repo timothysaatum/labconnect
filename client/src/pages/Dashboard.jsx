@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   Truck,
   TestTubes,
+  Microscope,
 } from "lucide-react";
 import {
   Tooltip,
@@ -29,6 +30,11 @@ export default function Dashboard() {
       icon: <Home className="h-5 w-5" />,
       link: "/dashboard",
       name: "Overview",
+    },
+    {
+      icon: <Microscope className="h-5 w-5" />,
+      link: "my-laboratory",
+      name: "My Laboratory",
     },
     { icon: <Truck className="h-5 w-5" />, link: "tracking", name: "Tracking" },
     {

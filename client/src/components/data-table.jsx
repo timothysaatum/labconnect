@@ -1,0 +1,190 @@
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  getFilteredRowModel,
+} from "@tanstack/react-table";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import React from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { ListFilter, Search } from "lucide-react";
+
+function EmptyLab({ header, helper, button }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="flex flex-col items-center  text-center py-14 ">
+        <h3 className="text-xl font-semibold tracking-tight">{header}</h3>
+        <p className="text-sm text-muted-foreground">{helper}</p>
+        <Button className="mt-4">{button}</Button>
+      </div>
+    </div>
+  );
+}
+export function DataTable({ data, columnDef, loading, error, title, filter }) {
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({});
+
+  const finalData = React.useMemo(() => data, [data]);
+  const finalColumnDef = React.useMemo(() => columnDef, [columnDef]);
+
+  const table = useReactTable({
+    columns: finalColumnDef,
+    data: finalData,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+  });
+
+  if (loading) return "Loading...";
+  if (error)
+    return (
+      <EmptyLab
+        header={`Error loading ${title}`}
+        title={title}
+        helper={"Please check no connection and try again "}
+        button={"Try Again"}
+      />
+    );
+  if (!loading && !error) {
+    if (finalData.length === 0)
+      return (
+        <EmptyLab
+          header={`No ${title} Found`}
+          helper={`Add ${title} to view`}
+          button={null}
+        />
+      );
+  }
+  return (
+    <>
+      <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            id="search"
+            placeholder={`Search ${title} ...`}
+            className="w-full rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10"
+            value={table.getColumn(`${filter}`)?.getFilterValue() ?? ""}
+            onChange={(event) =>
+              table.getColumn(`${filter}`)?.setFilterValue(event.target.value)
+            }
+          />
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-7 gap-1 text-sm">
+              <ListFilter className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only">Filter</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuCheckboxItem checked>
+              Fulfilled
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem>Declined</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem>Refunded</DropdownMenuCheckboxItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto h-7">
+              Columns
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerEl) => (
+              <TableRow key={headerEl.id}>
+                {headerEl.headers.map((columnEl) => (
+                  <TableHead key={columnEl.id} colSpan={columnEl.colSpan}>
+                    {columnEl.isPlaceholder
+                      ? null
+                      : flexRender(
+                          columnEl.column.columnDef.header,
+                          columnEl.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.map((rowEl) => (
+              <TableRow key={rowEl.id}>
+                {rowEl.getVisibleCells().map((cellEl) => (
+                  <TableCell key={cellEl.id}>
+                    {flexRender(
+                      cellEl.column.columnDef.cell,
+                      cellEl.getContext()
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="pl-4 mt-2 flex-1 text-sm text-muted-foreground">
+        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+        {table.getFilteredRowModel().rows.length} row(s) selected.
+      </div>
+    </>
+  );
+}
