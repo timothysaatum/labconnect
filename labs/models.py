@@ -123,7 +123,7 @@ class Test(BaseModel):
 	department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='tests', db_index=True)
 	name = models.CharField(max_length=200, db_index=True)
 	price = models.FloatField()
-	discount_price = models.FloatField(blank=True, null=True)
+	discount_price = models.FloatField(default=0, blank=True, null=True)
 
 
 	class Meta:
@@ -155,3 +155,4 @@ class Test(BaseModel):
 			percentage = round((self.discount_price / self.price) * 100)
 
 			return f'{percentage}%'
+		return '0%'

@@ -16,9 +16,9 @@ class HospitalSerializer(serializers.ModelSerializer):
 
 class SampleSerializer(serializers.ModelSerializer):
 
-	tests = TestSerializer(many=True)
 	patient_age = serializers.DateField(format='%Y-%m-%d')
 	attachment = serializers.FileField(required=False)
+	#tests = TestSerializer(many=True, required=False)
 
 	class Meta:
 

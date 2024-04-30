@@ -18,7 +18,6 @@ urlpatterns = [
 	path('update/<int:pk>/', LaboratoryUpdateView.as_view(), name='laboratory-update'),
 	path('delete/<int:pk>/', LaboratoryDeleteView.as_view(), name='laboratory-delete'),
 
-
 	#creating, reading, updating and deleting department routes
 
 	path('department/add/', DepartmentSerializerView.as_view(), name='add-department'),
@@ -26,7 +25,7 @@ urlpatterns = [
 	path('department/details/<int:pk>/', DepartmentDetailView.as_view(), name='department-details'),
 	path('department/update/<int:pk>/', DepartmentUpdateView.as_view(), name='department-update'),
 	path('department/delete/<int:pk>/', DepartmentDeleteView.as_view(), name='department-delete'),
-	
+
 	#creating, reading, updating and deleting test & results routes
 
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
@@ -38,7 +37,6 @@ urlpatterns = [
 	path('test/result/details/<int:pk>/', TestResultDetailView.as_view(), name='results-details'),
 	path('test/result/update/<int:pk>/', TestResultUpdateView.as_view(), name='result-update'),
 	path('test/result/delete/<int:pk>/', TestResultDeleteView.as_view(), name='result-delete'),
-
 
 	#samples
 	path('samples-list/', LaboratorySampleList.as_view(), name='samples-list')
