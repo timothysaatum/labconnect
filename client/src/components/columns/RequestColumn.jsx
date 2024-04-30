@@ -10,91 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
-import { useEffect } from "react";
+import { createCell, createSortableHeader } from "../../utils/tablefxns";
 
-const createSortableHeader =
-  (columnName) =>
-  ({ column }) => {
-    return (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      >
-        {columnName}
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
-    );
-  };
-const createCell =
-  (cell) =>
-  ({ getValue }) => {
-    if (cell === "date_added" || cell.split("_")[0].includes("date")) {
-      const date = moment(getValue("date_added")).format("MMM Do YY");
-      return <div className="text-start font-medium">{date}</div>;
-    }
-    return <div className="text-center font-medium">{getValue(cell)}</div>;
-  };
-
-export const testscolumnDef = [
-  {
-    accessorKey: "test_name",
-    header: createSortableHeader("Test Name"),
-  },
-  {
-    accessorKey: "price",
-    header: createSortableHeader("Price (GHS)"),
-    cell: createCell("price"),
-  },
-  {
-    accessorKey: "department",
-    header: createSortableHeader("Department"),
-    cell: createCell("department"),
-  },
-  {
-    accessorKey: "discounted_price",
-    header: createSortableHeader("Discounted Price"),
-    cell: createCell("discounted_price"),
-  },
-  {
-    accessorKey: "date_added",
-    header: createSortableHeader("Date Added"),
-    cell: createCell("date_added"),
-  },
-];
-
-export const departmentColumnDef = [
-  {
-    accessorKey: "department_name",
-    header: createSortableHeader("Department name"),
-  },
-  {
-    accessorKey: "head_of_department",
-    header: "Head of department",
-  },
-  {
-    accessorKey: "email",
-    header: "Department Email",
-  },
-  {
-    accessorKey: "phone_number",
-    header: "Tel",
-  },
-  {
-    accessorKey: "date_added",
-    header: createSortableHeader("Date Added"),
-    cell: createCell("date_added"),
-  },
-];
-
-//requests
 export const useRequestColums = () => {
   const user = useSelector(selectCurrentUser);
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
   const RequestColumns = [
     {
       id: "select",

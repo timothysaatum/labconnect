@@ -4,6 +4,7 @@ import {
   useReactTable,
   getSortedRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -26,7 +27,7 @@ import {
 import React from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ListFilter, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, ListFilter, Search } from "lucide-react";
 
 function EmptyLab({ header, helper, button }) {
   return (
@@ -44,7 +45,6 @@ export function DataTable({ data, columnDef, loading, error, title, filter }) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [rowSelection, setRowSelection] = React.useState({});
-
   const finalData = React.useMemo(() => data, [data]);
   const finalColumnDef = React.useMemo(() => columnDef, [columnDef]);
 
@@ -65,6 +65,7 @@ export function DataTable({ data, columnDef, loading, error, title, filter }) {
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   if (loading) return "Loading...";
@@ -90,18 +91,20 @@ export function DataTable({ data, columnDef, loading, error, title, filter }) {
   return (
     <>
       <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            id="search"
-            placeholder={`Search ${title} ...`}
-            className="w-full rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10"
-            value={table.getColumn(`${filter}`)?.getFilterValue() ?? ""}
-            onChange={(event) =>
-              table.getColumn(`${filter}`)?.setFilterValue(event.target.value)
-            }
-          />
+        <div className="flex-1">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              id="search"
+              placeholder={`Search ${title} ...`}
+              className="w-full rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10"
+              value={table.getColumn(`${filter}`)?.getFilterValue() ?? ""}
+              onChange={(event) =>
+                table.getColumn(`${filter}`)?.setFilterValue(event.target.value)
+              }
+            />
+          </div>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -181,9 +184,31 @@ export function DataTable({ data, columnDef, loading, error, title, filter }) {
           </TableBody>
         </Table>
       </div>
-      <div className="pl-4 mt-2 flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+      <div className="flex items-center mt-2">
+        <div className="text-muted-foreground flex-1">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="items-center space-x-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="w-8 h-8"
+          >
+            <ChevronLeft />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="w-8 h-8"
+          >
+            <ChevronRight/>
+          </Button>
+        </div>
       </div>
     </>
   );

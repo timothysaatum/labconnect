@@ -23,7 +23,8 @@ import {
 import { useEffect, useState } from "react";
 import { Table, TableHead, TableHeader } from "./ui/table";
 import { DataTable } from "./data-table";
-import { departmentColumnDef, testscolumnDef } from "./columns";
+import { departmentColumnDef } from "./columns/departmentColumns";
+import { testscolumnDef } from "./columns/testsColumns";
 
 function TableData({ tablehead }) {
   return (
@@ -39,60 +40,50 @@ function TableData({ tablehead }) {
 
 export default function MyLab() {
   const dispatch = useDispatch();
-  const [tests, setLabTests] = useState([]);
+  const [labtests, setLabTests] = useState([]);
   const [labDepartments, setLabDepartments] = useState([]);
-  const departments = useSelector(selectDepartments);
-  const labtests = useSelector(selectLabTests);
 
   const {
     isError: testError,
     isLoading: testsLoading,
-    data: testsData,
+    data: tests,
   } = useFetchLabTests(2);
   const {
     isError: deparmentsError,
     isLoading: deparmentsLoading,
-    data: deparmentsData,
+    data: departments,
   } = useFetchLabDepartments();
   useEffect(() => {
-    if (testsData?.data) {
-      dispatch(setTests(testsData?.data));
-    }
-  }, [testsData]);
-  useEffect(() => {
-    if (labtests) {
+    if (tests?.data) {
       setLabTests(
-        labtests.map((test) => {
+        tests.data.map((test) => {
           return {
             test_name: test.name,
             price: test.price,
             date_added: test.date_added,
             discounted_price: test.discount_price || "--",
-            department: departments?.find(
+            department: departments?.data?.find(
               (department) => department.id === test.department
             )?.department_name,
           };
         })
       );
     }
-  }, [labtests, labDepartments]);
+  }, [tests, labDepartments]);
   useEffect(() => {
-    if (deparmentsData?.data) {
-      dispatch(setDeparments(deparmentsData?.data));
+    if (departments?.data) {
+      setLabDepartments(
+        departments.data.map((department) => {
+          return {
+            department_name: department.department_name,
+            head_of_department: department.heard_of_department,
+            email: department.email,
+            phone_number: department.phone,
+            date_added: department.date_added,
+          };
+        })
+      );
     }
-  }, [deparmentsData?.data]);
-  useEffect(() => {
-    setLabDepartments(
-      departments.map((department) => {
-        return {
-          department_name: department.department_name,
-          head_of_department: department.heard_of_department,
-          email: department.email,
-          phone_number: department.phone,
-          date_added: department.date_added,
-        };
-      })
-    );
   }, [departments]);
 
   const headerCards = [
@@ -109,7 +100,7 @@ export default function MyLab() {
       title: "Tests",
       description:
         "All tests run in this laboratory. you can add new test,update existing tests and delete tests. you can also discounts to specific tests",
-      data: tests,
+      data: labtests,
       columnDef: testscolumnDef,
       loading: testsLoading,
       error: testError,

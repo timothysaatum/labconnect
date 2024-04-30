@@ -1,6 +1,4 @@
-import { BellRing, ListFilter, Search } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
+import { BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,41 +8,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RequestDialog from "./requestdialog";
 import { useFetchRequests } from "@/api/queries";
 import { useEffect, useState } from "react";
 import RequestDetails from "./requestDetails";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAllRequests, setRequests } from "@/redux/requests/requestsSlice";
+import {useSelector } from "react-redux";
 import { DataTable } from "../data-table";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
-import { useRequestColums } from "../columns";
+import { useRequestColums } from "@/components/columns/RequestColumn";
 
 export default function DashboardOverview() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setTableRequests] = useState([]);
   const RequestColumns = useRequestColums();
 
-  const dispatch = useDispatch();
-  const allrequests = useSelector(selectAllRequests);
   const user = useSelector(selectCurrentUser);
   const handleRequestSelect = (request) => {
     if (selectedRequest === request) {
@@ -53,17 +30,12 @@ export default function DashboardOverview() {
     }
     setSelectedRequest(request);
   };
-  const fetchRequest = useFetchRequests();
-  const { isError, data, isLoading } = fetchRequest;
-  useEffect(() => {
-    if (data) {
-      dispatch(setRequests(data.data));
-    }
-  }, [data]);
+
+  const { isError, data:allrequests, isLoading } = useFetchRequests();
   useEffect(() => {
     if (allrequests) {
       setTableRequests(
-        allrequests.map((request) => {
+        allrequests.data.map((request) => {
           return {
             id: request.id,
             Patient: request.name_of_patient,
@@ -76,9 +48,6 @@ export default function DashboardOverview() {
       );
     }
   }, [allrequests]);
-useEffect(()=>{
-  console.log(requests)
-},[requests])
   return (
     <main className="grid gap-4 p-4 sm:px-6 sm:pl-20 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
       <div
@@ -117,33 +86,23 @@ useEffect(()=>{
             <CardContent></CardContent>
           </Card>
         </div>
-        <Tabs defaultValue="week">
-          <div className="flex items-center">
-            <TabsList>
-              <TabsTrigger value="week">Today</TabsTrigger>
-              <TabsTrigger value="month">This week</TabsTrigger>
-              <TabsTrigger value="year">This month</TabsTrigger>
-            </TabsList>
-          </div>
-          <TabsContent value="week">
-            <Card>
-              <CardHeader className="px-7">
-                <CardTitle>Requests</CardTitle>
-                <CardDescription>Recent Requests you made</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <DataTable
-                  data={requests}
-                  error={isError}
-                  loading={isLoading}
-                  columnDef={RequestColumns}
-                  title={"Requests"}
-                  filter={"Patient"}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+
+        <Card>
+          <CardHeader className="px-7">
+            <CardTitle>Requests</CardTitle>
+            <CardDescription>Recent Requests you made</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DataTable
+              data={requests}
+              error={isError}
+              loading={isLoading}
+              columnDef={RequestColumns}
+              title={"Requests"}
+              filter={"Patient"}
+            />
+          </CardContent>
+        </Card>
       </div>
       {selectedRequest && (
         <RequestDetails
