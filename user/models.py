@@ -21,15 +21,10 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	#setting the paramaters
 	email = models.EmailField(unique=True)
 	first_name = models.CharField(max_length=50)
-	middle_name = models.CharField(max_length=50, blank=True, null=True)
 	last_name = models.CharField(max_length=50)
 	gender = models.CharField(max_length=7, choices=SEX)
 	phone_number = models.CharField(max_length=13)
 	digital_address = models.CharField(max_length=12)
-	emmergency_number = models.CharField(max_length=13)
-	#current_facility = models.CharField(max_length=200)
-	staff_id = models.CharField(max_length=50)
-	profile_picture = models.ImageField(upload_to='clients/profile/picture', default='default.png')
 	account_type = models.CharField(max_length=100, choices=USER_TYPE)
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
@@ -82,13 +77,6 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
 		return f'{self.first_name} {self.last_name}'
 
-	@property
-	def profile_picture_url(self):
-		
-		return f'http://127.0.0.1:8000{self.profile_picture.url}'
-
-
-
 
 class OneTimePassword(models.Model):
 
@@ -98,7 +86,7 @@ class OneTimePassword(models.Model):
 
 	def __str__(self):
 
-		return f'{self.user.last_name} => {self.code}'
+		return f'{self.user.last_name} | {self.code}'
 
 	def user_for(self):
 		return self.user

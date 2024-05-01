@@ -11,13 +11,13 @@ class ClientAdmin(UserAdmin):
     form = ClientChangeForm
     add_form = ClientCreationForm
 
-    list_display = ('email', 'first_name', 'middle_name', 'last_name', 'phone_number', 'is_verified', 'last_login')
+    list_display = ('email', 'first_name', 'last_name', 'phone_number', 'is_verified', 'last_login')
     list_editable = ('is_verified', )
     list_filter = ('email', 'phone_number')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'middle_name', 'last_name', 'gender', 'phone_number')}),
-        ('Other details', {'fields': ('digital_address', 'emmergency_number', 'account_type', 'staff_id')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'phone_number')}),
+        ('Other details', {'fields': ('digital_address', 'account_type')}),
         ('Permissions', {'fields': ('is_admin', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important Dates', {'fields': ('date_joined',)})
     )
@@ -25,8 +25,9 @@ class ClientAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide', 'extrapretty'),
-            'fields': ('email', 'phone_number', 'password1', 'password2', 'first_name', 'middle_name', 'last_name', 'gender', 
-            'digital_address', 'emmergency_number', 'staff_id', 'account_type', 'is_admin', 'is_active', 'is_staff', 'is_superuser'),
+            'fields': ('email', 'first_name', 'last_name', 'gender', 'phone_number', 'digital_address', 
+                'account_type','password1', 'password2', 'is_admin', 'is_active', 'is_staff', 'is_superuser'
+                ),
         }),
     )
 

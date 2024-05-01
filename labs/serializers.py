@@ -11,7 +11,7 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 		model = Laboratory
 		fields = ('id' ,'laboratory_name', 'herfra_id', 
-			'digital_address', 'main_phone', 'main_email', 'website', 
+			'main_phone', 'main_email', 'website', 
 			'description', 'date_modified', 'date_added', 'logo')
 
 

@@ -51,9 +51,10 @@ class ClientChangeForm(forms.ModelForm):
 
     class Meta:
         model = Client
-        fields = ('email', 'first_name', 'middle_name', 'last_name', 
-            'phone_number', 'digital_address', 'emmergency_number',
-            'account_type', 'password', 'is_active', 'is_admin')
+        fields = ('email', 'first_name', 'last_name', 
+            'phone_number', 'digital_address', 'account_type', 
+            'password', 'is_active', 'is_admin'
+            )
 
 
 
@@ -63,13 +64,10 @@ class ClientRegisterationForm(UserCreationForm):
     
     email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder':'e.g example@gmail.com'}))
     first_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Angela'}))
-    middle_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder':'Saatum'}))
     last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Suurweh'}))
     phone_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'0594438287'}))
     digital_address = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'XL-1999-0000'}))
-    emmergency_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'0245623553'}))
-    id_number = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Ghana Card or Passport №'}))
-
+    
 
     #send email after validating the user data to tell them their account was successfully 
     #created
@@ -95,7 +93,6 @@ class ClientRegisterationForm(UserCreationForm):
         model = Client
 
         fields = [
-            'email', 'first_name', 'middle_name', 'last_name', 'gender' 
-            ,'phone_number', 'digital_address', 
-            'emmergency_number', 'id_number', 'account_type'
+            'email', 'first_name', 'last_name', 'gender' 
+            ,'phone_number', 'digital_address', 'account_type'
         ]

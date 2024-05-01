@@ -37,28 +37,28 @@ class CreateLaboratoryView(CreateAPIView):
 class LaboratoryListView(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
-	serializer_class = LaboratorySerializer
+	serializer_class = BranchSerializer
 
 	def get_queryset(self):
 
 		try:
-			return Laboratory.objects.filter(created_by=self.request.user)
+			return Branch.objects.filter(laboratory__created_by=self.request.user)
 			
-		except Laboratory.DoesNotExist:
+		except Branch.DoesNotExist:
 			return Response({'error': 'Laboratory not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class LaboratoryDetailView(RetrieveAPIView):
 
 	permission_classes = [IsAuthenticated]
-	serializer_class = LaboratorySerializer
+	serializer_class = BranchSerializer
 
 	def get_queryset(self, pk, user):
 
 		try:
-			return Laboratory.objects.filter(created_by=user).get(pk=pk)
+			return Branch.objects.filter(laboratory__created_by=user).get(pk=pk)
 
-		except Laboratory.DoesNotExist:
+		except Branch.DoesNotExist:
 
 			return Response({'error': 'Laboratory does not exist.'})
 
@@ -72,7 +72,7 @@ class LaboratoryDetailView(RetrieveAPIView):
 		try:
 
 			lab = self.get_queryset(pk, self.request.user)
-			serialized_data = LaboratorySerializer(lab)
+			serialized_data = BranchSerializer(lab)
 
 			return Response(serialized_data.data)
 
@@ -84,12 +84,12 @@ class LaboratoryDetailView(RetrieveAPIView):
 class LaboratoryUpdateView(UpdateAPIView):
 
 	permission_classes = [IsAuthenticated]
-	serializer_class = LaboratorySerializer
+	serializer_class = BranchSerializer
 
 	def put(self, request, pk, format=None):
 
-		lab = Laboratory.objects.filter(created_by=self.request.user).get(pk=pk)
-		serializer = LaboratorySerializer(lab, data=request.data)
+		lab = Branch.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
+		serializer = BranchSerializer(lab, data=request.data)
 
 		if serializer.is_valid():
 			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
@@ -109,7 +109,7 @@ class LaboratoryDeleteView(DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		lab = Laboratory.objects.filter(created_by=self.request.user).get(pk=pk)
+		lab = Branch.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
 		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 
 			lab.delete()
@@ -130,7 +130,7 @@ class DepartmentSerializerView(CreateAPIView):
 
 		if serializer.is_valid(raise_exception=True):
 
-			serializer.save()#heard_of_department=self.request.user)
+			serializer.save()
 
 		return Response({'message': 'Department added successfully.'}, status=status.HTTP_200_OK)
 
@@ -143,7 +143,7 @@ class DepartmentListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Department.objects.filter(heard_of_department=self.request.user)
+			return Department.objects.filter(branch__branch_manager=self.request.user)
 
 		except Department.DoesNotExist:
 			return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -157,7 +157,7 @@ class DepartmentDetailView(RetrieveAPIView):
 	def get_queryset(self, pk, user):
 
 		try:
-			return Department.objects.filter(heard_of_department=user).get(pk=pk)
+			return Department.objects.filter(branch__branch_manager=user).get(pk=pk)
 
 		except Department.DoesNotExist:
 
@@ -187,7 +187,7 @@ class DepartmentUpdateView(UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 
-		department = Department.objects.filter(heard_of_department=self.request.user).get(pk=pk)
+		department = Department.objects.filter(branch__branch_manager=self.request.user).get(pk=pk)
 		serializer = DepartmentSerializer(department, data=request.data)
 
 		if serializer.is_valid():
@@ -207,7 +207,7 @@ class DepartmentDeleteView(DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		lab = Department.objects.filter(heard_of_department=self.request.user).get(pk=pk)
+		lab = Department.objects.filter(branch__branch_manager=self.request.user).get(pk=pk)
 		if self.request.user.is_staff and self.request.user.account_type == 'Laboratory':
 			lab.delete()
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
@@ -240,7 +240,7 @@ class TestListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Test.objects.filter(department__branch__laboratory__id=self.kwargs.get('pk'))
+			return Test.objects.filter(department__branch__id=self.kwargs.get('pk'))
 
 		except Test.DoesNotExist:
 			return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
