@@ -48,12 +48,12 @@ class TestSerializer(serializers.ModelSerializer):
 class TestResultSerializer(serializers.ModelSerializer):
 
 
-	send_by = serializers.PositiveIntgerField(read_only=True)
-	department = serializers.PositiveIntgerField(read_only=True)
-	laboratory = serializers.PositiveIntgerField(read_only=True)
-	hospital = serializers.PositiveIntgerField(read_only=True)
-	test = serializers.PositiveIntgerField(read_only=True)
-	sample = serializers.PositiveIntgerField(read_only=True)
+	send_by = serializers.IntegerField(read_only=True)
+	department = serializers.IntegerField(read_only=True)
+	laboratory = serializers.IntegerField(read_only=True)
+	hospital = serializers.IntegerField(read_only=True)
+	test = serializers.IntegerField(read_only=True)
+	sample = serializers.IntegerField(read_only=True)
 
 
 	class Meta:
