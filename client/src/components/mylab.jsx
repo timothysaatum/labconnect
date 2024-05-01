@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button";
 import CountUp from "react-countup";
-
 import {
   Card,
   CardContent,
@@ -12,42 +10,27 @@ import {
 import { Plus } from "lucide-react";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { useFetchLabDepartments, useFetchLabTests } from "@/api/queries";
-import { useDispatch, useSelector } from "react-redux";
 import {
-  selectDepartments,
-  selectLabTests,
-  setDeparments,
-  setTests,
-} from "@/redux/laboratories/AllLabsSlice";
+  useFetchLabDepartments,
+  useFetchLabTests,
+  useFetchUserLab,
+} from "@/api/queries";
 import { useEffect, useState } from "react";
-import { Table, TableHead, TableHeader } from "./ui/table";
 import { DataTable } from "./data-table";
 import { departmentColumnDef } from "./columns/departmentColumns";
 import { testscolumnDef } from "./columns/testsColumns";
 
-function TableData({ tablehead }) {
-  return (
-    <Table>
-      <TableHeader>
-        {tablehead.map((topic) => (
-          <TableHead>{topic}</TableHead>
-        ))}
-      </TableHeader>
-    </Table>
-  );
-}
-
 export default function MyLab() {
-  const dispatch = useDispatch();
   const [labtests, setLabTests] = useState([]);
   const [labDepartments, setLabDepartments] = useState([]);
 
+  const { data: userlab } = useFetchUserLab();
   const {
     isError: testError,
     isLoading: testsLoading,
     data: tests,
-  } = useFetchLabTests(2);
+  } = useFetchLabTests(userlab?.data[0]?.id);
+
   const {
     isError: deparmentsError,
     isLoading: deparmentsLoading,
@@ -93,7 +76,7 @@ export default function MyLab() {
       footer: "Add New Department",
       number: labDepartments?.length,
     },
-    { title: "Tests", footer: "Add New Test", number: tests?.length },
+    { title: "Tests", footer: "Add New Test", number: labtests?.length },
   ];
   const tabContent = [
     {
@@ -120,7 +103,7 @@ export default function MyLab() {
   return (
     <main className="ml-14 px-10">
       <header className="grid grid-cols-12">
-        <Card className="col-span-12 lg:col-span-9">
+        <Card className="col-span-12 lg:col-span-9 shadow-inner border-none">
           <CardContent className="grid grid-cols-3 gap-10 pt-10">
             {headerCards.map((card) => (
               <Card key={card.title}>

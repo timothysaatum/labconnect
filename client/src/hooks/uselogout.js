@@ -1,8 +1,11 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import useAxiosPrivate from "./useAxiosPrivate";
 import { logOut } from "@/redux/auth/authSlice";
 
 const useLogout = () => {
+  const queryClient = useQueryClient();
+
   const dispatch = useDispatch();
   const axiosPrivate = useAxiosPrivate();
   const logout = async () => {
@@ -11,6 +14,7 @@ const useLogout = () => {
         withCredentials: true,
       });
       dispatch(logOut());
+      queryClient.removeQueries(); // this will clear the cache
     } catch (error) {
       console.log(error);
     }

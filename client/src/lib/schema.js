@@ -33,22 +33,31 @@ export const SigninSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z.string().min(1, { message: "Password is required" }),
 });
+const testsSchema = z.object({
+  label: z.string(),
+  value: z.number(),
+});
+
+//send sample schema
 export const labRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),
-  patient_age: z.coerce.number().min(1, "age is required"),
+  patient_age: z.date({
+    required_error: "Date of birth is required",
+    invalid_type_error: "Enter a valid date format YYY-MM-DD",
+  }),
   patient_sex: z.string().min(1, "Sex is required"),
   sample_type: z.string().min(1, "Sample type is required"),
   sample_container: z.string().min(1, "Sample container is required"),
-  delivery: z.string().min(1, "Delivery Service is required"),
-  lab: z.string().min(1, "Lab is required"),
-  hospital: z.string().min(1, "Hospital is required"),
-  ward: z.string().min(1, "Ward is required"),
-  brief_description: z.string().min(1, "Brief description is required"),
-  attachment: z
-    .instanceof(FileList)
-    .refine((attachment) => attachment?.length == 1, "File is required."),
-
-  // tests: z.array(z.object()).nonempty("Please select at least one test"),
+  delivery: z.number({
+    invalid_type_error: "enter valid data",
+  }),
+  lab: z.number({
+    required_error: "lab is required",
+    invalid_type_error: "enter valid data",
+  }),
+  tests: z.array(testsSchema).min(1),
+  brief_description: z.string(),
+  attachment: z.instanceof(FileList),
 });
 export const OTPSchema = z.object({
   code: z.string().min(6, {

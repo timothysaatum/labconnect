@@ -4,14 +4,10 @@ import {
   LineChart,
   Package2,
   Settings,
-  User,
   Users2,
   Package,
   PanelLeft,
   ShoppingCart,
-  Truck,
-  TestTubes,
-  Microscope,
 } from "lucide-react";
 import {
   Tooltip,
@@ -23,31 +19,13 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Button } from "@/components/ui/button";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useGetSideLinks } from "@/hooks/usesidelinks";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
 
 export default function Dashboard() {
-  const sideLinks = [
-    {
-      icon: <Home className="h-5 w-5" />,
-      link: "/dashboard",
-      name: "Overview",
-    },
-    {
-      icon: <Microscope className="h-5 w-5" />,
-      link: "my-laboratory",
-      name: "My Laboratory",
-    },
-    { icon: <Truck className="h-5 w-5" />, link: "tracking", name: "Tracking" },
-    {
-      icon: <TestTubes className="h-5 w-5" />,
-      link: "/requests",
-      name: "Samples",
-    },
-    {
-      icon: <LineChart className="h-5 w-5" />,
-      link: "/analytics",
-      name: "analytics",
-    },
-  ];
+  const user = useSelector(selectCurrentUser);
+  const sideLinks = useGetSideLinks(user?.account_type);
   const location = useLocation();
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
