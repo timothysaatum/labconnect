@@ -27,7 +27,7 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	phone_number = models.CharField(max_length=13)
 	digital_address = models.CharField(max_length=12)
 	emmergency_number = models.CharField(max_length=13)
-	current_facility = models.CharField(max_length=200)
+	#current_facility = models.CharField(max_length=200)
 	staff_id = models.CharField(max_length=50)
 	profile_picture = models.ImageField(upload_to='clients/profile/picture', default='default.png')
 	account_type = models.CharField(max_length=100, choices=USER_TYPE)

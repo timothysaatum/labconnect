@@ -1,8 +1,7 @@
-from .models import Laboratory, Department, Test
+from .models import Laboratory, Department, Test, Branch
 from hospital.models import Hospital, Sample
 from django.contrib.auth import get_user_model
 from django.db import models
-
 
 
 
@@ -20,10 +19,10 @@ class TestResult(models.Model):
 	hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, related_name='results', db_index=True)
 	sample = models.ForeignKey(Sample, on_delete=models.CASCADE, db_index=True)
 	department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='results', db_index=True)
-	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='results', db_index=True)
 	result = models.FileField(upload_to='labs/results')
-	comments = models.TextField()
+	comments = models.TextField(blank=True, null=True)
 	is_verified = models.BooleanField(default=False)
 	is_received = models.BooleanField(default=False)
 	date_added = models.DateField(auto_now_add=True)
@@ -31,4 +30,4 @@ class TestResult(models.Model):
 
 
 	def __str__(self):
-		return self.laboratory
+		return self.branch

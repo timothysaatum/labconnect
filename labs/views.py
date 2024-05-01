@@ -1,10 +1,10 @@
-from .serializers import (LaboratorySerializer, DepartmentSerializer, TestSerializer, TestResultSerializer)
+from .serializers import (LaboratorySerializer, DepartmentSerializer, TestSerializer, TestResultSerializer, BranchSerializer)
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Laboratory, Department, Test
+from .models import Laboratory, Department, Test, Branch
 from .results import TestResult
 from rest_framework_simplejwt.exceptions import InvalidToken
 from hospital.models import Sample
@@ -127,10 +127,10 @@ class DepartmentSerializerView(CreateAPIView):
 	def post(self, request):
 
 		serializer = self.serializer_class(data=request.data)
+
 		if serializer.is_valid(raise_exception=True):
 
-			lab = Laboratory.objects.get(created_by=self.request.user)
-			serializer.save(laboratory=lab)
+			serializer.save()#heard_of_department=self.request.user)
 
 		return Response({'message': 'Department added successfully.'}, status=status.HTTP_200_OK)
 
@@ -143,7 +143,7 @@ class DepartmentListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Department.objects.filter(laboratory__created_by=self.request.user)
+			return Department.objects.filter(heard_of_department=self.request.user)
 
 		except Department.DoesNotExist:
 			return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -157,7 +157,7 @@ class DepartmentDetailView(RetrieveAPIView):
 	def get_queryset(self, pk, user):
 
 		try:
-			return Department.objects.filter(laboratory__created_by=user).get(pk=pk)
+			return Department.objects.filter(heard_of_department=user).get(pk=pk)
 
 		except Department.DoesNotExist:
 
@@ -187,11 +187,11 @@ class DepartmentUpdateView(UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 
-		department = Department.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
+		department = Department.objects.filter(heard_of_department=self.request.user).get(pk=pk)
 		serializer = DepartmentSerializer(department, data=request.data)
 
 		if serializer.is_valid():
-			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+			if self.request.user.is_staff and self.request.user.account_type == 'Laboratory':
 				serializer.save()
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
 
@@ -207,8 +207,8 @@ class DepartmentDeleteView(DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		lab = Department.objects.filter(laboratory__created_by=self.request.user).get(pk=pk)
-		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+		lab = Department.objects.filter(heard_of_department=self.request.user).get(pk=pk)
+		if self.request.user.is_staff and self.request.user.account_type == 'Laboratory':
 			lab.delete()
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -240,7 +240,7 @@ class TestListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Test.objects.filter(department__laboratory__id=self.kwargs.get('pk'))
+			return Test.objects.filter(department__branch__laboratory__id=self.kwargs.get('pk'))
 
 		except Test.DoesNotExist:
 			return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -253,12 +253,15 @@ class TestUpdateView(UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 
-		test = Test.objects.filter(department__laboratory__created_by=self.request.user).get(pk=pk)
+		test = Test.objects.filter(department__heard_of_department=self.request.user).get(pk=pk)
 		serializer = TestSerializer(test, data=request.data)
 
 		if serializer.is_valid():
+
 			if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
+
 				serializer.save()
+
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
 
 			return Response({'error': 'You are no authorized to edit labaratory details!'}, 
@@ -273,7 +276,7 @@ class TestDeleteView(DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		test = Test.objects.filter(department__laboratory__created_by=self.request.user).get(pk=pk)
+		test = Test.objects.filter(department__heard_of_department=self.request.user).get(pk=pk)
 		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 			test.delete()
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
@@ -283,7 +286,7 @@ class TestDeleteView(DestroyAPIView):
 
 class CreateTestResultView(CreateAPIView):
 
-	#permission_classes = [IsAuthenticated]
+	permission_classes = [IsAuthenticated]
 	serializer_class = TestResultSerializer
 
 	def post(self, request):
@@ -308,7 +311,7 @@ class TestResultListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return TestResult.objects.filter(laboratory__created_by=self.request.user)
+			return TestResult.objects.filter(department__heard_of_department=self.request.user)
 
 		except TestResult.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -386,20 +389,20 @@ class LaboratorySampleList(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Sample.objects.filter(lab__created_by=self.request.user)
+			return Sample.objects.filter(department__heard_of_department=self.request.user)
 
 		except Sample.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class AllLaboratories(ListAPIView):
+class AllBranches(ListAPIView):
 
-	serializer_class = LaboratorySerializer
+	serializer_class = BranchSerializer
 
 	def get_queryset(self):
 
 		try:
-			return Laboratory.objects.all()
+			return Branch.objects.all()
 
-		except Laboratory.DoesNotExist:
+		except Branch.DoesNotExist:
 			return Response({'error': 'No labaratory added yet'}, status=status.HTTP_404_NOT_FOUND)
