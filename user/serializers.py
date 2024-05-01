@@ -25,9 +25,9 @@ class UserCreationSerializer(serializers.ModelSerializer):
 		model = Client
 
 		fields = (
-					'email', 'first_name', 'last_name', 'gender', 'phone_number', 'digital_address', 'emmergency_number', 
-					'current_facility', 'staff_id', 'account_type', 'profile_picture', 
-					'password', 'password_confirmation'
+					'email', 'first_name', 'last_name', 'gender', 'phone_number',
+					'digital_address', 'emmergency_number', 'staff_id', 'account_type',
+					 'profile_picture', 'password', 'password_confirmation'
 				)
 
 	def validate(self, attrs):
@@ -51,7 +51,6 @@ class UserCreationSerializer(serializers.ModelSerializer):
 				phone_number=validated_data.get('phone_number'),
 				digital_address=validated_data.get('digital_address'),
 				emmergency_number=validated_data.get('emmergency_number'),
-				current_facility=validated_data.get('current_facility'),
 				account_type=validated_data.get('account_type'),
 				staff_id=validated_data.get('staff_id'),
 				password=validated_data.get('password')
@@ -65,7 +64,6 @@ class LoginSerializer(serializers.ModelSerializer):
 	email = serializers.EmailField(max_length=200, min_length=5)
 	password = serializers.CharField(max_length=200, write_only=True)
 	full_name = serializers.CharField(max_length=255, read_only=True)
-	current_facility = serializers.CharField(max_length=255, read_only=True)
 	staff_id = serializers.CharField(max_length=255, read_only=True)
 	profile_picture = serializers.CharField(max_length=255, read_only=True)
 	account_type = serializers.CharField(max_length=255, read_only=True)
@@ -81,7 +79,7 @@ class LoginSerializer(serializers.ModelSerializer):
 		model = Client
 		fields = [
 
-			'email', 'password', 'full_name', 'current_facility', 'staff_id', 'profile_picture', 
+			'email', 'password', 'full_name', 'staff_id', 'profile_picture', 
 			'account_type', 'is_staff', 'is_verified', 'is_active', 'is_admin','user_id',
 		]
 
@@ -107,7 +105,6 @@ class LoginSerializer(serializers.ModelSerializer):
 		return {
 
 			'full_name': user.full_name,
-			'current_facility': user.current_facility,
 			'staff_id': user.staff_id,
 			'is_staff': user.is_staff,
 			'is_verified': user.is_verified,
@@ -227,7 +224,7 @@ class UserSerializer(serializers.ModelSerializer):
 		model = Client
 		fields = [
 					'email', 'first_name', 'last_name', 'gender', 'phone_number', 
-					'digital_address', 'emmergency_number', 'current_facility', 
-					'staff_id', 'account_type', 'profile_picture', 'is_staff', 
-					'is_active', 'is_admin', 'is_verified', 'date_joined', 'last_login',
+					'digital_address', 'emmergency_number', 'staff_id', 'account_type',
+					'profile_picture', 'is_staff', 'is_active', 'is_admin', 'is_verified',
+					'date_joined', 'last_login',
 				]

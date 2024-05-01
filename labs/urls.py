@@ -3,7 +3,7 @@ from .views import (CreateLaboratoryView, DepartmentSerializerView, CreateTestVi
 	LaboratoryDetailView, DepartmentDetailView, TestUpdateView, DepartmentDetailView,
 	LaboratoryListView, LaboratoryUpdateView, LaboratoryDeleteView, DepartmentListView, DepartmentUpdateView,
 	DepartmentDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView, TestResultUpdateView,
-	TestResultDeleteView, LaboratorySampleList, AllLaboratories)
+	TestResultDeleteView, LaboratorySampleList, AllBranches)
 
 
 app_name = 'laboratory'
@@ -13,7 +13,7 @@ urlpatterns = [
 
 	path('create/', CreateLaboratoryView.as_view(), name='create-laboratory'),
 	path('list/', LaboratoryListView.as_view(), name='laboratory-list'),
-	path('laboratories/all/', AllLaboratories.as_view(), name='all-laboratories'),
+	path('laboratory-branches/all/', AllBranches.as_view(), name='lab-branches'),
 	path('details/<int:pk>/', LaboratoryDetailView.as_view(), name='laboratory-details'),
 	path('update/<int:pk>/', LaboratoryUpdateView.as_view(), name='laboratory-update'),
 	path('delete/<int:pk>/', LaboratoryDeleteView.as_view(), name='laboratory-delete'),

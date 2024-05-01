@@ -17,7 +17,7 @@ class ClientAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'middle_name', 'last_name', 'gender', 'phone_number')}),
-        ('Other details', {'fields': ('digital_address', 'emmergency_number', 'current_facility', 'account_type', 'staff_id')}),
+        ('Other details', {'fields': ('digital_address', 'emmergency_number', 'account_type', 'staff_id')}),
         ('Permissions', {'fields': ('is_admin', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important Dates', {'fields': ('date_joined',)})
     )

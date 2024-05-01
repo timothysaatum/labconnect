@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Laboratory, Department, Test
+from .models import Laboratory, Department, Test, Branch
 from .results import TestResult
 
 
@@ -10,7 +10,8 @@ class LaboratorySerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = Laboratory
-		fields = ('id' ,'name', 'region_of_location', 'town_of_location', 'herfra_id', 'digital_address', 'phone', 'email', 'website', 
+		fields = ('id' ,'laboratory_name', 'herfra_id', 
+			'digital_address', 'main_phone', 'main_email', 'website', 
 			'description', 'date_modified', 'date_added', 'logo')
 
 
@@ -25,6 +26,14 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 
 
+class BranchSerializer(serializers.ModelSerializer):
+
+	class Meta:
+
+		model = Branch
+		fields = ('id' ,'branch_manager', 'laboratory', 'branch_name', 'branch_phone', 
+			'branch_email', 'location', 'digital_address', 'region', 'date_modified', 'date_added')
+
 
 class TestSerializer(serializers.ModelSerializer):
 
@@ -37,6 +46,15 @@ class TestSerializer(serializers.ModelSerializer):
 
 
 class TestResultSerializer(serializers.ModelSerializer):
+
+
+	send_by = serializers.IntegerField(read_only=True)
+	department = serializers.IntegerField(read_only=True)
+	laboratory = serializers.IntegerField(read_only=True)
+	hospital = serializers.IntegerField(read_only=True)
+	test = serializers.IntegerField(read_only=True)
+	sample = serializers.IntegerField(read_only=True)
+
 
 	class Meta:
 

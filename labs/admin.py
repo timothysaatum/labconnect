@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Test, Department, Laboratory
+from .models import Test, Department, Laboratory, Branch
 from .results import TestResult
 import csv
 from django.http import HttpResponse
@@ -31,7 +31,7 @@ def download_csv(self, request, query):
 
 
 class TestAdmin(admin.ModelAdmin):
-	list_display = ('id', 'name', 'laboratory', 'price', 'current_price', 'discount_price', 
+	list_display = ('id', 'name', 'branch', 'price', 'current_price', 'discount_price', 
 		'discount_percent', 'date_added', 'date_modified')
 	list_display_links = ('id', 'name')
 	#list_editable = ('name', 'price', 'discount_price')
@@ -41,35 +41,43 @@ class TestAdmin(admin.ModelAdmin):
 
 
 class DepartmentAdmin(admin.ModelAdmin):
-	list_display = ('id', 'department_name', 'laboratory_name', 'heard_of_department', 'phone', 
+	list_display = ('id', 'department_name', 'branch_name', 'heard_of_department', 'phone', 
 		'email', 'date_added', 'date_modified')
 	list_display_links = ('department_name', 'date_added', 'id')
 	#list_editable = ('heard_of_department', 'phone', 'email')
 	ordering = ('id',)
-	list_per_page = 5
+	list_per_page = 10
 
 
 class LaboratoryAdmin(admin.ModelAdmin):
-	list_display = ('id', 'created_by', 'name', 'region_of_location', 'town_of_location' ,
-					'departments', 'digital_address', 'phone', 'email', 'herfra_id', 
+
+	list_display = ('id', 'created_by', 'laboratory_name',
+					'branches', 'main_phone', 'main_email', 'herfra_id', 
 					'website', 'date_added', 'date_modified'
 					)
-	list_display_links = ('created_by', 'name')
-	ordering = ('id',)
-	list_per_page = 5
 
-	def departments(self, obj):
-		return ", ".join([dept.department_name for dept in obj.departments.all()])
+	list_display_links = ('created_by', 'laboratory_name')
+	ordering = ('id',)
+	list_per_page = 10
+
+	def branches(self, obj):
+		return ", ".join([branch.branch_name for branch in obj.branches.all()])
 
 
 
 class TestResultAdmin(admin.ModelAdmin):
-	list_display = ('id', 'send_by', 'department', 'laboratory', 'test', 'result', 
+	list_display = ('id', 'send_by', 'department', 'branch', 'test', 'result', 
 		'comments', 'is_verified', 'is_received' ,'date_added', 'date_modified')
 	list_editable = ('is_verified', 'is_received')
-	list_per_page = 5
+	list_per_page = 10
+
+
+class BranchAdmin(admin.ModelAdmin):
+	list_display = ('id', 'branch_name', 'branch_manager', 'location', 'region', 'laboratory','date_added', 'date_modified')
+
 
 admin.site.register(Test, TestAdmin)
+admin.site.register(Branch, BranchAdmin)
 admin.site.register(TestResult, TestResultAdmin)
 admin.site.register(Laboratory, LaboratoryAdmin)
 admin.site.register(Department, DepartmentAdmin)

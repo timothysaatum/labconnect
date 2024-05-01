@@ -14,25 +14,6 @@ class BaseModel(models.Model):
 		abstract = True
 
 
-
-
-#REGIONS = [
-#	('NR', 'Northern Region')
-#]
-#class Branch(BaseModel):
-#
-#	name = models.CharField(max_length=255)
-#	manager = models.ForeignKey(user, on_delete=models.CASCADE)
-#	location = models.CharField(max_length=255)
-#	region = models.CharField(choices=REGIONS, max_length=100)
-#	laboratory = models.ForeignKey('Laboratory', on_delete=models.CASCADE)
-#
-#
-#	def __str__(self):
-#		return self.branch_name
-
-
-
 class Laboratory(BaseModel):
 
 	'''
@@ -42,26 +23,60 @@ class Laboratory(BaseModel):
 	name(str): the name of the laboratory
 	'''
 
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
-	digital_address = models.CharField(max_length=15)
-	phone = models.CharField(max_length=15)
-	email = models.EmailField()
-	name = models.CharField(max_length=200, db_index=True, validators=[MinLengthValidator(10), MaxLengthValidator(200)])
-	region_of_location = models.CharField(max_length=255)
-	town_of_location = models.CharField(max_length=255)
+	created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_column='General manager')
+	laboratory_name = models.CharField(max_length=200, db_index=True, validators=[MinLengthValidator(10), MaxLengthValidator(200)])
+	main_phone = models.CharField(max_length=15)
+	main_email = models.EmailField()
 	logo = models.ImageField(upload_to='labs/logo', default='logo.png')
 	herfra_id = models.CharField('HERFRA ID', max_length=100)
 	website = models.URLField()
 	description = models.TextField()
 
 	def __str__(self):
-		return f'{self.name} {self.town_of_location}({self.region_of_location})'
-
+		return self.laboratory_name
 
 	class Meta:
 		verbose_name_plural = 'Laboratories'
-		unique_together = ('name', )
+		unique_together = ('laboratory_name', )
 
+
+REGIONS = [
+
+	('Northern', 'Northern'),
+	('Upper West', 'Upper West'),
+	('Upper East', 'Upper East'),
+	('Savannah', 'Savannah'),
+	('Bono', 'Bono'),
+	('Greater Accra', 'Greater Accra'),
+	('Western', 'Western'),
+	('Central', 'Central'),
+	('Volta', 'Volta'),
+	('North East', 'North East'),
+	('Bono East', 'Bono East'),
+	('Oti', 'Oti'),
+	('Ashanti', 'Ashanti'),
+
+]
+
+
+class Branch(BaseModel):
+
+	branch_manager = models.ForeignKey(user, on_delete=models.CASCADE)
+	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')
+	branch_name = models.CharField(max_length=255)
+	branch_phone = models.CharField(max_length=15)
+	branch_email = models.CharField(max_length=15)
+	location = models.CharField(max_length=255)
+	digital_address = models.CharField(max_length=15)
+	region = models.CharField(choices=REGIONS, max_length=100)
+
+	class Meta:
+
+		verbose_name_plural = 'Branches'
+
+	def __str__(self):
+
+		return f'{self.laboratory} | {self.branch_name}'
 
 
 DEPARTMENT_NAME = [
@@ -74,6 +89,7 @@ DEPARTMENT_NAME = [
 
 ]
 
+
 class Department(BaseModel):
 
 	'''
@@ -84,14 +100,15 @@ class Department(BaseModel):
 	department_name(str): The name of the department.
 	'''
 
-	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='departments', db_index=True)
-	heard_of_department = models.CharField(max_length=200)
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='departments', db_index=True)
+	heard_of_department = models.ForeignKey(user, on_delete=models.CASCADE)
+	department_name = models.CharField(choices=DEPARTMENT_NAME, max_length=100, db_index=True)
 	phone = models.CharField(max_length=15)
 	email = models.EmailField()
-	department_name = models.CharField(choices=DEPARTMENT_NAME, max_length=100, db_index=True)
+
 
 	class Meta:
-		unique_together = ('laboratory', 'department_name')
+		unique_together = ('branch', 'department_name')
 
 
 	def __str__(self):
@@ -104,9 +121,9 @@ class Department(BaseModel):
 
 		return lab_tests
 
-	def laboratory_name(self):
+	def branch_name(self):
 
-		return self.laboratory
+		return self.branch
 
 
 class Test(BaseModel):
@@ -122,20 +139,19 @@ class Test(BaseModel):
 
 	department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='tests', db_index=True)
 	name = models.CharField(max_length=200, db_index=True)
-	price = models.FloatField()
-	discount_price = models.FloatField(default=0, blank=True, null=True)
-
+	price = models.DecimalField(decimal_places=2, max_digits=10)
+	discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
 
 	class Meta:
 		unique_together = ('department', 'name')
 
 	def __str__(self):
 
-		return f'{self.name} = {self.price}ghs'
+		return f'{self.name} | {self.price}ghs'
 
-	def laboratory(self):
+	def branch(self):
 
-		return self.department.laboratory
+		return self.department.branch
 
 	def current_price(self):
 	
@@ -147,7 +163,6 @@ class Test(BaseModel):
 
 			return self.price
 
-
 	def discount_percent(self):
 
 		if self.discount_price is not None:
@@ -155,4 +170,5 @@ class Test(BaseModel):
 			percentage = round((self.discount_price / self.price) * 100)
 
 			return f'{percentage}%'
+
 		return '0%'

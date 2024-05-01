@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from labs.models import Test, Laboratory
+from labs.models import Test, Laboratory, Branch
 from delivery.models import Delivery
-#from django.utils import timezone
 
 
 
@@ -48,11 +47,13 @@ class Sample(models.Model):
 	sample_type = models.CharField(max_length=200)
 	sample_container = models.CharField(max_length=100)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
-	lab = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
+	lab = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	tests = models.ManyToManyField(Test, related_name='tests')
 	hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
-	brief_description = models.TextField()
+	brief_description = models.TextField(null=True, blank=True)
 	attachment = models.FileField(upload_to='sample/attachments', blank=True, null=True)
+	is_rejected = models.BooleanField(default=False)
+	rejection_reason = models.TextField(blank=True, null=True)
 	is_paid = models.BooleanField(default=False)
 	is_received_by_delivery = models.BooleanField(default=False)
 	is_delivered_to_lab = models.BooleanField(default=False)
@@ -60,14 +61,9 @@ class Sample(models.Model):
 	date_created = models.DateField(auto_now_add=True)
 	date_modified = models.DateField(auto_now=True)
 
+
 	def __str__(self):
 		return self.sample_type
-
-
-	#def save(self, *args, **kwargs):
-	#	super().save(*args, **kwargs)
-
-	#	self.test.set(self.tests.all() | set(kwargs.get('tests', [])))
 
 
 	def sender_phone(self):
@@ -76,10 +72,13 @@ class Sample(models.Model):
 
 		return phone
 
+
 	def delivery_phone(self):
 
 		if self.delivery:
+
 			del_phone = Delivery.objects.get(id=self.delivery.id).phone
 
 			return del_phone
+
 		return 'Self Sent'
