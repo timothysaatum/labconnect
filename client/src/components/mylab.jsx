@@ -19,12 +19,18 @@ import { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { departmentColumnDef } from "./columns/departmentColumns";
 import { testscolumnDef } from "./columns/testsColumns";
+import { branchcolumnDef } from "./columns/branchcolumns";
 
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
   const [labDepartments, setLabDepartments] = useState([]);
+  const [branches, setBranches] = useState([]);
 
-  const { data: userlab } = useFetchUserLab();
+  const {
+    data: userlab,
+    isLoading: labsLoading,
+    isError: labsError,
+  } = useFetchUserLab();
   const {
     isError: testError,
     isLoading: testsLoading,
@@ -54,6 +60,20 @@ export default function MyLab() {
     }
   }, [tests, labDepartments]);
   useEffect(() => {
+    if (userlab?.data) {
+      setBranches(
+        userlab?.data.map((branch) => {
+          return {
+            branch_name: branch.branch_name,
+            branch_manager: branch.branch_manager, 
+            branch_phone:branch.branch_phone,
+            branch_email:branch.branch_email
+          };
+        })
+      );
+    }
+  }, [userlab]);
+  useEffect(() => {
     if (departments?.data) {
       setLabDepartments(
         departments.data.map((department) => {
@@ -70,13 +90,17 @@ export default function MyLab() {
   }, [departments]);
 
   const headerCards = [
-    { title: "Branches", footer: "Add New Branch", number: 2 },
     {
       title: "Departments",
       footer: "Add New Department",
       number: labDepartments?.length,
     },
     { title: "Tests", footer: "Add New Test", number: labtests?.length },
+    {
+      title: "Branches",
+      footer: "Add New Branch",
+      number: userlab?.data.length,
+    },
   ];
   const tabContent = [
     {
@@ -99,6 +123,16 @@ export default function MyLab() {
       error: deparmentsError,
       filter: "department_name",
     },
+    {
+      title: "Branches",
+      description:
+        "All Branches can be managed here you can create,delete and update branches",
+      data: branches,
+      columnDef: branchcolumnDef,
+      loading: labsLoading,
+      error: labsError,
+      filter: "branch_name",
+    },
   ];
   return (
     <main className="ml-14 px-10">
@@ -116,10 +150,6 @@ export default function MyLab() {
                     </span>{" "}
                   </CardTitle>
                 </CardHeader>
-                <CardFooter className=" hover:cursor-pointer font-semibold flex flex-row justify-center pt-2 gap-2 items-center  hover:bg-muted text-center self-center">
-                  <Plus className="w-10 h-10" />
-                  {card.footer}
-                </CardFooter>
               </Card>
             ))}
           </CardContent>
@@ -130,7 +160,7 @@ export default function MyLab() {
           <TabsList>
             <TabsTrigger value="Tests">Tests</TabsTrigger>
             <TabsTrigger value="Department">Departments</TabsTrigger>
-            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="Branches">Branches</TabsTrigger>
           </TabsList>
           {tabContent?.map((tab) => (
             <TabsContent value={tab.title} key={tab.title}>

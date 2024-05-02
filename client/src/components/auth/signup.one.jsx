@@ -43,15 +43,6 @@ export default function accountType({ form, errors }) {
               <AlertCircle className="self-center" /> Note that this field can
               not be changed later
             </FormDescription>
-            {errors?.account_type && (
-              <Alert variant="destructive" className="mt-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                  {errors?.account_type.message}
-                </AlertDescription>
-              </Alert>
-            )}
           </FormItem>
         )}
       />
