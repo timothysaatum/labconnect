@@ -1,10 +1,10 @@
-from .serializers import (LaboratorySerializer, DepartmentSerializer, TestSerializer, TestResultSerializer, BranchSerializer)
+from .serializers import (LaboratorySerializer, TestSerializer, TestResultSerializer, BranchSerializer)
 from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Laboratory, Department, Test, Branch
+from .models import Laboratory, Test, Branch
 from .results import TestResult
 from rest_framework_simplejwt.exceptions import InvalidToken
 from hospital.models import Sample
@@ -34,7 +34,37 @@ class CreateLaboratoryView(CreateAPIView):
 		return Response({'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LaboratoryListView(ListAPIView):
+class CreateBranchView(CreateAPIView):
+
+	permission_classes = [IsAuthenticated]
+	serializer_class = BranchSerializer
+
+	def post(self, request):
+	
+		serializer = self.serializer_class(data=request.data)
+		if serializer.is_valid(raise_exception=True):
+			if self.request.user.account_type == 'Laboratory' and self.request.user.is_admin:
+
+				serializer.save(branch_manager=self.request.user)
+
+				return Response({'message': 'Branch created successfully.'},
+							status=status.HTTP_200_OK)
+
+			return Response({'error': 'Your account does not support labs'}, status=status.HTTP_400_BAD_REQUEST)
+
+		return Response({'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class BranchListView(ListAPIView):
+
+	'''
+	This API end point call list all the branches that a user has added to their lab
+	when the user is logged into their account.
+
+	This is different from the the AllBranches end point which list all the branches
+	that are available in the system.
+	'''
 
 	permission_classes = [IsAuthenticated]
 	serializer_class = BranchSerializer
@@ -42,21 +72,21 @@ class LaboratoryListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Branch.objects.filter(laboratory__created_by=self.request.user)
+			return Branch.objects.filter(branch_manager=self.request.user)
 			
 		except Branch.DoesNotExist:
 			return Response({'error': 'Laboratory not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class LaboratoryDetailView(RetrieveAPIView):
+class BranchDetailView(RetrieveAPIView):
 
-	permission_classes = [IsAuthenticated]
+	#permission_classes = [IsAuthenticated]
 	serializer_class = BranchSerializer
 
-	def get_queryset(self, pk, user):
+	def get_queryset(self, pk):
 
 		try:
-			return Branch.objects.filter(laboratory__created_by=user).get(pk=pk)
+			return Branch.objects.get(pk=pk)
 
 		except Branch.DoesNotExist:
 
@@ -71,7 +101,7 @@ class LaboratoryDetailView(RetrieveAPIView):
 
 		try:
 
-			lab = self.get_queryset(pk, self.request.user)
+			lab = self.get_queryset(pk)
 			serialized_data = BranchSerializer(lab)
 
 			return Response(serialized_data.data)
@@ -81,7 +111,7 @@ class LaboratoryDetailView(RetrieveAPIView):
 			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
-class LaboratoryUpdateView(UpdateAPIView):
+class BranchUpdateView(UpdateAPIView):
 
 	permission_classes = [IsAuthenticated]
 	serializer_class = BranchSerializer
@@ -103,7 +133,7 @@ class LaboratoryUpdateView(UpdateAPIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LaboratoryDeleteView(DestroyAPIView):
+class BranchDeleteView(DestroyAPIView):
 
 	permission_classes = [IsAuthenticated]
 
@@ -118,101 +148,6 @@ class LaboratoryDeleteView(DestroyAPIView):
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class DepartmentSerializerView(CreateAPIView):
-
-	permission_classes = [IsAuthenticated]
-
-	serializer_class = DepartmentSerializer
-
-	def post(self, request):
-
-		serializer = self.serializer_class(data=request.data)
-
-		if serializer.is_valid(raise_exception=True):
-
-			serializer.save()
-
-		return Response({'message': 'Department added successfully.'}, status=status.HTTP_200_OK)
-
-
-class DepartmentListView(ListAPIView):
-
-	permission_classes = [IsAuthenticated]
-	serializer_class = DepartmentSerializer
-
-	def get_queryset(self):
-
-		try:
-			return Department.objects.filter(branch__branch_manager=self.request.user)
-
-		except Department.DoesNotExist:
-			return Response({'error': 'Department not found'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class DepartmentDetailView(RetrieveAPIView):
-
-	permission_classes = [IsAuthenticated]
-	serializer_class = DepartmentSerializer
-
-	def get_queryset(self, pk, user):
-
-		try:
-			return Department.objects.filter(branch__branch_manager=user).get(pk=pk)
-
-		except Department.DoesNotExist:
-
-			return Response({'error': 'Department does not exist!'}, status=status.HTTP_404_NOT_FOUND)
-
-		except Exception as e:
-
-			return Response({'erroe': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-	def get(self, request, pk, format=None):
-	
-		try:
-			department = self.get_queryset(pk, self.request.user)
-			serialized_data = DepartmentSerializer(department)
-
-			return Response(serialized_data.data)
-		except Exception as e:
-			
-			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
-		
-
-class DepartmentUpdateView(UpdateAPIView):
-
-	permission_classes = [IsAuthenticated]
-	serializer_class = DepartmentSerializer
-
-	def put(self, request, pk, format=None):
-
-		department = Department.objects.filter(branch__branch_manager=self.request.user).get(pk=pk)
-		serializer = DepartmentSerializer(department, data=request.data)
-
-		if serializer.is_valid():
-			if self.request.user.is_staff and self.request.user.account_type == 'Laboratory':
-				serializer.save()
-				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-
-			return Response({'error': 'You are no authorized to edit department details!'}, 
-				status=status.HTTP_401_UNAUTHORIZED)
-
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class DepartmentDeleteView(DestroyAPIView):
-
-	permission_classes = [IsAuthenticated]
-
-	def delete(self, request, pk, format=None):
-
-		lab = Department.objects.filter(branch__branch_manager=self.request.user).get(pk=pk)
-		if self.request.user.is_staff and self.request.user.account_type == 'Laboratory':
-			lab.delete()
-			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
-
-		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class CreateTestView(CreateAPIView):
@@ -240,7 +175,7 @@ class TestListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Test.objects.filter(department__branch__id=self.kwargs.get('pk'))
+			return Test.objects.filter(branch__id=self.kwargs.get('pk'))
 
 		except Test.DoesNotExist:
 			return Response({'error': 'Test not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -253,7 +188,7 @@ class TestUpdateView(UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 
-		test = Test.objects.filter(department__heard_of_department=self.request.user).get(pk=pk)
+		test = Test.objects.filter(branch__branch_manager=self.request.user).get(pk=pk)
 		serializer = TestSerializer(test, data=request.data)
 
 		if serializer.is_valid():
@@ -276,7 +211,7 @@ class TestDeleteView(DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		test = Test.objects.filter(department__heard_of_department=self.request.user).get(pk=pk)
+		test = Test.objects.filter(branch__branch_manager=self.request.user).get(pk=pk)
 		if self.request.user.is_admin and self.request.user.account_type == 'Laboratory':
 			test.delete()
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
@@ -311,7 +246,7 @@ class TestResultListView(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return TestResult.objects.filter(department__heard_of_department=self.request.user)
+			return TestResult.objects.filter(branch__branch_manager=self.request.user)
 
 		except TestResult.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -395,14 +330,27 @@ class LaboratorySampleList(ListAPIView):
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class AllBranches(ListAPIView):
+class AllLaboratories(ListAPIView):
+
+	serializer_class = LaboratorySerializer
+
+	def get_queryset(self):
+
+		try:
+			return Laboratory.objects.all()
+
+		except Laboratory.DoesNotExist:
+			return Response({'error': 'No labaratory added yet'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class LaboratoryBranches(ListAPIView):
 
 	serializer_class = BranchSerializer
 
 	def get_queryset(self):
 
 		try:
-			return Branch.objects.all()
+			return Branch.objects.filter(laboratory_id=self.kwargs.get('pk'))
 
 		except Branch.DoesNotExist:
-			return Response({'error': 'No labaratory added yet'}, status=status.HTTP_404_NOT_FOUND)
+			return Response({'error': 'Branch not found'}, status=status.HTTP_404_NOT_FOUND)

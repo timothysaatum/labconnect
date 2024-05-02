@@ -65,7 +65,7 @@ class Branch(BaseModel):
 	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')
 	branch_name = models.CharField(max_length=255)
 	branch_phone = models.CharField(max_length=15)
-	branch_email = models.CharField(max_length=15)
+	branch_email = models.CharField(max_length=150)
 	location = models.CharField(max_length=255)
 	digital_address = models.CharField(max_length=15)
 	region = models.CharField(choices=REGIONS, max_length=100)
@@ -79,79 +79,33 @@ class Branch(BaseModel):
 		return f'{self.laboratory} | {self.branch_name}'
 
 
-DEPARTMENT_NAME = [
-
-	('Haematology', 'Haematology'),
-	('Microbiology', 'Microbiology'),
-	('Parasitology', 'Parasitology'),
-	('Clinical Chemistry', 'Clinical Chemistry'),
-	('Molecular Biology', 'Molecular Biology')
-
-]
-
-
-class Department(BaseModel):
-
-	'''
-	A department within a laboratory.
-
-	Attrs:
-	laboratory(Laboratory): The laboratory that this department belongs to.
-	department_name(str): The name of the department.
-	'''
-
-	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='departments', db_index=True)
-	heard_of_department = models.ForeignKey(user, on_delete=models.CASCADE)
-	department_name = models.CharField(choices=DEPARTMENT_NAME, max_length=100, db_index=True)
-	phone = models.CharField(max_length=15)
-	email = models.EmailField()
-
-
-	class Meta:
-		unique_together = ('branch', 'department_name')
-
-
-	def __str__(self):
-		return self.department_name
-
-
-	def tests(self):
-
-		lab_tests = [test for test in Test.objects.filter(department=self.id)]
-
-		return lab_tests
-
-	def branch_name(self):
-
-		return self.branch
-
 
 class Test(BaseModel):
 
 	'''
-	A test than can be conducted in a department.
+	A test than can be conducted in a branch.
 	Attrs:
-	department(Department): The department that this test belongs to.
+	branch(Branch): The branch that this test belongs to.
 	name(str): The name of the test.
 	price(float): The price of the test.
 	dicount_price (float, optional): The discounted price of the test.
 	'''
 
-	department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='tests', db_index=True)
 	name = models.CharField(max_length=200, db_index=True)
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='tests', db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
 	discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
 
 	class Meta:
-		unique_together = ('department', 'name')
+		unique_together = ('branch', 'name')
 
 	def __str__(self):
 
 		return f'{self.name} | {self.price}ghs'
 
-	def branch(self):
+	def laboratory(self):
 
-		return self.department.branch
+		return self.branch
 
 	def current_price(self):
 	

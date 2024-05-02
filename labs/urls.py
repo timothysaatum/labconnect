@@ -1,9 +1,8 @@
 from django.urls import path
-from .views import (CreateLaboratoryView, DepartmentSerializerView, CreateTestView, CreateTestResultView,
-	LaboratoryDetailView, DepartmentDetailView, TestUpdateView, DepartmentDetailView,
-	LaboratoryListView, LaboratoryUpdateView, LaboratoryDeleteView, DepartmentListView, DepartmentUpdateView,
-	DepartmentDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView, TestResultUpdateView,
-	TestResultDeleteView, LaboratorySampleList, AllBranches)
+from .views import (CreateLaboratoryView, CreateTestView, CreateTestResultView,
+	BranchDetailView, TestUpdateView, BranchListView, BranchUpdateView, CreateBranchView,
+	BranchDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView, 
+	TestResultUpdateView, TestResultDeleteView, LaboratorySampleList, AllLaboratories, LaboratoryBranches)
 
 
 app_name = 'laboratory'
@@ -12,19 +11,14 @@ urlpatterns = [
 	#creating, reading, updating and deleting laboratory routes
 
 	path('create/', CreateLaboratoryView.as_view(), name='create-laboratory'),
-	path('list/', LaboratoryListView.as_view(), name='laboratory-list'),
-	path('laboratory-branches/all/', AllBranches.as_view(), name='lab-branches'),
-	path('details/<int:pk>/', LaboratoryDetailView.as_view(), name='laboratory-details'),
-	path('update/<int:pk>/', LaboratoryUpdateView.as_view(), name='laboratory-update'),
-	path('delete/<int:pk>/', LaboratoryDeleteView.as_view(), name='laboratory-delete'),
+	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
+	path('list/', BranchListView.as_view(), name='laboratory-list'),
+	path('laboratory/all/', AllLaboratories.as_view(), name='all-labs'),
+	path('laboratory-branches/<int:pk>/', LaboratoryBranches.as_view(), name='lab-branches'),
+	path('details/<int:pk>/', BranchDetailView.as_view(), name='branch-details'),
+	path('update/<int:pk>/', BranchUpdateView.as_view(), name='branch-update'),
+	path('delete/<int:pk>/', BranchDeleteView.as_view(), name='branch-delete'),
 
-	#creating, reading, updating and deleting department routes
-
-	path('department/add/', DepartmentSerializerView.as_view(), name='add-department'),
-	path('department/list/', DepartmentListView.as_view(), name='list-departments'),
-	path('department/details/<int:pk>/', DepartmentDetailView.as_view(), name='department-details'),
-	path('department/update/<int:pk>/', DepartmentUpdateView.as_view(), name='department-update'),
-	path('department/delete/<int:pk>/', DepartmentDeleteView.as_view(), name='department-delete'),
 
 	#creating, reading, updating and deleting test & results routes
 

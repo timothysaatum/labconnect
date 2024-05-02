@@ -8,6 +8,7 @@ from .models import Sample, Hospital
 from rest_framework_simplejwt.exceptions import InvalidToken
 from labs.results import TestResult
 from labs.serializers import TestResultSerializer
+from labs.models import Test
 
 
 
@@ -34,20 +35,24 @@ class SampleSerializerView(CreateAPIView):
 
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
+			if self.request.user.account_type == 'Clinician':
+				serializer.save(send_by=self.request.user)
 
-			serializer.save(send_by=self.request.user)
+				test_ids = request.data.getlist('tests')
+				print(test_ids)
+				sample = serializer.instance
+				print(sample)
+				for test_id in test_ids:
+					test = Test.objects.get(pk=test_id)
+					sample.tests.add(test)
 
-			test_ids = request.data.get('tests')
-			print(test_ids)
-			sample = serializer.instance
-			print(sample)
-			for test_id in test_ids:
-				print(test_id)
-				sample.tests.add(test_id)
+				return Response(
+					{'message': 'Sample added successfully.'},
+					status=status.HTTP_201_CREATED)
 
 			return Response(
-				{'message': 'Sample added successfully.'},
-				status=status.HTTP_201_CREATED)
+					{'message': 'Account type does not support sample addition.'},
+					status=status.HTTP_400_BAD_REQUEST)
 
 		return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
