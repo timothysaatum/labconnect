@@ -389,7 +389,7 @@ class LaboratorySampleList(ListAPIView):
 	def get_queryset(self):
 
 		try:
-			return Sample.objects.filter(department__heard_of_department=self.request.user)
+			return Sample.objects.filter(lab__branch_manager=self.request.user)
 
 		except Sample.DoesNotExist:
 			return Response({'error': 'Test results not found'}, status=status.HTTP_404_NOT_FOUND)
