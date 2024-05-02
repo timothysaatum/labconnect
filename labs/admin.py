@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Test, Department, Laboratory, Branch
+from .models import Test, Laboratory, Branch
 from .results import TestResult
 import csv
 from django.http import HttpResponse
@@ -40,14 +40,6 @@ class TestAdmin(admin.ModelAdmin):
 	actions = [download_csv]
 
 
-class DepartmentAdmin(admin.ModelAdmin):
-	list_display = ('id', 'department_name', 'branch_name', 'heard_of_department', 'phone', 
-		'email', 'date_added', 'date_modified')
-	list_display_links = ('department_name', 'date_added', 'id')
-	#list_editable = ('heard_of_department', 'phone', 'email')
-	ordering = ('id',)
-	list_per_page = 10
-
 
 class LaboratoryAdmin(admin.ModelAdmin):
 
@@ -66,7 +58,7 @@ class LaboratoryAdmin(admin.ModelAdmin):
 
 
 class TestResultAdmin(admin.ModelAdmin):
-	list_display = ('id', 'send_by', 'department', 'branch', 'test', 'result', 
+	list_display = ('id', 'send_by', 'branch', 'test', 'result', 
 		'comments', 'is_verified', 'is_received' ,'date_added', 'date_modified')
 	list_editable = ('is_verified', 'is_received')
 	list_per_page = 10
@@ -80,4 +72,3 @@ admin.site.register(Test, TestAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(TestResult, TestResultAdmin)
 admin.site.register(Laboratory, LaboratoryAdmin)
-admin.site.register(Department, DepartmentAdmin)

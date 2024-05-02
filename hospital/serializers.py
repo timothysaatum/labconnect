@@ -19,8 +19,8 @@ class SampleSerializer(serializers.ModelSerializer):
 	patient_age = serializers.DateField(format='%Y-%m-%d')
 	attachment = serializers.FileField(required=False)
 	send_by = serializers.IntegerField(read_only=True)
-	hospital = serializers.IntegerField(read_only=True)
-	#tests = TestSerializer(many=True, required=False)
+	#hospital = serializers.IntegerField(read_only=True)
+	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
 
 	class Meta:
 
