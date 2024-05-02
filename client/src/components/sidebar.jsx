@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { LogOutIcon, Menu } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { Separator } from "./ui/separator";
 
 export function Sidebar() {
   return (

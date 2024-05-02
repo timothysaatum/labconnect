@@ -1,4 +1,4 @@
-import { createCell, createSortableHeader } from "@/utils/tablefxns";
+import { createCell, createSortableHeader } from "@/util/tablefxns";
 
 export const testscolumnDef = [
   {
