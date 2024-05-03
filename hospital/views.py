@@ -34,17 +34,18 @@ class SampleSerializerView(CreateAPIView):
 	def post(self, request):
 
 		serializer = self.serializer_class(data=request.data)
+
 		if serializer.is_valid(raise_exception=True):
+
 			if self.request.user.account_type == 'Clinician':
-				serializer.save(send_by=self.request.user)
+				
+				sample = serializer.save(send_by=self.request.user)
 
 				test_ids = request.data.getlist('tests')
-				print(test_ids)
-				sample = serializer.instance
-				print(sample)
+				
 				for test_id in test_ids:
-					test = Test.objects.get(pk=test_id)
-					sample.tests.add(test)
+					
+					sample.tests.add(test_id)
 
 				return Response(
 					{'message': 'Sample added successfully.'},
