@@ -21,6 +21,8 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 class BranchSerializer(serializers.ModelSerializer):
 
+	branch_name = serializers.StringRelatedField(source='__str__')
+
 	class Meta:
 
 		model = Branch
@@ -39,6 +41,8 @@ class BranchSerializer(serializers.ModelSerializer):
 
 
 class TestSerializer(serializers.ModelSerializer):
+
+	name = serializers.StringRelatedField(source='__str__')
 
 	class Meta:
 
@@ -60,16 +64,17 @@ class TestResultSerializer(serializers.ModelSerializer):
 
 
 	send_by = serializers.IntegerField(read_only=True)
-	laboratory = serializers.IntegerField(read_only=True)
+	branch = serializers.IntegerField(read_only=True)
 	hospital = serializers.IntegerField(read_only=True)
 	test = serializers.IntegerField(read_only=True)
 	sample = serializers.IntegerField(read_only=True)
+	branch = serializers.StringRelatedField(source='__str__')
 
 
 	class Meta:
 
 		model = TestResult
-		fields = ('id' ,'send_by', 'laboratory', 'hospital', 'test', 'result', 'sample',
+		fields = ('id' ,'send_by', 'branch', 'hospital', 'test', 'result', 'sample',
 			'comments', 'is_verified', 'is_received', 'date_modified', 'date_added')
 
 
