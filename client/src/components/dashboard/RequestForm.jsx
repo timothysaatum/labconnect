@@ -36,6 +36,12 @@ import {
 import { FormBuilder } from "../formbuilder";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const RequestForm = React.forwardRef((props, ref) => {
   const form = useForm({
@@ -71,6 +77,9 @@ const RequestForm = React.forwardRef((props, ref) => {
     isLoading: labsLoading,
   } = useFetchAllLabs();
 
+  useEffect(() => {
+    console.log(labs?.data);
+  }, [labs]);
   const onSubmit = async (data) => {
     const testvalue = data?.tests ? data.tests.map((test) => test.value) : [];
     const newData = {
@@ -130,7 +139,7 @@ const RequestForm = React.forwardRef((props, ref) => {
     <section>
       <Form {...form}>
         <form
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 py-10"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormBuilder name="name_of_patient" label="Name of patient">
@@ -246,7 +255,7 @@ const RequestForm = React.forwardRef((props, ref) => {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent>
+                  <PopoverContent className="w-popover-content-width-same-as-its-trigger max-h-popover-content-width-same-as-its-trigger">
                     <Command>
                       <CommandInput placeholder="Search delivery service..." />
                       <CommandEmpty>
@@ -307,7 +316,7 @@ const RequestForm = React.forwardRef((props, ref) => {
                           {field.value
                             ? labs?.data?.find(
                                 (option) => option.id === field.value
-                              )?.name
+                              )?.laboratory_name
                             : "choose laboratory"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -326,14 +335,7 @@ const RequestForm = React.forwardRef((props, ref) => {
                         <CommandGroup>
                           <CommandList>
                             {labs?.data.map((lab) => (
-                              <CommandItem
-                                value={lab.id}
-                                key={lab.id}
-                                onSelect={() => {
-                                  form.setValue("lab", lab.id);
-                                  form.clearErrors("lab");
-                                }}
-                              >
+                              <CommandItem value={lab.id} key={lab.id}>
                                 <Check
                                   className={cn(
                                     "mr-2 h-4 w-4",
@@ -342,7 +344,15 @@ const RequestForm = React.forwardRef((props, ref) => {
                                       : "opacity-0"
                                   )}
                                 />
-                                {lab.name}
+
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger>
+                                    {lab.laboratory_name}
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent>
+                                    <DropdownMenuItem>dd</DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
                               </CommandItem>
                             ))}
                           </CommandList>
@@ -377,6 +387,7 @@ const RequestForm = React.forwardRef((props, ref) => {
                             : "No laboratories found"}
                         </p>
                       }
+                      {...field}
                     />
                     <ChevronsUpDown className=" absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
                   </div>

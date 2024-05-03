@@ -1,4 +1,10 @@
-import { BellRing } from "lucide-react";
+import {
+  BellRing,
+  BookCheck,
+  CalendarIcon,
+  ClipboardCheck,
+  Pause,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,11 +21,14 @@ import RequestDetails from "./requestDetails";
 import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
 import { calcAge } from "@/util/ageCalculate";
+import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
 
 export default function LaboratoryDashboardOverview() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setTableRequests] = useState([]);
   const requestColumns = useRequestLabColumns();
+  const [date, setDate] = useState(null);
   const { isError, data: allrequests, isLoading } = useFetchLabRequests();
 
   useEffect(() => {
@@ -45,33 +54,72 @@ export default function LaboratoryDashboardOverview() {
         }`}
       >
         <div className="max-w-full grid gap-4 grid-cols-1 md:grid-cols-10">
-          <Card className="md:col-span-3 shadow-inner border-none">
+          <Card className="md:col-span-3 shadow-inner border-none ">
             <CardHeader className="relative pb-3">
               <CardTitle>Your Requests</CardTitle>
               <CardDescription className="max-w-lg text-balance leading-relaxed">
                 Introducing Our Dynamic Requests Dashboard for Seamless
                 Management and Insightful Analysis.
               </CardDescription>
-              <div className="absolute right-5 top-5 md:hidden">
-                <Button variant="outline" size="icon" className="text-gray-400">
-                  <BellRing />
-                </Button>
-              </div>
             </CardHeader>
             <CardFooter>
               <RequestDialog />
             </CardFooter>
           </Card>
 
-          <Card className="col-span-7 px-4 place-items-center shadow-inner border-none">
-            <CardContent className=" grid grid-cols-3 gap-8">
+          <div className="hidden md:flex col-span-7 px-4 place-items-start shadow-inner border-none">
+            <CardContent className=" grid grid-cols-3 gap-5 w-full">
               <Card>
-                <CardContent>ii</CardContent>
+                <CardHeader>
+                  <CardTitle className="text-md flex justify-between">
+                    Total samples <BookCheck />
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col items-center">
+                      <p className="text-gray-500">Today:</p>
+                      <p className="text-3xl">5</p>
+                    </div>
+
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          className="self-end"
+                        >
+                          <CalendarIcon />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={date}
+                          onSelect={setDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </CardContent>
               </Card>
-              <Card>hh</Card>
-              <Card></Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-md flex justify-between">
+                    Processed Requests <ClipboardCheck />
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-md flex justify-between">
+                    Pending samples <Pause />
+                  </CardTitle>
+                </CardHeader>
+              </Card>
             </CardContent>
-          </Card>
+          </div>
         </div>
         <Card>
           <CardHeader className="px-7">

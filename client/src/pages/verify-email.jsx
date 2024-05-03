@@ -138,7 +138,7 @@ export function OTPInput() {
                       : remainingSeconds}
                   </span>
                 ) : (
-                  <Button variant="ghost" className="p-0 text-blue-400">
+                  <Button variant="ghost" className="text-primary">
                     Get a new code
                   </Button>
                 )}

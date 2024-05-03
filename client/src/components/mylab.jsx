@@ -3,27 +3,22 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Plus } from "lucide-react";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import {
-  useFetchLabDepartments,
   useFetchLabTests,
   useFetchUserLab,
 } from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
-import { departmentColumnDef } from "./columns/departmentColumns";
 import { testscolumnDef } from "./columns/testsColumns";
 import { branchcolumnDef } from "./columns/branchcolumns";
 
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
-  const [labDepartments, setLabDepartments] = useState([]);
   const [branches, setBranches] = useState([]);
 
   const {
@@ -37,11 +32,6 @@ export default function MyLab() {
     data: tests,
   } = useFetchLabTests(userlab?.data[0]?.id);
 
-  const {
-    isError: deparmentsError,
-    isLoading: deparmentsLoading,
-    data: departments,
-  } = useFetchLabDepartments();
   useEffect(() => {
     if (tests?.data) {
       setLabTests(
@@ -51,14 +41,11 @@ export default function MyLab() {
             price: test.price,
             date_added: test.date_added,
             discounted_price: test.discount_price || "--",
-            department: departments?.data?.find(
-              (department) => department.id === test.department
-            )?.department_name,
           };
         })
       );
     }
-  }, [tests, labDepartments]);
+  }, [tests]);
   useEffect(() => {
     if (userlab?.data) {
       setBranches(
@@ -73,28 +60,8 @@ export default function MyLab() {
       );
     }
   }, [userlab]);
-  useEffect(() => {
-    if (departments?.data) {
-      setLabDepartments(
-        departments.data.map((department) => {
-          return {
-            department_name: department.department_name,
-            head_of_department: department.heard_of_department,
-            email: department.email,
-            phone_number: department.phone,
-            date_added: department.date_added,
-          };
-        })
-      );
-    }
-  }, [departments]);
 
   const headerCards = [
-    {
-      title: "Departments",
-      footer: "Add New Department",
-      number: labDepartments?.length,
-    },
     { title: "Tests", footer: "Add New Test", number: labtests?.length },
     {
       title: "Branches",
@@ -112,16 +79,6 @@ export default function MyLab() {
       loading: testsLoading,
       error: testError,
       filter: "test_name",
-    },
-    {
-      title: "Department",
-      description:
-        "All tests run in this laboratory. you can add new test,update existing tests and delete tests. you can also discounts to specific tests",
-      data: labDepartments,
-      columnDef: departmentColumnDef,
-      loading: deparmentsLoading,
-      error: deparmentsError,
-      filter: "department_name",
     },
     {
       title: "Branches",
@@ -159,7 +116,6 @@ export default function MyLab() {
         <Tabs defaultValue="Tests">
           <TabsList>
             <TabsTrigger value="Tests">Tests</TabsTrigger>
-            <TabsTrigger value="Department">Departments</TabsTrigger>
             <TabsTrigger value="Branches">Branches</TabsTrigger>
           </TabsList>
           {tabContent?.map((tab) => (
