@@ -8,14 +8,14 @@ import {
 } from "./ui/card";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import {
-  useFetchLabTests,
-  useFetchUserLab,
-} from "@/api/queries";
+import { useFetchLabTests, useFetchUserLab } from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { testscolumnDef } from "./columns/testsColumns";
 import { branchcolumnDef } from "./columns/branchcolumns";
+import { DropdownMenu } from "./ui/dropdown-menu";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Button } from "./ui/button";
 
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
@@ -52,9 +52,9 @@ export default function MyLab() {
         userlab?.data.map((branch) => {
           return {
             branch_name: branch.branch_name,
-            branch_manager: branch.branch_manager, 
-            branch_phone:branch.branch_phone,
-            branch_email:branch.branch_email
+            branch_manager: branch.branch_manager,
+            branch_phone: branch.branch_phone,
+            branch_email: branch.branch_email,
           };
         })
       );
@@ -109,6 +109,18 @@ export default function MyLab() {
                 </CardHeader>
               </Card>
             ))}
+            <Card>
+              <CardHeader className="flex-row justify-between view">
+                <CardTitle className="text-md">Viewing:</CardTitle>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild >
+                    <Button variant="outline">
+                      {userlab?.data[0]?.branch_name.split("|")[1]}
+                    </Button>
+                  </DropdownMenuTrigger>
+                </DropdownMenu>
+              </CardHeader>
+            </Card>
           </CardContent>
         </Card>
       </header>

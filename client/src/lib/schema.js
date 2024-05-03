@@ -41,6 +41,10 @@ export const labRequestSchema = z.object({
   }),
   patient_sex: z.string().min(1, "Sex is required"),
   sample_type: z.string().min(1, "Sample type is required"),
+  hospital: z.number({
+    required_error: "hospital is required",
+    invalid_type_error: "enter valid data",
+  }),
   sample_container: z.string().min(1, "Sample container is required"),
   lab: z.number({
     required_error: "lab is required",

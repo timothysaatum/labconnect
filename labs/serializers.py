@@ -53,7 +53,7 @@ class TestSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		data['branch'] = instance.branch_name
+		data['branch'] = instance.branch.branch_name
 		
 		return data
 

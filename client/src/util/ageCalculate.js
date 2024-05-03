@@ -6,9 +6,9 @@ export const calcAge = (dob) => {
     age = moment().diff(moment(dob), "months");
     if (age < 1) {
       age = moment().diff(moment(dob), "days");
-      return age + " D";
+      return age + " Day(s)";
     }
-    return age + " M";
+    return age + " Month(s)";
   }
-  return age + " Y";
+  return age + " Year(s)";
 };
