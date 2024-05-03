@@ -1,4 +1,3 @@
-import { useForm } from "react-hook-form";
 import { FormControl, FormDescription, FormField, FormItem, FormLabel } from "./ui/form";
 import React from "react";
 
@@ -17,7 +16,7 @@ export const FormBuilder = ({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>{React.cloneElement(children, field)}</FormControl>
-          {message && <FormMessage>{message}</FormMessage>}
+          {message && <FormMessage/>}
           {description && <FormDescription>{description}</FormDescription>}
         </FormItem>
       )}

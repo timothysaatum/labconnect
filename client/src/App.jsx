@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Signin from "./pages/Signin";
 import Home from "./pages/Home";
-import Signup from "./pages/Signup";
+import Signup from "./pages/signup";
 import RequireAuth, { LabRoutes } from "./components/RequireAuth";
 import PersistLogin from "./components/persistLogin";
 import Layout from "./components/Layout";
