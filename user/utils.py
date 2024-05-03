@@ -35,7 +35,7 @@ def send_code_to_user(email):
 
 	try:
 
-		message.send(fail_silently=True)
+		message.send(fail_silently=False)
 
 	except Exception as e:
 

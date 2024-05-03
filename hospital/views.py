@@ -38,14 +38,14 @@ class SampleSerializerView(CreateAPIView):
 		if serializer.is_valid(raise_exception=True):
 
 			if self.request.user.account_type == 'Clinician':
-				
+
 				sample = serializer.save(send_by=self.request.user)
 
-				test_ids = request.data.getlist('tests')
+				tests = request.data.getlist('tests')
 				
-				for test_id in test_ids:
+				for test in tests:
 					
-					sample.tests.add(test_id)
+					sample.tests.add(test)
 
 				return Response(
 					{'message': 'Sample added successfully.'},
@@ -122,10 +122,10 @@ class SampleUpdateView(UpdateAPIView):
 
 				serializer.save()
 				sample.tests.clear()
-				test_ids = request.data.get('tests')
+				tests = request.data.getlist('tests')
 
-				for test_id in test_ids:
-					sample.tests.add(test_id)
+				for test in tests:
+					sample.tests.add(test)
 
 				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
 

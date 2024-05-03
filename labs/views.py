@@ -42,10 +42,12 @@ class CreateBranchView(CreateAPIView):
 	def post(self, request):
 	
 		serializer = self.serializer_class(data=request.data)
+
 		if serializer.is_valid(raise_exception=True):
+
 			if self.request.user.account_type == 'Laboratory' and self.request.user.is_admin:
 
-				serializer.save(branch_manager=self.request.user)
+				serializer.save()
 
 				return Response({'message': 'Branch created successfully.'},
 							status=status.HTTP_200_OK)
@@ -80,7 +82,6 @@ class BranchListView(ListAPIView):
 
 class BranchDetailView(RetrieveAPIView):
 
-	#permission_classes = [IsAuthenticated]
 	serializer_class = BranchSerializer
 
 	def get_queryset(self, pk):
@@ -332,14 +333,14 @@ class LaboratorySampleList(ListAPIView):
 
 class AllLaboratories(ListAPIView):
 
-	serializer_class = LaboratorySerializer
+	serializer_class = BranchSerializer
 
 	def get_queryset(self):
 
 		try:
-			return Laboratory.objects.all()
+			return Branch.objects.all()
 
-		except Laboratory.DoesNotExist:
+		except Branch.DoesNotExist:
 			return Response({'error': 'No labaratory added yet'}, status=status.HTTP_404_NOT_FOUND)
 
 
