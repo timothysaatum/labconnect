@@ -91,38 +91,20 @@ class Test(BaseModel):
 	dicount_price (float, optional): The discounted price of the test.
 	'''
 
+	test_code = models.CharField(max_length=100)
 	name = models.CharField(max_length=200, db_index=True)
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='tests', db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
-	discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
+	turn_around_time = models.DurationField(default='2 hours')
+	patient_preparation = models.TextField()
 
 	class Meta:
 		unique_together = ('branch', 'name')
 
 	def __str__(self):
 
-		return f'{self.name} | {self.price}ghs'
+		return f'{self.name} | {self.price}ghs | {turn_around_time}'
 
 	def laboratory(self):
 
 		return self.branch
-
-	def current_price(self):
-	
-		if self.discount_price is not None:
-
-			return (self.price - self.discount_price)
-
-		else:
-
-			return self.price
-
-	def discount_percent(self):
-
-		if self.discount_price is not None:
-
-			percentage = round((self.discount_price / self.price) * 100)
-
-			return f'{percentage}%'
-
-		return '0%'

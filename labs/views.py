@@ -342,16 +342,3 @@ class AllLaboratories(ListAPIView):
 
 		except Branch.DoesNotExist:
 			return Response({'error': 'No labaratory added yet'}, status=status.HTTP_404_NOT_FOUND)
-
-
-class LaboratoryBranches(ListAPIView):
-
-	serializer_class = BranchSerializer
-
-	def get_queryset(self):
-
-		try:
-			return Branch.objects.filter(laboratory_id=self.kwargs.get('pk'))
-
-		except Branch.DoesNotExist:
-			return Response({'error': 'Branch not found'}, status=status.HTTP_404_NOT_FOUND)

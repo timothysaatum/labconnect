@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (CreateLaboratoryView, CreateTestView, CreateTestResultView,
 	BranchDetailView, TestUpdateView, BranchListView, BranchUpdateView, CreateBranchView,
 	BranchDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView, 
-	TestResultUpdateView, TestResultDeleteView, LaboratorySampleList, AllLaboratories, LaboratoryBranches)
+	TestResultUpdateView, TestResultDeleteView, LaboratorySampleList, AllLaboratories)
 
 
 app_name = 'laboratory'
@@ -14,7 +14,6 @@ urlpatterns = [
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
 	path('list/', BranchListView.as_view(), name='laboratory-list'),
 	path('laboratory/all/', AllLaboratories.as_view(), name='all-labs'),
-	path('laboratory-branches/<int:pk>/', LaboratoryBranches.as_view(), name='lab-branches'),
 	path('details/<int:pk>/', BranchDetailView.as_view(), name='branch-details'),
 	path('update/<int:pk>/', BranchUpdateView.as_view(), name='branch-update'),
 	path('delete/<int:pk>/', BranchDeleteView.as_view(), name='branch-delete'),

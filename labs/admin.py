@@ -31,8 +31,7 @@ def download_csv(self, request, query):
 
 
 class TestAdmin(admin.ModelAdmin):
-	list_display = ('id', 'name', 'branch', 'price', 'current_price', 'discount_price', 
-		'discount_percent', 'date_added', 'date_modified')
+	list_display = ('id', 'test_code', 'name', 'branch', 'price', 'turn_around_time', 'patient_preparation', 'date_added', 'date_modified')
 	list_display_links = ('id', 'name')
 	#list_editable = ('name', 'price', 'discount_price')
 	ordering = ('id',)
