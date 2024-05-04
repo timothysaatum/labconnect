@@ -1,5 +1,6 @@
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useQuery } from "@tanstack/react-query";
+import axios from "./axios";
 
 export const useFetchLabRequests = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -34,7 +35,7 @@ export const useFetchAllLabs = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["All labs"],
-    queryFn: async () => await axiosPrivate.get("/laboratory/laboratory-branches/all/"),
+    queryFn: async () => await axiosPrivate.get("/laboratory/laboratory/all/"),
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60,
   });
@@ -49,21 +50,22 @@ export const useFetchLabTests = (id) => {
     staleTime: 1000 * 60 * 60,
   });
 };
-export const useFetchLabDepartments = () => {
-  const axiosPrivate = useAxiosPrivate();
-  return useQuery({
-    queryKey: ["departments"],
-    queryFn: async () => await axiosPrivate.get(`/laboratory/department/list/`),
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 60,
-  });
-};
+
 export const useFetchUserLab = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["userlabs"],
     queryFn: async () => await axiosPrivate.get(`/laboratory/list/`),
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 60,
+  });
+};
+
+
+//hospitals
+export const useFetchAllHospitals = () => {
+  return useQuery({
+    queryKey: ["All hospitals"],
+    queryFn: async () => await axios.get("/hospital/list/"),
     staleTime: 1000 * 60 * 60,
   });
 };

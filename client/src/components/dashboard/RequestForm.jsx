@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import {
   useFetchAllDeliveries,
+  useFetchAllHospitals,
   useFetchAllLabs,
   useFetchLabTests,
 } from "@/api/queries";
@@ -36,8 +37,11 @@ import {
 import { FormBuilder } from "../formbuilder";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 
 const RequestForm = React.forwardRef((props, ref) => {
+  const queryClient = useQueryClient();
   const form = useForm({
     resolver: zodResolver(labRequestSchema),
     defaultValues: {
@@ -84,6 +88,7 @@ const RequestForm = React.forwardRef((props, ref) => {
     ) {
       newData.attachment = newData.attachment[0];
     }
+    console.log(data);
 
     try {
       const formData = new FormData();
@@ -99,7 +104,10 @@ const RequestForm = React.forwardRef((props, ref) => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      console.log(response?.data);
+      queryClient.invalidateQueries("Requests");
+      toast.success("Sample Sent", {
+        position: "top-center",
+      });
     } catch (error) {
       console.log(error.data);
     }
@@ -121,6 +129,12 @@ const RequestForm = React.forwardRef((props, ref) => {
     );
   }, [tests]);
 
+  //hospitals
+  const {
+    isLoading: hospitalsLoading,
+    isError: hospitalsError,
+    data: hospitals,
+  } = useFetchAllHospitals();
   // id of lab to fetch tests for
   useEffect(() => {
     const value = form.watch("lab");
@@ -246,15 +260,15 @@ const RequestForm = React.forwardRef((props, ref) => {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent>
+                  <PopoverContent className="w-popover-content-width-same-as-its-trigger max-h-pop">
                     <Command>
                       <CommandInput placeholder="Search delivery service..." />
                       <CommandEmpty>
                         {deliveriesLoading
                           ? "Loading..."
                           : deliveriesError
-                          ? "Error loading labs"
-                          : "No laboratories found"}
+                          ? "Error loading delivery services"
+                          : "No Delivery Services Available"}
                       </CommandEmpty>
                       <CommandGroup>
                         <CommandList>
@@ -288,6 +302,72 @@ const RequestForm = React.forwardRef((props, ref) => {
           />
           <FormField
             control={form.control}
+            name="hospital"
+            render={({ field }) => (
+              <FormItem className="flex flex-col justify-end">
+                <FormLabel>Choose Current hospital</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? hospitals?.data?.find(
+                              (option) => option.id === field.value
+                            )?.name
+                          : "Choose Current Hospital"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-popover-content-width-same-as-its-trigger max-h-pop">
+                    <Command>
+                      <CommandInput placeholder="Search delivery service..." />
+                      <CommandEmpty>
+                        {hospitalsLoading
+                          ? "Loading..."
+                          : hospitalsError
+                          ? "Error loading Hospitals"
+                          : "No Hospitals found"}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        <CommandList>
+                          {hospitals?.data?.map((hospital) => (
+                            <CommandItem
+                              value={hospital.id}
+                              key={hospital.id}
+                              onSelect={() => {
+                                form.setValue("hospital", hospital.id);
+                                form.clearErrors("hospital");
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  hospital.id === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {hospital.name}
+                            </CommandItem>
+                          ))}
+                        </CommandList>
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="lab"
             render={({ field }) => (
               <FormItem>
@@ -307,7 +387,7 @@ const RequestForm = React.forwardRef((props, ref) => {
                           {field.value
                             ? labs?.data?.find(
                                 (option) => option.id === field.value
-                              )?.name
+                              )?.branch_name
                             : "choose laboratory"}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -342,7 +422,7 @@ const RequestForm = React.forwardRef((props, ref) => {
                                       : "opacity-0"
                                   )}
                                 />
-                                {lab.name}
+                                {lab.branch_name}
                               </CommandItem>
                             ))}
                           </CommandList>
@@ -377,6 +457,7 @@ const RequestForm = React.forwardRef((props, ref) => {
                             : "No laboratories found"}
                         </p>
                       }
+                      {...field}
                     />
                     <ChevronsUpDown className=" absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
                   </div>

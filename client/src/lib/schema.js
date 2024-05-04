@@ -9,15 +9,9 @@ export const SignupSchema = z
     email: z.string().email("Invalid email address"),
     phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
     gender: z.string().min(1, "please select a gender"),
-    staff_id: z.string().min(1, "Staff ID is required"),
-    current_facility: z.string().min(1, "Facility is required"),
-
-    emmergency_number: z
-      .string()
-      .refine(isValidPhoneNumber, "Invalid phone number"),
     digital_address: z.string().min(1, "Digital address is required"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    password_confirmation: z.string(),
+    password_confirmation: z.string().min(1,"Password confirmation is required"),
     tc: z.boolean(),
   })
   .refine((data) => data.password === data.password_confirmation, {
@@ -47,10 +41,11 @@ export const labRequestSchema = z.object({
   }),
   patient_sex: z.string().min(1, "Sex is required"),
   sample_type: z.string().min(1, "Sample type is required"),
-  sample_container: z.string().min(1, "Sample container is required"),
-  delivery: z.number({
+  hospital: z.number({
+    required_error: "hospital is required",
     invalid_type_error: "enter valid data",
   }),
+  sample_container: z.string().min(1, "Sample container is required"),
   lab: z.number({
     required_error: "lab is required",
     invalid_type_error: "enter valid data",
