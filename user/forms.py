@@ -51,7 +51,7 @@ class ClientChangeForm(forms.ModelForm):
 
     class Meta:
         model = Client
-        fields = ('email', 'first_name', 'last_name', 
+        fields = ('email', 'first_name', 'last_name', 'id_number',
             'phone_number', 'digital_address', 'account_type', 
             'password', 'is_active', 'is_admin'
             )

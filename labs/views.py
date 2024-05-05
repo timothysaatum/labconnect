@@ -6,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Laboratory, Test, Branch
 from .results import TestResult
-from rest_framework_simplejwt.exceptions import InvalidToken
 from hospital.models import Sample
 from hospital.serializers import SampleSerializer
 

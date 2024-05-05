@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 user = get_user_model()
+from delivery.models import Delivery
 
 
 
@@ -103,8 +104,45 @@ class Test(BaseModel):
 
 	def __str__(self):
 
-		return f'{self.name} | {self.price}ghs | {turn_around_time}'
+		return f'Code: {self.test_code} | Price: {self.price}ghs | turn arount time: {self.turn_around_time}'
 
 	def laboratory(self):
 
 		return self.branch
+
+
+
+class LaboratorySample(BaseModel):
+
+	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
+	name_of_patient = models.CharField(max_length=200)
+	patient_age = models.DateField()
+	patient_sex = models.CharField(max_length=20)
+	sample_type = models.CharField(max_length=200)
+	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
+	to_lab = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='lab_samples', db_index=True)
+	tests = models.ManyToManyField(Test, related_name='tests_requested')
+	from_lab = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	brief_description = models.TextField(null=True, blank=True)
+	attachment = models.FileField(upload_to='sample/attachments', blank=True, null=True)
+	is_rejected = models.BooleanField(default=False)
+	rejection_reason = models.TextField(blank=True, null=True)
+	is_paid = models.BooleanField(default=False)
+	is_received_by_delivery = models.BooleanField(default=False)
+	is_delivered_to_lab = models.BooleanField(default=False)
+	is_access_by_lab = models.BooleanField(default=False)
+
+	def __str__(self):
+		return f'{self.sample_type} | {self.from_lab}'
+
+
+	def sender_phone(self):
+		return from_lab.branch_phone
+
+
+	def dispatched_time(self):
+		return self.date_added
+
+
+	def email(self):
+		return self.branch_email

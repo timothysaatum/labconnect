@@ -3,6 +3,8 @@ from .views import (CreateLaboratoryView, CreateTestView, CreateTestResultView,
 	BranchDetailView, TestUpdateView, BranchListView, BranchUpdateView, CreateBranchView,
 	BranchDeleteView, TestListView,TestDeleteView, TestResultListView, TestResultDetailView, 
 	TestResultUpdateView, TestResultDeleteView, LaboratorySampleList, AllLaboratories)
+from .sample_views import LaboratorySampleSerializerView
+
 
 
 app_name = 'laboratory'
@@ -32,5 +34,8 @@ urlpatterns = [
 	path('test/result/delete/<int:pk>/', TestResultDeleteView.as_view(), name='result-delete'),
 
 	#samples
-	path('samples-list/', LaboratorySampleList.as_view(), name='samples-list')
+	path('samples-list/', LaboratorySampleList.as_view(), name='samples-list'),
+
+	#url endpoints for creating, updating and deletion of laboratory samples
+	path('laboratory/add/sample/', LaboratorySampleSerializerView.as_view(), name='samples-list')
 ]

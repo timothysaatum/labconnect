@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Laboratory, Test, Branch
+from .models import Laboratory, Test, Branch, LaboratorySample
 from .results import TestResult
 
 
@@ -86,5 +86,38 @@ class TestResultSerializer(serializers.ModelSerializer):
 		data['sample'] = instance.sample.sample_type
 		data['test'] = instance.test.name
 		data['laboratory'] = instance.laboratory.laboratory_name
+
+		return data
+
+
+
+class LaboratorySampleSerializer(serializers.ModelSerializer):
+
+	patient_age = serializers.DateField(format='%Y-%m-%d')
+	attachment = serializers.FileField(required=False)
+	send_by = serializers.PrimaryKeyRelatedField(read_only=True)
+	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
+
+	class Meta:
+
+		model = LaboratorySample
+
+		fields = ('id', 'send_by', 'from_lab', 'name_of_patient', 'patient_age', 'patient_sex',
+			'delivery', 'is_paid', 'is_received_by_delivery', 'is_delivered_to_lab', 
+			'is_access_by_lab', 'sample_type', 'to_lab', 'tests', 'brief_description', 
+			'attachment', 'date_modified', 'date_added')
+
+	def to_representation(self, instance):
+
+		data = super().to_representation(instance)
+		data['tests'] = [test.name for test in instance.tests.all()]
+		data['send_by'] = instance.send_by.full_name
+		data['hospital'] = instance.hospital.name
+		data['to_lab'] = instance.lab.branch_name
+		data['from_lab'] = instance.lab.branch_name
+
+		if data['delivery']:
+			
+			data['delivery'] = instance.delivery.name
 
 		return data

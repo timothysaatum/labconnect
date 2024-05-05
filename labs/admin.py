@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Test, Laboratory, Branch
+from .models import Test, Laboratory, Branch, LaboratorySample
 from .results import TestResult
 import csv
 from django.http import HttpResponse
@@ -67,6 +67,11 @@ class BranchAdmin(admin.ModelAdmin):
 	list_display = ('id', 'branch_name', 'branch_manager', 'location', 'region', 'laboratory','date_added', 'date_modified')
 
 
+class LaboratorySampleAdmin(admin.ModelAdmin):
+	list_display = ('send_by', 'name_of_patient', 'sample_type', 'from_lab', 'to_lab', 'delivery', 'is_paid')
+
+
+admin.site.register(LaboratorySample, LaboratorySampleAdmin)
 admin.site.register(Test, TestAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(TestResult, TestResultAdmin)

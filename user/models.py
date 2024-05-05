@@ -12,18 +12,19 @@ from rest_framework_simplejwt.tokens import RefreshToken
 SEX = [('Male', 'Male'), ('Female', 'Female')]
 USER_TYPE = [
 	('Laboratory', 'Laboratory'),
-	('Clinician', 'Clinician'),
+	('Health Worker', 'Health Worker'),
 	('Delivery', 'Delivery')
 ]
 
 class Client(AbstractBaseUser, PermissionsMixin):
 
 	#setting the paramaters
-	email = models.EmailField(unique=True)
 	first_name = models.CharField(max_length=50)
 	last_name = models.CharField(max_length=50)
 	gender = models.CharField(max_length=7, choices=SEX)
 	phone_number = models.CharField(max_length=13)
+	email = models.EmailField(unique=True)
+	id_number = models.CharField(max_length=50)
 	digital_address = models.CharField(max_length=12)
 	account_type = models.CharField(max_length=100, choices=USER_TYPE)
 	is_staff = models.BooleanField(default=False)

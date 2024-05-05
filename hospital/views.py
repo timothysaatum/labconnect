@@ -37,7 +37,7 @@ class SampleSerializerView(CreateAPIView):
 
 		if serializer.is_valid(raise_exception=True):
 
-			if self.request.user.account_type == 'Clinician':
+			if self.request.user.account_type == 'Health Worker':
 
 				sample = serializer.save(send_by=self.request.user)
 
@@ -81,7 +81,7 @@ class SampleDetailView(RetrieveAPIView):
 	def get_queryset(self, pk):
 
 		try:
-			return Sample.objects.get(pk=pk)
+			return Sample.objects.filter(send_by=self.request.user).get(pk=pk)
 
 		except Sample.DoesNotExist:
 
@@ -114,11 +114,11 @@ class SampleUpdateView(UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 
-		sample = Sample.objects.get(pk=pk)
+		sample = Sample.objects.filter(send_by=self.request.user).get(pk=pk)
 		serializer = SampleSerializer(sample, data=request.data)
 
 		if serializer.is_valid():
-			if self.request.user.account_type == 'Client':
+			if self.request.user.account_type == 'Health Worker':
 
 				serializer.save()
 				sample.tests.clear()
@@ -142,8 +142,8 @@ class SampleDeleteView(DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		sample = Sample.objects.get(pk=pk)
-		if self.request.user.account_type == 'Clinician':
+		sample = Sample.objects.filter(send_by=self.request.user).get(pk=pk)
+		if self.request.user.account_type == 'Health Worker':
 
 			sample.delete()
 			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
@@ -151,7 +151,7 @@ class SampleDeleteView(DestroyAPIView):
 		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class ClinicianResultList(ListAPIView):
+class HealthWorkerResultList(ListAPIView):
 
 	permission_classes = [IsAuthenticated]
 	serializer_class = TestResultSerializer

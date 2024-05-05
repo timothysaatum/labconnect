@@ -168,7 +168,7 @@ class LoginUserView(GenericAPIView):
 				user = Client.objects.get(id=serializer.data['user_id'])
 
 			except Client.DoesNotExist:
-				return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+				return Response({'error': 'An error occured, try again.'}, status=status.HTTP_404_NOT_FOUND)
 
 			user_tokens = user.tokens()
 
@@ -274,7 +274,8 @@ class LogoutView(APIView):
 				token.blacklist()
 
 			except TokenError as e:
-				raise serializers.ValidationError(str(e))
+
+				raise InvalidToken('An error occured')
 
 			response = Response({'message': 'Log out success'},status=status.HTTP_200_OK)
 			response.delete_cookie('refresh_token')

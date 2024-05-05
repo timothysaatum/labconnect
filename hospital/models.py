@@ -19,7 +19,7 @@ class BaseModel(models.Model):
 
 HOSPITAL_TYPES = [
 
-	('Government', 'Government'),
+	('Public', 'Public'),
 	('Private', 'Private')
 ]
 
@@ -45,9 +45,8 @@ class Sample(models.Model):
 	patient_age = models.DateField()
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
-	sample_container = models.CharField(max_length=100)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
-	lab = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	lab = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='samples', db_index=True)
 	tests = models.ManyToManyField(Test, related_name='tests')
 	hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
 	brief_description = models.TextField(null=True, blank=True)
@@ -71,7 +70,6 @@ class Sample(models.Model):
 		phone = self.send_by.phone_number
 
 		return phone
-
 
 	def delivery_phone(self):
 

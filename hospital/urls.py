@@ -1,17 +1,17 @@
 from django.urls import path
 from .views import (HospitalSerializerView, SampleSerializerView, 
-	SampleListView, SampleDetailView, SampleUpdateView, SampleDeleteView, ClinicianResultList)
+	SampleListView, SampleDetailView, SampleUpdateView, SampleDeleteView, HealthWorkerResultList)
 
 
 app_name = 'hospital'
 urlpatterns = [
 
 	path('list/', HospitalSerializerView.as_view(), name='hospital-list'),
-	path('clinician/sample/add/', SampleSerializerView.as_view(), name='add-sample'),
+	path('health-worker/sample/add/', SampleSerializerView.as_view(), name='add-sample'),
 	path('sample/list/', SampleListView.as_view(), name='sample'),
 	path('sample/details/<int:pk>/', SampleDetailView.as_view(), name='sample-details'),
 	path('sample/update/<int:pk>/', SampleUpdateView.as_view(), name='sample-update'),
 	path('sample/delete/<int:pk>/', SampleDeleteView.as_view(), name='delete-sample'),
-	path('result-list/', ClinicianResultList.as_view(), name='result-list'),
+	path('result-list/', HealthWorkerResultList.as_view(), name='result-list'),
 
 ]
