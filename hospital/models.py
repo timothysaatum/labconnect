@@ -8,14 +8,6 @@ from delivery.models import Delivery
 user = get_user_model()
 
 
-class BaseModel(models.Model):
-
-	name = models.CharField(max_length=200)
-	date_created = models.DateField(auto_now_add=True)
-	date_modified = models.DateField(auto_now=True)
-
-	class Meta:
-		abstract=True
 
 HOSPITAL_TYPES = [
 
@@ -23,26 +15,35 @@ HOSPITAL_TYPES = [
 	('Private', 'Private')
 ]
 
-class Hospital(BaseModel):
+class Hospital(models.Model):
 
-	hospital_type = models.CharField(max_length=50, choices=HOSPITAL_TYPES)
+	'''
+	Model representing a hospital
+	'''
+	name = models.CharField(max_length=200)
+	hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
 	region_of_location = models.CharField(max_length=255)
 	digital_address = models.CharField(max_length=15)
 	mailing_address = models.CharField(max_length=255)
 	phone = models.CharField(max_length=15)
 	email = models.EmailField()
 	website = models.URLField()
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return self.name
 
 
 
 class Sample(models.Model):
 
+	'''
+	Model representing a medical sample
+	'''
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
-	patient_age = models.DateField()
+	patient_age = models.PositiveIntegerField()
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
@@ -57,11 +58,11 @@ class Sample(models.Model):
 	is_received_by_delivery = models.BooleanField(default=False)
 	is_delivered_to_lab = models.BooleanField(default=False)
 	is_access_by_lab = models.BooleanField(default=False)
-	date_created = models.DateField(auto_now_add=True)
-	date_modified = models.DateField(auto_now=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return self.sample_type
 
 

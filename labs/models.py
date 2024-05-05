@@ -99,9 +99,6 @@ class Test(BaseModel):
 	turn_around_time = models.DurationField(default='2 hours')
 	patient_preparation = models.TextField()
 
-	class Meta:
-		unique_together = ('branch', 'name')
-
 	def __str__(self):
 
 		return f'Code: {self.test_code} | Price: {self.price}ghs | turn arount time: {self.turn_around_time}'

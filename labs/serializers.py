@@ -21,8 +21,6 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 class BranchSerializer(serializers.ModelSerializer):
 
-	branch_name = serializers.StringRelatedField(source='__str__')
-
 	class Meta:
 
 		model = Branch
@@ -30,34 +28,31 @@ class BranchSerializer(serializers.ModelSerializer):
 		fields = ('id' ,'branch_manager', 'laboratory', 'branch_name', 'branch_phone', 
 			'branch_email', 'location', 'digital_address', 'region', 'date_modified', 'date_added')
 
-
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
 		data['branch_manager'] = instance.branch_manager.full_name
 		data['laboratory'] = instance.laboratory.laboratory_name
+		data['branch_name'] = instance.__str__()
 
 		return data
 
 
 class TestSerializer(serializers.ModelSerializer):
 
-	name = serializers.StringRelatedField(source='__str__')
-
 	class Meta:
 
 		model = Test
-		fields = ('id' ,'branch', 'name', 'price', 'discount_price', 'date_modified', 'date_added')
+		fields = ('id', 'test_code', 'name', 'turn_around_time', 'price', 'patient_preparation', 'branch', 'date_modified', 'date_added')
 
 
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
 		data['branch'] = instance.branch.branch_name
-		
+		data['name'] = instance.__str__()
+
 		return data
-
-
 
 
 class TestResultSerializer(serializers.ModelSerializer):
