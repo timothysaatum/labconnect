@@ -1,126 +1,97 @@
-from django.shortcuts import render
-from django.views.generic import CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Delivery
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView
+from rest_framework.generics import (
+	CreateAPIView,
+	UpdateAPIView,
+	ListAPIView,
+	RetrieveAPIView, 
+	DestroyAPIView, 
+	GenericAPIView
+)
 from .serializers import DeliverySerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
 
 
-
-
-
-class CreateDeliveryView(CreateAPIView):
-
+class DeliveryPermissionMixin(BasePermission):
 	permission_classes = [IsAuthenticated]
-	serializer_class = DeliverySerializer
 
-	def post(self, request):
-
-		serializer = self.serializer_class(data=request.data, context={'request': request})
-
-		if serializer.is_valid(raise_exception=True):
-
-			if self.request.user.account_type == 'Delivery':
-
-				serializer.save(created_by=self.request.user)
-				return Response({'message': 'Delivery created successfully.'}, status=status.HTTP_200_OK)
-
-			return Response({'error': 'Your account type does not support addition of a delivery.'})
-
-		return Response({'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-	
+	def has_permission(self, request, view):
+		return (
+				request.user.is_authenticated and (
+				request.user.account_type == 'Delivery'
+			)
+		)
 
 
+class DeliveryMixin(GenericAPIView):
+	'''Mixins class for common logic in sample views'''
 
-class DeliveryListView(ListAPIView):
-
-	permission_classes = [IsAuthenticated]
+	permission_classes = [DeliveryPermissionMixin]
 	serializer_class = DeliverySerializer
 
 	def get_queryset(self):
+		return Delivery.objects.filter(created_by=self.request.user)
 
-		try:
-			return Delivery.objects.filter(created_by=self.request.user)
-			
-		except Delivery.DoesNotExist:
-			return Response({'error': 'Delivery not found'}, status=status.HTTP_404_NOT_FOUND)
 
+class CreateDeliveryView(DeliveryMixin, CreateAPIView):
+
+	def post(self, request):
+
+		if not self.get_permissions():
+			return Response({'error': 'Unauthroized action'}, status=status.HTTP_400_BAD_REQUEST)
+
+		self.create(request)
+		return Response({'message': 'Created'}, status=status.HTTP_201_CREATED)
+
+	def perform_create(self, serializer):
+		serializer.save(created_by=self.request.user)
+
+
+class DeliveryListView(DeliveryMixin, ListAPIView):
+	pass
 
 
 class DeliveryDetailView(RetrieveAPIView):
-
-	permission_classes = [IsAuthenticated]
 	serializer_class = DeliverySerializer
 
 	def get_queryset(self, pk):
 
-		try:
-			return Delivery.objects.get(pk=pk)
-
-		except Delivery.DoesNotExist:
-
-			return Response({'error': 'Delivery does not exist.'})
-
-		except Exception as e:
-
-			return Response({'error': str(e)})
-
+		return Delivery.objects.get(pk=pk)
 
 	def get(self, request, pk, format=None):
 
 		try:
-
-			delivery = self.get_queryset(pk)
+			delivery = self.get_queryset(pk=pk)
 			serialized_data = DeliverySerializer(delivery)
-
 			return Response(serialized_data.data)
 
-		except Exception as e:
-			
-			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+		except Delivery.DoesNotExist:
+			return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
-class DeliveryUpdateView(UpdateAPIView):
-
-	permission_classes = [IsAuthenticated]
-	serializer_class = DeliverySerializer
+class DeliveryUpdateView(DeliveryMixin, UpdateAPIView):
 
 	def put(self, request, pk, format=None):
+		
+		if not self.get_permissions():
 
-		delivery = Delivery.objects.get(pk=pk)
-		serializer = DeliverySerializer(delivery, data=request.data)
+			return Response({'error': 'You are not authorized to perform this action'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		if serializer.is_valid():
-			if self.request.user.account_type == 'Delivery':
-
-				serializer.save()
-				return Response({'message': 'Updated'},status=status.HTTP_201_CREATED)
-
-			return Response({'error': 'You are no authorized to edit delivery details!'},
-							status=status.HTTP_401_UNAUTHORIZED)
-
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		self.update(request, pk, format=None)
+		return Response({'message': 'Updated'}, status=status.HTTP_200_OK)
 
 
-
-class DeliveryDeleteView(DestroyAPIView):
-
-	permission_classes = [IsAuthenticated]
+class DeliveryDeleteView(DeliveryMixin, DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		delivery = Delivery.objects.get(pk=pk)
-		if self.request.user.account_type == 'Delivery':
+		if not self.get_permissions():
 
-			delivery.delete()
-			return Response({'message': 'delete successful'}, status=status.HTTP_204_NO_CONTENT)
-
-		return Response({'message': 'Unauthorized'}, status=status.HTTP_401_UNAUTHORIZED)
-
+			return Response({'error': 'You are not authorized to perform this action'}, status=status.HTTP_401_UNAUTHORIZED)
+		
+		self.destroy(request, pk, format=None)
+		return Response({'message': 'Delete successful.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class AllDelivery(ListAPIView):

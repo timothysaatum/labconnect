@@ -93,13 +93,18 @@ class SampleUpdateView(SampleMixin, generics.UpdateAPIView):
 	def put(self, request, *args, **kwargs):
 		sample = self.get_object()
 		serializer = self.get_serializer(sample, data=request.data)
-		serializer.is_valid(raise_exception=True)
-		self.perform_update(serializer)
-		sample.tests.clear()
-		tests = request.data.getlist('tests')
-		for test in tests:
-			sample.tests.add(test)
-		return Response({'message': 'Update successful.'}, status=status.HTTP_200_OK)
+
+		if serializer.is_valid(raise_exception=True):
+
+			self.perform_update(serializer)
+			sample.tests.clear()
+			tests = request.data.getlist('tests')
+
+			for test in tests:
+				sample.tests.add(test)
+				return Response({'message': 'Update successful.'}, status=status.HTTP_200_OK)
+			
+		return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SampleDeleteView(SampleMixin, generics.DestroyAPIView):

@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 user = get_user_model()
 from delivery.models import Delivery
+import uuid
 
 
 
@@ -23,7 +24,7 @@ class Laboratory(BaseModel):
 	Attrs:
 	name(str): the name of the laboratory
 	'''
-
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_column='General manager')
 	laboratory_name = models.CharField(max_length=200, db_index=True, validators=[MinLengthValidator(10), MaxLengthValidator(200)])
 	main_phone = models.CharField(max_length=15)
@@ -62,6 +63,7 @@ REGIONS = [
 
 class Branch(BaseModel):
 
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	branch_manager = models.ForeignKey(user, on_delete=models.CASCADE)
 	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')
 	branch_name = models.CharField(max_length=255)
@@ -92,6 +94,7 @@ class Test(BaseModel):
 	dicount_price (float, optional): The discounted price of the test.
 	'''
 
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	test_code = models.CharField(max_length=100)
 	name = models.CharField(max_length=200, db_index=True)
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='tests', db_index=True)
@@ -111,9 +114,10 @@ class Test(BaseModel):
 
 class LaboratorySample(BaseModel):
 
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
-	patient_age = models.DateField()
+	patient_age = models.PositiveIntegerField()
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
