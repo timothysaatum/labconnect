@@ -13,19 +13,32 @@ import { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { testscolumnDef } from "./columns/testsColumns";
 import { branchcolumnDef } from "./columns/branchcolumns";
-import { DropdownMenu } from "./ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
+import { ChevronDown } from "lucide-react";
 
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
   const [branches, setBranches] = useState([]);
+  const [checked, setChecked] = useState();
 
   const {
     data: userlab,
     isLoading: labsLoading,
     isError: labsError,
   } = useFetchUserLab();
+
+  useEffect(() => {
+    setChecked(userlab?.data[0]?.id);
+  }, [userlab?.data]);
+
+
   const {
     isError: testError,
     isLoading: testsLoading,
@@ -37,7 +50,7 @@ export default function MyLab() {
       setLabTests(
         tests.data.map((test) => {
           return {
-            test_name: test.name,
+            test_name: test.name.split("|")[0],
             price: test.price,
             date_added: test.date_added,
             discounted_price: test.discount_price || "--",
@@ -46,6 +59,8 @@ export default function MyLab() {
       );
     }
   }, [tests]);
+  
+  
   useEffect(() => {
     if (userlab?.data) {
       setBranches(
@@ -93,12 +108,12 @@ export default function MyLab() {
   ];
   return (
     <main className="ml-14 px-10">
-      <header className="grid grid-cols-12">
-        <Card className="col-span-12 lg:col-span-9 shadow-inner border-none">
-          <CardContent className="grid grid-cols-3 gap-10 pt-10">
+      {/* <header>
+        <Card className="shadow-inner border-none">
+          <CardContent className="grid grid-cols-12 gap-10 pt-10">
             {headerCards.map((card) => (
-              <Card key={card.title}>
-                <CardHeader className="border-b-2">
+              <Card key={card.title} className="col-span-4">
+                <CardHeader>
                   <CardTitle className="text-md flex justify-between">
                     {card.title}:{" "}
                     <span className="text-xl">
@@ -109,11 +124,11 @@ export default function MyLab() {
                 </CardHeader>
               </Card>
             ))}
-            <Card>
-              <CardHeader className="flex-row justify-between view">
+            <Card className="col-span-4">
+              <CardHeader className="flex-row justify-between">
                 <CardTitle className="text-md">Viewing:</CardTitle>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild >
+                  <DropdownMenuTrigger asChild>
                     <Button variant="outline">
                       {userlab?.data[0]?.branch_name.split("|")[1]}
                     </Button>
@@ -123,8 +138,8 @@ export default function MyLab() {
             </Card>
           </CardContent>
         </Card>
-      </header>
-      <section className="mt-10">
+      </header> */}
+      <section>
         <Tabs defaultValue="Tests">
           <TabsList>
             <TabsTrigger value="Tests">Tests</TabsTrigger>
@@ -133,10 +148,40 @@ export default function MyLab() {
           {tabContent?.map((tab) => (
             <TabsContent value={tab.title} key={tab.title}>
               <div className="grid grid-cols-12">
-                <Card className="col-span-12 lg:col-span-9">
-                  <CardHeader>
-                    <CardTitle>{tab.title}</CardTitle>
-                    <CardDescription>{tab.description}</CardDescription>
+                <Card className="col-span-12">
+                  <CardHeader className="flex-row justify-between">
+                    <div>
+                      <CardTitle>{tab.title}</CardTitle>
+                      <CardDescription>{tab.description}</CardDescription>
+                    </div>
+                    <div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="flex justify-between items-center text-sm px-2 gap-3"
+                          >
+                            {
+                              userlab?.data?.find(
+                                (branch) => branch.id === checked
+                              )?.branch_name.split("|")[1]
+                            }
+                            <ChevronDown className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {userlab?.data?.map((branch) => (
+                            <DropdownMenuCheckboxItem
+                              key={branch.id}
+                              checked={checked === branch.id}
+                              onCheckedChange={() => setChecked(branch.id)}
+                            >
+                              {branch.branch_name.split("|")[1]}
+                            </DropdownMenuCheckboxItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <DataTable
