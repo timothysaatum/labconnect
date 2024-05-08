@@ -9,8 +9,8 @@ class PriceModel(models.Model):
 
 	distance = models.PositiveIntegerField()
 	price = models.DecimalField(decimal_places=2, max_digits=10)
-	date_added = models.DateField(auto_now_add=True)
-	date_modified = models.DateField(auto_now=True)
+	date_added = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return f'{self.distance} => {self.price}'
@@ -25,8 +25,8 @@ class Delivery(models.Model):
 	email = models.CharField(max_length=100)
 	website = models.URLField()
 	service_fee = models.ForeignKey(PriceModel, on_delete=models.CASCADE)
-	date_added = models.DateField(auto_now_add=True)
-	date_modified = models.DateField(auto_now=True)
+	date_added = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 
 	def __str__(self):

@@ -60,8 +60,8 @@ class CreateLaboratoryView(PermissionMixin, CreateAPIView):
 
 			return Response({'error': 'Your account does not support labs'}, status=HTTP_400_BAD_REQUEST)
 
-		self.create(request)
-		return Response({'message': 'Created'}, status=HTTP_201_CREATED)
+		return self.create(request)
+
 
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
@@ -76,8 +76,7 @@ class CreateBranchView(PermissionMixin, CreateAPIView):
 
 			return Response({'error': 'Your account does not support labs'}, status=HTTP_400_BAD_REQUEST)
 
-		self.create(request)
-		return Response({'message': 'Created'}, status=HTTP_201_CREATED)
+		return self.create(request)
 
 
 class BranchListView(PermissionMixin, ListAPIView):
@@ -113,16 +112,15 @@ class BranchUpdateView(PermissionMixin, UpdateAPIView):
 		return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
 	def put(self, request, pk, format=None):
-		
+
 		branch = self.get_queryset()
 
 		if not self.has_laboratory_permission_to_edit_branch(request.user, branch):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		self.update(request, pk, format=None)
-		return Response({'message': 'Updated'}, status=HTTP_200_OK)
-		
+		return self.update(request, pk, format=None)
+
 
 class BranchDeleteView(PermissionMixin, DestroyAPIView):
 
@@ -137,8 +135,7 @@ class BranchDeleteView(PermissionMixin, DestroyAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		self.destroy(request, pk, format=None)
-		return Response({'message': 'Delete successful'}, status=HTTP_200_OK)
+		return self.destroy(request, pk, format=None)
 
 
 class CreateTestView(PermissionMixin, CreateAPIView):
@@ -150,8 +147,8 @@ class CreateTestView(PermissionMixin, CreateAPIView):
 
 			return Response({'error': 'Unauthorized action'}, status=HTTP_400_BAD_REQUEST)
 		
-		self.create(request)
-		return Response({'message': 'Test added'}, status=HTTP_201_CREATED)
+		return self.create(request)
+
 
 class TestListView(ListAPIView):
 	serializer_class = TestSerializer
@@ -178,8 +175,7 @@ class TestUpdateView(PermissionMixin, UpdateAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		self.update(request, pk, format=None)
-		return Response({'message': 'Update successful'}, status=HTTP_200_OK)
+		return self.update(request, pk, format=None)
 
 
 class TestDeleteView(PermissionMixin, DestroyAPIView):
@@ -196,8 +192,7 @@ class TestDeleteView(PermissionMixin, DestroyAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		self.destroy(request, pk, format=None)
-		return Response({'message': 'Delete successful'}, status=HTTP_200_OK)
+		return self.destroy(request, pk, format=None)
 
 
 class CreateTestResultView(PermissionMixin, CreateAPIView):
@@ -209,8 +204,7 @@ class CreateTestResultView(PermissionMixin, CreateAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		self.create(request)
-		return Response({'message': 'Result added'}, status=HTTP_200_OK)
+		return self.create(request)
 
 
 	def perform_create(self, serializer):
@@ -261,8 +255,7 @@ class TestResultUpdateView(PermissionMixin, UpdateAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		self.update(request, pk, format=None)
-		return Response({'message': 'Update successful'}, status=HTTP_200_OK)
+		return self.update(request, pk, format=None)
 
 
 class TestResultDeleteView(PermissionMixin, DestroyAPIView):
@@ -276,8 +269,7 @@ class TestResultDeleteView(PermissionMixin, DestroyAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		self.destroy(request, pk, format=None)
-		return Response({'message': 'Delete successful'}, status=HTTP_200_OK)
+		return self.destroy(request, pk, format=None)
 
 
 class LaboratorySampleSerializerView(PermissionMixin, CreateAPIView):

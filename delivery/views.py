@@ -1,4 +1,4 @@
-from .models import Delivery
+from .models import Delivery, PriceModel
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import (
@@ -9,7 +9,7 @@ from rest_framework.generics import (
 	DestroyAPIView, 
 	GenericAPIView
 )
-from .serializers import DeliverySerializer
+from .serializers import DeliverySerializer, PriceModelSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission
 
 
@@ -17,11 +17,7 @@ class DeliveryPermissionMixin(BasePermission):
 	permission_classes = [IsAuthenticated]
 
 	def has_permission(self, request, view):
-		return (
-				request.user.is_authenticated and (
-				request.user.account_type == 'Delivery'
-			)
-		)
+		return request.user.is_authenticated and request.user.account_type == 'Delivery'
 
 
 class DeliveryMixin(GenericAPIView):
@@ -37,12 +33,8 @@ class DeliveryMixin(GenericAPIView):
 class CreateDeliveryView(DeliveryMixin, CreateAPIView):
 
 	def post(self, request):
-
-		if not self.get_permissions():
-			return Response({'error': 'Unauthroized action'}, status=status.HTTP_400_BAD_REQUEST)
-
-		self.create(request)
-		return Response({'message': 'Created'}, status=status.HTTP_201_CREATED)
+		
+		return self.create(request)
 
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
@@ -74,24 +66,15 @@ class DeliveryUpdateView(DeliveryMixin, UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 		
-		if not self.get_permissions():
-
-			return Response({'error': 'You are not authorized to perform this action'}, status=status.HTTP_401_UNAUTHORIZED)
-
-		self.update(request, pk, format=None)
-		return Response({'message': 'Updated'}, status=status.HTTP_200_OK)
+		return super().put(request, pk, format=None)
 
 
 class DeliveryDeleteView(DeliveryMixin, DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		if not self.get_permissions():
-
-			return Response({'error': 'You are not authorized to perform this action'}, status=status.HTTP_401_UNAUTHORIZED)
+		return super().delete(request, pk, format=None)
 		
-		self.destroy(request, pk, format=None)
-		return Response({'message': 'Delete successful.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class AllDelivery(ListAPIView):
@@ -100,9 +83,60 @@ class AllDelivery(ListAPIView):
 
 	def get_queryset(self):
 
-		try:
-			return Delivery.objects.all()
-			
-		except Delivery.DoesNotExist:
-			return Response({'error': 'Delivery not found'}, status=status.HTTP_404_NOT_FOUND)
+		return Delivery.objects.all()
 
+	def get(self, request, *args, **kwargs):
+		try:
+			delivery = self.get_queryset()
+			serializer = self.get_serializer(delivery, many=True)
+			return Response(serializer.data)
+		
+		except Delivery.DoesNotExist:
+			return Response({'error': 'Not found'},status=status.HTTP_404_NOT_FOUND)
+
+
+class CreatePriceModelView(DeliveryMixin, CreateAPIView):
+	serializer_class = PriceModelSerializer
+
+	def post(self, request):
+
+		return self.create(request)
+
+
+class UpdatePriceModelView(DeliveryMixin, UpdateAPIView):
+	serializer_class = PriceModelSerializer
+
+	def get_queryset(self):
+		return PriceModel.objects.filter(pk=self.kwargs.get('pk'))
+
+	def put(self, request, pk, format=None):
+		
+		return super().put(request, pk, format=None)
+
+class DeletePriceModelView(DeliveryMixin, DestroyAPIView):
+
+	def get_queryset(self):
+		return PriceModel.objects.filter(pk=self.kwargs.get('pk'))
+
+	def delete(self, request, pk, format=None):
+
+		return super().delete(request, pk, format=None)
+
+
+class PriceModels(ListAPIView):
+
+	serializer_class = PriceModelSerializer
+
+	def get_queryset(self):
+
+		return PriceModel.objects.all()
+
+	def get(self, request, *args, **kwargs):
+
+		try:
+			price = self.get_queryset()
+			serializer = self.get_serializer(price, many=True)
+			return Response(serializer.data)
+
+		except PriceModel.DoesNotExist:
+			return Response({'error': 'Not found'},status=status.HTTP_404_NOT_FOUND)
