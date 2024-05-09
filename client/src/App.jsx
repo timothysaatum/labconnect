@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Signin from "./pages/Signin";
 import Home from "./pages/Home";
-import Signup from "./pages/signup";
+import Signup from "@/pages/Signup";
 import RequireAuth, { LabRoutes } from "./components/RequireAuth";
 import PersistLogin from "./components/persistLogin";
 import Layout from "./components/Layout";
@@ -9,8 +9,9 @@ import VerifyEmail from "./pages/verify-email";
 import ConfirmForgotPassword from "./pages/password-reset-confirm";
 import React from "react";
 import Notfound from "./components/notfound";
-import DashboardOverview from "./components/dashboard/overview.dashboard";
+import DashboardOverview from "@/components/dashboard/Overview.dashboard"
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
+
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const MyLab = React.lazy(() => import("@/components/mylab"));
 const DashboardSettings = React.lazy(() =>
