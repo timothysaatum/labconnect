@@ -40,7 +40,16 @@ function EmptyLab({ header, helper, button }) {
     </div>
   );
 }
-export function DataTable({ data, columnDef, loading, error, title, filter }) {
+export function DataTable({
+  data,
+  columnDef,
+  loading,
+  error,
+  title,
+  filter,
+  setSelected,
+  selected,
+}) {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -153,7 +162,17 @@ export function DataTable({ data, columnDef, loading, error, title, filter }) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((rowEl) => (
-              <TableRow key={rowEl.id}>
+              <TableRow
+                key={rowEl.id}
+                onClick={() => {
+                  if (rowEl.original.id === selected) {
+                    setSelected(null);
+                  } else {
+                    setSelected(rowEl.original.id);
+                  }
+                }}
+                className="cursor-pointer"
+              >
                 {rowEl.getVisibleCells().map((cellEl) => (
                   <TableCell key={cellEl.id}>
                     {flexRender(
@@ -168,7 +187,7 @@ export function DataTable({ data, columnDef, loading, error, title, filter }) {
         </Table>
       </div>
       <div className="flex items-center mt-2">
-        <div className="text-muted-foreground flex-1">
+        <div className="text-muted-foreground flex-1 text-xs">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>

@@ -2,27 +2,24 @@ import { createCell, createSortableHeader } from "@/util/tablefxns";
 
 export const testscolumnDef = [
   {
+    accessorKey: "test_code",
+    header: createSortableHeader("Test Code"),
+  },
+  {
     accessorKey: "test_name",
-    header: createSortableHeader("Test Name"),
+    header: "Test Name",
   },
   {
     accessorKey: "price",
-    header: createSortableHeader("Price (GHS)"),
-    cell: createCell("price"),
+    header: "Price",
   },
   {
-    accessorKey: "department",
-    header: createSortableHeader("Department"),
-    cell: createCell("department"),
+    accessorKey: "turn_around_time",
+    header: "Turn around time",
   },
   {
-    accessorKey: "discounted_price",
-    header: createSortableHeader("Discounted Price"),
-    cell: createCell("discounted_price"),
-  },
-  {
-    accessorKey: "date_added",
-    header: createSortableHeader("Date Added"),
+    accessorKey: "date",
+    header: createSortableHeader("Date added"),
     cell: createCell("date_added"),
   },
 ];

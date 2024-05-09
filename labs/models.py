@@ -77,9 +77,9 @@ class Branch(BaseModel):
 
 		verbose_name_plural = 'Branches'
 
-	def __str__(self):
+	def __str__(self) ->str:
 
-		return f'{self.laboratory} | {self.branch_name}'
+		return self.branch_name
 
 
 

@@ -4,7 +4,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
@@ -26,6 +25,9 @@ export const branchcolumnDef = [
   {
     accessorKey: "branch_email",
     header: "Branch Email",
+  },
+  {
+    id: "actions",
     cell: ({ row }) => {
       const branch = row.original;
 
