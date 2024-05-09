@@ -12,9 +12,18 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 		model = Laboratory
 
-		fields = ('id' ,'laboratory_name', 'herfra_id', 
-			'main_phone', 'main_email', 'website', 
-			'description', 'date_modified', 'date_added', 'logo')
+		fields = (
+			'id',
+			'laboratory_name', 
+			'herfra_id', 
+			'main_phone', 
+			'main_email', 
+			'website', 
+			'description',
+			'logo', 
+			'date_modified', 
+			'date_added'
+		)
 
 
 class BranchSerializer(serializers.ModelSerializer):
@@ -23,8 +32,19 @@ class BranchSerializer(serializers.ModelSerializer):
 
 		model = Branch
 
-		fields = ('id' ,'branch_manager', 'laboratory', 'branch_name', 'branch_phone', 
-			'branch_email', 'location', 'digital_address', 'region', 'date_modified', 'date_added')
+		fields = (
+			'id',
+			'branch_manager', 
+			'laboratory', 
+			'branch_name', 
+			'branch_phone', 
+			'branch_email', 
+			'location', 
+			'digital_address', 
+			'region', 
+			'date_modified', 
+			'date_added'
+		)
 
 	def to_representation(self, instance):
 
@@ -41,7 +61,17 @@ class TestSerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = Test
-		fields = ('id', 'test_code', 'name', 'turn_around_time', 'price', 'patient_preparation', 'branch', 'date_modified', 'date_added')
+		fields = (
+			'id', 
+			'test_code', 
+			'name',
+			'turn_around_time', 
+			'price', 
+			'patient_preparation', 
+			'branch', 
+			'date_modified', 
+			'date_added'
+		)
 
 		pagination_class = QueryPagination
 
@@ -67,8 +97,18 @@ class TestResultSerializer(serializers.ModelSerializer):
 
 		model = TestResult
 		fields = (
-			'id' ,'send_by', 'branch', 'hospital', 'test', 'result', 'sample',
-			'comments', 'is_verified', 'is_received', 'date_modified', 'date_added'
+			'id',
+			'send_by', 
+			'branch', 
+			'hospital', 
+			'test', 
+			'result', 
+			'sample',
+			'comments', 
+			'is_verified', 
+			'is_received', 
+			'date_modified', 
+			'date_added'
 		)
 
 		pagination_class = QueryPagination
@@ -97,10 +137,24 @@ class LaboratorySampleSerializer(serializers.ModelSerializer):
 		model = LaboratorySample
 
 		fields = (
-			'id', 'send_by', 'from_lab', 'name_of_patient', 'patient_age', 'patient_sex',
-			'delivery', 'is_paid', 'is_received_by_delivery', 'is_delivered_to_lab', 
-			'is_access_by_lab', 'sample_type', 'to_lab', 'tests', 'brief_description', 
-			'attachment', 'date_modified', 'date_added'
+			'id', 
+			'send_by', 
+			'from_lab', 
+			'name_of_patient', 
+			'patient_age', 
+			'patient_sex',
+			'delivery', 
+			'is_paid', 
+			'is_received_by_delivery', 
+			'is_delivered_to_lab', 
+			'is_access_by_lab', 
+			'sample_type', 
+			'to_lab', 
+			'tests', 
+			'brief_description', 
+			'attachment', 
+			'date_modified', 
+			'date_added'
 		)
 		pagination_class = QueryPagination
 

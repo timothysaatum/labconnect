@@ -1,4 +1,4 @@
-from .models import Laboratory, Test, Branch
+from .models import Test, Branch
 from hospital.models import Hospital, Sample
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -28,5 +28,5 @@ class TestResult(models.Model):
 	date_modified = models.DateField(auto_now=True)
 
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return self.branch

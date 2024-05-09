@@ -12,8 +12,8 @@ class PriceModel(models.Model):
 	date_added = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 
-	def __str__(self):
-		return f'{self.distance} => {self.price}'
+	def __str__(self) -> str:
+		return self.distance
 
 
 class Delivery(models.Model):
@@ -29,10 +29,10 @@ class Delivery(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 
 
-	def __str__(self):
-		return f'{self.name} @ {self.service_fee}ghs'
+	def __str__(self) -> str:
+		return self.name
 
-	def owner_phone(self):
+	def owner_phone(self) -> str:
 		return self.created_by.phone_number
 
 	class Meta:

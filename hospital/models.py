@@ -65,14 +65,13 @@ class Sample(models.Model):
 	def __str__(self) -> str:
 		return self.sample_type
 
-
-	def sender_phone(self):
+	def sender_phone(self) -> str:
 
 		phone = self.send_by.phone_number
 
 		return phone
 
-	def delivery_phone(self):
+	def delivery_phone(self) -> str:
 
 		if self.delivery:
 
@@ -80,4 +79,4 @@ class Sample(models.Model):
 
 			return del_phone
 
-		return 'Self Sent'
+		return self.request.user.phone_number
