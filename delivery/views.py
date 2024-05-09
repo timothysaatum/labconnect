@@ -5,7 +5,7 @@ from rest_framework.generics import (
 	CreateAPIView,
 	UpdateAPIView,
 	ListAPIView,
-	RetrieveAPIView, 
+	RetrieveAPIView,
 	DestroyAPIView, 
 	GenericAPIView
 )
@@ -76,7 +76,6 @@ class DeliveryDeleteView(DeliveryMixin, DestroyAPIView):
 		return super().delete(request, pk, format=None)
 		
 
-
 class AllDelivery(ListAPIView):
 
 	serializer_class = DeliverySerializer
@@ -112,6 +111,7 @@ class UpdatePriceModelView(DeliveryMixin, UpdateAPIView):
 	def put(self, request, pk, format=None):
 		
 		return super().put(request, pk, format=None)
+
 
 class DeletePriceModelView(DeliveryMixin, DestroyAPIView):
 

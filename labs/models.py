@@ -34,7 +34,7 @@ class Laboratory(BaseModel):
 	website = models.URLField()
 	description = models.TextField()
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return self.laboratory_name
 
 	class Meta:
@@ -62,6 +62,10 @@ REGIONS = [
 
 
 class Branch(BaseModel):
+	'''
+	A brach: is a local set up of a particular laboratory that carries out test within the enclave.
+	Branch_name: refers to the name of a branch.
+	'''
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	branch_manager = models.ForeignKey(user, on_delete=models.CASCADE)
@@ -77,6 +81,7 @@ class Branch(BaseModel):
 
 		verbose_name_plural = 'Branches'
 
+	def __str__(self) -> str:
 	def __str__(self) ->str:
 
 		return self.branch_name
@@ -102,9 +107,9 @@ class Test(BaseModel):
 	turn_around_time = models.DurationField(default='2 hours')
 	patient_preparation = models.TextField()
 
-	def __str__(self):
+	def __str__(self) -> str:
 
-		return f'Code: {self.test_code} | Price: {self.price}ghs | turn arount time: {self.turn_around_time}'
+		return self.name
 
 	def laboratory(self):
 
@@ -133,12 +138,12 @@ class LaboratorySample(BaseModel):
 	is_delivered_to_lab = models.BooleanField(default=False)
 	is_access_by_lab = models.BooleanField(default=False)
 
-	def __str__(self):
-		return f'{self.sample_type} | {self.from_lab}'
+	def __str__(self) -> str:
+		return self.sample_type
 
 
-	def sender_phone(self):
-		return from_lab.branch_phone
+	def sender_phone(self) -> str:
+		return self.from_lab.branch_phone
 
 
 	def dispatched_time(self):

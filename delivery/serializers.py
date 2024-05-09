@@ -8,8 +8,18 @@ class DeliverySerializer(serializers.ModelSerializer):
 
 		model = Delivery
 
-		fields = ('id', 'created_by','name', 'digital_address', 'phone', 'email', 'website', 
-			'service_fee', 'date_modified', 'date_added')
+		fields = (
+			'id',
+			'created_by',
+			'name', 
+			'digital_address', 
+			'phone', 
+			'email', 
+			'website', 
+			'service_fee', 
+			'date_modified', 
+			'date_added'
+		)
 
 		def to_representation(self, instance):
 			data = super().to_representation(instance)
@@ -22,4 +32,10 @@ class PriceModelSerializer(serializers.ModelSerializer):
 
 		model = PriceModel
 
-		fields = ('id', 'distance','price', 'date_modified', 'date_added')
+		fields = (
+			'id', 
+			'distance',
+			'price', 
+			'date_modified', 
+			'date_added'
+		)

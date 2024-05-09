@@ -1,8 +1,6 @@
 from .serializers import (HospitalSerializer, SampleSerializer)
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions
 from rest_framework import filters
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Sample, Hospital
 from labs.results import TestResult
@@ -26,6 +24,7 @@ class SampleMixin(generics.GenericAPIView):
 	serializer_class = SampleSerializer
 
 	def get_queryset(self):
+
 		return Sample.objects.filter(send_by=self.request.user)
 
 
@@ -37,52 +36,37 @@ class HospitalSerializerView(generics.ListAPIView):
 	filter_backends = [filters.SearchFilter]
 
 
-class SampleSerializerView(generics.CreateAPIView):
+class SampleSerializerView(SampleMixin, generics.CreateAPIView):
 	'''Create for creating a sample.'''
 
-	permission_classes = [IsAuthenticated]
-	serializer_class = SampleSerializer
 	parser_classes = (MultiPartParser, FormParser)
 
+
 	def post(self, request):
+		
+		return self.create(request)
 
-		serializer = self.serializer_class(data=request.data)
+	def perform_create(self, serializer):
 
-		if serializer.is_valid(raise_exception=True):
+		sample = serializer.save(send_by=self.request.user)
+		tests = self.request.data.getlist('tests')
 
-			if self.request.user.account_type == 'Health Worker':
-
-				sample = serializer.save(send_by=self.request.user)
-
-				tests = request.data.getlist('tests')
-				
-				for test in tests:
-					
-					sample.tests.add(test)
-
-				return Response(
-					{'message': 'Sample added successfully.'},
-					status=status.HTTP_201_CREATED)
-
-			return Response(
-					{'message': 'Account type does not support sample addition.'},
-					status=status.HTTP_400_BAD_REQUEST)
-
-		return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+		sample.tests.add(*tests)
 
 
 class SampleListView(SampleMixin, generics.ListAPIView):
 	'''List view for samples created by the authenticated user.'''
-	pass
+	filter_backends = [filters.SearchFilter]
 
 
 class SampleDetailView(SampleMixin, generics.RetrieveAPIView):
 	'''Retrieves details of a specific sample'''
 
 	def get_object(self):
-		pk = self.kwargs['pk']
+
 		try:
-			return self.get_queryset().get(pk=pk)
+			return self.get_queryset().get(pk=self.kwargs['pk'])
+
 		except Sample.DoesNotExist:
 			raise permissions.DoesNotExist()
 
@@ -90,29 +74,23 @@ class SampleDetailView(SampleMixin, generics.RetrieveAPIView):
 class SampleUpdateView(SampleMixin, generics.UpdateAPIView):
 	'''Update details of a specific sample.'''
 
-	def put(self, request, *args, **kwargs):
-		sample = self.get_object()
-		serializer = self.get_serializer(sample, data=request.data)
+	def put(self, request, pk, format=None):
+		
+		return super().put(request, pk, format=None)
 
-		if serializer.is_valid(raise_exception=True):
-
-			self.perform_update(serializer)
-			sample.tests.clear()
-			tests = request.data.getlist('tests')
-
-			for test in tests:
-				sample.tests.add(test)
-				return Response({'message': 'Update successful.'}, status=status.HTTP_200_OK)
-			
-		return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+	def perform_update(self, serializer):
+		sample = serializer.save()
+		sample.tests.clear()
+		tests = self.request.data.getlist('tests')
+		sample.tests.add(*tests)
 
 
 class SampleDeleteView(SampleMixin, generics.DestroyAPIView):
 	'''Delete a specific sample.'''
 
-	def delete(self, request, *args, **kwargs):
-		self.perform_destroy(self.get_object())
-		return Response({'message': 'Delete successful.'}, status=status.HTTP_204_NO_CONTENT)
+	def delete(self, request, pk, format=None):
+
+		return super().delete(request, pk, format=None)
 
 
 class SampleResultList(generics.ListAPIView):
@@ -122,4 +100,5 @@ class SampleResultList(generics.ListAPIView):
 	serializer_class = TestResultSerializer
 
 	def get_queryset(self):
+
 		return TestResult.objects.filter(sample__send_by=self.request.user)

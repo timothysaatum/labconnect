@@ -62,7 +62,6 @@ class CreateLaboratoryView(PermissionMixin, CreateAPIView):
 
 		return self.create(request)
 
-
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
 
@@ -283,16 +282,38 @@ class LaboratorySampleSerializerView(PermissionMixin, CreateAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 		
-		self.create(request)
-		return Response({'message': 'Result added'}, status=HTTP_200_OK)
+		return self.create(request)
 
 	def perform_create(self, serializer):
 
 		sample = serializer.save(send_by=self.request.user)
 		tests = self.request.data.getlist('tests')
 
-		for test in tests:
-			sample.tests.add(test)
+		sample.tests.add(*tests)
+
+
+
+class LaboratorySampleUpdateView(PermissionMixin, UpdateAPIView):
+	'''Update details of a specific sample.'''
+	serializer_class = LaboratorySampleSerializer
+
+	def put(self, request, pk, format=None):
+
+		return super().put(request, pk, format=None)
+
+	def perform_update(self, serializer):
+		sample = serializer.save()
+		sample.tests.clear()
+		tests = self.request.data.getlist('tests')
+		sample.tests.add(*tests)
+
+
+class LaboratorySampleDeleteView(PermissionMixin, DestroyAPIView):
+	'''Delete a specific sample.'''
+
+	def delete(self, request, pk, format=None):
+
+		return super().delete(request, pk, format=None)
 
 
 class LaboratorySampleList(ListAPIView):
