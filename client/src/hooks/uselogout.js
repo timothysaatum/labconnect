@@ -8,11 +8,11 @@ const useLogout = () => {
 
   const dispatch = useDispatch();
   const axiosPrivate = useAxiosPrivate();
-  const logout = () => {
+  const logout = async () => {
     try {
-      // await axiosPrivate.post("/user/logout/", {
-      //   withCredentials: true,
-      // });
+      await axiosPrivate.post("/user/logout/", {
+        withCredentials: true,
+      });
       dispatch(logOut());
       queryClient.removeQueries(); // this will clear the cache
     } catch (error) {

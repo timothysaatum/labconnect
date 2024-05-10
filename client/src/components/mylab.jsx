@@ -8,7 +8,7 @@ import {
 } from "./ui/card";
 import { Tabs } from "@radix-ui/react-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { useFetchLabTests, useFetchUserLab } from "@/api/queries";
+import { useFetchLabTests, useFetchUserBranches } from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { testscolumnDef } from "./columns/testsColumns";
@@ -31,13 +31,14 @@ export default function MyLab() {
   const [checked, setChecked] = useState();
   const [selectedTests, setSelectedTests] = useState();
   const [selected, setSelected] = useState();
+  const [tab, setTab] = useState("Tests");
 
   const {
     dataUpdatedAt,
-    data: userlab,
-    isLoading: labsLoading,
-    isError: labsError,
-  } = useFetchUserLab();
+    data: userbranches,
+    isLoading: branchesLoading,
+    isError: branchesError,
+  } = useFetchUserBranches();
 
   useEffect(() => {
     if (selectedTests) {
@@ -55,8 +56,8 @@ export default function MyLab() {
   }, [selectedTests]);
 
   useEffect(() => {
-    setChecked(userlab?.data[0]?.id);
-  }, [userlab?.data]);
+    setChecked(userbranches?.data[0]?.id);
+  }, [userbranches?.data]);
 
   const {
     isError: testError,
@@ -71,7 +72,7 @@ export default function MyLab() {
           return {
             id: test.id,
             test_code: test.test_code,
-            test_name: test.name.split("|")[0],
+            test_name: test.name,
             price: test.price,
             turn_around_time: moment(test.turn_around_time, "HH:mm:ss").format(
               "h [hours] m [minutes]"
@@ -84,11 +85,11 @@ export default function MyLab() {
   }, [tests]);
 
   useEffect(() => {
-    if (userlab?.data) {
+    if (userbranches?.data) {
       setBranches(
-        userlab?.data.map((branch) => {
+        userbranches?.data.map((branch) => {
           return {
-            branch_name: branch.branch_name.split("|")[1],
+            branch_name: branch.branch_name,
             branch_manager: branch.branch_manager,
             branch_phone: branch.branch_phone,
             branch_email: branch.branch_email,
@@ -96,7 +97,7 @@ export default function MyLab() {
         })
       );
     }
-  }, [userlab]);
+  }, [userbranches]);
 
   const index = tests?.data.findIndex((test) => test.id === selected?.id);
   const nextTest = () => {
@@ -114,19 +115,6 @@ export default function MyLab() {
     }
   };
 
-  const headerCards = [
-    {
-      title: "Tests",
-      footer: "Add New Test",
-      number: labtests?.length,
-      add: <AddTest />,
-    },
-    {
-      title: "Branches",
-      footer: "Add New Branch",
-      number: userlab?.data.length,
-    },
-  ];
   const tabContent = [
     {
       title: "Tests",
@@ -146,40 +134,25 @@ export default function MyLab() {
         "All Branches can be managed here you can create,delete and update branches",
       data: branches,
       columnDef: branchcolumnDef,
-      loading: labsLoading,
-      error: labsError,
+      loading: branchesLoading,
+      error: branchesError,
       filter: "branch_name",
     },
   ];
   return (
-    <main className="ml-14 px-10 grid grid-cols-12 gap-x-4">
-      <div className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}>
-        <header>
-          <Card className="shadow-inner border-none">
-            <CardContent className="grid grid-cols-12 gap-10 pt-10">
-              {headerCards.map((card) => (
-                <Card key={card.title} className="col-span-4">
-                  <CardHeader>
-                    <CardTitle className="text-md flex justify-between">
-                      {card.title}:{" "}
-                      <span className="text-xl">
-                        {" "}
-                        <CountUp end={card.number} />
-                      </span>{" "}
-                    </CardTitle>
-                    {card.add}
-                  </CardHeader>
-                </Card>
-              ))}
-            </CardContent>
-          </Card>
-        </header>
-        <section className="mt-8">
-          <Tabs defaultValue="Tests">
-            <TabsList>
-              <TabsTrigger value="Tests">Tests</TabsTrigger>
-              <TabsTrigger value="Branches">Branches</TabsTrigger>
-            </TabsList>
+    <main className="sm:ml-14 px-2 md:px-10 grid grid-cols-12 gap-x-4 max-sm:mt-2">
+      <div
+        className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
+      >
+        <section>
+          <Tabs defaultValue="Tests" onValueChange={setTab}>
+            <div className="flex justify-between">
+              <TabsList>
+                <TabsTrigger value="Tests">Tests</TabsTrigger>
+                <TabsTrigger value="Branches">Branches</TabsTrigger>
+              </TabsList>
+              <div>{tab === "Tests" && <AddTest />}</div>
+            </div>
             {tabContent?.map((tab) => (
               <TabsContent value={tab.title} key={tab.title}>
                 <div className="grid grid-cols-12">
@@ -197,21 +170,21 @@ export default function MyLab() {
                               className="flex justify-between items-center text-sm px-2 gap-3"
                             >
                               {
-                                userlab?.data
-                                  ?.find((branch) => branch.id === checked)
-                                  ?.branch_name.split("|")[1]
+                                userbranches?.data?.find(
+                                  (branch) => branch.id === checked
+                                )?.branch_name
                               }
                               <ChevronDown className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            {userlab?.data?.map((branch) => (
+                            {userbranches?.data?.map((branch) => (
                               <DropdownMenuCheckboxItem
                                 key={branch.id}
                                 checked={checked === branch.id}
                                 onCheckedChange={() => setChecked(branch.id)}
                               >
-                                {branch.branch_name.split("|")[1]}
+                                {branch.branch_name}
                               </DropdownMenuCheckboxItem>
                             ))}
                           </DropdownMenuContent>

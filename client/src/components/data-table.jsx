@@ -107,7 +107,7 @@ export function DataTable({
               type="search"
               id="search"
               placeholder={`Search ${title} ...`}
-              className="w-full rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10"
+              className="w-full rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10 max-w-[350px]"
               value={table.getColumn(`${filter}`)?.getFilterValue() ?? ""}
               onChange={(event) =>
                 table.getColumn(`${filter}`)?.setFilterValue(event.target.value)

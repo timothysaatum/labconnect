@@ -18,9 +18,9 @@ export const createSortableHeader =
 
 export const createCell =
   (cell) =>
-  ({ getValue }) => {
+    ({ getValue }) => {
     if (cell === "date_added" || cell.split("_")[0].includes("date")) {
-      const date = moment(getValue("date_added")).format("MMM Do YY");
+      const date = moment(getValue(cell)).format("MMM Do YY");
       return <div className="text-start font-medium">{date}</div>;
     }
     return <div className="text-center font-medium">{getValue(cell)}</div>;
