@@ -25,7 +25,7 @@ const logout = useLogout()
       aria-label="main navigation bar"
       className={`${
         location.pathname.includes("/dashboard") ? "sm:ml-14" : ""
-      } flex justify-between px-4 md:px-8 items-center py-3 border-b-2 border-gray-200 dark:border-gray-800 shadow-sm`}
+      } flex justify-between px-4 md:px-8 items-center py-3 border-b-2 border-gray-200 dark:border-border shadow-sm shadow-background`}
     >
       <div className="text-xl w-fit font-bold from-[#6366F1] via-[#D946EF] to-[#FB7185] bg-gradient-to-r bg-clip-text text-transparent">
         <h3>LabConnect</h3>

@@ -73,3 +73,13 @@ export const ResetPassSchema = z
     message: "Passwords do not match",
     path: ["password_confirmation"],
   });
+
+export const AddTestSchema = z.object({
+  test_code:z.string().min(1,"Test code is required"),
+  name: z.string().min(1, "Test name is required"),
+  // price: z.number({
+  //   invalid_type_error:"invalid"
+  // }).positive("price must be a positive number"),
+  
+  
+})

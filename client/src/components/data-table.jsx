@@ -117,7 +117,7 @@ export function DataTable({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto h-7">
+            <Button variant="outline" className="ml-auto ">
               Columns
             </Button>
           </DropdownMenuTrigger>
@@ -164,7 +164,7 @@ export function DataTable({
             {table.getRowModel().rows.map((rowEl) => (
               <TableRow
                 key={rowEl.id}
-                onClick={() => {
+                onDoubleClick={() => {
                   if (rowEl.original.id === selected) {
                     setSelected(null);
                   } else {

@@ -9,7 +9,8 @@ import VerifyEmail from "./pages/verify-email";
 import ConfirmForgotPassword from "./pages/password-reset-confirm";
 import React from "react";
 import Notfound from "./components/notfound";
-import DashboardOverview from "@/components/dashboard/Overview.dashboard"
+import DashboardOverview from "@/components/dashboard/Overview.dashboard";
+import AddManager from "./components/dashboard/addManager";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));

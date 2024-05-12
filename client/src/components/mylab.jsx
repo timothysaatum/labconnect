@@ -24,6 +24,7 @@ import { ChevronDown } from "lucide-react";
 import moment from "moment";
 import TestDetails from "./dashboard/testsDetails";
 import AddTest from "./dashboard/addTests";
+import AddBranch from "./dashboard/addbranch";
 
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
@@ -50,9 +51,6 @@ export default function MyLab() {
     } else {
       setSelected(null);
     }
-  }, [selectedTests]);
-  useEffect(() => {
-    console.log(selected);
   }, [selectedTests]);
 
   useEffect(() => {
@@ -151,18 +149,18 @@ export default function MyLab() {
                 <TabsTrigger value="Tests">Tests</TabsTrigger>
                 <TabsTrigger value="Branches">Branches</TabsTrigger>
               </TabsList>
-              <div>{tab === "Tests" && <AddTest />}</div>
+              <div>{tab === "Tests" ? <AddTest /> : <AddBranch />}</div>
             </div>
             {tabContent?.map((tab) => (
               <TabsContent value={tab.title} key={tab.title}>
                 <div className="grid grid-cols-12">
                   <Card className="col-span-12">
-                    <CardHeader className="flex-row justify-between gap-4">
+                    <CardHeader className="flex-col justify-between gap-4 sm:flex-row">
                       <div>
                         <CardTitle>{tab.title}</CardTitle>
                         <CardDescription>{tab.description}</CardDescription>
                       </div>
-                      <div>
+                      <div className="flex max-sm:justify-end">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button

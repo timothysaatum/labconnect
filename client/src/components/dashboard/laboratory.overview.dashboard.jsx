@@ -66,7 +66,7 @@ export default function LaboratoryDashboardOverview() {
             </CardFooter>
           </Card>
 
-          <div className="hidden md:flex col-span-7 px-4 place-items-start shadow-inner border-none">
+          <div className="hidden md:flex col-span-7 px-4 place-items-start  border-none">
             <CardContent className=" grid grid-cols-3 gap-5 w-full">
               <Card>
                 <CardHeader>
