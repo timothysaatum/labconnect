@@ -34,8 +34,7 @@ class TestAdmin(admin.ModelAdmin):
 	list_display = (
 		'id', 
 		'test_code', 
-		'name', 
-		'branch', 
+		'name',  
 		'price', 
 		'turn_around_time', 
 		'patient_preparation', 

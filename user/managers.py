@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 class ClientManager(BaseUserManager):
 
-
     def create_user(self, email, password=None, **extra_fields):
         """
         Creates and saves a User with the given email, date of

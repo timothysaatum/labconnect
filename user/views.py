@@ -1,6 +1,6 @@
 from .serializers import (UserCreationSerializer, LoginSerializer, VerifyEmailSerializer,
 	PasswordResetViewSerializer, SetNewPasswordSerializer, UserSerializer)
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView, CreateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
@@ -72,33 +72,15 @@ class CheckRefreshToken(APIView):
 			'data': serialized_data.data
 
 			}, status=status.HTTP_200_OK)
-		
 
 
-class CreateUserView(GenericAPIView):
+class CreateUserView(CreateAPIView):
 
 	serializer_class = UserCreationSerializer
 
-	def post(self, request):
-
-		user_data = request.data
-		serializer=self.serializer_class(data=user_data)
-
-		if serializer.is_valid(raise_exception=True):
-
-			#user = serializer.save()
-			serializer.save()
-			#send_code_to_user(user.email)
-
-			return Response(
-
-					{'message': 'Account created successfully, otp was sent, please verify your account.'},
-					status=status.HTTP_201_CREATED
-
-				)
-
-		return Response(serializer.erros, status.HTTP_400_BAD_REQUEST)
-
+	def post(self, request, format=None):
+		
+		return self.create(request)
 
 
 class VerifyUserEmail(GenericAPIView):

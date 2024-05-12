@@ -79,4 +79,4 @@ class Sample(models.Model):
 
 			return del_phone
 
-		return self.request.user.phone_number
+		return None

@@ -58,18 +58,20 @@ class BranchSerializer(serializers.ModelSerializer):
 
 class TestSerializer(serializers.ModelSerializer):
 
+	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all())
+
 	class Meta:
 
 		model = Test
 		fields = (
-			'id', 
-			'test_code', 
+			'id',
+			'test_code',
 			'name',
-			'turn_around_time', 
-			'price', 
-			'patient_preparation', 
-			'branch', 
-			'date_modified', 
+			'turn_around_time',
+			'price',
+			'patient_preparation',
+			'branch',
+			'date_modified',
 			'date_added'
 		)
 
@@ -78,7 +80,7 @@ class TestSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		data['branch'] = instance.branch.branch_name
+		data['branch'] = [branch.branch_name for branch in instance.branch.all()]
 		data['name'] = instance.__str__()
 
 		return data

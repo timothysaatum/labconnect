@@ -37,7 +37,7 @@ class PermissionMixin(object):
 	def has_laboratory_permission(self):
 
 		return self.request.user.account_type == 'Laboratory' and (
-				self.request.user.is_staff or self.request.user.is_superuser or self.request.user.is_admin
+				self.request.user.is_staff or self.request.user.is_admin
 			)
 
 	def has_laboratory_permission_to_edit_branch(self, user, branch):
@@ -83,7 +83,10 @@ class BranchListView(PermissionMixin, ListAPIView):
 
 	def get_queryset(self):
 
-		return Branch.objects.filter(laboratory__created_by=self.request.user)
+		return Branch.objects.filter(
+			Q(laboratory__created_by=self.request.user) |
+			Q(branch_manager=self.request.user)
+		)
 
 
 class BranchDetailView(RetrieveAPIView):
@@ -128,9 +131,7 @@ class BranchDeleteView(PermissionMixin, DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
-		branch = self.get_queryset()
-
-		if not self.has_laboratory_permission_to_edit_branch(request.user, branch):
+		if not self.has_laboratory_permission():
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
@@ -148,6 +149,13 @@ class CreateTestView(PermissionMixin, CreateAPIView):
 		
 		return self.create(request)
 
+	def perform_create(self, serializer):
+
+		test = serializer.save()
+		branches = self.request.data.getlist('branche')
+
+		test.branch.add(*branches)
+
 
 class TestListView(ListAPIView):
 	serializer_class = TestSerializer
@@ -163,6 +171,7 @@ class TestUpdateView(PermissionMixin, UpdateAPIView):
 	serializer_class = TestSerializer
 
 	def get_queryset(self):
+
 		return Test.objects.filter(
 			Q(branch__branch_manager=self.request.user) | 
 			Q(branch__laboratory__created_by=self.request.user)
@@ -174,7 +183,17 @@ class TestUpdateView(PermissionMixin, UpdateAPIView):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
-		return self.update(request, pk, format=None)
+		return super().put(request, pk, format=None)
+
+	def perform_update(self, serializer):
+
+		test = serializer.save()
+
+		test.branch.clear()
+
+		branch = self.request.data.getlist('branch')
+
+		test.branch.add(*branch)
 
 
 class TestDeleteView(PermissionMixin, DestroyAPIView):
@@ -207,6 +226,7 @@ class CreateTestResultView(PermissionMixin, CreateAPIView):
 
 
 	def perform_create(self, serializer):
+
 		serializer.save(send_by=self.request.user)
 
 
