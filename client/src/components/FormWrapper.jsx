@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 const formVariants = {
@@ -22,7 +23,7 @@ const FormWrapper = ({ children }) => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="flex flex-col gap-2"
+      className={cn("flex flex-col gap-2")}
     >
       {children}
     </motion.div>

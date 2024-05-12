@@ -1,4 +1,11 @@
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 import React from "react";
 
 export const FormBuilder = ({
@@ -7,21 +14,20 @@ export const FormBuilder = ({
   children,
   description = null,
   message = null,
+  control = undefined,
 }) => {
-
   return (
     <FormField
       name={name}
+      control={control}
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>{React.cloneElement(children, field)}</FormControl>
-          {message && <FormMessage/>}
+          {message && <FormMessage />}
           {description && <FormDescription>{description}</FormDescription>}
         </FormItem>
       )}
     />
   );
 };
-
-

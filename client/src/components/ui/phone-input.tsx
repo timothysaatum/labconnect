@@ -38,7 +38,7 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
       return (
         <RPNInput.default
           ref={ref}
-          className={cn("flex", className)}
+          className={cn("flex focus-within:ring-2 focus-within:ring-offset-2 rounded-md focus-within:ring-primary ", className)}
           flagComponent={FlagComponent}
           countrySelectComponent={CountrySelect}
           inputComponent={InputComponent}
@@ -62,7 +62,7 @@ PhoneInput.displayName = "PhoneInput";
 const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => (
     <Input
-      className={cn("rounded-s-none rounded-e-lg", className)}
+      className={cn("rounded-s-none rounded-e-lg focus-visible:ring-0", className)}
       {...props}
       ref={ref}
     />

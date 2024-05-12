@@ -1,5 +1,4 @@
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import moment from "moment";
+import { MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -94,7 +93,6 @@ export const useClinicianRequestColumns = () => {
   return RequestColumns;
 };
 export const useRequestLabColumns = () => {
-  const user = useSelector(selectCurrentUser);
   const RequestColumns = [
     {
       id: "select",

@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: hsla(0 0% 100%);
+}
+::-webkit-scrollbar-thumb {
+  background: hsla(214.3 31.8% 91.4%);
+  border-radius: 8px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: hsla(222.2 84% 4.9);
+}
+::-webkit-scrollbar-track {
+  background: hsla(0 0% 100%);
+}
+
 html {
   font-family: "Inter", sans-serif;
 }
@@ -20,7 +39,7 @@ html {
 nav ul li {
   display: inline-block;
   list-style: none;
-  margin-inline: 20px;
+  margin-inline: 10px;
   white-space: nowrap;
 }
 nav ul a li {
@@ -100,7 +119,7 @@ aside.settings nav a.active:hover {
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 60.6%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;

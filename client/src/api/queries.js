@@ -43,7 +43,7 @@ export const useFetchAllLabs = () => {
 export const useFetchLabTests = (id) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["Lab Tests", id],
+    queryKey: ["tests", id],
     queryFn: async () => await axiosPrivate.get(`/laboratory/test/list/${id}/`),
     refetchOnWindowFocus: false,
     enabled: !!id,
@@ -51,10 +51,10 @@ export const useFetchLabTests = (id) => {
   });
 };
 
-export const useFetchUserLab = () => {
+export const useFetchUserBranches = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["userlabs"],
+    queryKey: ["userbranches"],
     queryFn: async () => await axiosPrivate.get(`/laboratory/list/`),
     staleTime: 1000 * 60 * 60,
   });
