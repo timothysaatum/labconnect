@@ -25,7 +25,7 @@ class Laboratory(BaseModel):
 	name(str): the name of the laboratory
 	'''
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_column='General manager')
+	created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_column='General manager', db_index=True)
 	laboratory_name = models.CharField(max_length=200, db_index=True, validators=[MinLengthValidator(10), MaxLengthValidator(200)])
 	main_phone = models.CharField(max_length=15)
 	main_email = models.EmailField()
@@ -63,12 +63,12 @@ REGIONS = [
 
 class Branch(BaseModel):
 	'''
-	A brach: is a local set up of a particular laboratory that carries out test within the enclave.
+	A brach: is a local set up of a particular laboratory that carries out test within that enclave.
 	Branch_name: refers to the name of a branch.
 	'''
 
-	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	branch_manager = models.ForeignKey(user, on_delete=models.CASCADE)
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
+	branch_manager = models.ForeignKey(user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True)
 	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')
 	branch_name = models.CharField(max_length=255)
 	branch_phone = models.CharField(max_length=15)
@@ -101,18 +101,18 @@ class Test(BaseModel):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	test_code = models.CharField(max_length=100)
 	name = models.CharField(max_length=200, db_index=True)
-	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='tests', db_index=True)
+	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
-	turn_around_time = models.DurationField(default='2 hours')
+	turn_around_time = models.DurationField(default='02:00:00')
 	patient_preparation = models.TextField()
 
 	def __str__(self) -> str:
 
 		return self.name
 
-	def laboratory(self):
+	def laboratory(self) -> str:
 
-		return self.branch
+		return self.name
 
 
 
@@ -124,10 +124,10 @@ class LaboratorySample(BaseModel):
 	patient_age = models.PositiveIntegerField()
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
-	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
+	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True, db_index=True)
 	to_lab = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='lab_samples', db_index=True)
 	tests = models.ManyToManyField(Test, related_name='tests_requested')
-	from_lab = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	from_lab = models.ForeignKey(Branch, on_delete=models.CASCADE, db_index=True)
 	brief_description = models.TextField(null=True, blank=True)
 	attachment = models.FileField(upload_to='sample/attachments', blank=True, null=True)
 	is_rejected = models.BooleanField(default=False)
@@ -140,14 +140,11 @@ class LaboratorySample(BaseModel):
 	def __str__(self) -> str:
 		return self.sample_type
 
-
 	def sender_phone(self) -> str:
 		return self.from_lab.branch_phone
 
-
 	def dispatched_time(self):
 		return self.date_added
-
 
 	def email(self):
 		return self.branch_email

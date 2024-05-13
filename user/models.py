@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Permission
 from django.utils import timezone
 from .managers import ClientManager
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -25,7 +24,7 @@ class Client(AbstractBaseUser, PermissionsMixin):
 	phone_number = models.CharField(max_length=13)
 	email = models.EmailField(unique=True)
 	id_number = models.CharField(max_length=50)
-	digital_address = models.CharField(max_length=12)
+	digital_address = models.CharField(max_length=12, null=True, blank=True)
 	account_type = models.CharField(max_length=100, choices=USER_TYPE)
 	is_staff = models.BooleanField(default=False)
 	is_active = models.BooleanField(default=True)
@@ -49,18 +48,14 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
 			self.user_permissions.add(permission)
 
-
 	def __str__(self):
 		return f'{self.last_name} {self.first_name}'
-
 
 	def has_perm(self, perm, obj=None):
 		return True
 
-
 	def has_module_perms(self, app_label):
 		return True
-
 
 	def tokens(self):
 
@@ -72,7 +67,6 @@ class Client(AbstractBaseUser, PermissionsMixin):
 			'access': str(refresh.access_token)
 		}
 
-
 	@property
 	def full_name(self):
 
@@ -82,7 +76,7 @@ class Client(AbstractBaseUser, PermissionsMixin):
 class OneTimePassword(models.Model):
 
 	user = models.OneToOneField(Client, on_delete=models.CASCADE)
-	code = models.CharField(max_length=6, unique=True)
+	code = models.CharField(max_length=6, unique=True, db_index=True)
 	secrete = models.CharField(max_length=100)
 
 	def __str__(self):
@@ -91,7 +85,6 @@ class OneTimePassword(models.Model):
 
 	def user_for(self):
 		return self.user
-
 
 	def email_for(self):
 		return self.user.email

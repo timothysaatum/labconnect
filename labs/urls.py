@@ -28,7 +28,6 @@ app_name = 'laboratory'
 urlpatterns = [
 
 	#creating, reading, updating and deleting laboratory routes
-
 	path('create/', CreateLaboratoryView.as_view(), name='create-laboratory'),
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
 	path('list/', BranchListView.as_view(), name='laboratory-list'),
