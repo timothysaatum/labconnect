@@ -15,13 +15,14 @@ export const FormBuilder = ({
   description = null,
   message = null,
   control = undefined,
+  ...rest
 }) => {
   return (
     <FormField
       name={name}
       control={control}
       render={({ field }) => (
-        <FormItem>
+        <FormItem {...rest}>
           <FormLabel>{label}</FormLabel>
           <FormControl>{React.cloneElement(children, field)}</FormControl>
           {message && <FormMessage />}

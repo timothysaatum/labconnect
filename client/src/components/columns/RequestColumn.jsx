@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import { createCell, createSortableHeader } from "../../util/tablefxns";
 
-export const useClinicianRequestColumns = () => {
+export const useHealthWorkerRequestColumns = () => {
   const user = useSelector(selectCurrentUser);
   const RequestColumns = [
     {

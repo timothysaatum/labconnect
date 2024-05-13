@@ -1,3 +1,4 @@
+import "react-day-picker/dist/style.css";
 import { Route, Routes } from "react-router-dom";
 import Signin from "./pages/Signin";
 import Home from "./pages/Home";
@@ -10,7 +11,6 @@ import ConfirmForgotPassword from "./pages/password-reset-confirm";
 import React from "react";
 import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
-import AddManager from "./components/dashboard/addManager";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));

@@ -38,6 +38,7 @@ export default function Signup() {
       last_name: "",
       email: "",
       phone_number: "",
+      id_number:"",
       gender: "",
       digital_address: "",
       password: "",
@@ -48,7 +49,7 @@ export default function Signup() {
   const navigate = useNavigate();
   const accounts = [
     { value: "Laboratory", label: "Laboratory Services" },
-    { value: "Clinician", label: "Health Service Provider" },
+    { value: "Health Worker", label: "Health Service Provider" },
     { value: "Delivery", label: "Delivery Agent" },
   ];
   const gender = [
@@ -140,9 +141,17 @@ export default function Signup() {
                   <FormBuilder label={"Email"} name={"email"} message={true}>
                     <Input type="email" placeholder="email" />
                   </FormBuilder>
+                  <FormBuilder
+                    label={"National ID number"}
+                    name={"id_number"}
+                    message={true}
+                  >
+                    <Input type="text" placeholder="id number" />
+                  </FormBuilder>
                   <FormBuilder label={"Phone number"} name={"phone_number"}>
                     <PhoneInput defaultCountry="GH" international />
                   </FormBuilder>
+
                   <FormField
                     control={form.control}
                     name="gender"

@@ -9,19 +9,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import RequestDialog from "./requestdialog";
-import { useFetchClinicianRequests } from "@/api/queries";
+import { useFetchHealthWorkerRequests } from "@/api/queries";
 import { useEffect, useState } from "react";
 import RequestDetails from "./requestDetails";
 import { DataTable } from "../data-table";
-import { useClinicianRequestColumns } from "@/components/columns/RequestColumn";
+import { useHealthWorkerRequestColumns } from "@/components/columns/RequestColumn";
 
-export default function ClinicianDashboardOverview() {
+export default function HealthWorkerDashboardOverview() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setTableRequests] = useState([]);
-  const RequestColumns = useClinicianRequestColumns();
+  const RequestColumns = useHealthWorkerRequestColumns();
 
 
-  const { isError, data: allrequests, isLoading } = useFetchClinicianRequests();
+  const { isError, data: allrequests, isLoading } = useFetchHealthWorkerRequests();
   useEffect(() => {
     if (allrequests) {
       setTableRequests(
