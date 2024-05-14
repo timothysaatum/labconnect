@@ -2,8 +2,8 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
 import ThemeToggler from "./ThemeToggler";
 import { Sidebar } from "./sidebar";
-import {selectCurrentUser } from "@/redux/auth/authSlice";
-import {  useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
+import { useSelector } from "react-redux";
 
 import {
   DropdownMenu,
@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useLogout from "@/hooks/uselogout";
+import { useFetchUserBranches } from "@/api/queries";
 
 const Header = () => {
-  const user = useSelector(selectCurrentUser);
   const location = useLocation();
-const logout = useLogout()
+  const user = useSelector(selectCurrentUser);
+  const logout = useLogout();
+
   return (
     <nav
       aria-label="main navigation bar"
@@ -57,8 +59,7 @@ const logout = useLogout()
                   <AvatarImage
                     src={"http://localhost:8000/media/labs/logo/Capture.PNG"}
                   />
-                  <AvatarFallback>
-                  </AvatarFallback>
+                  <AvatarFallback></AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -83,9 +84,10 @@ const logout = useLogout()
             </Link>
           </div>
         )}
-        <div className="hidden sm:block">
+        <div className="hidden sm:block ml-2">
           <ThemeToggler />
         </div>
+
         <div className="md:hidden">
           <Sidebar />
         </div>

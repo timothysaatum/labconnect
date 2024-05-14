@@ -32,7 +32,7 @@ export const SigninSchema = z.object({
 });
 const testsSchema = z.object({
   label: z.string(),
-  value: z.number(),
+  value: z.string().min(1),
 });
 
 //send sample schema
@@ -54,7 +54,7 @@ export const healthWorkerRequestSchema = z.object({
   }),
   tests: z.array(testsSchema).min(1),
   brief_description: z.string(),
-  attachment: z.instanceof(FileList),
+  attachment: z.instanceof(FileList).optional,
 });
 export const labRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),
@@ -64,17 +64,11 @@ export const labRequestSchema = z.object({
   }),
   patient_sex: z.string().min(1, "Sex is required"),
   sample_type: z.string().min(1, "Sample type is required"),
-  lab_from: z.number({
-    required_error: "Laboratory Required is required",
-    invalid_type_error: "enter valid data",
-  }),
-  lab_to: z.number({
-    required_error: "lab is required",
-    invalid_type_error: "enter valid data",
-  }),
+  from_lab: z.string().min(1, "laboratory is required"),
+  to_lab: z.string().min(1, "laboratory is required"),
   tests: z.array(testsSchema).min(1),
   brief_description: z.string(),
-  attachment: z.instanceof(FileList),
+  // attachment: z.instanceof(FileList),
 });
 export const OTPSchema = z.object({
   code: z.string().min(6, {

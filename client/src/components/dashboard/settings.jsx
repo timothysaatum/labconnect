@@ -14,7 +14,7 @@ import { ChevronDown } from "lucide-react";
 
 const Sidebar = ({ tab }) => {
   return (
-    <aside className="settings hidden w-36 md:w-60 font-medium sm:flex flex-col">
+    <aside className="settings hidden w-36 lg:w-60 font-medium md:flex flex-col">
       <nav className="flex flex-col gap-4">
         <Link
           to="?tab=profile"
@@ -90,9 +90,9 @@ const DashboardSettings = () => {
     }
   };
   return (
-    <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-      <Card className="mx-10 relative">
-        <div className="mt-4 flex justify-end mr-8 sm:hidden">
+    <div className="flex flex-col sm:gap-4 py-4 sm:pl-14">
+      <Card className="mx-4 sm:mx-8 relative">
+        <div className="mt-4 flex justify-end mr-8 md:hidden">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="min-w-24">
@@ -129,7 +129,7 @@ const DashboardSettings = () => {
         </CardHeader>
         <CardContent className="flex">
           <Sidebar tab={tab} />
-          <main className="px-10 flex-1 max-w-4xl">{settingTab()}</main>
+          <main className="md:px-10 flex-1 max-w-4xl">{settingTab()}</main>
         </CardContent>
       </Card>
     </div>

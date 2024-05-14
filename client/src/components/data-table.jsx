@@ -27,24 +27,11 @@ import {
 import React from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ChevronLeft, ChevronRight, ListFilter, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
-function EmptyLab({ header, helper, button }) {
-  return (
-    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-      <div className="flex flex-col items-center  text-center py-14 ">
-        <h3 className="text-xl font-semibold tracking-tight">{header}</h3>
-        <p className="text-sm text-muted-foreground">{helper}</p>
-        <Button className="mt-4">{button}</Button>
-      </div>
-    </div>
-  );
-}
 export function DataTable({
   data,
   columnDef,
-  loading,
-  error,
   title,
   filter,
   setSelected,
@@ -77,26 +64,6 @@ export function DataTable({
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (loading) return "Loading...";
-  if (error)
-    return (
-      <EmptyLab
-        header={`Error loading ${title}`}
-        title={title}
-        helper={"Please check no connection and try again "}
-        button={"Try Again"}
-      />
-    );
-  if (!loading && !error) {
-    if (finalData.length === 0)
-      return (
-        <EmptyLab
-          header={`No ${title} Found`}
-          helper={`Add ${title} to view`}
-          button={null}
-        />
-      );
-  }
   return (
     <>
       <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-2">

@@ -35,7 +35,7 @@ export const useFetchAllLabsBranches = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["All labs"],
-    queryFn: async () => await axiosPrivate.get("/laboratory/list/"),
+    queryFn: async () => await axiosPrivate.get("/laboratory/all/"),
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60,
   });

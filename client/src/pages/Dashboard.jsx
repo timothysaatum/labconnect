@@ -28,7 +28,7 @@ export default function Dashboard() {
   const sideLinks = useGetSideLinks(user?.account_type);
   const location = useLocation();
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
+    <div className="flex flex-col min-h-screen  bg-muted/40">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
@@ -97,39 +97,29 @@ export default function Dashboard() {
                   <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
                   <span className="sr-only">LabConnect</span>
                 </Link>
+                {sideLinks.map((item) => (
+                  <Link
+                    to={item.link}
+                    key={item.link}
+                    className={` ${
+                      (item.link === "/dashboard" &&
+                        location.pathname === "/dashboard") ||
+                      (item.link !== "/dashboard" &&
+                        location.pathname.includes(item.link))
+                        ? "bg-accent text-accent-foreground"
+                        : ""
+                    } flex items-center gap-4 px-2.5 py-2 rounded-md text-muted-foreground hover:text-foreground`}
+                  >
+                    {item.icon}
+                    {item.name}
+                  </Link>
+                ))}
+
                 <Link
-                  href="#"
+                  to="settings"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
-                  <Home className="h-5 w-5" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-foreground"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  Orders
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <Package className="h-5 w-5" />
-                  Products
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <Users2 className="h-5 w-5" />
-                  Customers
-                </Link>
-                <Link
-                  href="#"
-                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                  <LineChart className="h-5 w-5" />
+                  <Settings className="h-5 w-5" />
                   Settings
                 </Link>
               </nav>

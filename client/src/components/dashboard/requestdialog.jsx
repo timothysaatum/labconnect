@@ -1,33 +1,30 @@
-import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { useMediaQuery } from "../../hooks/use-media-query";
 
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import RequestForm from "./RequestForm";
 import { ScrollArea } from "../ui/scroll-area";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { CreditCardIcon } from "lucide-react";
 
 export default function RequestDialog() {
+  const [open,setOpen]=React.useState(false)
   const submitRef = useRef();
   const handleClick = () => {
     submitRef.current.click();
   };
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button>Send a Sample</Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="h-[90dvh] p-0 lg:px-5">
+      <SheetContent side="bottom" className="h-[90dvh] p-4 md:p-8  ">
         <SheetHeader className="flex flex-col sm:flex-row sm:items-start items-start text-start px-2 mb-4 space-y-4">
           <div className="sm:flex-1 pt-2">
             <SheetTitle>Send a new sample</SheetTitle>
@@ -40,7 +37,7 @@ export default function RequestDialog() {
           </Button>
         </SheetHeader>
         <ScrollArea className="h-[80%] pr-2">
-          <RequestForm ref={submitRef} />
+          <RequestForm ref={submitRef} setOpen={ setOpen} />
         </ScrollArea>
       </SheetContent>
     </Sheet>
