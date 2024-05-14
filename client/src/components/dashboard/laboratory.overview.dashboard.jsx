@@ -1,12 +1,7 @@
 import {
   Activity,
-  BookCheck,
-  CalendarIcon,
   ChevronDown,
-  ClipboardCheck,
   CreditCard,
-  DollarSign,
-  Pause,
   RefreshCcw,
   Users,
 } from "lucide-react";
@@ -15,19 +10,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import RequestDialog from "./requestdialog";
 import { useFetchLabRequests, useFetchUserBranches } from "@/api/queries";
 import { useEffect, useState } from "react";
-import RequestDetails from "./requestDetails";
 import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
 import { calcAge } from "@/util/ageCalculate";
-import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
-import { Calendar } from "../ui/calendar";
 import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
@@ -125,19 +116,11 @@ export default function LaboratoryDashboardOverview() {
     <main className="px-4 sm:pl-16 ">
       <div className="lg:col-span-3 flex flex-col gap-8">
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Revenue
-              </CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">$45,231.89</div>
-              <p className="text-xs text-muted-foreground">
-                +20.1% from last month
-              </p>
-            </CardContent>
+          <Card className="bg-transparent shadow-none ring-0 border-none p-0">
+            <RequestDialog
+              className="w-full h-16 font-medium shadow-sm"
+              size="lg"
+            />
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -195,9 +178,11 @@ export default function LaboratoryDashboardOverview() {
                 <Card>
                   <CardHeader className="flex flex-row">
                     <div className="flex-1">
-                      <CardTitle>Requests</CardTitle>
+                      <CardTitle>Samples</CardTitle>
                       <CardDescription>
-                        Recent Requests you made
+                        {checked === "Sent Samples"
+                          ? "Samples you have sent to other labs"
+                          : "Samples you have received "}
                       </CardDescription>
                     </div>
                     <DropdownMenu>

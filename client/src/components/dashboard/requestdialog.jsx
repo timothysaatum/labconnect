@@ -11,10 +11,10 @@ import {
 import RequestForm from "./RequestForm";
 import { ScrollArea } from "../ui/scroll-area";
 import React, { useRef } from "react";
-import { CreditCardIcon } from "lucide-react";
+import { CreditCardIcon, Truck } from "lucide-react";
 
-export default function RequestDialog() {
-  const [open,setOpen]=React.useState(false)
+export default function RequestDialog({ ...rest }) {
+  const [open, setOpen] = React.useState(false);
   const submitRef = useRef();
   const handleClick = () => {
     submitRef.current.click();
@@ -22,7 +22,9 @@ export default function RequestDialog() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button>Send a Sample</Button>
+        <Button {...rest} variant="outline">
+          Send a Sample <Truck className="w-5 h-5 text-muted-foreground ml-2" />
+        </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="h-[90dvh] p-4 md:p-8  ">
         <SheetHeader className="flex flex-col sm:flex-row sm:items-start items-start text-start px-2 mb-4 space-y-4">
@@ -32,12 +34,15 @@ export default function RequestDialog() {
               fill out the form below to create send new sample
             </SheetDescription>
           </div>
-          <Button className="max-sm:w-full sm:mr-8 flex gap-2 text-accent" onClick={handleClick}>
-            <CreditCardIcon className="w-6 h-6"/> Proceed to Payment
+          <Button
+            className="max-sm:w-full sm:mr-8 flex gap-2 text-accent"
+            onClick={handleClick}
+          >
+            <CreditCardIcon className="w-6 h-6" /> Proceed to Payment
           </Button>
         </SheetHeader>
         <ScrollArea className="h-[80%] pr-2">
-          <RequestForm ref={submitRef} setOpen={ setOpen} />
+          <RequestForm ref={submitRef} setOpen={setOpen} />
         </ScrollArea>
       </SheetContent>
     </Sheet>

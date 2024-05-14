@@ -48,13 +48,10 @@ export const healthWorkerRequestSchema = z.object({
     required_error: "hospital is required",
     invalid_type_error: "enter valid data",
   }),
-  lab: z.number({
-    required_error: "lab is required",
-    invalid_type_error: "enter valid data",
-  }),
+  lab: z.string().min(1, "laboratory is required"),
   tests: z.array(testsSchema).min(1),
   brief_description: z.string(),
-  attachment: z.instanceof(FileList).optional,
+  attachment: z.instanceof(FileList),
 });
 export const labRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),

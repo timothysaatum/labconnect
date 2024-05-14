@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { healthWorkerRequestSchema, labRequestSchema } from "@/lib/schema";
 import { Input } from "../ui/input";
@@ -166,6 +166,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
       user.account_type === "Laboratory" ? "to_lab" : "lab"
     );
     setId(value);
+    form.setValue("tests", []);
   }, [form.watch(user.account_type === "Laboratory" ? "to_lab" : "lab")]);
   return (
     <section>
@@ -303,13 +304,14 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
                       options={Options}
                       disabled={!tests?.data}
                       placeholder="select tests to request"
+                      hidePlaceholderWhenSelected
                       emptyIndicator={
                         <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                           {testsLoading
                             ? "Loading..."
                             : testsError
                             ? "Error loading Tests"
-                            : "No laboratories found"}
+                            : "Empty tests list"}
                         </p>
                       }
                       {...field}
@@ -320,11 +322,21 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
               </FormItem>
             )}
           />
-
-          <FormBuilder name="attachment" label="Attachment">
-            <Input type="file" placeholder="Attachment" {...fileRef} />
-          </FormBuilder>
-
+          <FormField
+            control={form.control}
+            name="attachment"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>File</FormLabel>
+                  <FormControl>
+                    <Input type="file" placeholder="shadcn" {...fileRef} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
           <FormBuilder
             name="brief_description"
             label="Patient History (Optional)"
