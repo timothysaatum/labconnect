@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { useForm } from "react-hook-form";
 import { healthWorkerRequestSchema, labRequestSchema } from "@/lib/schema";
 import { Input } from "../ui/input";
@@ -142,6 +149,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
     data: tests,
     isError: testsError,
     isLoading: testsLoading,
+    isPaused: testspaused,
   } = useFetchLabTests(id);
 
   const [Options, setOptions] = useState(null);
@@ -302,16 +310,19 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
                   <div className="relative">
                     <MultipleSelector
                       options={Options}
-                      disabled={!tests?.data}
                       placeholder="select tests to request"
                       hidePlaceholderWhenSelected
                       emptyIndicator={
-                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                          {testsLoading
-                            ? "Loading..."
+                        <p className="text-center text-md text-muted-foreground">
+                          {testspaused
+                            ? "Check your internet Connection and try again"
+                            : testsLoading
+                            ? "loading..."
                             : testsError
-                            ? "Error loading Tests"
-                            : "Empty tests list"}
+                            ? "Error loading tests"
+                            : tests?.data?.length < 1
+                            ? "Selected Lab has no tests"
+                            : `No more tests available`}
                         </p>
                       }
                       {...field}

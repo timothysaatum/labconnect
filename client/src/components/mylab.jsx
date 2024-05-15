@@ -293,7 +293,6 @@ export default function MyLab() {
                       )}
                     </CardContent>
                   </Card>
-                  <div></div>
                 </div>
               </TabsContent>
             ))}

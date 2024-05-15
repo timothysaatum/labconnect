@@ -1,18 +1,18 @@
 "use client";
 
 import * as React from "react";
+import { forwardRef, useEffect } from "react";
+import { Command as CommandPrimitive, useCommandState } from "cmdk";
 import { X } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Command as CommandPrimitive, useCommandState } from "cmdk";
-import { useEffect, forwardRef } from "react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 export interface Option {
   value: string;
@@ -96,7 +96,7 @@ export function useDebounce<T>(value: T, delay?: number): T {
 }
 
 function transToGroupOption(options: Option[], groupBy?: string) {
-  if (options.length === 0) {
+  if (options?.length === 0) {
     return {};
   }
   if (!groupBy) {
@@ -120,11 +120,22 @@ function removePickedOption(groupOption: GroupOption, picked: Option[]) {
   const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
 
   for (const [key, value] of Object.entries(cloneOption)) {
-    cloneOption[key] = value.filter(
+    cloneOption[key] = value?.filter(
       (val) => !picked.find((p) => p.value === val.value)
     );
   }
   return cloneOption;
+}
+
+function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
+  for (const [key, value] of Object.entries(groupOption)) {
+    if (
+      value.some((option) => targetOption.find((p) => p.value === option.value))
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -200,6 +211,7 @@ const MultipleSelector = React.forwardRef<
       () => ({
         selectedValue: [...selected],
         input: inputRef.current as HTMLInputElement,
+        focus: () => inputRef.current?.focus(),
       }),
       [selected]
     );
@@ -222,7 +234,7 @@ const MultipleSelector = React.forwardRef<
               handleUnselect(selected[selected.length - 1]);
             }
           }
-          // This is not a default behaviour of the <input /> field
+          // This is not a default behavior of the <input /> field
           if (e.key === "Escape") {
             input.blur();
           }
@@ -269,10 +281,17 @@ const MultipleSelector = React.forwardRef<
       };
 
       void exec();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     const CreatableItem = () => {
       if (!creatable) return undefined;
+      if (
+        isOptionsExist(options, [{ value: inputValue, label: inputValue }]) ||
+        selected.find((s) => s.value === inputValue)
+      ) {
+        return undefined;
+      }
 
       const Item = (
         <CommandItem
@@ -292,7 +311,9 @@ const MultipleSelector = React.forwardRef<
             setSelected(newOptions);
             onChange?.(newOptions);
           }}
-        >{`Create "${inputValue}"`}</CommandItem>
+        >
+          {`Create "${inputValue}"`}
+        </CommandItem>
       );
 
       // For normal creatable
@@ -363,7 +384,7 @@ const MultipleSelector = React.forwardRef<
       >
         <div
           className={cn(
-            "group rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+            "group  rounded-md border border-input px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
             className
           )}
         >
@@ -374,7 +395,7 @@ const MultipleSelector = React.forwardRef<
                   variant="outline"
                   key={option.value}
                   className={cn(
-                    "py-1 px-2 ",
+                    "data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
                     badgeClassName
                   )}
@@ -453,7 +474,7 @@ const MultipleSelector = React.forwardRef<
                       className="h-full overflow-auto"
                     >
                       <>
-                        {dropdowns.map((option) => {
+                        {dropdowns?.map((option) => {
                           return (
                             <CommandItem
                               key={option.value}
