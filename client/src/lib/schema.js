@@ -6,12 +6,15 @@ export const SignupSchema = z
     account_type: z.string().min(1, "Please select an account type"),
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
+    id_number: z.string().min(1, "Id is required"),
     email: z.string().email("Invalid email address"),
     phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
     gender: z.string().min(1, "please select a gender"),
     digital_address: z.string().min(1, "Digital address is required"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    password_confirmation: z.string().min(1,"Password confirmation is required"),
+    password_confirmation: z
+      .string()
+      .min(1, "Password confirmation is required"),
     tc: z.boolean(),
   })
   .refine((data) => data.password === data.password_confirmation, {
@@ -33,7 +36,7 @@ const testsSchema = z.object({
 });
 
 //send sample schema
-export const labRequestSchema = z.object({
+export const healthWorkerRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),
   patient_age: z.date({
     required_error: "Date of birth is required",
@@ -45,8 +48,27 @@ export const labRequestSchema = z.object({
     required_error: "hospital is required",
     invalid_type_error: "enter valid data",
   }),
-  sample_container: z.string().min(1, "Sample container is required"),
   lab: z.number({
+    required_error: "lab is required",
+    invalid_type_error: "enter valid data",
+  }),
+  tests: z.array(testsSchema).min(1),
+  brief_description: z.string(),
+  attachment: z.instanceof(FileList),
+});
+export const labRequestSchema = z.object({
+  name_of_patient: z.string().min(1, "Patient name is required"),
+  patient_age: z.date({
+    required_error: "Date of birth is required",
+    invalid_type_error: "Enter a valid date format YYY-MM-DD",
+  }),
+  patient_sex: z.string().min(1, "Sex is required"),
+  sample_type: z.string().min(1, "Sample type is required"),
+  lab_from: z.number({
+    required_error: "Laboratory Required is required",
+    invalid_type_error: "enter valid data",
+  }),
+  lab_to: z.number({
     required_error: "lab is required",
     invalid_type_error: "enter valid data",
   }),
@@ -75,11 +97,9 @@ export const ResetPassSchema = z
   });
 
 export const AddTestSchema = z.object({
-  test_code:z.string().min(1,"Test code is required"),
+  test_code: z.string().min(1, "Test code is required"),
   name: z.string().min(1, "Test name is required"),
   // price: z.number({
   //   invalid_type_error:"invalid"
   // }).positive("price must be a positive number"),
-  
-  
-})
+});

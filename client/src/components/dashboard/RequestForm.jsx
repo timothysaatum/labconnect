@@ -3,14 +3,14 @@ import { format } from "date-fns";
 
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { useForm } from "react-hook-form";
-import { labRequestSchema } from "@/lib/schema";
+import { healthWorkerRequestSchema, labRequestSchema } from "@/lib/schema";
 import { Input } from "../ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import MultipleSelector from "../ui/multi-select";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, ChevronsUpDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -21,42 +21,54 @@ import {
 import {
   useFetchAllDeliveries,
   useFetchAllHospitals,
-  useFetchAllLabs,
+  useFetchAllLabsBranches,
   useFetchLabTests,
+  useFetchUserBranches,
 } from "@/api/queries";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../ui/command";
 import { FormBuilder } from "../formbuilder";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useQueries, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
+import PopoverSelect from "../popoverselect";
 
 const RequestForm = React.forwardRef((props, ref) => {
+  const user = useSelector(selectCurrentUser);
   const queryClient = useQueryClient();
   const form = useForm({
-    resolver: zodResolver(labRequestSchema),
-    defaultValues: {
-      name_of_patient: "",
-      patient_age: "",
-      patient_sex: "",
-      sample_type: "",
-      sample_container: "",
-      delivery: "",
-      lab: "",
-      hospital: "",
-      ward: "",
-      brief_description: "",
-      tests: [],
-    },
+    // resolver: zodResolver(
+    //   user.account_type === "Laboratory"
+    //     ? labRequestSchema
+    //     : healthWorkerRequestSchema
+    // ),
+    defaultValues:
+      user.account_type === "Laboratory"
+        ? {
+            name_of_patient: "",
+            patient_age: "",
+            patient_sex: "",
+            sample_type: "",
+            delivery: "",
+            lab_to: "",
+            from_lab: "",
+            brief_description: "",
+            tests: [],
+          }
+        : {
+            name_of_patient: "",
+            patient_age: "",
+            patient_sex: "",
+            sample_type: "",
+            delivery: "",
+            lab: "",
+            hospital: "",
+            brief_description: "",
+            tests: [],
+          },
   });
   const axiosPrivate = useAxiosPrivate();
   const fileRef = form.register("attachment");
@@ -73,7 +85,13 @@ const RequestForm = React.forwardRef((props, ref) => {
     data: labs,
     isError: labsError,
     isLoading: labsLoading,
-  } = useFetchAllLabs();
+  } = useFetchAllLabsBranches();
+
+  const {
+    data: branches,
+    isError: branchesError,
+    isLoading: branchesLoading,
+  } = useFetchUserBranches();
 
   const onSubmit = async (data) => {
     const testvalue = data?.tests ? data.tests.map((test) => test.value) : [];
@@ -88,7 +106,7 @@ const RequestForm = React.forwardRef((props, ref) => {
     ) {
       newData.attachment = newData.attachment[0];
     }
-    console.log(data);
+    console.log(newData);
 
     try {
       const formData = new FormData();
@@ -97,7 +115,7 @@ const RequestForm = React.forwardRef((props, ref) => {
         formData.append(key, newData[key]);
       }
       const response = await axiosPrivate.post(
-        "/hospital/clinician/sample/add/",
+        "laboratory/lab/sample/add",
         formData,
 
         {
@@ -113,6 +131,9 @@ const RequestForm = React.forwardRef((props, ref) => {
     }
   };
   const [id, setId] = useState(null);
+  useEffect(() => {
+    console.log(id);
+  }, [id]);
   const {
     data: tests,
     isError: testsError,
@@ -128,7 +149,9 @@ const RequestForm = React.forwardRef((props, ref) => {
       }))
     );
   }, [tests]);
-
+  useEffect(() => {
+  
+},[])
   //hospitals
   const {
     isLoading: hospitalsLoading,
@@ -137,8 +160,10 @@ const RequestForm = React.forwardRef((props, ref) => {
   } = useFetchAllHospitals();
   // id of lab to fetch tests for
   useEffect(() => {
-    const value = form.watch("lab");
-    setId(Number(value));
+    const value = form.watch(
+      user.account_type === "Laboratory" ? "lab_to" : "lab"
+    );
+    setId(value);
   }, [form.watch("lab")]);
   return (
     <section>
@@ -215,224 +240,54 @@ const RequestForm = React.forwardRef((props, ref) => {
               </FormItem>
             )}
           />
-          <FormField
-            name="sample_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sample Type</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="Sample type"
-                    {...field}
-                    size="small"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormBuilder name={"sample_container"} label={"Sample Container"}>
-            <Input type="text" placeholder="Sample container" />
+          <FormBuilder name={"sample_type"} label={"Sample Type"}>
+            <Input type="text" placeholder="Sample type" size="small" />
           </FormBuilder>
-          <FormField
-            control={form.control}
-            name="delivery"
-            render={({ field }) => (
-              <FormItem className="flex flex-col justify-end">
-                <FormLabel>Choose Delivery Service (Optional)</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "w-full justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? deliveries.data?.find(
-                              (option) => option.id === field.value
-                            )?.name
-                          : "choose delivery service"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-popover-content-width-same-as-its-trigger max-h-pop">
-                    <Command>
-                      <CommandInput placeholder="Search delivery service..." />
-                      <CommandEmpty>
-                        {deliveriesLoading
-                          ? "Loading..."
-                          : deliveriesError
-                          ? "Error loading delivery services"
-                          : "No Delivery Services Available"}
-                      </CommandEmpty>
-                      <CommandGroup>
-                        <CommandList>
-                          {deliveries?.data?.map((delivery) => (
-                            <CommandItem
-                              value={delivery.id}
-                              key={delivery.id}
-                              onSelect={() => {
-                                form.setValue("delivery", delivery.id);
-                                form.clearErrors("delivery");
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  delivery.id === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {delivery.name}
-                            </CommandItem>
-                          ))}
-                        </CommandList>
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
+          <PopoverSelect
+            form={form}
+            name={"delivery"}
+            error={deliveriesError}
+            loading={deliveriesLoading}
+            items={deliveries}
+            label={"Choose Delivery Service (Optional)"}
+            title={"Deliveries"}
+            search={"Search delivery service..."}
           />
-          <FormField
-            control={form.control}
-            name="hospital"
-            render={({ field }) => (
-              <FormItem className="flex flex-col justify-end">
-                <FormLabel>Choose Current hospital</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          "w-full justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? hospitals?.data?.find(
-                              (option) => option.id === field.value
-                            )?.name
-                          : "Choose Current Hospital"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-popover-content-width-same-as-its-trigger max-h-pop">
-                    <Command>
-                      <CommandInput placeholder="Search delivery service..." />
-                      <CommandEmpty>
-                        {hospitalsLoading
-                          ? "Loading..."
-                          : hospitalsError
-                          ? "Error loading Hospitals"
-                          : "No Hospitals found"}
-                      </CommandEmpty>
-                      <CommandGroup>
-                        <CommandList>
-                          {hospitals?.data?.map((hospital) => (
-                            <CommandItem
-                              value={hospital.id}
-                              key={hospital.id}
-                              onSelect={() => {
-                                form.setValue("hospital", hospital.id);
-                                form.clearErrors("hospital");
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  hospital.id === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {hospital.name}
-                            </CommandItem>
-                          ))}
-                        </CommandList>
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lab"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Choose Labortory</FormLabel>
-                <FormControl>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-full justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? labs?.data?.find(
-                                (option) => option.id === field.value
-                              )?.branch_name
-                            : "choose laboratory"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-popover-content-width-same-as-its-trigger max-h-popover-content-width-same-as-its-trigger p-0">
-                      <Command className="shadow-lg">
-                        <CommandInput placeholder="Search laboratory..." />
-                        <CommandEmpty>
-                          {labsLoading
-                            ? "Loading..."
-                            : labsError
-                            ? "Error loading labs"
-                            : "No laboratories found"}
-                        </CommandEmpty>
-                        <CommandGroup>
-                          <CommandList>
-                            {labs?.data.map((lab) => (
-                              <CommandItem
-                                value={lab.id}
-                                key={lab.id}
-                                onSelect={() => {
-                                  form.setValue("lab", lab.id);
-                                  form.clearErrors("lab");
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    lab.id === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                                {lab.branch_name}
-                              </CommandItem>
-                            ))}
-                          </CommandList>
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </FormControl>
-              </FormItem>
-            )}
+          {user.account_type === "Laboratory" ? (
+            <PopoverSelect
+              form={form}
+              name={"lab_from"}
+              error={branchesError}
+              loading={branchesLoading}
+              items={branches}
+              label={"Choose Sending Branch"}
+              title={"Branches"}
+              search={"Search branches..."}
+              info={"branch_name"}
+            />
+          ) : (
+            <PopoverSelect
+              form={form}
+              name={"hospital"}
+              error={hospitalsError}
+              loading={hospitalsLoading}
+              items={hospitals}
+              label={"Choose current Hospital"}
+              title={"Hospitals"}
+              search={"Search hospital..."}
+              info="name"
+            />
+          )}
+
+          <PopoverSelect
+            form={form}
+            name={user.account_type === "Laboratory" ? "lab_to" : "lab"}
+            error={labsError}
+            loading={labsLoading}
+            items={labs}
+            label={"Choose Laboratory"}
+            title={"Laboratories"}
+            search={"Search laboratory..."}
           />
           <FormField
             control={form.control}
@@ -465,34 +320,19 @@ const RequestForm = React.forwardRef((props, ref) => {
               </FormItem>
             )}
           />
-          <FormField
-            name="attachment"
-            render={() => (
-              <FormItem>
-                <FormLabel>Attachment (Optional)</FormLabel>
-                <FormControl>
-                  <Input type="file" placeholder="Attachment" {...fileRef} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
 
-          <FormField
-            control={form.control}
+          <FormBuilder name="attachment" label="Attachment">
+            <Input type="file" placeholder="Attachment" {...fileRef} />
+          </FormBuilder>
+
+          <FormBuilder
             name="brief_description"
-            render={({ field }) => (
-              <FormItem className="md:col-span-2 lg:col-span-3">
-                <FormLabel>Brief Description (Optional)</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Brief description"
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+            label="Patient History (Optional)"
+            className="md:col-span-2 lg:col-span-3"
+            control={form.control}
+          >
+            <Textarea placeholder="Brief description" className="resize-none" />
+          </FormBuilder>
           <Button type="submit" ref={ref} className="hidden"></Button>
         </form>
       </Form>

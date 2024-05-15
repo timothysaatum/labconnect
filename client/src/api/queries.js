@@ -10,7 +10,7 @@ export const useFetchLabRequests = () => {
     staleTime: 1000 * 60 * 5,
   });
 };
-export const useFetchClinicianRequests = () => {
+export const useFetchHealthWorkerRequests = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["Requests"],
@@ -25,17 +25,17 @@ export const useFetchAllDeliveries = () => {
   return useQuery({
     queryKey: ["All Deliveries"],
     queryFn: async () => await axiosPrivate.get("/delivery/delivery/all/"),
-    refetchOnWindowFocus: false,
+  refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60,
   });
 };
 
 // laboratories
-export const useFetchAllLabs = () => {
+export const useFetchAllLabsBranches = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["All labs"],
-    queryFn: async () => await axiosPrivate.get("/laboratory/laboratory/all/"),
+    queryFn: async () => await axiosPrivate.get("/laboratory/list/"),
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60,
   });
@@ -59,7 +59,6 @@ export const useFetchUserBranches = () => {
     staleTime: 1000 * 60 * 60,
   });
 };
-
 
 //hospitals
 export const useFetchAllHospitals = () => {
