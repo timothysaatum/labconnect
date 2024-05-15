@@ -27,10 +27,9 @@ from .results import TestResult
 from hospital.models import Sample
 from hospital.serializers import SampleSerializer
 from django.db.models import Q
-from rest_framework.viewsets import ModelViewSet
-from django.shortcuts import get_object_or_404  # Avoid repetitive try-except blocks
-from rest_framework.decorators import action
-from rest_framework.permissions import BasePermission
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+
 
 
 
@@ -44,7 +43,7 @@ class PermissionMixin(object):
 				self.request.user.is_staff or self.request.user.is_admin
 			)
 
-	def has_laboratory_permission_to_edit_branch(self, user, branch):
+	def has_permission_to_edit_branch(self, user, branch):
 		return (
 			user.is_authenticated and
 			(
@@ -53,81 +52,32 @@ class PermissionMixin(object):
 			)
 		)
 
-class IsLabManagerOrBranchManager(BasePermission):
-	'''
-		Custom permission class that allows acess to authorized users only.
-		-LabManager have full access
-		-BranchManager can access resources only for their own branches
+	def has_permission_to_edit_test(self, user, test):
+		return self.has_laboratory_permission() and any(
+				branch.pk == test.branch.pk for branch in get_user_branches(user)
+			)
 
-	'''
+	def has_permission_to_edit_sample(self, user, sample):
+		return self.has_laboratory_permission() and any(
+				lab.pk == sample.lab.pk for lab in get_user_branches(user)
+			)
 
-	def has_permission(self, request, view):
-		'''
-			Checks if a user has permisison to access the resource.
+def require_laboratory_permission(view_func):
 
-			Args:
-				request(Request): The incoming request object.
-				view(APIView): The view being processed.
-			Returns:
-			bol: True if the user has permission, False otherwise.
-		'''
+	@wraps(view_func)
+	def wrapper(self, request, *args, **kwargs):
+		if not self.has_laboratory_permission():
+			return Response({'error': 'Unauthorized'}, status=HTTP_401_UNAUTHORIZED)
 
-		if request.user.is_admin or request.user.is_staff:
-			print('im here.')
-			return True
-
-		#check if the viewset has a 'get_queryset' method
-		if hasattr(view, 'get_queryset'):
-			queryset = view.get_queryset()
-
-			#filter based on user's branch if aplicable(e.g, BranchviewSet)
-			if hasattr(request.user,  'branch'):
-				queryset = queryset.filter(branch_manager=request.user)
-				print(queryset)
-			#checks if the requested object exists in the filtered query
-			return queryset.exists()
-		#default permission for other views(if 'get_queryset' is not available)
-		return False
+		return view_func(self, request, *args, **kwargs)
+	return wrapper
 
 
-
-class LaboratoryViewSet(ModelViewSet):
-    ''''
-	API endpoint for managing laboratories (Create, Read, Update, Delete, List).
-	'''
-    serializer_class = LaboratorySerializer
-    permission_classes = [IsAuthenticated & IsLabManagerOrBranchManager]  # Combine permissions
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_staff or user.is_admin:
-            return Laboratory.objects.all()
-        return Laboratory.objects.filter(created_by=user)
-
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated & PermissionMixin])
-    def create_branch(self, request, pk=None):
-        # Create branch associated with the laboratory
-        laboratory = get_object_or_404(Laboratory, pk=pk)
-        serializer = BranchSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(laboratory=laboratory)
-        return Response(serializer.data, status=HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
-        #laboratory_cache.clear()  # Clear cache after laboratory creation
-
-
-
-
-
-
-
-
-
-
-
-
+def get_user_branches(user):
+	return Branch.objects.filter(
+			Q(laboratory__created_by=self.request.user) |
+			Q(branch_manager=self.request.user)
+		)
 
 
 class CreateLaboratoryView(PermissionMixin, CreateAPIView):
@@ -441,7 +391,7 @@ class HospitalSamplesView(PermissionMixin, ListAPIView):
 
 
 class LaboratorySampleList(PermissionMixin, ListAPIView):
-	serializer_class = SampleSerializer
+	serializer_class = LaboratorySampleSerializer
 
 	def get_queryset(self):
 

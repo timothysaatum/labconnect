@@ -21,8 +21,7 @@ from .views import (
     LaboratorySampleSerializerView,
     LaboratorySampleUpdateView,
     LaboratorySampleDeleteView,
-    HospitalSamplesView,
-    LaboratoryViewSet
+    HospitalSamplesView
 )
 
 
@@ -30,7 +29,7 @@ app_name = 'laboratory'
 urlpatterns = [
 
 	#creating, reading, updating and deleting laboratory
-	path('create/', LaboratoryViewSet.as_view({'get': 'list', 'post': 'create'}), name='laboratory'),
+	path('create/', CreateLaboratoryView.as_view(), name='laboratory'),
 	path('user-laboratory/', LaboratoryUserListVIew.as_view(), name='user-lab'),
 
 	#creating, reading, updating and deleting Branch
