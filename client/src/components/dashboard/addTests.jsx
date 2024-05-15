@@ -49,15 +49,15 @@ const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
     data: branches,
   } = useFetchUserBranches();
   const onSubmit = async (data) => {
-    const branchesvalue = data?.branches
-      ? data.branches.map((branch) => branch.value)
+    const branchvalue = data?.branch
+      ? data.branch.map((branch) => branch.value)
       : [];
     const newData = {
       ...data,
-      branches: branchesvalue,
+      branch: branchvalue,
     };
 
-    console.table(newData);
+    console.log(newData);
     try {
       await axiosPrivate.post("/laboratory/test/add/", newData);
       queryClient.invalidateQueries(["tests", data?.branch]);
@@ -92,7 +92,7 @@ const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
-          name="branches"
+          name="branch"
           control={form.control}
           render={({ field }) => (
             <FormItem className="-mb-2">

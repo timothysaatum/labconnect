@@ -159,7 +159,7 @@ class CreateTestView(PermissionMixin, CreateAPIView):
 	def perform_create(self, serializer):
 
 		test = serializer.save()
-		branches = self.request.data.getlist('branche')
+		branches = self.request.data.getlist('branch')
 
 		test.branch.add(*branches)
 
