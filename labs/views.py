@@ -361,7 +361,7 @@ class HospitalSamplesView(PermissionMixin, ListAPIView):
 
 
 class LaboratorySampleList(PermissionMixin, ListAPIView):
-	serializer_class = SampleSerializer
+	serializer_class = LaboratorySampleSerializer
 
 	def get_queryset(self):
 

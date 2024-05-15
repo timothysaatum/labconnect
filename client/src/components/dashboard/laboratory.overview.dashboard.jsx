@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import RequestDialog from "./requestdialog";
-import { useFetchLabRequests, useFetchUserBranches } from "@/api/queries";
+import { useFetchLabRequests, useFetchLabRequestsSent, useFetchUserBranches } from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
@@ -56,7 +56,9 @@ function ErrorLab({ refetch }) {
   return (
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
       <div className="flex flex-col items-center  text-center py-16 ">
-        <h3 className="text-xl font-semibold ">An Error has Occured</h3>
+        <h3 className="text-xl font-semibold text-destructive ">
+          An Error has Occured
+        </h3>
         <p className="text-sm text-muted-foreground">
           check your internet connection and try again{" "}
         </p>
@@ -91,12 +93,21 @@ export default function LaboratoryDashboardOverview() {
     refetch,
     isRefetchError,
   } = useFetchLabRequests();
+  const {
+    isError:sentError,
+    data: sentrequests,
+    isLoading:sentRequestsLoading,
+    refetch:sentRequestsRefetch,
+  } = useFetchLabRequestsSent();
 
   const {
     data: branches,
     isLoading: branchesLoading,
     isError: branchesError,
   } = useFetchUserBranches();
+  useEffect(() => {
+    setChecked(branches?.data[0]?.id);
+  }, [branches?.data]);
   useEffect(() => {
     if (allrequests) {
       setTableRequests(
@@ -162,110 +173,72 @@ export default function LaboratoryDashboardOverview() {
           </Card>
         </div>
         <div className="">
-          {branches?.data.length > 1 ? (
-            <Tabs defaultValue={branches?.data[0].branch_name}>
-              <TabsList className="max-w-full">
-                {branches?.data.map((branch) => (
-                  <TabsTrigger
-                    key={branch.branch_name}
-                    value={branch.branch_name}
-                  >
-                    {branch.branch_name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              <TabsContent value="Kumasi Branch">
-                <Card>
-                  <CardHeader className="flex flex-row">
-                    <div className="flex-1">
-                      <CardTitle>Samples</CardTitle>
-                      <CardDescription>
-                        {checked === "Sent Samples"
-                          ? "Samples you have sent to other labs"
-                          : "Samples you have received "}
-                      </CardDescription>
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="flex gap-2">
-                          <span className="text-muted-foreground">
-                            Viewing:
-                          </span>{" "}
-                          {checked}
-                          <ChevronDown className="w-4 h-4 ml-2" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+          <Tabs defaultValue="Received">
+            <TabsList className="max-w-full">
+              <TabsTrigger value="Received">Received samples</TabsTrigger>
+              <TabsTrigger value="Sent Samples">Sent Samples</TabsTrigger>
+            </TabsList>
+            <TabsContent value="Received">
+              <Card>
+                <CardHeader className="flex flex-row">
+                  <div className="flex-1">
+                    <CardTitle>Samples</CardTitle>
+                    <CardDescription>
+                      {checked === "Sent Samples"
+                        ? "Samples you have sent to other labs"
+                        : "Samples you have received "}
+                    </CardDescription>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="flex gap-2">
+                        <span className="text-muted-foreground">Viewing:</span>{" "}
+                        {
+                          branches?.data?.find(
+                            (branch) => branch.id === checked
+                          )?.branch_name
+                        }
+                        <ChevronDown className="w-4 h-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {branches?.data?.map((branch) => (
                         <DropdownMenuCheckboxItem
-                          checked={checked === "Sent Samples"}
-                          onCheckedChange={() => setChecked("Sent Samples")}
+                          key={branch.id}
+                          checked={checked === branch.id}
+                          onCheckedChange={() => setChecked(branch.id)}
                         >
-                          Sent Samples
+                          {branch.branch_name}
                         </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem
-                          checked={checked === "Received Samples"}
-                          onCheckedChange={() => setChecked("Received Samples")}
-                        >
-                          Received Samples
-                        </DropdownMenuCheckboxItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </CardHeader>
-                  <CardContent>
-                    {isLoading ? (
-                      <LoadingLab />
-                    ) : isError ? (
-                      <ErrorLab
-                        refetch={refetch}
-                        isRefetchError={isRefetchError}
-                        isRefetching={isRefetching}
-                      />
-                    ) : allrequests?.data.length < 1 ? (
-                      <EmptyLab />
-                    ) : (
-                      <DataTable
-                        data={requests}
-                        error={isError}
-                        loading={isLoading}
-                        columnDef={requestColumns}
-                        title={"Requests"}
-                        filter={"Patient"}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Requests</CardTitle>
-                <CardDescription>Recent Requests you made</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {isLoading ? (
-                  <LoadingLab />
-                ) : isError ? (
-                  <ErrorLab
-                    refetch={refetch}
-                    isRefetchError={isRefetchError}
-                    isRefetching={isRefetching}
-                  />
-                ) : allrequests?.data.length < 1 ? (
-                  <EmptyLab />
-                ) : (
-                  <DataTable
-                    data={requests}
-                    error={isError}
-                    loading={isLoading}
-                    columnDef={requestColumns}
-                    title={"Requests"}
-                    filter={"Patient"}
-                  />
-                )}
-              </CardContent>
-            </Card>
-          )}
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <LoadingLab />
+                  ) : isError ? (
+                    <ErrorLab
+                      refetch={refetch}
+                      isRefetchError={isRefetchError}
+                      isRefetching={isRefetching}
+                    />
+                  ) : allrequests?.data.length < 1 ? (
+                    <EmptyLab />
+                  ) : (
+                    <DataTable
+                      data={requests}
+                      error={isError}
+                      loading={isLoading}
+                      columnDef={requestColumns}
+                      title={"Requests"}
+                      filter={"Patient"}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </main>
