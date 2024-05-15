@@ -1,33 +1,32 @@
-import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { useMediaQuery } from "../../hooks/use-media-query";
 
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import RequestForm from "./RequestForm";
 import { ScrollArea } from "../ui/scroll-area";
-import { useRef } from "react";
-import { CreditCardIcon } from "lucide-react";
+import React, { useRef } from "react";
+import { CreditCardIcon, Truck } from "lucide-react";
 
-export default function RequestDialog() {
+export default function RequestDialog({ ...rest }) {
+  const [open, setOpen] = React.useState(false);
   const submitRef = useRef();
   const handleClick = () => {
     submitRef.current.click();
   };
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button>Send a Sample</Button>
+        <Button {...rest} variant="outline">
+          Send a Sample <Truck className="w-5 h-5 text-muted-foreground ml-2" />
+        </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="h-[90dvh] p-0 lg:px-5">
+      <SheetContent side="bottom" className="h-[90dvh] p-4 md:p-8  ">
         <SheetHeader className="flex flex-col sm:flex-row sm:items-start items-start text-start px-2 mb-4 space-y-4">
           <div className="sm:flex-1 pt-2">
             <SheetTitle>Send a new sample</SheetTitle>
@@ -35,12 +34,15 @@ export default function RequestDialog() {
               fill out the form below to create send new sample
             </SheetDescription>
           </div>
-          <Button className="max-sm:w-full sm:mr-8 flex gap-2 text-accent" onClick={handleClick}>
-            <CreditCardIcon className="w-6 h-6"/> Proceed to Payment
+          <Button
+            className="max-sm:w-full sm:mr-8 flex gap-2 text-accent"
+            onClick={handleClick}
+          >
+            <CreditCardIcon className="w-6 h-6" /> Proceed to Payment
           </Button>
         </SheetHeader>
         <ScrollArea className="h-[80%] pr-2">
-          <RequestForm ref={submitRef} />
+          <RequestForm ref={submitRef} setOpen={setOpen} />
         </ScrollArea>
       </SheetContent>
     </Sheet>

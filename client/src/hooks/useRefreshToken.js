@@ -2,7 +2,6 @@ import { setCredentials } from "@/redux/auth/authSlice";
 import axios from "./../api/axios";
 import { useDispatch } from "react-redux";
 import {logOut } from "@/redux/auth/authSlice";
-import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 

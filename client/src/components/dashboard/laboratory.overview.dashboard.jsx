@@ -1,35 +1,102 @@
 import {
-  BookCheck,
-  CalendarIcon,
-  ClipboardCheck,
-  Pause,
+  Activity,
+  ChevronDown,
+  CreditCard,
+  RefreshCcw,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import RequestDialog from "./requestdialog";
-import { useFetchLabRequests } from "@/api/queries";
+import { useFetchLabRequests, useFetchUserBranches } from "@/api/queries";
 import { useEffect, useState } from "react";
-import RequestDetails from "./requestDetails";
 import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
 import { calcAge } from "@/util/ageCalculate";
-import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
-import { Calendar } from "../ui/calendar";
+import { Link } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+
+function EmptyLab() {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="flex flex-col items-center  text-center py-16 ">
+        <h3 className="text-xl font-semibold ">
+          You have received no samples yet
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          you will see requests made to your lab here{" "}
+        </p>
+      </div>
+    </div>
+  );
+}
+function LoadingLab() {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="flex flex-col items-center  text-center py-16 ">
+        {/* <h3 className="text-xl font-semibold ">An Error has Occured</h3> */}
+        <p className="text-sm text-muted-foreground">loading...</p>
+      </div>
+    </div>
+  );
+}
+function ErrorLab({ refetch }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="flex flex-col items-center  text-center py-16 ">
+        <h3 className="text-xl font-semibold ">An Error has Occured</h3>
+        <p className="text-sm text-muted-foreground">
+          check your internet connection and try again{" "}
+        </p>
+        <Button
+          variant="outline"
+          className="mt-6"
+          onClick={() => {
+            refetch();
+          }}
+        >
+          Try Again{" "}
+          <RefreshCcw className="h-4 w-4 ml-2 text-muted-foreground" />
+        </Button>
+        <p className="text-muted-foreground text-xs mt-2">
+          If error persists{" "}
+          <Link className="hover:underline underline-offset-2">Contact us</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function LaboratoryDashboardOverview() {
-  const [selectedRequest, setSelectedRequest] = useState(null);
   const [requests, setTableRequests] = useState([]);
+  const [checked, setChecked] = useState("Sent Samples");
   const requestColumns = useRequestLabColumns();
-  const [date, setDate] = useState(null);
-  const { isError, data: allrequests, isLoading } = useFetchLabRequests();
+  const {
+    isError,
+    data: allrequests,
+    isLoading,
+    isRefetching,
+    refetch,
+    isRefetchError,
+  } = useFetchLabRequests();
 
+  const {
+    data: branches,
+    isLoading: branchesLoading,
+    isError: branchesError,
+  } = useFetchUserBranches();
   useEffect(() => {
     if (allrequests) {
       setTableRequests(
@@ -46,103 +113,161 @@ export default function LaboratoryDashboardOverview() {
     }
   }, [allrequests]);
   return (
-    <main className="grid gap-4 p-4 sm:px-6 sm:pl-20 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
-      <div
-        className={`grid auto-rows-max items-start gap-4 md:gap-8 ${
-          selectedRequest ? "lg:col-span-2" : "lg:col-span-3"
-        }`}
-      >
-        <div className="max-w-full grid gap-4 grid-cols-1 md:grid-cols-10">
-          <Card className="md:col-span-3 shadow-inner border-none ">
-            <CardHeader className="relative pb-3">
-              <CardTitle>Your Requests</CardTitle>
-              <CardDescription className="max-w-lg text-balance leading-relaxed">
-                Introducing Our Dynamic Requests Dashboard for Seamless
-                Management and Insightful Analysis.
-              </CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <RequestDialog />
-            </CardFooter>
-          </Card>
-
-          <div className="hidden md:flex col-span-7 px-4 place-items-start  border-none">
-            <CardContent className=" grid grid-cols-3 gap-5 w-full">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-md flex justify-between">
-                    Total samples <BookCheck />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col items-center">
-                      <p className="text-gray-500">Today:</p>
-                      <p className="text-3xl">5</p>
-                    </div>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="self-end"
-                        >
-                          <CalendarIcon />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={date}
-                          onSelect={setDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-md flex justify-between">
-                    Processed Requests <ClipboardCheck />
-                  </CardTitle>
-                </CardHeader>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-md flex justify-between">
-                    Pending samples <Pause />
-                  </CardTitle>
-                </CardHeader>
-              </Card>
-            </CardContent>
-          </div>
-        </div>
-        <Card>
-          <CardHeader className="px-7">
-            <CardTitle>Requests</CardTitle>
-            <CardDescription>Recent Requests you made</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <DataTable
-              data={requests}
-              error={isError}
-              loading={isLoading}
-              columnDef={requestColumns}
-              title={"Requests"}
-              filter={"Patient"}
+    <main className="px-4 sm:pl-16 ">
+      <div className="lg:col-span-3 flex flex-col gap-8">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+          <Card className="bg-transparent shadow-none ring-0 border-none p-0">
+            <RequestDialog
+              className="w-full h-16 font-medium shadow-sm"
+              size="lg"
             />
-          </CardContent>
-        </Card>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Subscriptions
+              </CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">+2350</div>
+              <p className="text-xs text-muted-foreground">
+                +180.1% from last month
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Sales</CardTitle>
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">+12,234</div>
+              <p className="text-xs text-muted-foreground">
+                +19% from last month
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+              <Activity className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">+573</div>
+              <p className="text-xs text-muted-foreground">
+                +201 since last hour
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="">
+          {branches?.data.length > 1 ? (
+            <Tabs defaultValue={branches?.data[0].branch_name}>
+              <TabsList className="max-w-full">
+                {branches?.data.map((branch) => (
+                  <TabsTrigger
+                    key={branch.branch_name}
+                    value={branch.branch_name}
+                  >
+                    {branch.branch_name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <TabsContent value="Kumasi Branch">
+                <Card>
+                  <CardHeader className="flex flex-row">
+                    <div className="flex-1">
+                      <CardTitle>Samples</CardTitle>
+                      <CardDescription>
+                        {checked === "Sent Samples"
+                          ? "Samples you have sent to other labs"
+                          : "Samples you have received "}
+                      </CardDescription>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="flex gap-2">
+                          <span className="text-muted-foreground">
+                            Viewing:
+                          </span>{" "}
+                          {checked}
+                          <ChevronDown className="w-4 h-4 ml-2" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuCheckboxItem
+                          checked={checked === "Sent Samples"}
+                          onCheckedChange={() => setChecked("Sent Samples")}
+                        >
+                          Sent Samples
+                        </DropdownMenuCheckboxItem>
+                        <DropdownMenuCheckboxItem
+                          checked={checked === "Received Samples"}
+                          onCheckedChange={() => setChecked("Received Samples")}
+                        >
+                          Received Samples
+                        </DropdownMenuCheckboxItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </CardHeader>
+                  <CardContent>
+                    {isLoading ? (
+                      <LoadingLab />
+                    ) : isError ? (
+                      <ErrorLab
+                        refetch={refetch}
+                        isRefetchError={isRefetchError}
+                        isRefetching={isRefetching}
+                      />
+                    ) : allrequests?.data.length < 1 ? (
+                      <EmptyLab />
+                    ) : (
+                      <DataTable
+                        data={requests}
+                        error={isError}
+                        loading={isLoading}
+                        columnDef={requestColumns}
+                        title={"Requests"}
+                        filter={"Patient"}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Requests</CardTitle>
+                <CardDescription>Recent Requests you made</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <LoadingLab />
+                ) : isError ? (
+                  <ErrorLab
+                    refetch={refetch}
+                    isRefetchError={isRefetchError}
+                    isRefetching={isRefetching}
+                  />
+                ) : allrequests?.data.length < 1 ? (
+                  <EmptyLab />
+                ) : (
+                  <DataTable
+                    data={requests}
+                    error={isError}
+                    loading={isLoading}
+                    columnDef={requestColumns}
+                    title={"Requests"}
+                    filter={"Patient"}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
-      {selectedRequest && (
-        <RequestDetails
-          selectedRequest={selectedRequest}
-          setSelectedRequest={setSelectedRequest}
-        />
-      )}
     </main>
   );
 }

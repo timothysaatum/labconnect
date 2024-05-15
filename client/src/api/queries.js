@@ -25,17 +25,26 @@ export const useFetchAllDeliveries = () => {
   return useQuery({
     queryKey: ["All Deliveries"],
     queryFn: async () => await axiosPrivate.get("/delivery/delivery/all/"),
-  refetchOnWindowFocus: false,
+    refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60,
   });
 };
 
 // laboratories
+export const useFetchUserLab= () => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["Laboratory"],
+    queryFn: async () => await axiosPrivate.get("/laboratory/user-laboratory/"),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 600,
+  });
+};
 export const useFetchAllLabsBranches = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["All labs"],
-    queryFn: async () => await axiosPrivate.get("/laboratory/list/"),
+    queryFn: async () => await axiosPrivate.get("/laboratory/all/"),
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 60,
   });

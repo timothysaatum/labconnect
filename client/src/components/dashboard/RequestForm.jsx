@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { useForm } from "react-hook-form";
 import { healthWorkerRequestSchema, labRequestSchema } from "@/lib/schema";
 import { Input } from "../ui/input";
@@ -35,16 +42,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import PopoverSelect from "../popoverselect";
+import { DevTool } from "@hookform/devtools";
 
-const RequestForm = React.forwardRef((props, ref) => {
+const RequestForm = React.forwardRef(({ setOpen }, ref) => {
   const user = useSelector(selectCurrentUser);
   const queryClient = useQueryClient();
   const form = useForm({
-    // resolver: zodResolver(
-    //   user.account_type === "Laboratory"
-    //     ? labRequestSchema
-    //     : healthWorkerRequestSchema
-    // ),
+    resolver: zodResolver(
+      user?.account_type === "Laboratory"
+        ? labRequestSchema
+        : healthWorkerRequestSchema
+    ),
     defaultValues:
       user.account_type === "Laboratory"
         ? {
@@ -53,7 +61,7 @@ const RequestForm = React.forwardRef((props, ref) => {
             patient_sex: "",
             sample_type: "",
             delivery: "",
-            lab_to: "",
+            to_lab: "",
             from_lab: "",
             brief_description: "",
             tests: [],
@@ -78,8 +86,7 @@ const RequestForm = React.forwardRef((props, ref) => {
     data: deliveries,
     isLoading: deliveriesLoading,
     isError: deliveriesError,
-  } = useFetchAllDeliveries(); //used deliveries to prevent naming conflicts
-
+  } = useFetchAllDeliveries();
   //fetching labs
   const {
     data: labs,
@@ -94,10 +101,11 @@ const RequestForm = React.forwardRef((props, ref) => {
   } = useFetchUserBranches();
 
   const onSubmit = async (data) => {
+    console.log(data);
     const testvalue = data?.tests ? data.tests.map((test) => test.value) : [];
     const newData = {
       ...data,
-      patient_age: format(data?.patient_age, "yyyy-MM-dd"),
+      patient_age: 44,
       tests: testvalue,
     };
     if (
@@ -107,25 +115,28 @@ const RequestForm = React.forwardRef((props, ref) => {
       newData.attachment = newData.attachment[0];
     }
     console.log(newData);
-
     try {
       const formData = new FormData();
 
       for (const key in newData) {
         formData.append(key, newData[key]);
       }
-      const response = await axiosPrivate.post(
-        "laboratory/lab/sample/add",
+      await axiosPrivate.post(
+        user.account_type === "Laboratory"
+          ? "laboratory/lab/sample/add"
+          : "hospital/health-worker/add/sample/",
         formData,
 
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      queryClient.invalidateQueries("Requests");
+      form.reset();
+      queryClient.invalidateQueries(["Requests"]);
       toast.success("Sample Sent", {
         position: "top-center",
       });
+      setOpen(false);
     } catch (error) {
       console.log(error.data);
     }
@@ -138,6 +149,7 @@ const RequestForm = React.forwardRef((props, ref) => {
     data: tests,
     isError: testsError,
     isLoading: testsLoading,
+    isPaused: testspaused,
   } = useFetchLabTests(id);
 
   const [Options, setOptions] = useState(null);
@@ -149,9 +161,7 @@ const RequestForm = React.forwardRef((props, ref) => {
       }))
     );
   }, [tests]);
-  useEffect(() => {
-  
-},[])
+  useEffect(() => {}, []);
   //hospitals
   const {
     isLoading: hospitalsLoading,
@@ -161,10 +171,11 @@ const RequestForm = React.forwardRef((props, ref) => {
   // id of lab to fetch tests for
   useEffect(() => {
     const value = form.watch(
-      user.account_type === "Laboratory" ? "lab_to" : "lab"
+      user.account_type === "Laboratory" ? "to_lab" : "lab"
     );
     setId(value);
-  }, [form.watch("lab")]);
+    form.setValue("tests", []);
+  }, [form.watch(user.account_type === "Laboratory" ? "to_lab" : "lab")]);
   return (
     <section>
       <Form {...form}>
@@ -256,7 +267,7 @@ const RequestForm = React.forwardRef((props, ref) => {
           {user.account_type === "Laboratory" ? (
             <PopoverSelect
               form={form}
-              name={"lab_from"}
+              name={"from_lab"}
               error={branchesError}
               loading={branchesLoading}
               items={branches}
@@ -281,7 +292,7 @@ const RequestForm = React.forwardRef((props, ref) => {
 
           <PopoverSelect
             form={form}
-            name={user.account_type === "Laboratory" ? "lab_to" : "lab"}
+            name={user.account_type === "Laboratory" ? "to_lab" : "lab"}
             error={labsError}
             loading={labsLoading}
             items={labs}
@@ -298,18 +309,20 @@ const RequestForm = React.forwardRef((props, ref) => {
                 <FormControl>
                   <div className="relative">
                     <MultipleSelector
-                      disabled={!tests?.data}
-                      placeholder="select tests to request"
-                      value={field.value.value}
-                      onChange={field.onChange}
                       options={Options}
+                      placeholder="select tests to request"
+                      hidePlaceholderWhenSelected
                       emptyIndicator={
-                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                          {testsLoading
-                            ? "Loading..."
+                        <p className="text-center text-md text-muted-foreground">
+                          {testspaused
+                            ? "Check your internet Connection and try again"
+                            : testsLoading
+                            ? "loading..."
                             : testsError
-                            ? "Error loading Tests"
-                            : "No laboratories found"}
+                            ? "Error loading tests"
+                            : tests?.data?.length < 1
+                            ? "Selected Lab has no tests"
+                            : `No more tests available`}
                         </p>
                       }
                       {...field}
@@ -320,11 +333,21 @@ const RequestForm = React.forwardRef((props, ref) => {
               </FormItem>
             )}
           />
-
-          <FormBuilder name="attachment" label="Attachment">
-            <Input type="file" placeholder="Attachment" {...fileRef} />
-          </FormBuilder>
-
+          <FormField
+            control={form.control}
+            name="attachment"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>File</FormLabel>
+                  <FormControl>
+                    <Input type="file" placeholder="shadcn" {...fileRef} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
           <FormBuilder
             name="brief_description"
             label="Patient History (Optional)"
@@ -335,6 +358,7 @@ const RequestForm = React.forwardRef((props, ref) => {
           </FormBuilder>
           <Button type="submit" ref={ref} className="hidden"></Button>
         </form>
+        <DevTool control={form.control} />
       </Form>
     </section>
   );

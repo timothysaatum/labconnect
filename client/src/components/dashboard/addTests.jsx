@@ -1,4 +1,4 @@
-import { Loader2, Plus, TestTubeDiagonal } from "lucide-react";
+import { ChevronsUpDown, Loader2, Plus, TestTubeDiagonal } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Drawer,
@@ -31,26 +31,39 @@ import {
 import { useFetchUserBranches } from "@/api/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddTestSchema } from "@/lib/schema";
+import MultipleSelector from "../ui/multi-select";
 
 const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
 
-  const { isLoading, isError, data: branches } = useFetchUserBranches();
+  const {
+    isLoading,
+    isError,
+    isPaused,
+    data: branches,
+  } = useFetchUserBranches();
   const onSubmit = async (data) => {
-    console.log(data);
+    const branchvalue = data?.branch
+      ? data.branch.map((branch) => branch.value)
+      : [];
+    const newData = {
+      ...data,
+      branch: branchvalue,
+    };
+
+    console.log(newData);
     try {
-      await axiosPrivate.post("/laboratory/test/add/", data);
+      await axiosPrivate.post("/laboratory/test/add/", newData);
       queryClient.invalidateQueries(["tests", data?.branch]);
       toast.success(
-        `New test- ${data?.name} added to ${
-          branches?.data?.find((branch) => branch.id === data.branch)
-            .branch_name
+        `New test- ${data?.name} added ${
+          data.branches.length < 2 ? "" : `to ${data.branches.length} Branches`
         } successfully`,
         {
           position: "top-center",
@@ -59,9 +72,18 @@ const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
       if (!keepOpen) setOpen(false);
       form.reset();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
+  const [Options, setOptions] = useState(null);
+  useEffect(() => {
+    setOptions(
+      branches?.data?.map((item) => ({
+        label: item.branch_name,
+        value: item.id,
+      }))
+    );
+  }, [branches]);
   return (
     <Form {...form}>
       <form
@@ -69,6 +91,39 @@ const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
         noValidate
         onSubmit={form.handleSubmit(onSubmit)}
       >
+        <FormField
+          name="branch"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="-mb-2">
+              <FormLabel>Which branches are you adding the test for</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <MultipleSelector
+                    options={Options}
+                    placeholder="select tests to request"
+                    hidePlaceholderWhenSelected
+                    emptyIndicator={
+                      <p className="text-center text-md text-muted-foreground">
+                        {isPaused
+                          ? "Check your internet Connection and try again"
+                          : isLoading
+                          ? "loading..."
+                          : isError
+                          ? "Error loading Branches"
+                          : branches?.data?.length < 1
+                          ? "Lab has no branches create a branch to before adding tests"
+                          : `No more branches available`}
+                      </p>
+                    }
+                    {...field}
+                  />
+                  <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <FormBuilder name={"test_code"} label={"Test Code"}>
           <Input />
         </FormBuilder>
@@ -109,35 +164,6 @@ const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
             )}
           />
         </div>
-        <FormField
-          name="branch"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Which branches are you adding the test for</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="choose branch" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {isLoading ? (
-                    <SelectItem disabled>Loading...</SelectItem>
-                  ) : isError ? (
-                    <SelectItem disabled>Error loading branches</SelectItem>
-                  ) : (
-                    branches?.data?.map((branch) => (
-                      <SelectItem value={branch.id} key={branch.id}>
-                        {branch?.branch_name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
         <FormBuilder
           name={"patient_preparation"}
           label={"Patient Preparation required"}
@@ -173,6 +199,9 @@ const AddTest = () => {
   const handleClick = () => {
     submitRef.current.click();
   };
+  useEffect(() => {
+    !open && form.reset();
+  }, [open]);
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
@@ -184,7 +213,7 @@ const AddTest = () => {
         </DialogTrigger>
         <DialogContent className="px-2">
           <div className="h-full max-h-[80dvh] overflow-auto">
-            <DialogHeader className="bg-background flex-row justify-between items-start sticky top-0 px-4">
+            <DialogHeader className="z-50 bg-background flex-row justify-between items-start sticky top-0 px-4">
               <div className="flex flex-col gap-2">
                 <DialogTitle>Add new test</DialogTitle>
                 <div className="flex items-center space-x-2 mb-2">
@@ -243,6 +272,7 @@ const AddTest = () => {
             <Button
               onClick={handleClick}
               disabled={form.formState.isSubmitting}
+              className="z-30"
             >
               <TestTubeDiagonal className="mr-2 h-5 w-5" />
               Add new Test

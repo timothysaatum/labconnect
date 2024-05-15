@@ -1,4 +1,3 @@
-import CountUp from "react-countup";
 import {
   Card,
   CardContent,
@@ -20,25 +19,98 @@ import {
 } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, RefreshCcw } from "lucide-react";
 import moment from "moment";
 import TestDetails from "./dashboard/testsDetails";
 import AddTest from "./dashboard/addTests";
 import AddBranch from "./dashboard/addbranch";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
+import { Link } from "react-router-dom";
 
+function EmptyLab({ title, user }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="flex flex-col items-center  text-center py-16 ">
+        {title === "Tests" ? (
+          <>
+            <h3 className="text-xl font-semibold ">This Branch has no Tests</h3>
+            <p className="text-sm text-muted-foreground">
+              you will see tests added to branches here
+            </p>
+            <div className="mt-4">
+              <AddTest />
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="text-xl font-semibold ">
+              There are no branches with this user
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Authorized branches with this user will be here
+            </p>
+            {user.is_admin && (
+              <div className="mt-4">
+                <AddBranch />
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+function LoadingLab() {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="flex flex-col items-center  text-center py-16 ">
+        <p className="text-sm text-muted-foreground">loading...</p>
+      </div>
+    </div>
+  );
+}
+function ErrorLab({ refetch }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="flex flex-col items-center  text-center py-16 ">
+        <h3 className="text-xl font-semibold ">An Error has Occured</h3>
+        <p className="text-sm text-muted-foreground">
+          check your internet connection and try again{" "}
+        </p>
+        <Button
+          variant="outline"
+          className="mt-6"
+          onClick={() => {
+            refetch();
+          }}
+        >
+          Try Again{" "}
+          <RefreshCcw className="h-4 w-4 ml-2 text-muted-foreground" />
+        </Button>
+        <p className="text-muted-foreground text-xs mt-2">
+          If error persists{" "}
+          <Link className="hover:underline underline-offset-2">Contact us</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
   const [branches, setBranches] = useState([]);
   const [checked, setChecked] = useState();
   const [selectedTests, setSelectedTests] = useState();
   const [selected, setSelected] = useState();
-  const [tab, setTab] = useState("Tests");
+  const [currentTab, setTab] = useState("Tests");
+  const user = useSelector(selectCurrentUser);
 
   const {
     dataUpdatedAt,
     data: userbranches,
     isLoading: branchesLoading,
     isError: branchesError,
+    refetch: refreshBranches,
   } = useFetchUserBranches();
 
   useEffect(() => {
@@ -61,6 +133,7 @@ export default function MyLab() {
     isError: testError,
     isLoading: testsLoading,
     data: tests,
+    refetch: refetchTests,
   } = useFetchLabTests(checked);
 
   useEffect(() => {
@@ -97,7 +170,7 @@ export default function MyLab() {
     }
   }, [userbranches]);
 
-  const index = tests?.data.findIndex((test) => test.id === selected?.id);
+  const index = tests?.data?.findIndex((test) => test.id === selected?.id);
   const nextTest = () => {
     if (index < tests?.data.length - 1) {
       setSelectedTests(tests?.data[index + 1]?.id);
@@ -122,6 +195,7 @@ export default function MyLab() {
       columnDef: testscolumnDef,
       loading: testsLoading,
       error: testError,
+      refetch: refetchTests,
       filter: "test_name",
       setItems: setSelectedTests,
       selected: selectedTests,
@@ -132,6 +206,7 @@ export default function MyLab() {
         "All Branches can be managed here you can create,delete and update branches",
       data: branches,
       columnDef: branchcolumnDef,
+      refetch: refreshBranches,
       loading: branchesLoading,
       error: branchesError,
       filter: "branch_name",
@@ -143,13 +218,19 @@ export default function MyLab() {
         className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
       >
         <section>
-          <Tabs defaultValue="Tests" onValueChange={setTab}>
+          <Tabs defaultValue={currentTab} onValueChange={setTab}>
             <div className="flex justify-between">
               <TabsList>
                 <TabsTrigger value="Tests">Tests</TabsTrigger>
                 <TabsTrigger value="Branches">Branches</TabsTrigger>
               </TabsList>
-              <div>{tab === "Tests" ? <AddTest /> : <AddBranch />}</div>
+              <div>
+                {currentTab === "Tests" ? (
+                  <AddTest />
+                ) : user.is_admin ? (
+                  <AddBranch />
+                ) : null}
+              </div>
             </div>
             {tabContent?.map((tab) => (
               <TabsContent value={tab.title} key={tab.title}>
@@ -160,49 +241,58 @@ export default function MyLab() {
                         <CardTitle>{tab.title}</CardTitle>
                         <CardDescription>{tab.description}</CardDescription>
                       </div>
-                      <div className="flex max-sm:justify-end">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className="flex justify-between items-center text-sm px-2 gap-3"
-                            >
-                              {
-                                userbranches?.data?.find(
-                                  (branch) => branch.id === checked
-                                )?.branch_name
-                              }
-                              <ChevronDown className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {userbranches?.data?.map((branch) => (
-                              <DropdownMenuCheckboxItem
-                                key={branch.id}
-                                checked={checked === branch.id}
-                                onCheckedChange={() => setChecked(branch.id)}
+                      {currentTab === "Tests" ? (
+                        <div className="flex max-sm:justify-end">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                disabled={branchesLoading || branchesError}
+                                variant="outline"
+                                className="flex justify-between items-center text-sm px-2 gap-3"
                               >
-                                {branch.branch_name}
-                              </DropdownMenuCheckboxItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                                {branchesError
+                                  ? "Error loading branches"
+                                  : userbranches?.data?.find(
+                                      (branch) => branch.id === checked
+                                    )?.branch_name}
+
+                                <ChevronDown className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              {userbranches?.data?.map((branch) => (
+                                <DropdownMenuCheckboxItem
+                                  key={branch.id}
+                                  checked={checked === branch.id}
+                                  onCheckedChange={() => setChecked(branch.id)}
+                                >
+                                  {branch.branch_name}
+                                </DropdownMenuCheckboxItem>
+                              ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      ) : null}
                     </CardHeader>
                     <CardContent>
-                      <DataTable
-                        data={tab?.data}
-                        columnDef={tab.columnDef}
-                        loading={tab.loading}
-                        error={tab.error}
-                        title={tab.title}
-                        filter={tab.filter}
-                        setSelected={tab.setItems}
-                        selected={tab.selected}
-                      />
+                      {tab.loading ? (
+                        <LoadingLab />
+                      ) : tab.error ? (
+                        <ErrorLab refetch={tab.refetch} />
+                      ) : tab.data?.length < 1 ? (
+                        <EmptyLab title={tab.title} user={user} />
+                      ) : (
+                        <DataTable
+                          data={tab?.data}
+                          columnDef={tab.columnDef}
+                          title={tab.title}
+                          filter={tab.filter}
+                          setSelected={tab.setItems}
+                          selected={tab.selected}
+                        />
+                      )}
                     </CardContent>
                   </Card>
-                  <div></div>
                 </div>
               </TabsContent>
             ))}
