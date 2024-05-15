@@ -103,7 +103,7 @@ class Test(BaseModel):
 	name = models.CharField(max_length=200, db_index=True)
 	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
-	turn_around_time = models.DurationField(default='02:00:00')
+	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField()
 
 	def __str__(self) -> str:

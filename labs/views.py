@@ -27,6 +27,10 @@ from .results import TestResult
 from hospital.models import Sample
 from hospital.serializers import SampleSerializer
 from django.db.models import Q
+from rest_framework.viewsets import ModelViewSet
+from django.shortcuts import get_object_or_404  # Avoid repetitive try-except blocks
+from rest_framework.decorators import action
+from rest_framework.permissions import BasePermission
 
 
 
@@ -48,6 +52,82 @@ class PermissionMixin(object):
 				(user == branch[0].branch_manager)
 			)
 		)
+
+class IsLabManagerOrBranchManager(BasePermission):
+	'''
+		Custom permission class that allows acess to authorized users only.
+		-LabManager have full access
+		-BranchManager can access resources only for their own branches
+
+	'''
+
+	def has_permission(self, request, view):
+		'''
+			Checks if a user has permisison to access the resource.
+
+			Args:
+				request(Request): The incoming request object.
+				view(APIView): The view being processed.
+			Returns:
+			bol: True if the user has permission, False otherwise.
+		'''
+
+		if request.user.is_admin or request.user.is_staff:
+			print('im here.')
+			return True
+
+		#check if the viewset has a 'get_queryset' method
+		if hasattr(view, 'get_queryset'):
+			queryset = view.get_queryset()
+
+			#filter based on user's branch if aplicable(e.g, BranchviewSet)
+			if hasattr(request.user,  'branch'):
+				queryset = queryset.filter(branch_manager=request.user)
+				print(queryset)
+			#checks if the requested object exists in the filtered query
+			return queryset.exists()
+		#default permission for other views(if 'get_queryset' is not available)
+		return False
+
+
+
+class LaboratoryViewSet(ModelViewSet):
+    ''''
+	API endpoint for managing laboratories (Create, Read, Update, Delete, List).
+	'''
+    serializer_class = LaboratorySerializer
+    permission_classes = [IsAuthenticated & IsLabManagerOrBranchManager]  # Combine permissions
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.is_admin:
+            return Laboratory.objects.all()
+        return Laboratory.objects.filter(created_by=user)
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated & PermissionMixin])
+    def create_branch(self, request, pk=None):
+        # Create branch associated with the laboratory
+        laboratory = get_object_or_404(Laboratory, pk=pk)
+        serializer = BranchSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(laboratory=laboratory)
+        return Response(serializer.data, status=HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+        #laboratory_cache.clear()  # Clear cache after laboratory creation
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class CreateLaboratoryView(PermissionMixin, CreateAPIView):
@@ -159,7 +239,7 @@ class CreateTestView(PermissionMixin, CreateAPIView):
 	def perform_create(self, serializer):
 
 		test = serializer.save()
-		branches = self.request.data.getlist('branche')
+		branches = self.request.data.getlist('branch')
 
 		test.branch.add(*branches)
 
@@ -372,4 +452,4 @@ class LaboratorySampleList(PermissionMixin, ListAPIView):
 			)
 
 		except LaboratorySample.DoesNotExist:
-			return Response({'error': 'No samples sent.'}, status=HTTP_404_NOT_FOUND)
+			return Response({'error': 'No sample sent.'}, status=HTTP_404_NOT_FOUND)

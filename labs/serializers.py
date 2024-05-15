@@ -14,6 +14,7 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 		fields = (
 			'id',
+			'created_by',
 			'laboratory_name', 
 			'herfra_id', 
 			'main_phone', 
@@ -24,6 +25,14 @@ class LaboratorySerializer(serializers.ModelSerializer):
 			'date_modified', 
 			'date_added'
 		)
+
+	def to_representation(self, instance):
+
+		data = super().to_representation(instance)
+		data['created_by'] = instance.created_by.full_name
+		
+		return data
+
 
 
 class BranchSerializer(serializers.ModelSerializer):

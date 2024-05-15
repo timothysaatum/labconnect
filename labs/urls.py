@@ -21,31 +21,31 @@ from .views import (
     LaboratorySampleSerializerView,
     LaboratorySampleUpdateView,
     LaboratorySampleDeleteView,
-    HospitalSamplesView
+    HospitalSamplesView,
+    LaboratoryViewSet
 )
-
 
 
 app_name = 'laboratory'
 urlpatterns = [
 
 	#creating, reading, updating and deleting laboratory
-	path('create/', CreateLaboratoryView.as_view(), name='create-laboratory'),
+	path('create/', LaboratoryViewSet.as_view({'get': 'list', 'post': 'create'}), name='laboratory'),
 	path('user-laboratory/', LaboratoryUserListVIew.as_view(), name='user-lab'),
 
 	#creating, reading, updating and deleting Branch
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
-	path('list/', BranchListView.as_view(), name='laboratory-list'),
-	path('all/', AllLaboratories.as_view(), name='all-labs'),
-	path('details/<uuid:pk>/', BranchDetailView.as_view(), name='branch-details'),
-	path('update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
-	path('delete/<uuid:pk>/', BranchDeleteView.as_view(), name='branch-delete'),
+	path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
+	path('branch/all/', AllLaboratories.as_view(), name='all-labs'),
+	path('branch/details/<uuid:pk>/', BranchDetailView.as_view(), name='branch-details'),
+	path('branch/update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
+	path('branch/delete/<uuid:pk>/', BranchDeleteView.as_view(), name='branch-delete'),
 
 	#creating, reading, updating and deleting
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
-	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
-	path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
-	path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
+	path('test/list/<uuid:branch_pk>/', TestListView.as_view(), name='test-list'),
+	path('test/update/<uuid:test_pk>/', TestUpdateView.as_view(), name='test-update'),
+	path('test/delete/<uuid:test_pk>/', TestDeleteView.as_view(), name='test-delete'),
 
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
