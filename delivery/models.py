@@ -13,7 +13,7 @@ class PriceModel(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
-		return self.distance
+		return str(self.distance)
 
 
 class Delivery(models.Model):

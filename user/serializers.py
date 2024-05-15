@@ -19,6 +19,9 @@ class UserCreationSerializer(serializers.ModelSerializer):
 
 	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
 	password_confirmation = serializers.CharField(max_length=68, min_length=8, write_only=True)
+	is_admin = serializers.CharField(max_length=10, read_only=True)
+	is_staff = serializers.CharField(max_length=10, read_only=True)
+	is_active = serializers.CharField(max_length=10, read_only=True)
 
 	class Meta:
 
@@ -26,7 +29,8 @@ class UserCreationSerializer(serializers.ModelSerializer):
 
 		fields = (
 					'email', 'first_name', 'last_name', 'gender', 'phone_number','id_number',
-					'digital_address', 'account_type', 'password', 'password_confirmation'
+					'digital_address', 'account_type', 'is_admin', 'is_staff', 'is_active',
+					'password', 'password_confirmation'
 				)
 
 	def validate(self, attrs):
