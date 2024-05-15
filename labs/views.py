@@ -27,6 +27,9 @@ from .results import TestResult
 from hospital.models import Sample
 from hospital.serializers import SampleSerializer
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+
 
 
 
@@ -40,13 +43,40 @@ class PermissionMixin(object):
 				self.request.user.is_staff or self.request.user.is_admin
 			)
 
-	def has_laboratory_permission_to_edit_branch(self, user, branch):
+	def has_permission_to_edit_branch(self, user, branch):
 		return (
 			user.is_authenticated and
 			(
 				(user == branch[0].laboratory.created_by) or
 				(user == branch[0].branch_manager)
 			)
+		)
+
+	def has_permission_to_edit_test(self, user, test):
+		return self.has_laboratory_permission() and any(
+				branch.pk == test.branch.pk for branch in get_user_branches(user)
+			)
+
+	def has_permission_to_edit_sample(self, user, sample):
+		return self.has_laboratory_permission() and any(
+				lab.pk == sample.lab.pk for lab in get_user_branches(user)
+			)
+
+def require_laboratory_permission(view_func):
+
+	@wraps(view_func)
+	def wrapper(self, request, *args, **kwargs):
+		if not self.has_laboratory_permission():
+			return Response({'error': 'Unauthorized'}, status=HTTP_401_UNAUTHORIZED)
+
+		return view_func(self, request, *args, **kwargs)
+	return wrapper
+
+
+def get_user_branches(user):
+	return Branch.objects.filter(
+			Q(laboratory__created_by=self.request.user) |
+			Q(branch_manager=self.request.user)
 		)
 
 
@@ -372,4 +402,4 @@ class LaboratorySampleList(PermissionMixin, ListAPIView):
 			)
 
 		except LaboratorySample.DoesNotExist:
-			return Response({'error': 'No samples sent.'}, status=HTTP_404_NOT_FOUND)
+			return Response({'error': 'No sample sent.'}, status=HTTP_404_NOT_FOUND)

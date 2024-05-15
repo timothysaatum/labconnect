@@ -103,7 +103,7 @@ class Test(BaseModel):
 	name = models.CharField(max_length=200, db_index=True)
 	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
-	turn_around_time = models.DurationField(default='02:00:00')
+	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField()
 
 	def __str__(self) -> str:
@@ -121,7 +121,7 @@ class LaboratorySample(BaseModel):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
-	patient_age = models.PositiveIntegerField()
+	patient_age = models.DateTimeField(default=auto_now=True)
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True, db_index=True)
