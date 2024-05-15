@@ -22,7 +22,7 @@ from .serializers import (
 	BranchSerializer,
 	LaboratorySampleSerializer
 )
-from .models import Test, Branch
+from .models import Test, Branch, Laboratory, LaboratorySample
 from .results import TestResult
 from hospital.models import Sample
 from hospital.serializers import SampleSerializer
@@ -64,6 +64,13 @@ class CreateLaboratoryView(PermissionMixin, CreateAPIView):
 
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
+
+
+class LaboratoryUserListVIew(PermissionMixin, ListAPIView):
+	serializer_class = LaboratorySerializer
+
+	def get_queryset(self):
+		return Laboratory.objects.filter(created_by=self.request.user)
 
 
 class CreateBranchView(PermissionMixin, CreateAPIView):
@@ -336,23 +343,33 @@ class LaboratorySampleDeleteView(PermissionMixin, DestroyAPIView):
 		return super().delete(request, pk, format=None)
 
 
-class LaboratorySampleList(ListAPIView):
-	permission_classes = [IsAuthenticated]
+class AllLaboratories(ListAPIView):
+
+	serializer_class = BranchSerializer
+	queryset = Branch.objects.all()
+
+
+
+class HospitalSamplesView(PermissionMixin, ListAPIView):
+	serializer_class = SampleSerializer
+
+	def get_queryset(self):
+		return Sample.objects.filter(
+				Q(lab__laboratory__created_by=self.request.user) |
+				Q(lab__branch_manager=self.request.user)
+			)
+
+
+class LaboratorySampleList(PermissionMixin, ListAPIView):
 	serializer_class = SampleSerializer
 
 	def get_queryset(self):
 
 		try:
-			return Sample.objects.filter(
-				Q(lab__branch_manager=self.request.user) | 
-				Q(lab__laboratory__created_by=self.request.user)
+			return LaboratorySample.objects.filter(
+				Q(to_lab__branch_manager=self.request.user) | 
+				Q(to_lab__laboratory__created_by=self.request.user)
 			)
 
-		except Sample.DoesNotExist:
-			return Response({'error': 'Test results not found'}, status=HTTP_404_NOT_FOUND)
-
-
-class AllLaboratories(ListAPIView):
-
-	serializer_class = BranchSerializer
-	queryset = Branch.objects.all()
+		except LaboratorySample.DoesNotExist:
+			return Response({'error': 'No samples sent.'}, status=HTTP_404_NOT_FOUND)

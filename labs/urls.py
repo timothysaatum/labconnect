@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
-    CreateLaboratoryView, 
+    CreateLaboratoryView,
+    LaboratoryUserListVIew,
     CreateTestView, 
     CreateTestResultView,
 	BranchDetailView, 
@@ -19,7 +20,8 @@ from .views import (
     AllLaboratories, 
     LaboratorySampleSerializerView,
     LaboratorySampleUpdateView,
-    LaboratorySampleDeleteView
+    LaboratorySampleDeleteView,
+    HospitalSamplesView
 )
 
 
@@ -27,8 +29,11 @@ from .views import (
 app_name = 'laboratory'
 urlpatterns = [
 
-	#creating, reading, updating and deleting laboratory routes
+	#creating, reading, updating and deleting laboratory
 	path('create/', CreateLaboratoryView.as_view(), name='create-laboratory'),
+	path('user-laboratory/', LaboratoryUserListVIew.as_view(), name='user-lab'),
+
+	#creating, reading, updating and deleting Branch
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
 	path('list/', BranchListView.as_view(), name='laboratory-list'),
 	path('all/', AllLaboratories.as_view(), name='all-labs'),
@@ -55,5 +60,8 @@ urlpatterns = [
 	#url endpoints for creating, updating and deletion of laboratory samples
 	path('lab/sample/add', LaboratorySampleSerializerView.as_view(), name='add-sample'),
     path('lab/sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
-    path('lab/sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample')
+    path('lab/sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample'),
+
+    #the endpoint that handles test sample sent to the laboratory.
+    path('lab/test-requests/samples/', HospitalSamplesView.as_view(), name='requested-tests')
 ]
