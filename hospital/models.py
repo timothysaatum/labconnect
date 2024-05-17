@@ -35,7 +35,6 @@ class Hospital(models.Model):
 		return self.name
 
 
-
 class Sample(models.Model):
 
 	'''
@@ -60,7 +59,6 @@ class Sample(models.Model):
 	is_access_by_lab = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-
 
 	def __str__(self) -> str:
 		return self.sample_type

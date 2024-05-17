@@ -112,13 +112,14 @@ class BranchAdmin(admin.ModelAdmin):
 class LaboratorySampleAdmin(admin.ModelAdmin):
 	list_display = (
 		'send_by', 
-		'name_of_patient', 
-		'sample_type', 
-		'from_lab', 
-		'to_lab', 
-		'delivery', 
-		'is_paid', 
-		'date_added', 
+		'name_of_patient',
+		'patient_age',
+		'sample_type',
+		'from_lab',
+		'to_lab',
+		'delivery',
+		'is_paid',
+		'date_added',
 		'date_modified'
 	)
 

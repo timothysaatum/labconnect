@@ -34,7 +34,8 @@ urlpatterns = [
 
 	#creating, reading, updating and deleting Branch
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
-	path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
+	#path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
+	path('list/', BranchListView.as_view(), name='laboratory-list'),
 	path('branch/all/', AllLaboratories.as_view(), name='all-labs'),
 	path('branch/details/<uuid:pk>/', BranchDetailView.as_view(), name='branch-details'),
 	path('branch/update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
