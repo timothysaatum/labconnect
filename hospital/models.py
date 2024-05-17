@@ -35,7 +35,6 @@ class Hospital(models.Model):
 		return self.name
 
 
-
 class Sample(models.Model):
 
 	'''
@@ -43,7 +42,7 @@ class Sample(models.Model):
 	'''
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
-	patient_age = models.DateTimeField(default=auto_now=True)
+	patient_age = models.DateTimeField(auto_now=True)
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True)
@@ -60,7 +59,6 @@ class Sample(models.Model):
 	is_access_by_lab = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-
 
 	def __str__(self) -> str:
 		return self.sample_type

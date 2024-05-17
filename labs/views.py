@@ -189,8 +189,7 @@ class CreateTestView(PermissionMixin, CreateAPIView):
 	def perform_create(self, serializer):
 
 		test = serializer.save()
-		branches = self.request.data.getlist('branch')
-
+		branches = self.request.data.get('branch', [])
 		test.branch.add(*branches)
 
 
@@ -198,8 +197,9 @@ class TestListView(ListAPIView):
 	serializer_class = TestSerializer
 
 	def get_queryset(self):
+		
 		return Test.objects.filter(
-			Q(branch__id=self.kwargs.get('pk')) | 
+			Q(branch__id=self.kwargs.get('branch_pk')) | 
 			Q(branch__laboratory__id=self.kwargs.get('pk'))
 		)
 
@@ -344,7 +344,7 @@ class LaboratorySampleSerializerView(PermissionMixin, CreateAPIView):
 	def perform_create(self, serializer):
 
 		sample = serializer.save(send_by=self.request.user)
-		tests = self.request.data.getlist('tests')
+		tests = self.request.data.get('tests')
 
 		sample.tests.add(*tests)
 
