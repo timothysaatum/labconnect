@@ -24,10 +24,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setSelectedRows } from "@/redux/dataTable/selectedrowsSlice";
 
 export function DataTable({
   data,
@@ -44,13 +46,15 @@ export function DataTable({
   const finalData = React.useMemo(() => data, [data]);
   const finalColumnDef = React.useMemo(() => columnDef, [columnDef]);
 
+  const dispatch = useDispatch()
+
   const table = useReactTable({
     columns: finalColumnDef,
     data: finalData,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-
+    getRowId: (row) => row.id,
     state: {
       sorting,
       columnFilters,
@@ -63,7 +67,15 @@ export function DataTable({
     onRowSelectionChange: setRowSelection,
     getPaginationRowModel: getPaginationRowModel(),
   });
-
+  useEffect(() => {
+    if (title === "Branches") {
+      dispatch(
+        setSelectedRows(
+          table.getSelectedRowModel()?.rows.map((row) => row.original)
+        )
+      );
+    }
+  }, [rowSelection, title]);
   return (
     <>
       <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-2">

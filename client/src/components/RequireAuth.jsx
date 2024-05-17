@@ -4,7 +4,7 @@ import { selectCurrentUser, selectCurrenttoken } from "@/redux/auth/authSlice";
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
   const location = useLocation();
-
+  
   return token ? (
     <Outlet />
   ) : (

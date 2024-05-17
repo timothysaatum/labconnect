@@ -16,6 +16,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
 } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
@@ -27,6 +28,8 @@ import AddBranch from "./dashboard/addbranch";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import { Link } from "react-router-dom";
+import { selectSelectedRows } from "@/redux/dataTable/selectedrowsSlice";
+import { AlertDialog, AlertDialogTrigger } from "./ui/alert-dialog";
 
 function EmptyLab({ title, user }) {
   return (
@@ -96,6 +99,9 @@ function ErrorLab({ refetch }) {
     </div>
   );
 }
+const DeleteAlert = () => {
+  return <AlertDialog open></AlertDialog>;
+};
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
   const [branches, setBranches] = useState([]);
@@ -104,7 +110,8 @@ export default function MyLab() {
   const [selected, setSelected] = useState();
   const [currentTab, setTab] = useState("Tests");
   const user = useSelector(selectCurrentUser);
-
+  const selectedRows = useSelector(selectSelectedRows);
+  const [action, setAction] = useState("Perform Action");
   const {
     dataUpdatedAt,
     data: userbranches,
@@ -160,6 +167,7 @@ export default function MyLab() {
       setBranches(
         userbranches?.data.map((branch) => {
           return {
+            id: branch.id,
             branch_name: branch.branch_name,
             branch_manager: branch.branch_manager,
             branch_phone: branch.branch_phone,
@@ -212,8 +220,11 @@ export default function MyLab() {
       filter: "branch_name",
     },
   ];
+  const DeleteAlert = () => {
+    return <AlertDialog open={action === "Delete Selected"}></AlertDialog>;
+  };
   return (
-    <main className="sm:ml-14 px-2 md:px-10 grid grid-cols-12 gap-x-4 max-sm:mt-2">
+    <main className="sm:ml-14 px-4 lg:px-10 grid grid-cols-12 gap-x-4 max-sm:mt-2">
       <div
         className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
       >
@@ -241,6 +252,30 @@ export default function MyLab() {
                         <CardTitle>{tab.title}</CardTitle>
                         <CardDescription>{tab.description}</CardDescription>
                       </div>
+                      {selectedRows?.length > 0 && currentTab==="Branches"? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="flex justify-between items-center text-sm px-2 gap-3"
+                            >
+                              {action}
+
+                              <ChevronDown className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            {selectedRows.length === 1 && (
+                              <DropdownMenuItem>View Selected</DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem className="text-destructive">
+                              Delete Selected
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        ""
+                      )}
                       {currentTab === "Tests" ? (
                         <div className="flex max-sm:justify-end">
                           <DropdownMenu>

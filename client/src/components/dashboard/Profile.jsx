@@ -96,7 +96,7 @@ const SettingProfile = () => {
           />
           <Accordion collapsible>
             <AccordionItem value="item-1">
-              <AccordionTrigger className="text-md font-mono">
+              <AccordionTrigger className="text-md font-bold">
                 Has the location of your laboratory changed? click to update
                 location
               </AccordionTrigger>

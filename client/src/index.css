@@ -3,20 +3,24 @@
 @tailwind utilities;
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: hsla(0 0% 100%);
+  background: hsla(217.2 32.6% 17.5%);
+  ;
 }
+
 ::-webkit-scrollbar-thumb {
   background: hsla(214.3 31.8% 91.4%);
   border-radius: 8px;
 }
+
 .dark ::-webkit-scrollbar-track {
   background: hsla(222.2 84% 4.9);
 }
+
 ::-webkit-scrollbar-track {
   background: hsla(0 0% 100%);
 }
@@ -30,6 +34,7 @@ html {
   color: hsla(222.2 84% 4.9%);
   width: 100px;
 }
+
 .dark .rdp-dropdown {
   background-color: hsla(222.2 84% 4.9%);
   color: hsla(210 40% 98%);
@@ -42,11 +47,13 @@ nav ul li {
   margin-inline: 10px;
   white-space: nowrap;
 }
+
 nav ul a li {
   text-decoration: none;
   font-size: 18px;
   position: relative;
 }
+
 nav ul a li::after {
   content: "";
   width: 0%;
@@ -57,12 +64,15 @@ nav ul a li::after {
   bottom: -6px;
   transition: 0.5s;
 }
+
 .dark nav ul a li::after {
   background: hsla(210 40% 96.1%);
 }
+
 nav ul a li:hover::after {
   width: 100%;
 }
+
 nav ul a.active li::after {
   width: 100%;
 }
@@ -71,9 +81,11 @@ nav ul a.active li::after {
 aside.settings nav a.active {
   background-color: hsla(210 40% 96.1%);
 }
+
 aside.settings nav a.active:hover {
   text-decoration: none;
 }
+
 .dark aside.settings nav a.active {
   background-color: hsla(217.2 32.6% 17.5%);
 }
@@ -119,7 +131,7 @@ aside.settings nav a.active:hover {
     --muted-foreground: 215 20.2% 65.1%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 55.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
@@ -131,6 +143,7 @@ aside.settings nav a.active:hover {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

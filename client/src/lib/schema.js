@@ -88,9 +88,5 @@ export const ResetPassSchema = z
   });
 
 export const AddTestSchema = z.object({
-  test_code: z.string().min(1, "Test code is required"),
-  name: z.string().min(1, "Test name is required"),
-  // price: z.number({
-  //   invalid_type_error:"invalid"
-  // }).positive("price must be a positive number"),
+  email: z.string().email().min(1, "Enter email send invite"),
 });
