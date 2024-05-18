@@ -174,8 +174,8 @@ const AddBranch = () => {
             Add new branch
           </Button>
         </DialogTrigger>
-        <DialogContent className="px-2">
-          <div className="h-full max-h-[80dvh] overflow-auto">
+        <DialogContent className="px-2 max-w-[36rem]">
+          <div className="h-full max-h-[80dvh] overflow-auto ">
             <DialogHeader className="bg-background flex-row justify-between items-start sticky top-0 px-4">
               <div className="flex flex-col gap-2">
                 <DialogTitle>Add new branch</DialogTitle>

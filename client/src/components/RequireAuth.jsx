@@ -1,11 +1,16 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser, selectCurrenttoken } from "@/redux/auth/authSlice";
+import { toast } from "sonner";
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
   const location = useLocation();
+  const dispatch = useDispatch();
 
-  return token ? (
+  if (!token) {
+    toast.error("Session expired, Please login again");
+  }
+  return !token ? (
     <Outlet />
   ) : (
     <Navigate to="/sign-in" state={{ from: location }} replace />
@@ -14,6 +19,7 @@ export default function RequireAuth() {
 
 export const LabRoutes = () => {
   const user = useSelector(selectCurrentUser);
+
   const location = useLocation();
   return user?.account_type === "Laboratory" ? (
     <Outlet />

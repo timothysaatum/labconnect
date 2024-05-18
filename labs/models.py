@@ -122,7 +122,11 @@ class LaboratorySample(BaseModel):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
+<<<<<<< HEAD
+	patient_age = models.DateTimeField(auto_now=True)
+=======
 	patient_age = models.DateTimeField(default=timezone.now)
+>>>>>>> 137df379a06e45fab26352dbe5531d2f2944f24a
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True, db_index=True)

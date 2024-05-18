@@ -14,7 +14,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import RequestDialog from "./requestdialog";
-import { useFetchLabRequests, useFetchLabRequestsSent, useFetchUserBranches } from "@/api/queries";
+import {
+  useFetchLabRequests,
+  useFetchLabRequestsSent,
+  useFetchUserBranches,
+} from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
@@ -94,10 +98,10 @@ export default function LaboratoryDashboardOverview() {
     isRefetchError,
   } = useFetchLabRequests();
   const {
-    isError:sentError,
+    isError: sentError,
     data: sentrequests,
-    isLoading:sentRequestsLoading,
-    refetch:sentRequestsRefetch,
+    isLoading: sentRequestsLoading,
+    refetch: sentRequestsRefetch,
   } = useFetchLabRequestsSent();
 
   const {
@@ -127,16 +131,13 @@ export default function LaboratoryDashboardOverview() {
     <main className="px-4 sm:pl-16 ">
       <div className="lg:col-span-3 flex flex-col gap-8">
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <Card className="bg-transparent shadow-none ring-0 border-none p-0">
-            <RequestDialog
-              className="w-full h-16 font-medium shadow-sm"
-              size="lg"
-            />
+          <Card className="bg-transparent flex justify-center items-center border-dashed shadow-none ring-0 p-0">
+            <RequestDialog className="max-md:w-full shadow-sm h-14" size="lg" />
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Subscriptions
+                Samples Received
               </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
@@ -149,7 +150,7 @@ export default function LaboratoryDashboardOverview() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sales</CardTitle>
+              <CardTitle className="text-sm font-medium">Samples Sent</CardTitle>
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -161,7 +162,7 @@ export default function LaboratoryDashboardOverview() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+              <CardTitle className="text-sm font-medium">proccessed today</CardTitle>
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -175,7 +176,7 @@ export default function LaboratoryDashboardOverview() {
         <div className="">
           <Tabs defaultValue="Received">
             <TabsList className="max-w-full">
-              <TabsTrigger value="Received">Received samples</TabsTrigger>
+              <TabsTrigger value="Received">Received Samples</TabsTrigger>
               <TabsTrigger value="Sent Samples">Sent Samples</TabsTrigger>
             </TabsList>
             <TabsContent value="Received">

@@ -4,16 +4,20 @@ import storage from "redux-persist/lib/storage";
 import persistStore from "redux-persist/es/persistStore";
 import authReducer from "./auth/authSlice";
 import labReducer from "./lab/userLabSlice";
+import selectedRowsReducer from "./dataTable/selectedrowsSlice";
+import sessionExpiredReducer from "./session/sessionSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  lab:labReducer
+  lab: labReducer,
+  selectedRows: selectedRowsReducer,
+  session: sessionExpiredReducer,
 });
 const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  blacklist: ["auth","lab"], // name of the slice to be excluded from the persistor
+  blacklist: ["auth", "lab", "selectedRows", "sessionExpired"], // name of the slice to be excluded from the persistor
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({

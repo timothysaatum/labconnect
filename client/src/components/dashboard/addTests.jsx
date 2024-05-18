@@ -211,7 +211,7 @@ const AddTest = () => {
             Add new Test
           </Button>
         </DialogTrigger>
-        <DialogContent className="px-2">
+        <DialogContent className="px-2 max-w-[36rem]">
           <div className="h-full max-h-[80dvh] overflow-auto">
             <DialogHeader className="z-50 bg-background flex-row justify-between items-start sticky top-0 px-4">
               <div className="flex flex-col gap-2">

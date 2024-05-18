@@ -17,7 +17,9 @@ import { z } from "zod";
 const formSchema = z.object({
   file: z.instanceof(FileList).optional(),
 });
-
+setTimeout(() => {
+  console.log("done")
+},[5000])
 export default function Home() {
   const form = useForm({
     // resolver: zodResolver(formSchema),

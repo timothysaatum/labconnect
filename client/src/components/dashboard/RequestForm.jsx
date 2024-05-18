@@ -101,7 +101,6 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
   } = useFetchUserBranches();
 
   const onSubmit = async (data) => {
-    console.log(data);
     const testvalue = data?.tests ? data.tests.map((test) => test.value) : [];
     const newData = {
       ...data,
@@ -114,7 +113,6 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
     ) {
       newData.attachment = newData.attachment[0];
     }
-    console.log(newData);
     try {
       const formData = new FormData();
 
@@ -142,9 +140,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
     }
   };
   const [id, setId] = useState(null);
-  useEffect(() => {
-    console.log(id);
-  }, [id]);
+
   const {
     data: tests,
     isError: testsError,

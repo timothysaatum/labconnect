@@ -18,7 +18,7 @@ const useRefreshToken = () => {
       return accessToken;
     } catch (error) {
       dispatch(logOut());
-      toast.error("Session expired, Please login again");
+      // toast.error("Session expired, Please login again");
     }
   };
   return refresh;
