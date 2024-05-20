@@ -10,7 +10,7 @@ export default function RequireAuth() {
   if (!token) {
     toast.error("Session expired, Please login again");
   }
-  return !token ? (
+  return token ? (
     <Outlet />
   ) : (
     <Navigate to="/sign-in" state={{ from: location }} replace />

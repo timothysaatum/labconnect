@@ -34,8 +34,8 @@ urlpatterns = [
 
 	#creating, reading, updating and deleting Branch
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
-	#path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
-	path('list/', BranchListView.as_view(), name='laboratory-list'),
+	path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
+	#path('list/', BranchListView.as_view(), name='laboratory-list'),
 	path('branch/all/', AllLaboratories.as_view(), name='all-labs'),
 	path('branch/details/<uuid:pk>/', BranchDetailView.as_view(), name='branch-details'),
 	path('branch/update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
@@ -43,7 +43,7 @@ urlpatterns = [
 
 	#creating, reading, updating and deleting
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
-	path('test/list/<uuid:branch_pk>/', TestListView.as_view(), name='test-list'),
+	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
 	path('test/update/<uuid:test_pk>/', TestUpdateView.as_view(), name='test-update'),
 	path('test/delete/<uuid:test_pk>/', TestDeleteView.as_view(), name='test-delete'),
 

@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Test, Laboratory, Branch, LaboratorySample
+from .models import (
+		Test,
+		Laboratory, 
+		Branch, 
+		LaboratorySample,
+		BranchManagerInvitation
+	)
 from .results import TestResult
 import csv
 from django.http import HttpResponse
@@ -124,8 +130,14 @@ class LaboratorySampleAdmin(admin.ModelAdmin):
 	)
 
 
+
+class BranchManagerInvitationAdmin(admin.ModelAdmin):
+    list_display = ('invitation_code', 'sender', 'receiver_email', 'branch', 'used')
+
+
 admin.site.register(LaboratorySample, LaboratorySampleAdmin)
 admin.site.register(Test, TestAdmin)
 admin.site.register(Branch, BranchAdmin)
+admin.site.register(BranchManagerInvitation, BranchManagerInvitationAdmin)
 admin.site.register(TestResult, TestResultAdmin)
 admin.site.register(Laboratory, LaboratoryAdmin)

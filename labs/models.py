@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator, validate_email
 user = get_user_model()
 from delivery.models import Delivery
 import uuid
@@ -32,7 +32,7 @@ class Laboratory(BaseModel):
 	main_email = models.EmailField()
 	logo = models.ImageField(upload_to='labs/logo', default='logo.png')
 	herfra_id = models.CharField('HERFRA ID', max_length=100)
-	website = models.URLField()
+	website = models.URLField(null=True, blank=True)
 	description = models.TextField()
 
 	def __str__(self) -> str:
@@ -122,11 +122,7 @@ class LaboratorySample(BaseModel):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
-<<<<<<< HEAD
-	patient_age = models.DateTimeField(auto_now=True)
-=======
 	patient_age = models.DateTimeField(default=timezone.now)
->>>>>>> 137df379a06e45fab26352dbe5531d2f2944f24a
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True, db_index=True)
@@ -152,4 +148,17 @@ class LaboratorySample(BaseModel):
 		return self.date_added
 
 	def email(self):
-		return self.branch_email
+		return self.from_lab.branch_email
+
+
+
+class BranchManagerInvitation(BaseModel):
+	
+	invitation_code = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+	sender = models.ForeignKey(user, on_delete=models.CASCADE)
+	receiver_email = models.EmailField(validators=[validate_email])
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	used = models.BooleanField(default=False)
+
+	def __str__(self):
+		return str(self.sender)

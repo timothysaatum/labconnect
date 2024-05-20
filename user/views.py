@@ -18,6 +18,9 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.views import APIView
 import jwt
 from datetime import timedelta, datetime
+from labs.models import BranchManagerInvitation, Branch
+from labs.serializers import BranchManagerInvitationSerializer
+from django.contrib.auth.hashers import make_password
 
 
 
@@ -292,6 +295,54 @@ class FetchUserData(APIView):
 				return Response({'error': 'User could not be retrieved'}, status=status.HTTP_400_BAD_REQUEST)
 
 			except NameError:
-				return Response({'error': 'Argument provide does not make sense'}, status=status.HTTP_400_BAD_REQUEST)
+				return Response({'error': 'Argument provided does not make sense'}, status=status.HTTP_400_BAD_REQUEST)
 
 		return Response({'error': 'Token is invalid or you have been logged out.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class InviteBranchManagerView(CreateAPIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = BranchManagerInvitationSerializer
+
+	def post(self, request):
+
+		return self.create(request)
+
+	def perform_create(self, serializer):
+		serializer.save(sender=self.request.user)
+
+
+
+class InvitationAcceptView(APIView):
+	serializer_class = BranchManagerInvitationSerializer
+
+	def post(self, request, *args, **kwargs):
+		serializer = self.serializer_class(data=request.data)
+		serializer.is_valid(raise_exception=True)
+		try:
+
+			invitation = BranchManagerInvitation.objects.get(invitation_code=self.kwargs.get('invitation_code'), used=False)
+
+		except BranchManagerInvitation.DoesNotExist:
+
+			return Response({'error': 'Invalid invitation code'}, status=status.HTTP_400_BAD_REQUEST)
+
+		invitation.used = True
+		invitation.save()
+
+		manager = Client.objects.get_or_create(
+				email=serializer.data['receiver_email'], 
+				is_staff=True, 
+				first_name=request.data.get('first_name'),
+				last_name=request.data.get('last_name'),
+				phone_number=request.data.get('phone_number'),
+				account_type='Laboratory',
+				password=request.data.get('password')
+			)
+
+		#if created:
+
+		#	manager.set_password(make_password(request.data.get('password')))
+		#	manager.save()
+		return Response('success')
