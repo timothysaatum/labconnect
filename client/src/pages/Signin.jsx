@@ -163,9 +163,12 @@ export default function Signin() {
               </Link>
             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              Login
-              {isSubmitting && (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              {isSubmitting ? (
+                <span className="flex items-center">
+                  Logging in <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                </span>
+              ) : (
+                "Login"
               )}
             </Button>
             <Button

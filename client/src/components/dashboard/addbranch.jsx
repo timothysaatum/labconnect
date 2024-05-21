@@ -36,7 +36,7 @@ import { Label } from "../ui/label";
 import { PhoneInput } from "../ui/phone-input";
 import AddManager from "./addManager";
 
-const BranchForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
+export const BranchForm = forwardRef(({ setOpen, keepOpen, form, className }, ref) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
 
@@ -74,7 +74,7 @@ const BranchForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
   return (
     <Form {...form}>
       <form
-        className="test flex flex-col gap-2 overflow-hidden hover:overflow-auto transition-all p-4"
+        className={className}
         noValidate
         onSubmit={form.handleSubmit(onSubmit)}
       >
@@ -203,6 +203,7 @@ const AddBranch = () => {
               keepOpen={keepOpen}
               ref={submitRef}
               form={form}
+              className="test flex flex-col gap-2 overflow-hidden hover:overflow-auto transition-all p-4"
             />
           </div>
         </DialogContent>
@@ -246,6 +247,7 @@ const AddBranch = () => {
             ref={submitRef}
             keepOpen={keepOpen}
             form={form}
+            className="test flex flex-col gap-2 overflow-hidden hover:overflow-auto transition-all p-4"
           />
         </div>
       </DrawerContent>

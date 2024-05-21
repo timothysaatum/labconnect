@@ -1,13 +1,8 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
-  Home,
-  LineChart,
   Package2,
   Settings,
-  Users2,
-  Package,
   PanelLeft,
-  ShoppingCart,
 } from "lucide-react";
 import {
   Tooltip,
@@ -22,13 +17,29 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useGetSideLinks } from "@/hooks/usesidelinks";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
+import { useEffect } from "react";
+import { useFetchUserLab } from "@/api/queries";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
   const sideLinks = useGetSideLinks(user?.account_type);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { data: userlab } = useFetchUserLab();
+
+  useEffect(() => {
+    if (user?.account_type === "Laboratory") {
+      if (userlab?.data.length<1) {
+        toast.info("Add a laboratory to continue", {
+          position: "top-center",
+        });
+        navigate("/create-lab");
+      }
+    }
+  }, [user]);
   return (
-    <div className="flex flex-col min-h-screen bg-muted/40">
+    <div className="flex flex-col min-h-screen bg-muted/10">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
