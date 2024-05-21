@@ -232,10 +232,10 @@ class BranchManagerInvitationSerializer(serializers.ModelSerializer):
 
 	def create(self, validated_data):
 
-		manager = BranchManagerInvitation.objects.create(
+		invitation = BranchManagerInvitation.objects.create(
 				receiver_email=validated_data.get('receiver_email'),
 				branch=validated_data.get('branch'),
 				sender=validated_data.get('sender'),
 			)
 
-		return manager
+		return invitation

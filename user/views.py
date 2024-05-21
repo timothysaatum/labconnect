@@ -318,8 +318,10 @@ class InvitationAcceptView(APIView):
 	serializer_class = BranchManagerInvitationSerializer
 
 	def post(self, request, *args, **kwargs):
+
 		serializer = self.serializer_class(data=request.data)
 		serializer.is_valid(raise_exception=True)
+
 		try:
 
 			invitation = BranchManagerInvitation.objects.get(invitation_code=self.kwargs.get('invitation_code'), used=False)
@@ -330,19 +332,18 @@ class InvitationAcceptView(APIView):
 
 		invitation.used = True
 		invitation.save()
+		print(serializer.data)
+		return Response({'data': serializer.data})
 
-		manager = Client.objects.get_or_create(
-				email=serializer.data['receiver_email'], 
-				is_staff=True, 
-				first_name=request.data.get('first_name'),
-				last_name=request.data.get('last_name'),
-				phone_number=request.data.get('phone_number'),
-				account_type='Laboratory',
-				password=request.data.get('password')
-			)
-
-		#if created:
-
-		#	manager.set_password(make_password(request.data.get('password')))
-		#	manager.save()
-		return Response('success')
+	#def perform_create(self, serializer):
+	#	invite = serializer.save(used=True)
+	#	invite.save()
+	#	Client.objects.create(
+	#			email=invite.receiver_email, 
+	#			first_name=self.request.data.get('first_name'),
+	#			last_name=self.request.data.get('last_name'),
+	#			phone_number=self.request.data.get('phone_number'),
+	#			account_type='Laboratory',
+	#			is_staff=True,
+	#			password=self.request.data.get('password')
+	#		)
