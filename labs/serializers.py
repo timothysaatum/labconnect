@@ -1,12 +1,19 @@
 from rest_framework import serializers
 from .paginators import QueryPagination
-from .models import Laboratory, Test, Branch, LaboratorySample
+from .models import (
+		Laboratory, 
+		Test, Branch, 
+		LaboratorySample, 
+		BranchManagerInvitation
+	)
 from .results import TestResult
+from user.serializers import UserCreationSerializer
 
 
 
 class LaboratorySerializer(serializers.ModelSerializer):
 	logo = serializers.ImageField(required=False)
+	created_by = serializers.PrimaryKeyRelatedField(read_only=True)
 
 	class Meta:
 
@@ -32,7 +39,6 @@ class LaboratorySerializer(serializers.ModelSerializer):
 		data['created_by'] = instance.created_by.full_name
 		
 		return data
-
 
 
 class BranchSerializer(serializers.ModelSerializer):
@@ -183,3 +189,53 @@ class LaboratorySampleSerializer(serializers.ModelSerializer):
 			data['delivery'] = instance.delivery.name
 
 		return data
+
+
+
+class BranchManagerInvitationSerializer(serializers.ModelSerializer):
+
+	first_name = serializers.CharField(required=False, write_only=True)
+	last_name = serializers.CharField(required=False, write_only=True)
+	phone_number = serializers.CharField(required=False, write_only=True)
+	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
+	password_confirmation = serializers.CharField(max_length=68, min_length=8, write_only=True)
+
+	class Meta:
+
+		model = BranchManagerInvitation
+
+		fields = (
+
+			'first_name',
+			'last_name',
+			'phone_number',
+			'invitation_code',
+			'sender',
+			'receiver_email',
+			'branch',
+			'used',
+			'password',
+			'password_confirmation'
+
+		)
+
+	def validate(self, attrs):
+
+		password = attrs.get('password', '')
+		password_confirmation = attrs.get('password_confirmation', '')
+
+		if password != password_confirmation:
+
+			raise serializers.ValidationError('Passwords do not match')
+
+		return attrs
+
+	def create(self, validated_data):
+
+		manager = BranchManagerInvitation.objects.create(
+				receiver_email=validated_data.get('receiver_email'),
+				branch=validated_data.get('branch'),
+				sender=validated_data.get('sender'),
+			)
+
+		return manager

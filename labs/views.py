@@ -114,6 +114,9 @@ class CreateBranchView(PermissionMixin, CreateAPIView):
 
 		return self.create(request)
 
+	def perform_create(self, serializer):
+		serializer.save(branch_manager=self.request.user)
+
 
 class BranchListView(PermissionMixin, ListAPIView):
 	serializer_class = BranchSerializer
@@ -199,7 +202,7 @@ class TestListView(ListAPIView):
 	def get_queryset(self):
 		
 		return Test.objects.filter(
-			Q(branch__id=self.kwargs.get('branch_pk')) | 
+			Q(branch__id=self.kwargs.get('pk')) | 
 			Q(branch__laboratory__id=self.kwargs.get('pk'))
 		)
 

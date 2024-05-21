@@ -42,5 +42,4 @@ class OneTimePasswordAdmin(admin.ModelAdmin):
 # Now register the new UserAdmin...
 admin.site.register(Client, ClientAdmin)
 admin.site.register(OneTimePassword, OneTimePasswordAdmin)
-
 admin.site.register(Permission)
