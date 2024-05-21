@@ -11,6 +11,7 @@ import ConfirmForgotPassword from "./pages/password-reset-confirm";
 import React from "react";
 import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
+import CreateLab from "./pages/create-lab";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 const BranchManagerProfileComplete = React.lazy(() =>
   import("@/components/dashboard/branch-manager-complete-profile")
@@ -55,6 +56,7 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
+              <Route path="create-lab" element={<CreateLab />} />
               <Route
                 path="dashboard"
                 element={

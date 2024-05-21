@@ -6,18 +6,20 @@ import authReducer from "./auth/authSlice";
 import labReducer from "./lab/userLabSlice";
 import selectedRowsReducer from "./dataTable/selectedrowsSlice";
 import sessionExpiredReducer from "./session/sessionSlice";
+import branchOpenReducer from "./DialogStates/BranchOpenSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   lab: labReducer,
   selectedRows: selectedRowsReducer,
   session: sessionExpiredReducer,
+  branchOpen: branchOpenReducer,
 });
 const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  blacklist: ["auth", "lab", "selectedRows", "sessionExpired"], // name of the slice to be excluded from the persistor
+  blacklist: ["auth", "lab", "selectedRows", "sessionExpired", "branchOpen"], // name of the slice to be excluded from the persistor
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({

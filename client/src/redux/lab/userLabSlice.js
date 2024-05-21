@@ -9,8 +9,7 @@ const labSlice = createSlice({
   initialState,
   reducers: {
     setlab: (state, action) => {
-      const { data} = action.payload;
-      state.labInfo = data;
+      state.labInfo = action.payload;
     },
     removeLab: (state) => {
       state.labInfo = null;

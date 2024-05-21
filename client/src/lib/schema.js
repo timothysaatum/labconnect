@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { isValidPhoneNumber } from "react-phone-number-input";
 
+//create account schema
 export const SignupSchema = z
   .object({
     account_type: z.string().min(1, "Please select an account type"),
@@ -26,16 +27,19 @@ export const SignupSchema = z
     path: ["tc"],
   });
 
+//sign in schema
 export const SigninSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z.string().min(1, { message: "Password is required" }),
 });
+
+//tests schema used in sending sample
 const testsSchema = z.object({
   label: z.string(),
   value: z.string().min(1),
 });
 
-//send sample schema
+//send sample by health worker schema
 export const healthWorkerRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),
   patient_age: z.date({
@@ -53,6 +57,8 @@ export const healthWorkerRequestSchema = z.object({
   brief_description: z.string(),
   attachment: z.instanceof(FileList),
 });
+
+//send sample by laboratory schema
 export const labRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),
   patient_age: z.date({
@@ -67,16 +73,20 @@ export const labRequestSchema = z.object({
   brief_description: z.string(),
   // attachment: z.instanceof(FileList),
 });
+
+//OTP SCHEMA
 export const OTPSchema = z.object({
   code: z.string().min(6, {
     message: "Your one-time password must be 6 characters.",
   }),
 });
 
+//Email reset scheme
 export const ResetPassEmailSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
+//password reset scheme
 export const ResetPassSchema = z
   .object({
     password: z.string().min(8, "Password must be at least 8 characters"),
@@ -87,6 +97,19 @@ export const ResetPassSchema = z
     path: ["password_confirmation"],
   });
 
+// addTest Schema
 export const AddTestSchema = z.object({
   email: z.string().email().min(1, "Enter email send invite"),
+});
+
+//create lab schema
+export const CreateLabSchema = z.object({
+  created_by: z.any(),
+  laboratory_name: z.string().min(1, "Laboratory name is requires"),
+  herfra_id: z.string().min(1, "Herfra Id is required"),
+  main_email: z.string().email("Invalid email address"),
+  main_phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
+  website: z.string().min(1, "Invalid website"),
+  description: z.string().min(1, "Description is required"),
+  logo: z.instanceof(FileList),
 });

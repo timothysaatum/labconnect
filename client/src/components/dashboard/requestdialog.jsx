@@ -26,7 +26,7 @@ export default function RequestDialog({ ...rest }) {
           Send a Sample <Truck className="w-5 h-5 text-muted-foreground ml-2" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="h-[90dvh] p-4 md:p-8  ">
+      <SheetContent side="bottom" className="h-[90dvh] p-4 md:p-8 mx-2 rounded-md">
         <SheetHeader className="flex flex-col sm:flex-row sm:items-start items-start text-start px-2 mb-4 space-y-4">
           <div className="sm:flex-1 pt-2">
             <SheetTitle>Send a new sample</SheetTitle>

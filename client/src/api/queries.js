@@ -14,7 +14,8 @@ export const useFetchLabRequestsSent = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["RequestsSent"],
-    queryFn: async () => await axiosPrivate.get("/laboratory/lab/test-requests/samples/"),
+    queryFn: async () =>
+      await axiosPrivate.get("/laboratory/lab/test-requests/samples/"),
     staleTime: 1000 * 60 * 5,
   });
 };
@@ -39,13 +40,14 @@ export const useFetchAllDeliveries = () => {
 };
 
 // laboratories
-export const useFetchUserLab= () => {
+export const useFetchUserLab = (token) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["Laboratory"],
     queryFn: async () => await axiosPrivate.get("/laboratory/user-laboratory/"),
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 600,
+    enabled: !!token,
   });
 };
 export const useFetchAllLabsBranches = () => {
@@ -72,7 +74,7 @@ export const useFetchUserBranches = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["userbranches"],
-    queryFn: async () => await axiosPrivate.get(`/laboratory/branch/list/`),
+    queryFn: async () => await axiosPrivate.get(`/laboratory/list/`),
     staleTime: 1000 * 60 * 60,
   });
 };
