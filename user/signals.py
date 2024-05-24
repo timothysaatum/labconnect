@@ -21,4 +21,3 @@ def create_room(sender, instance, created, **kwargs):
 
 		if instance.account_type == 'Delivery':
 			DeliveryUserProfile.objects.create(client=instance)
-

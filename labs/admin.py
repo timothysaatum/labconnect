@@ -20,15 +20,13 @@ def download_csv(self, request, query):
 
 	writer = csv.writer(response)
 
-	writer.writerow(['id', 'name', 'laboratory', 'price', 'current_price', 'discount_price', 
-		'discount_percent', 'date_added', 'date_modified'])
+	writer.writerow(['id', 'name', 'laboratory', 'price', 'date_added', 'date_modified'])
 
 	data = Test.objects.filter()
 
 	for row in data:
 
-		rowobj = [row.id, row.name, row.laboratory(), row.price, row.current_price(), 
-		row.discount_price, row.discount_percent(), row.date_added, row.date_modified]
+		rowobj = [row.id, row.name, row.laboratory(), row.price, row.date_added, row.date_modified]
 
 		writer.writerow(rowobj)
 

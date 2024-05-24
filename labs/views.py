@@ -54,7 +54,8 @@ class PermissionMixin(object):
 
 	def has_permission_to_edit_test(self, user, test):
 		return self.has_laboratory_permission() and any(
-				branch.pk == test.branch.pk for branch in get_user_branches(user)
+				user == branch.branch_manager for branch in test[0].branch.all() or
+				user == branch.laboratory.created_by for branch in test[0].branch.all()
 			)
 
 	def has_permission_to_edit_sample(self, user, sample):
@@ -157,7 +158,7 @@ class BranchUpdateView(PermissionMixin, UpdateAPIView):
 
 		branch = self.get_queryset()
 
-		if not self.has_laboratory_permission_to_edit_branch(request.user, branch):
+		if not self.has_permission_to_edit_branch(request.user, branch):
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
@@ -209,16 +210,14 @@ class TestListView(ListAPIView):
 
 class TestUpdateView(PermissionMixin, UpdateAPIView):
 	serializer_class = TestSerializer
-
+	
 	def get_queryset(self):
 
-		return Test.objects.filter(
-			Q(branch__branch_manager=self.request.user) | 
-			Q(branch__laboratory__created_by=self.request.user)
-		)
+		test_pk, branch_pk = self.kwargs.get('branch_pk'), self.kwargs.get('pk')
+		return Test.objects.filter(branch=branch_pk).filter(pk=test_pk)
 
-	def put(self, request, pk, format=None):
-
+	def put(self, request, pk, branch_pk, format=None):
+		
 		if not self.has_laboratory_permission():
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
@@ -239,12 +238,10 @@ class TestUpdateView(PermissionMixin, UpdateAPIView):
 class TestDeleteView(PermissionMixin, DestroyAPIView):
 
 	def get_queryset(self):
-		return Test.objects.filter(
-			Q(branch__branch_manager=self.request.user) |
-			Q(branch__laboratory__created_by=self.request.user)
-		)
+		test_pk, branch_pk = self.kwargs.get('branch_pk'), self.kwargs.get('pk')
+		return Test.objects.filter(branch=branch_pk).filter(pk=test_pk)
 
-	def delete(self, request, pk, format=None):
+	def delete(self, request, pk, branch_pk, format=None):
 
 		if not self.has_laboratory_permission():
 
