@@ -133,6 +133,28 @@ class CreateUserView(CreateAPIView):
 		return self.create(request)
 
 
+class UpdateUserAccount(UpdateAPIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = UserCreationSerializer
+
+	def get_queryset(self):
+		return Client.objects.filter(pk=self.kwargs.get('pk'))
+
+	def put(self, request, pk):
+		return super().put(request, pk)
+
+
+class DeleteUserAccount(UpdateAPIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = UserCreationSerializer
+
+	def get_queryset(self):
+		return Client.objects.filter(id=self.request.user)
+
+	def delete(self, request, pk):
+		return super().delete(request, pk)
+
+
 class VerifyUserEmail(GenericAPIView):
 
 	serializer_class = VerifyEmailSerializer

@@ -4,7 +4,6 @@ from django.utils import timezone
 from .managers import ClientManager
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
-#from hospital.models import Hospital
 
 
 
@@ -12,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 SEX = [('Male', 'Male'), ('Female', 'Female')]
 USER_TYPE = [
 	('Laboratory', 'Laboratory'),
-	('Health Worker', 'Health Worker'),
+	('Hospital', 'Hospital'),
 	('Delivery', 'Delivery')
 ]
 

@@ -11,7 +11,9 @@ from .views import (
 		CheckRefreshToken, 
 		FetchUserData, 
 		InviteBranchManagerView,
-		BranchManagerAcceptView
+		BranchManagerAcceptView,
+		UpdateUserAccount,
+		DeleteUserAccount
 	)
 from rest_framework_simplejwt import views
 
@@ -19,6 +21,8 @@ from rest_framework_simplejwt import views
 app_name='user'
 urlpatterns = [
 	path('create-account/', CreateUserView.as_view(), name='sign-up'),
+	path('update-account<int:pk>/', UpdateUserAccount.as_view(), name='update-account'),
+	path('delete-account/<int:pk>/', DeleteUserAccount.as_view(), name='delete-account'),
 	path('login/', LoginUserView.as_view(), name='login'),
 	path('password-reset/', PasswordResetView.as_view(), name='password-reset'),
 	path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirm.as_view(), name='password-reset-confirm'),

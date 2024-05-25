@@ -4,7 +4,8 @@ from .models import (
 		Laboratory, 
 		Test, Branch, 
 		LaboratorySample, 
-		BranchManagerInvitation
+		BranchManagerInvitation,
+		SampleType
 	)
 from .results import TestResult
 from user.serializers import UserCreationSerializer
@@ -75,7 +76,7 @@ class BranchSerializer(serializers.ModelSerializer):
 class TestSerializer(serializers.ModelSerializer):
 
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-	#branch = serializers.ListField(child=serializers.CharField())
+	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
 
 	class Meta:
 
@@ -87,6 +88,7 @@ class TestSerializer(serializers.ModelSerializer):
 			'turn_around_time',
 			'price',
 			'patient_preparation',
+			'sample_type',
 			'branch',
 			'date_modified',
 			'date_added'
@@ -166,7 +168,7 @@ class LaboratorySampleSerializer(serializers.ModelSerializer):
 			'is_paid', 
 			'is_received_by_delivery', 
 			'is_delivered_to_lab', 
-			'is_access_by_lab', 
+			'is_accessed_by_lab', 
 			'sample_type', 
 			'to_lab', 
 			'tests', 

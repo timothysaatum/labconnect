@@ -4,9 +4,10 @@ from .models import Hospital, Sample
 
 class HospitalAdmin(admin.ModelAdmin):
 	list_display = (
+		'administrator',
 		'name', 
 		'region_of_location', 
-		'mailing_address', 
+		'postal_address', 
 		'digital_address', 
 		'phone', 
 		'email', 
@@ -18,7 +19,6 @@ class HospitalAdmin(admin.ModelAdmin):
 
 class SampleAdmin(admin.ModelAdmin):
 	list_display = (
-		'send_by', 
 		'name_of_patient', 
 		'sample_type', 
 		'sender_phone', 

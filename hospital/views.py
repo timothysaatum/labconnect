@@ -1,5 +1,6 @@
 from .serializers import (HospitalSerializer, SampleSerializer)
 from rest_framework import generics, permissions
+from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Sample, Hospital
@@ -14,7 +15,7 @@ class SamplePermissions(permissions.BasePermission):
 	def has_permission(self, request, view):
 		if request.method in permissions.SAFE_METHODS:
 			return True
-		return request.user.is_authenticated and request.user.account_type == 'Health Worker'
+		return request.user.is_authenticated and request.user.account_type == 'Hospital'
 
 
 class SampleMixin(generics.GenericAPIView):
@@ -25,15 +26,51 @@ class SampleMixin(generics.GenericAPIView):
 
 	def get_queryset(self):
 
-		return Sample.objects.filter(send_by=self.request.user)
+		return Sample.objects.filter(hospital__administrator=self.request.user)
+
+class AddHospitalView(SampleMixin, generics.CreateAPIView):
+	serializer_class = HospitalSerializer
+
+	def post(self, request):
+
+		return self.create(request)
+
+
+	def perform_create(self, serializer):
+		serializer.save(administrator=self.request.user)
+
+
+class UpdateHospitalView(SampleMixin, generics.UpdateAPIView):
+	serializer_class = HospitalSerializer
+
+	def get_queryset(self):
+
+		return Hospital.objects.filter(administrator=self.request.user)
+
+	def put(self, request, pk):
+		return super().put(request, pk)
+
+
+class DeleteHospitalView(SampleMixin, generics.DestroyAPIView):
+
+	def get_queryset(self):
+
+		return Hospital.objects.filter(administrator=self.request.user)
+
+	def delete(self, request, pk, format=None):
+
+		return super().delete(request, pk, format=None)
+
 
 
 class HospitalSerializerView(generics.ListAPIView):
 	'''List view for Hospitals.'''
 
-	queryset = Hospital.objects.all()
 	serializer_class = HospitalSerializer
 	filter_backends = [filters.SearchFilter]
+
+	def get_queryset(self):
+		return Hospital.objects.filter(administrator=self.request.user)
 
 
 class SampleSerializerView(SampleMixin, generics.CreateAPIView):
@@ -48,7 +85,7 @@ class SampleSerializerView(SampleMixin, generics.CreateAPIView):
 
 	def perform_create(self, serializer):
 
-		sample = serializer.save(send_by=self.request.user)
+		sample = serializer.save(hospital__administrator=self.request.user)
 		tests = self.request.data.getlist('tests')
 
 		sample.tests.add(*tests)
@@ -90,6 +127,11 @@ class SampleDeleteView(SampleMixin, generics.DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
+		sample = self.get_queryset()
+
+		if sample.is_accessed_by_lab:
+			return Response('Cannot delete sample')
+
 		return super().delete(request, pk, format=None)
 
 
@@ -101,4 +143,4 @@ class SampleResultList(generics.ListAPIView):
 
 	def get_queryset(self):
 
-		return TestResult.objects.filter(sample__send_by=self.request.user)
+		return TestResult.objects.filter(sample__hospital__administrator=self.request.user)

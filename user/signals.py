@@ -13,7 +13,7 @@ def create_room(sender, instance, created, **kwargs):
 	if created:
 		email = instance.email
 		send_code_to_user(email)
-		if instance.account_type == 'Health Worker':
+		if instance.account_type == 'Hospital':
 			HealthWorkerProfile.objects.create(client=instance)
 
 		if instance.account_type == 'Laboratory':

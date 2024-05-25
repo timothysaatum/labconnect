@@ -86,6 +86,11 @@ class Branch(BaseModel):
 
 		return self.branch_name
 
+class SampleType(models.Model):
+	sample_name = models.CharField(max_length=100)
+
+	def __str__(self):
+		return self.sample_name
 
 
 class Test(BaseModel):
@@ -106,6 +111,7 @@ class Test(BaseModel):
 	price = models.DecimalField(decimal_places=2, max_digits=10)
 	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField()
+	sample_type = models.ManyToManyField(SampleType)
 
 	def __str__(self) -> str:
 
@@ -136,7 +142,7 @@ class LaboratorySample(BaseModel):
 	is_paid = models.BooleanField(default=False)
 	is_received_by_delivery = models.BooleanField(default=False)
 	is_delivered_to_lab = models.BooleanField(default=False)
-	is_access_by_lab = models.BooleanField(default=False)
+	is_accessed_by_lab = models.BooleanField(default=False)
 
 	def __str__(self) -> str:
 		return self.sample_type
@@ -153,7 +159,7 @@ class LaboratorySample(BaseModel):
 
 
 class BranchManagerInvitation(BaseModel):
-	
+
 	invitation_code = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
 	sender = models.ForeignKey(user, on_delete=models.CASCADE)
 	receiver_email = models.EmailField(validators=[validate_email])
