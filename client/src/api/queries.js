@@ -2,6 +2,16 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useQuery } from "@tanstack/react-query";
 import axios from "./axios";
 
+// users
+export const useFetchUserDetails = () => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["User"],
+    queryFn: async () => await axiosPrivate.get("/user/fetch-user-data/"),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 60,
+  });
+};
 export const useFetchLabRequests = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
@@ -40,14 +50,13 @@ export const useFetchAllDeliveries = () => {
 };
 
 // laboratories
-export const useFetchUserLab = (token) => {
+export const useFetchUserLab = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["Laboratory"],
     queryFn: async () => await axiosPrivate.get("/laboratory/user-laboratory/"),
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 600,
-    enabled: !!token,
   });
 };
 export const useFetchAllLabsBranches = () => {
@@ -74,7 +83,7 @@ export const useFetchUserBranches = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["userbranches"],
-    queryFn: async () => await axiosPrivate.get(`/laboratory/list/`),
+    queryFn: async () => await axiosPrivate.get(`/laboratory/branch/list/`),
     staleTime: 1000 * 60 * 60,
   });
 };

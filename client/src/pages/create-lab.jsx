@@ -93,6 +93,7 @@ const CreateLab = () => {
       toast.success("Laboratory Created , Just one more step to get started", {
         position: "top-center",
       });
+      setServerErrors(null)
     } catch (error) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (error?.response?.status === 401 || error?.response?.status === 403) {
@@ -135,7 +136,7 @@ const CreateLab = () => {
               without creating a laboratory
             </CardDescription>
           </div>
-          {!success && <AddBranchCreateLab open={open} setOpen={setOpen} />}
+          {success && <AddBranchCreateLab open={open} setOpen={setOpen} />}
         </CardHeader>
         <CardContent className="">
           <Form {...form}>
@@ -177,7 +178,7 @@ const CreateLab = () => {
                 )}
               />
               <Button type="submit">
-                Create Profile{" "}
+                Create laboratory profile
                 {form.formState.isSubmitting && (
                   <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                 )}

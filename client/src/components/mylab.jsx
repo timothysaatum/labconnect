@@ -78,11 +78,12 @@ function ErrorLab({ refetch }) {
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
       <div className="flex flex-col items-center  text-center py-16 ">
         <h3 className="text-xl font-semibold ">An Error has Occured</h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-destructive">
           check your internet connection and try again{" "}
         </p>
         <Button
           variant="outline"
+          size="sm"
           className="mt-6"
           onClick={() => {
             refetch();
@@ -93,7 +94,9 @@ function ErrorLab({ refetch }) {
         </Button>
         <p className="text-muted-foreground text-xs mt-2">
           If error persists{" "}
-          <Link className="hover:underline underline-offset-2">Contact us</Link>
+          <Link className="hover:underline underline-offset-2 text-des">
+            Contact us
+          </Link>
         </p>
       </div>
     </div>
@@ -152,9 +155,7 @@ export default function MyLab() {
             test_code: test.test_code,
             test_name: test.name,
             price: test.price,
-            turn_around_time: moment(test.turn_around_time, "HH:mm:ss").format(
-              "h [hours] m [minutes]"
-            ),
+            turn_around_time: test.turn_around_time,
             date_added: test.date_added,
           };
         })
@@ -252,7 +253,7 @@ export default function MyLab() {
                         <CardTitle>{tab.title}</CardTitle>
                         <CardDescription>{tab.description}</CardDescription>
                       </div>
-                      {selectedRows?.length > 0 && currentTab==="Branches"? (
+                      {selectedRows?.length > 0 && currentTab === "Branches" ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button

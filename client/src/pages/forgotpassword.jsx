@@ -1,5 +1,5 @@
 import axios from "@/api/axios";
-import FormWrapper from "@/components/FormWrapper";
+import { FormBuilder } from "@/components/formbuilder";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,12 +10,6 @@ import {
 } from "@/components/ui/card";
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ResetPassEmailSchema, ResetPassSchema } from "@/lib/schema";
@@ -44,10 +38,11 @@ function EmailInput() {
         position: "top-center",
         duration: 5000,
       });
+      form.reset()
     } catch (error) {
       console.error(error);
       if (error.response.status === 400) {
-        toast.error(error.response.data.error, {
+        toast.error("This account does not exist", {
           position: "top-center",
           duration: 5000,
         });
@@ -63,21 +58,13 @@ function EmailInput() {
           className="flex flex-col gap-6"
           noValidate
         >
-          <FormField
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input type="email" placeholder="Email" {...field} />
-                </FormControl>
-                <FormMessage />
-                <FormDescription>
-                  We will send you a link to reset your password.
-                </FormDescription>
-              </FormItem>
-            )}
-          />
+          <FormBuilder
+            name={"email"}
+            label={"Email"}
+            description={"We will send you a link to reset your password."}
+          >
+            <Input type="email" placeholder="Email" />
+          </FormBuilder>
           <Button type="submit" disabled={isSubmitting}>
             Send Link
           </Button>

@@ -44,6 +44,7 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 
 class BranchSerializer(serializers.ModelSerializer):
+	laboratory = serializers.PrimaryKeyRelatedField(read_only=True)
 
 	class Meta:
 
@@ -148,7 +149,6 @@ class TestResultSerializer(serializers.ModelSerializer):
 
 class LaboratorySampleSerializer(serializers.ModelSerializer):
 
-	patient_age = serializers.DateTimeField(format='%d-%m-%Y %H:%M')
 	attachment = serializers.FileField(required=False)
 	send_by = serializers.PrimaryKeyRelatedField(read_only=True)
 	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())

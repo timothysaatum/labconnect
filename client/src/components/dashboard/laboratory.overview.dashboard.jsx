@@ -117,7 +117,7 @@ export default function LaboratoryDashboardOverview() {
       setTableRequests(
         allrequests.data.map((request) => {
           return {
-            id: request.id,
+            sent_by: request.from_lab,
             Patient: request.name_of_patient,
             Patient_age: calcAge(request.patient_age),
             Sent_by: request.send_by,
@@ -130,47 +130,31 @@ export default function LaboratoryDashboardOverview() {
   return (
     <main className="px-4 sm:pl-16 ">
       <div className="lg:col-span-3 flex flex-col gap-8">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <Card className="bg-transparent flex justify-center items-center border-dashed shadow-none ring-0 p-0">
-            <RequestDialog className="max-md:w-full shadow-sm h-14" size="lg" />
-          </Card>
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 sticky top-0 left-0 bg-background bg-opacity-20 py-4 px-4">
+          <RequestDialog className="max-md:w-full shadow-sm h-14" size="lg" />
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Samples Received
+              <CardTitle className="text-xs font-medium tracking-wide">
+                Samples Received:
               </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <div className="text-sm font-bold">+2350</div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+2350</div>
-              <p className="text-xs text-muted-foreground">
-                +180.1% from last month
-              </p>
-            </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Samples Sent</CardTitle>
-              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs font-medium tracking-wide">
+                Samples Sent:
+              </CardTitle>
+              <div className="text-sm font-bold">+12,234</div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+12,234</div>
-              <p className="text-xs text-muted-foreground">
-                +19% from last month
-              </p>
-            </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">proccessed today</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-xs font-medium tracking-wide">
+                proccessed today:
+              </CardTitle>
+              <div className="text-sm font-bold">+573</div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">+573</div>
-              <p className="text-xs text-muted-foreground">
-                +201 since last hour
-              </p>
-            </CardContent>
           </Card>
         </div>
         <div className="">
@@ -180,6 +164,66 @@ export default function LaboratoryDashboardOverview() {
               <TabsTrigger value="Sent Samples">Sent Samples</TabsTrigger>
             </TabsList>
             <TabsContent value="Received">
+              <Card>
+                <CardHeader className="flex flex-row">
+                  <div className="flex-1">
+                    <CardTitle>Samples</CardTitle>
+                    <CardDescription>
+                      {checked === "Sent Samples"
+                        ? "Samples you have sent to other labs"
+                        : "Samples you have received "}
+                    </CardDescription>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="flex gap-2">
+                        <span className="text-muted-foreground">Viewing:</span>{" "}
+                        {
+                          branches?.data?.find(
+                            (branch) => branch.id === checked
+                          )?.branch_name
+                        }
+                        <ChevronDown className="w-4 h-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {branches?.data?.map((branch) => (
+                        <DropdownMenuCheckboxItem
+                          key={branch.id}
+                          checked={checked === branch.id}
+                          onCheckedChange={() => setChecked(branch.id)}
+                        >
+                          {branch.branch_name}
+                        </DropdownMenuCheckboxItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <LoadingLab />
+                  ) : isError ? (
+                    <ErrorLab
+                      refetch={refetch}
+                      isRefetchError={isRefetchError}
+                      isRefetching={isRefetching}
+                    />
+                  ) : allrequests?.data.length < 1 ? (
+                    <EmptyLab />
+                  ) : (
+                    <DataTable
+                      data={requests}
+                      error={isError}
+                      loading={isLoading}
+                      columnDef={requestColumns}
+                      title={"Requests"}
+                      filter={"Patient"}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="Sent Samples">
               <Card>
                 <CardHeader className="flex flex-row">
                   <div className="flex-1">

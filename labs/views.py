@@ -116,7 +116,9 @@ class CreateBranchView(PermissionMixin, CreateAPIView):
 		return self.create(request)
 
 	def perform_create(self, serializer):
-		serializer.save(branch_manager=self.request.user)
+		lab = Laboratory.objects.get(created_by=self.request.user)
+		print(lab)
+		serializer.save(branch_manager=self.request.user, laboratory=lab)
 
 
 class BranchListView(PermissionMixin, ListAPIView):
@@ -344,7 +346,7 @@ class LaboratorySampleSerializerView(PermissionMixin, CreateAPIView):
 	def perform_create(self, serializer):
 
 		sample = serializer.save(send_by=self.request.user)
-		tests = self.request.data.get('tests')
+		tests = self.request.data.getlist('tests')
 
 		sample.tests.add(*tests)
 

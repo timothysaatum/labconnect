@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -7,51 +7,121 @@ import {
   CardTitle,
 } from "../ui/card";
 import { useEffect, useState } from "react";
-import SettingProfile from "./Profile";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "../ui/button";
-import { ChevronDown } from "lucide-react";
+import { PanelTopOpen } from "lucide-react";
 
-const Sidebar = ({ tab }) => {
+const SideBarSheet = () => {
   return (
-    <aside className="settings hidden w-36 lg:w-60 font-medium md:flex flex-col">
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button size="icon" variant="outline" className="md:hidden">
+          <PanelTopOpen className="h-5 w-5" />
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="top">
+        <nav>
+          <SidebarSheetLinks />
+        </nav>
+      </SheetContent>
+    </Sheet>
+  );
+};
+const SidebarSheetLinks = () => {
+  return (
+    <aside className="settings font-medium md:flex flex-col">
       <nav className="flex flex-col gap-4">
         <Link
-          to="?tab=profile"
+          to="profile"
           className={`${
-            tab === "profile" ? "active" : ""
+            location.pathname.endsWith("settings") ||
+            location.pathname.includes("profile")
+              ? "active"
+              : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           Profile
         </Link>
         <Link
-          to="?tab=account"
+          to="account"
           className={`${
-            tab === "account" ? "active" : ""
+            location.pathname.includes("account") ? "active" : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           Account
         </Link>
         <Link
-          to="?tab=preferences"
+          to="preferences"
           className={`${
-            tab === "preferences" ? "active" : ""
+            location.pathname.includes("preferences") ? "active" : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           Preferences
         </Link>
         <Link
-          to="?tab=security"
+          to="security"
           className={`${
-            tab === "security" ? "active" : ""
+            location.pathname.includes("security") ? "active" : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           Security
         </Link>
         <Link
-          to="?tab=notifications"
+          to="notifications"
           className={`${
-            tab === "notifications" ? "active" : ""
+            location.pathname.includes("notifications") ? "active" : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          Notifications
+        </Link>
+      </nav>
+    </aside>
+  );
+};
+const Sidebar = () => {
+  return (
+    <aside className="settings hidden w-36 lg:w-60 font-medium md:flex flex-col">
+      <nav className="flex flex-col gap-4">
+        <Link
+          to="profile"
+          className={`${
+            location.pathname.endsWith("settings") ||
+            location.pathname.includes("profile")
+              ? "active"
+              : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          Profile
+        </Link>
+        <Link
+          to="account"
+          className={`${
+            location.pathname.includes("account") ? "active" : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          Account
+        </Link>
+        <Link
+          to="preferences"
+          className={`${
+            location.pathname.includes("preferences") ? "active" : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          Preferences
+        </Link>
+        <Link
+          to="security"
+          className={`${
+            location.pathname.includes("security") ? "active" : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          Security
+        </Link>
+        <Link
+          to="notifications"
+          className={`${
+            location.pathname.includes("notifications") ? "active" : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           Notifications
@@ -62,8 +132,8 @@ const Sidebar = ({ tab }) => {
 };
 
 const DashboardSettings = () => {
-  const [tab, setTab] = useState(null);
   const location = useLocation();
+  const [tab, setTab] = useState(null);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -73,63 +143,23 @@ const DashboardSettings = () => {
     }
   }, [location.search]);
 
-  const settingTab = () => {
-    switch (tab) {
-      case "profile":
-        return <SettingProfile />;
-      //   case "account":
-      //     return <Account />;
-      //   case "preferences":
-      //     return <Preferences />;
-      //   case "security":
-      //     return <Security />;
-      //   case "notifications":
-      //     return <Notifications />;
-      default:
-        return <SettingProfile />;
-    }
-  };
   return (
-    <div className="flex flex-col sm:gap-4 py-4 sm:pl-14">
+    <div className="flex flex-col sm:gap-4 sm:pl-14 max-sm:py-4">
       <Card className="mx-4 sm:mx-8 relative">
-        <div className="mt-4 flex justify-end mr-8 md:hidden">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="min-w-24">
-                {tab === null ? "Profile" : tab} {" "}
-                <ChevronDown    className="ml-2"/>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-                <DropdownMenuItem>
-                    <Link to="?tab=profile">Profile</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <Link to="?tab=account">Account</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <Link to="?tab=preferences">Preferences</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <Link to="?tab=security">Security</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    <Link to="?tab=notifications">Notifications</Link>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <CardHeader>
+        <CardHeader className="flex flex-row justify-between">
           <div>
             <CardTitle>Settings</CardTitle>
-            <CardDescription className="border-b pb-5">
+            <CardDescription>
               Manage your Laboratory settings and preferences here
             </CardDescription>
           </div>
+          <SideBarSheet />
         </CardHeader>
         <CardContent className="flex">
-          <Sidebar tab={tab} />
-          <main className="md:px-10 flex-1 max-w-4xl">{settingTab()}</main>
+          <Sidebar />
+          <main className="md:pl-10 flex-1 max-w-4xl">
+            <Outlet />
+          </main>
         </CardContent>
       </Card>
     </div>

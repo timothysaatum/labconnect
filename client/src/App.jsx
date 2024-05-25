@@ -12,6 +12,7 @@ import React from "react";
 import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import CreateLab from "./pages/create-lab";
+import SettingProfile from "./components/dashboard/Profile";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 const BranchManagerProfileComplete = React.lazy(() =>
   import("@/components/dashboard/branch-manager-complete-profile")
@@ -73,7 +74,11 @@ export default function App() {
                       <DashboardSettings />
                     </React.Suspense>
                   }
-                />
+                >
+                  <Route index element={<SettingProfile />} />
+                  <Route path="profile" element={<SettingProfile />} />
+                  <Route path="*" element={<div>not found</div>} />
+                </Route>
                 <Route
                   path="tracking"
                   element={

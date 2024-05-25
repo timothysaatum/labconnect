@@ -11,6 +11,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,7 +20,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import {
   Select,
@@ -30,15 +30,17 @@ import {
 } from "../ui/select";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { PhoneInput } from "../ui/phone-input";
 import AddManager from "./addManager";
+import { useFetchUserLab } from "@/api/queries";
 
-export const BranchForm = forwardRef(({ setOpen, keepOpen, form, className }, ref) => {
+export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
+  const [serverErrors, setServerErrors] = useState(null);
 
   const regions = [
     { value: "Western", label: "Western Region" },
@@ -59,16 +61,39 @@ export const BranchForm = forwardRef(({ setOpen, keepOpen, form, className }, re
     { value: "Upper East", label: "Upper East Region" },
   ];
   const onSubmit = async (data) => {
+    console.log(data);
     try {
       await axiosPrivate.post("/laboratory/create-branch/", data);
-      queryClient.invalidateQueries(["tests", data?.branch]);
-      toast.success(`New branch- ${data?.branch_name} added`, {
+      queryClient.invalidateQueries(["userbranches"]);
+      toast.success(`New branch - ${data?.branch_name} added`, {
         position: "top-center",
+        duration: 5000,
       });
       if (!keepOpen) setOpen(false);
       form.reset();
     } catch (error) {
+      for (const field in error?.response?.data) {
+        form.setError(field, {
+          type: "manual",
+          message: error.response.data[field][0],
+        });
+      }
       console.log(error);
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        const errorValues = [Object.values(error?.response?.data || {})];
+        if (errorValues.length > 0) {
+          console.log(errorValues[0]);
+          setServerErrors(errorValues[0]);
+        }
+      } else if (error?.response?.status === 400) {
+        setServerErrors("All fields are required");
+      } else {
+        setServerErrors("Something went wrong, try again");
+      }
+      toast.error(serverErrors, {
+        position: "top-center",
+        duration: 5000,
+      });
     }
   };
   return (
@@ -78,39 +103,17 @@ export const BranchForm = forwardRef(({ setOpen, keepOpen, form, className }, re
         noValidate
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <FormField
-          name="branch_manager"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className="flex-1">
-              <FormLabel>Branch Manager</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <div className="flex items-center overflow-hidden gap-2 p-1">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Branch Manager" />
-                    </SelectTrigger>
-                    <AddManager />
-                  </div>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem>fetch managers</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
         <FormBuilder name={"branch_name"} label={"Branch name"}>
-          <Input />
+          <Input type="text" placeholder="branch name" />
         </FormBuilder>
         <FormBuilder name={"branch_email"} label={"Branch Email"}>
-          <Input />
+          <Input type="email" placeholder="branch email" />
         </FormBuilder>
         <FormBuilder name={"branch_phone"} label={"Branch Contact"}>
           <PhoneInput defaultCountry="GH" international />
         </FormBuilder>
         <FormField
-          name="Region"
+          name="region"
           control={form.control}
           render={({ field }) => (
             <FormItem>
@@ -132,29 +135,33 @@ export const BranchForm = forwardRef(({ setOpen, keepOpen, form, className }, re
             </FormItem>
           )}
         />
-        <FormBuilder
-          name={"patient_preparation"}
-          label={"Patient Preparation required"}
-          control={form.control}
-        >
-          <Textarea />
+        <FormBuilder name={"location"} label={"City/Town"}>
+          <Input type="text" placeholder="branch location" />
         </FormBuilder>
-        <Button type="submit" ref={ref} className="hidden">
-          Add New Test
-        </Button>
+        <FormBuilder name={"digital_address"} label={"Digital Address"}>
+          <Input type="text" placeholder="Digital Address" />
+        </FormBuilder>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? (
+            <span className="flex items-center">
+              Branch is being added{" "}
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+            </span>
+          ) : (
+            <span className="flex items-center">
+              Add Branch <GitBranchPlus className="ml-2 h-4 w-4" />
+            </span>
+          )}
+        </Button>{" "}
       </form>
     </Form>
   );
-});
+};
 const AddBranch = () => {
   const [open, setOpen] = useState(false);
   const [keepOpen, setKeepOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const submitRef = useRef();
-  const handleClick = () => {
-    submitRef.current.click();
-  };
   const form = useForm({
     defaultValues: {
       branch_name: "",
@@ -175,35 +182,28 @@ const AddBranch = () => {
           </Button>
         </DialogTrigger>
         <DialogContent className="px-2 max-w-[36rem]">
-          <div className="h-full max-h-[80dvh] overflow-auto ">
-            <DialogHeader className="bg-background flex-row justify-between items-start sticky top-0 px-4">
-              <div className="flex flex-col gap-2">
-                <DialogTitle>Add new branch</DialogTitle>
-                <div className="flex items-center space-x-2 mb-2">
-                  <Checkbox
-                    checked={keepOpen}
-                    onCheckedChange={setKeepOpen}
-                    id="check"
-                  />
-                  <Label htmlFor="check">Keep open after adding branch</Label>
-                </div>
+          <div className="h-full max-h-[80dvh] overflow-auto">
+            <DialogHeader className="z-50 bg-background flex-row justify-between items-start sticky top-0 px-4">
+              <div>
+                <DialogTitle>Create a new branch</DialogTitle>
+                <DialogDescription>
+                  Fill in this form to Create a new Branch
+                </DialogDescription>
               </div>
-              <Button
-                onClick={handleClick}
-                disabled={form.formState.isSubmitting}
-              >
-                <GitBranchPlus className="mr-2 h-5 w-5" /> Add new branch{" "}
-                {form.formState.isSubmitting && (
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                )}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={keepOpen}
+                  onCheckedChange={setKeepOpen}
+                  id="check"
+                />
+                <Label htmlFor="check">Keep open after creating branch</Label>
+              </div>
             </DialogHeader>
             <BranchForm
               setOpen={setOpen}
               keepOpen={keepOpen}
-              ref={submitRef}
               form={form}
-              className="test flex flex-col gap-2 overflow-hidden hover:overflow-auto transition-all p-4"
+              className=" test flex flex-col gap-4 overflow-hidden hover:overflow-auto transition-all over p-4"
             />
           </div>
         </DialogContent>
@@ -231,23 +231,12 @@ const AddBranch = () => {
                 <Label htmlFor="check">Keep open after adding branch</Label>
               </div>
             </div>
-            <Button
-              onClick={handleClick}
-              disabled={form.formState.isSubmitting}
-            >
-              <GitBranchPlus className="mr-2 h-5 w-5" />
-              Add new Test
-              {form.formState.isSubmitting && (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              )}
-            </Button>
           </DrawerHeader>
           <BranchForm
             setOpen={setOpen}
-            ref={submitRef}
             keepOpen={keepOpen}
             form={form}
-            className="test flex flex-col gap-2 overflow-hidden hover:overflow-auto transition-all p-4"
+            className="test flex flex-col gap-4 overflow-hidden hover:overflow-auto transition-all over p-4"
           />
         </div>
       </DrawerContent>

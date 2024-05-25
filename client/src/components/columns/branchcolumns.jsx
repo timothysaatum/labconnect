@@ -4,12 +4,58 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
 import { Link } from "react-router-dom";
+import { usedeleteBranchMutation } from "@/api/mutations";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
+
+export function DeleteDialog({ mutate }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <span className="relative gap-2 text-destructive flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-destructive">
+          <Trash className="h-4 w-4" /> Delete Branch
+        </span>
+      </AlertDialogTrigger>
+      <AlertDialogContent className="max-sm:max-w-[90vw]">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently deletey your
+            branch and remove it's data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => mutate()}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 
 export const branchcolumnDef = [
   {
@@ -64,6 +110,7 @@ export const branchcolumnDef = [
     id: "actions",
     cell: ({ row }) => {
       const branch = row.original;
+      const { mutate, error } = usedeleteBranchMutation(branch.id);
 
       return (
         <DropdownMenu>
@@ -75,13 +122,11 @@ export const branchcolumnDef = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Update Branch</DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive"
-              onClick={() => console.log(branch.id)}
-            >
-              Delete Branch
-            </DropdownMenuItem>
+            <Link to="../settings">
+              <DropdownMenuItem>Update Branch</DropdownMenuItem>
+            </Link>
+            <DropdownMenuSeparator />
+            <DeleteDialog mutate={mutate} branchId={branch.id} />
           </DropdownMenuContent>
         </DropdownMenu>
       );

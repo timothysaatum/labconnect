@@ -1,8 +1,9 @@
-import { ChevronsUpDown, Loader2, Plus, TestTubeDiagonal } from "lucide-react";
+import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -11,6 +12,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -38,10 +40,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AddTestSchema } from "@/lib/schema";
 import MultipleSelector from "../ui/multi-select";
 
-const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
+const TestForm = ({ setOpen, keepOpen, form }) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    if (Object.keys(form.formState.errors).length > 0) {
+      const firstErrorField = Object.keys(form.formState.errors)[0];
+      document.getElementsByName(firstErrorField)[0]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [form.formState.errors]);
   const {
     isLoading,
     isError,
@@ -54,21 +65,28 @@ const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
       : [];
     const newData = {
       ...data,
+      turn_around_time: data.turn_around_time,
+      unit: data.unit,
+    };
+    const finalData = {
+      ...data,
+      turn_around_time: data?.turn_around_time + " " + data?.unit,
       branch: branchvalue,
     };
 
-    console.log(newData);
+    console.log(finalData);
     try {
-      await axiosPrivate.post("/laboratory/test/add/", newData);
+      await axiosPrivate.post("/laboratory/test/add/", finalData);
       queryClient.invalidateQueries(["tests", data?.branch]);
       toast.success(
         `New test- ${data?.name} added ${
-          data.branches.length < 2 ? "" : `to ${data.branches.length} Branches`
+          data.branch.length < 2 ? "" : `to ${data.branches.length} Branches`
         } successfully`,
         {
           position: "top-center",
         }
       );
+      queryClient.invalidateQueries(["tests"]);
       if (!keepOpen) setOpen(false);
       form.reset();
     } catch (error) {
@@ -171,34 +189,40 @@ const TestForm = forwardRef(({ setOpen, keepOpen, form }, ref) => {
         >
           <Textarea />
         </FormBuilder>
-        <Button type="submit" ref={ref} className="hidden">
-          Add New Test
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? (
+            <span className="flex items-center">
+              Test is being added{" "}
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+            </span>
+          ) : (
+            <span className="flex items-center">
+              Add Test <Plus className="ml-2 h-4 w-4" />
+            </span>
+          )}
         </Button>
       </form>
     </Form>
   );
-});
+};
 const AddTest = () => {
   const [open, setOpen] = useState(false);
   const [keepOpen, setKeepOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const form = useForm({
-    // resolver: zodResolver(AddTestSchema),
+    resolver: zodResolver(AddTestSchema),
     defaultValues: {
       test_code: "",
       name: "",
       price: "",
       turn_around_time: "",
       patient_preparation: "",
+      unit: "",
       branch: "",
     },
   });
 
-  const submitRef = useRef();
-  const handleClick = () => {
-    submitRef.current.click();
-  };
   useEffect(() => {
     !open && form.reset();
   }, [open]);
@@ -207,42 +231,29 @@ const AddTest = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline">
-            <TestTubeDiagonal className="mr-2 h-5 w-5" />
+            <Plus className="mr-2 h-5 w-5" />
             Add new Test
           </Button>
         </DialogTrigger>
         <DialogContent className="px-2 max-w-[36rem]">
           <div className="h-full max-h-[80dvh] overflow-auto">
-            <DialogHeader className="z-50 bg-background flex-row justify-between items-start sticky top-0 px-4">
-              <div className="flex flex-col gap-2">
+            <DialogHeader className="z-50 bg-background flex-row justify-between items-start sticky top-0 px-4 left-0">
+              <div>
                 <DialogTitle>Add new test</DialogTitle>
-                <div className="flex items-center space-x-2 mb-2">
-                  <Checkbox
-                    checked={keepOpen}
-                    onCheckedChange={setKeepOpen}
-                    id="check"
-                  />
-                  <Label htmlFor="check">Keep open after adding test</Label>
-                </div>
+                <DialogDescription>
+                  Fill in this form to add a new test
+                </DialogDescription>
               </div>
-              <Button
-                onClick={handleClick}
-                className=""
-                disabled={form.formState.isSubmitting}
-              >
-                <TestTubeDiagonal className="mr-2 h-5 w-5" />
-                Add new Test
-                {form.formState.isSubmitting && (
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                )}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={keepOpen}
+                  onCheckedChange={setKeepOpen}
+                  id="check"
+                />
+                <Label htmlFor="check">Keep open after adding test</Label>
+              </div>
             </DialogHeader>
-            <TestForm
-              setOpen={setOpen}
-              keepOpen={keepOpen}
-              ref={submitRef}
-              form={form}
-            />
+            <TestForm setOpen={setOpen} keepOpen={keepOpen} form={form} />
           </div>
         </DialogContent>
       </Dialog>
@@ -257,9 +268,14 @@ const AddTest = () => {
       </DrawerTrigger>
       <DrawerContent className="px-2">
         <div className="max-h-[90vh] overflow-auto ">
-          <DrawerHeader className="sticky top-0 bg-background">
-            <div className="flex justify-between gap-2 py-2">
-              <DrawerTitle>Add new test</DrawerTitle>
+          <DrawerHeader className="z-50 sticky top-0 bg-background">
+            <div className="flex justify-between gap-2">
+              <div>
+                <DrawerTitle>Add new test</DrawerTitle>
+                <DrawerDescription>
+                  Keep open after adding test
+                </DrawerDescription>
+              </div>
               <div className="flex items-center space-x-2 mb-2">
                 <Checkbox
                   checked={keepOpen}
@@ -269,24 +285,8 @@ const AddTest = () => {
                 <Label htmlFor="check">Keep open after adding test</Label>
               </div>
             </div>
-            <Button
-              onClick={handleClick}
-              disabled={form.formState.isSubmitting}
-              className="z-30"
-            >
-              <TestTubeDiagonal className="mr-2 h-5 w-5" />
-              Add new Test
-              {form.formState.isSubmitting && (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              )}
-            </Button>
           </DrawerHeader>
-          <TestForm
-            setOpen={setOpen}
-            ref={submitRef}
-            keepOpen={keepOpen}
-            form={form}
-          />
+          <TestForm setOpen={setOpen} keepOpen={keepOpen} form={form} />
         </div>
       </DrawerContent>
     </Drawer>

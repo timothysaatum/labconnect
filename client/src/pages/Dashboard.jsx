@@ -1,9 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import {
-  Package2,
-  Settings,
-  PanelLeft,
-} from "lucide-react";
+import { Package2, Settings, PanelLeft, LogOut } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -17,27 +13,14 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useGetSideLinks } from "@/hooks/usesidelinks";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
-import { useEffect } from "react";
-import { useFetchUserLab } from "@/api/queries";
-import { toast } from "sonner";
+import useLogout from "@/hooks/uselogout";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
   const sideLinks = useGetSideLinks(user?.account_type);
   const location = useLocation();
-  const navigate = useNavigate();
-  const { data: userlab } = useFetchUserLab();
+  const logout = useLogout();
 
-  useEffect(() => {
-    if (user?.account_type === "Laboratory") {
-      if (userlab?.data.length<1) {
-        toast.info("Add a laboratory to continue", {
-          position: "top-center",
-        });
-        navigate("/create-lab");
-      }
-    }
-  }, [user]);
   return (
     <div className="flex flex-col min-h-screen bg-muted/10">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -86,6 +69,20 @@ export default function Dashboard() {
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Settings</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  onClick={() => logout()}
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span className="sr-only">logout</span>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="right">Log out</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </nav>
