@@ -43,16 +43,17 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import PopoverSelect from "../popoverselect";
 import { DevTool } from "@hookform/devtools";
+import moment from "moment";
 
 const RequestForm = React.forwardRef(({ setOpen }, ref) => {
   const user = useSelector(selectCurrentUser);
   const queryClient = useQueryClient();
   const form = useForm({
-    resolver: zodResolver(
-      user?.account_type === "Laboratory"
-        ? labRequestSchema
-        : healthWorkerRequestSchema
-    ),
+    // resolver: zodResolver(
+    //   user?.account_type === "Laboratory"
+    //     ? labRequestSchema
+    //     : healthWorkerRequestSchema
+    // ),
     defaultValues:
       user.account_type === "Laboratory"
         ? {
@@ -104,8 +105,8 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
     const testvalue = data?.tests ? data.tests.map((test) => test.value) : [];
     const newData = {
       ...data,
-      patient_age: 44,
       tests: testvalue,
+      patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
     };
     if (
       newData.attachment instanceof FileList &&

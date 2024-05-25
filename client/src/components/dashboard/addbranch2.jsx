@@ -1,26 +1,165 @@
-import { Button } from "@/components/ui/button";
-
+import { GitBranchPlus, Loader2, Plus } from "lucide-react";
+import { Button } from "../ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { ScrollArea } from "../ui/scroll-area";
-import React, { useRef } from "react";
-import { CreditCardIcon, Truck } from "lucide-react";
-import { BranchForm } from "./addbranch";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../ui/drawer";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
+import { Input } from "../ui/input";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useState } from "react";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
+import { PhoneInput } from "../ui/phone-input";
+import { useFetchUserLab } from "@/api/queries";
 
-const date = new Date()
-console.log(date)
-export default function AddBranchCreateLab({ open, setOpen, ...rest }) {
-  const submitRef = useRef();
-  const handleClick = () => {
-    submitRef.current.click();
+export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+  const [serverErrors, setServerErrors] = useState(null);
+
+  const regions = [
+    { value: "Western", label: "Western Region" },
+    { value: "Western North", label: "Western North Region" },
+    { value: "Brong-Ahafo", label: "Brong-Ahafo Region" },
+    { value: "Ashanti", label: "Ashanti Region" },
+    { value: "Eastern", label: "Eastern Region" },
+    { value: "Ahafo", label: "Ahafo Region" },
+    { value: "Bono", label: "Bono Region" },
+    { value: "Bono East", label: "Bono East Region" },
+    { value: "Central", label: "Central Region" },
+    { value: "Greater Accra", label: "Greater Accra Region" },
+    { value: "Volta", label: "Volta Region" },
+    { value: "Oti", label: "Oti Region" },
+    { value: "Northern", label: "Northern Region" },
+    { value: "Savannah", label: "Savannah Region" },
+    { value: "North East", label: "North East Region" },
+    { value: "Upper East", label: "Upper East Region" },
+  ];
+  const onSubmit = async (data) => {
+    console.log(data);
+    try {
+      await axiosPrivate.post("/laboratory/create-branch/", data);
+      queryClient.invalidateQueries(["userbranches"]);
+      toast.success(`New branch - ${data?.branch_name} added`, {
+        position: "top-center",
+        duration: 5000,
+      });
+      if (!keepOpen) setOpen(false);
+      form.reset();
+    } catch (error) {
+      for (const field in error?.response?.data) {
+        form.setError(field, {
+          type: "manual",
+          message: error.response.data[field][0],
+        });
+      }
+      console.log(error);
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        const errorValues = [Object.values(error?.response?.data || {})];
+        if (errorValues.length > 0) {
+          console.log(errorValues[0]);
+          setServerErrors(errorValues[0]);
+        }
+      } else if (error?.response?.status === 400) {
+        setServerErrors("All fields are required");
+      } else {
+        setServerErrors("Something went wrong, try again");
+      }
+      toast.error(serverErrors, {
+        position: "top-center",
+        duration: 5000,
+      });
+    }
   };
+  return (
+    <Form {...form}>
+      <form
+        className={className}
+        noValidate
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <FormBuilder name={"branch_name"} label={"Branch name"}>
+          <Input type="text" placeholder="branch name" />
+        </FormBuilder>
+        <FormBuilder name={"branch_email"} label={"Branch Email"}>
+          <Input type="email" placeholder="branch email" />
+        </FormBuilder>
+        <FormBuilder name={"branch_phone"} label={"Branch Contact"}>
+          <PhoneInput defaultCountry="GH" international />
+        </FormBuilder>
+        <FormField
+          name="region"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Region</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Region" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {regions?.map((region) => (
+                    <SelectItem value={region.value} key={region.value}>
+                      {region?.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+        <FormBuilder name={"location"} label={"City/Town"}>
+          <Input type="text" placeholder="branch location" />
+        </FormBuilder>
+        <FormBuilder name={"digital_address"} label={"Digital Address"}>
+          <Input type="text" placeholder="Digital Address" />
+        </FormBuilder>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? (
+            <span className="flex items-center">
+              Branch is being added{" "}
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+            </span>
+          ) : (
+            <span className="flex items-center">
+              Add Branch <GitBranchPlus className="ml-2 h-4 w-4" />
+            </span>
+          )}
+        </Button>{" "}
+      </form>
+    </Form>
+  );
+};
+const AddBranchCreateLab = ({ open, setOpen }) => {
+  const [keepOpen, setKeepOpen] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
   const form = useForm({
     defaultValues: {
       branch_name: "",
@@ -31,33 +170,75 @@ export default function AddBranchCreateLab({ open, setOpen, ...rest }) {
       digital_address: "",
     },
   });
-  return (
-    <Sheet open onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button {...rest}>Add Branch</Button>
-      </SheetTrigger>
-      <SheetContent
-        side="bottom"
-        className="h-[80dvh] p-4 md:p-8 mx-2 rounded-md"
-      >
-        <SheetHeader className="flex flex-col sm:flex-row sm:items-start items-start text-start px-2 mb-4 space-y-4">
-          <div className="sm:flex-1 pt-2">
-            <SheetTitle>Send a new sample</SheetTitle>
-            <SheetDescription>
-              fill out the form below to create send new sample
-            </SheetDescription>
-          </div>
-          <Button
-            className="max-sm:w-full sm:mr-8 flex gap-2 text-accent"
-            onClick={handleClick}
-          >
-            <CreditCardIcon className="w-6 h-6" /> Proceed to Payment
+  if (isDesktop) {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button variant="outline">
+            <GitBranchPlus className="mr-2 h-5 w-5" />
+            Add new branch
           </Button>
-        </SheetHeader>
-        <ScrollArea className="h-[80%] pr-2">
-          <BranchForm form={form}  className="grid grid-cols-2 gap-6 px-4"/>
-        </ScrollArea>
-      </SheetContent>
-    </Sheet>
+        </DialogTrigger>
+        <DialogContent className="px-2 max-w-[36rem]">
+          <div className="h-full max-h-[80dvh] overflow-auto">
+            <DialogHeader className="z-50 bg-background flex-row justify-between items-start sticky top-0 px-4">
+              <div>
+                <DialogTitle>Create a new branch</DialogTitle>
+                <DialogDescription>
+                  Fill in this form to Create a new Branch
+                </DialogDescription>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={keepOpen}
+                  onCheckedChange={setKeepOpen}
+                  id="check"
+                />
+                <Label htmlFor="check">Keep open after creating branch</Label>
+              </div>
+            </DialogHeader>
+            <BranchForm
+              setOpen={setOpen}
+              keepOpen={keepOpen}
+              form={form}
+              className=" test flex flex-col gap-4 overflow-hidden hover:overflow-auto transition-all over p-4"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <Button size="icon" variant="outline">
+          <Plus className="h-4 w-4" />
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent className="px-2">
+        <div className="max-h-[90vh] overflow-auto ">
+          <DrawerHeader className="sticky top-0 bg-background">
+            <div className="flex justify-between gap-2 py-2">
+              <DrawerTitle>Add new Branch</DrawerTitle>
+              <div className="flex items-center space-x-2 mb-2">
+                <Checkbox
+                  checked={keepOpen}
+                  onCheckedChange={setKeepOpen}
+                  id="check"
+                />
+                <Label htmlFor="check">Keep open after adding branch</Label>
+              </div>
+            </div>
+          </DrawerHeader>
+          <BranchForm
+            setOpen={setOpen}
+            keepOpen={keepOpen}
+            form={form}
+            className="test flex flex-col gap-4 overflow-hidden hover:overflow-auto transition-all over p-4"
+          />
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
-}
+};
+export default AddBranchCreateLab;

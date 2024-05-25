@@ -122,7 +122,7 @@ class LaboratorySample(BaseModel):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name_of_patient = models.CharField(max_length=200)
-	patient_age = models.DateTimeField(default=timezone.now)
+	patient_age = models.DateField()
 	patient_sex = models.CharField(max_length=20)
 	sample_type = models.CharField(max_length=200)
 	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True, db_index=True)
@@ -148,9 +148,6 @@ class LaboratorySample(BaseModel):
 		return self.date_added
 
 	def email(self):
-<<<<<<< HEAD
-		return self.from_lab.branch_email
-=======
 		return self.from_lab.branch_email
 
 
@@ -165,4 +162,3 @@ class BranchManagerInvitation(BaseModel):
 
 	def __str__(self):
 		return str(self.sender)
->>>>>>> 934be008b2a58292840c14ace2c4ec71676d06e2

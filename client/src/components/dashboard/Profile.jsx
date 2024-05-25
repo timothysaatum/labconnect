@@ -1,149 +1,112 @@
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
-import { PhoneInput } from "../ui/phone-input";
-import { Textarea } from "../ui/textarea";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import UserProfile from "./user-profile";
+import LaboratoryProfile from "./laboratory-profile";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+
+const Sidebar = ({ tab }) => {
+  const location = useLocation();
+  return (
+    <aside className="settings hidden w-36 lg:w-48 font-medium lg:flex flex-col text-sm">
+      <nav className="flex flex-col gap-4">
+        <Link
+          to="?tab=user-profile"
+          className={`${
+            tab === null || tab === "user-profile" ? "active" : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          User profile
+        </Link>
+        <Link
+          to="?tab=laboratory-profile"
+          className={`${
+            tab === "laboratory-profile" ? "active" : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          Laboratory profile
+        </Link>
+        <Link
+          to="?tab=branch-profile"
+          className={`${
+            tab === "branch-profile" ? "active" : ""
+          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+        >
+          Branches
+        </Link>
+      </nav>
+    </aside>
+  );
+};
 
 const SettingProfile = () => {
+  const [tab, setTab] = useState(null);
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState("user-profile");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const tabFromUrl = urlParams.get("tab");
+    if (tabFromUrl) {
+      setTab(tabFromUrl);
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [location.search, location.pathname, tab]);
   const form = useForm({
     defaultValues: {
       name: "",
       email: "",
     },
   });
+  const settingTab = () => {
+    switch (tab) {
+      case "user-profile":
+        return <UserProfile form={form} />;
+      case "laboratory-profile":
+        return <LaboratoryProfile form={form} />;
+      //   case "preferences":
+      //     return <Preferences />;
+      //   case "security":
+      //     return <Security />;
+      //   case "notifications":
+      //     return <Notifications />;
+      default:
+        return <UserProfile form={form} />;
+    }
+  };
   return (
-    <Form {...form}>
-      <form>
-        <div className="mb-10 border-b pb-4">
-          <h3 className="text-2xl font-medium">Profile </h3>
-          <FormDescription>Update your laboratory information</FormDescription>
-        </div>
-        <div className="flex flex-col gap-8 mb-4">
-          <FormField
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Laboratory name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormDescription>
-                  The name of your laboratory as it will appear on your reports
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Laboratory Email</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormDescription>
-                  The email address associated with your laboratory. Important
-                  notifications will be sent to this address
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <div>
-            <FormField
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone number</FormLabel>
-                  <FormControl>
-                    <PhoneInput defaultCountry="GH" international {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button variant="outline" className="mt-4" type="button">
-              Add Another Number
-            </Button>
-          </div>
-          <FormField
-            name="website"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Website</FormLabel>
-                <FormControl>
-                  <Input type="text" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="Bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bio</FormLabel>
-                <FormControl>
-                  <Textarea {...field} maxLength={250} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <Accordion collapsible>
-            <AccordionItem value="item-1">
-              <AccordionTrigger className="text-md font-bold">
-                Has the location of your laboratory changed? click to update
-                location
-              </AccordionTrigger>
-              <AccordionContent className="flex flex-col gap-4">
-                <FormField
-                  name="Region"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Region</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  name="town"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Town/City</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  name="digital_address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Digital Address</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
-
-        <Button type="submit" className="w-40">
-          Update Profile
-        </Button>
-      </form>
-    </Form>
+    <div>
+      <div className="lg:flex gap-4 hidden">
+        {settingTab()}
+        <Sidebar tab={tab} />
+      </div>
+      <div className="lg:hidden">
+        <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="w-full justify-around">
+            <TabsTrigger value="user-profile">
+              <Link to={"?tab=user-profile"}>User Profile</Link>
+            </TabsTrigger>
+            <TabsTrigger value="laboratory-profile">
+              <Link to={"?tab=laboratory-profile"}>Laboratory Profile</Link>
+            </TabsTrigger>
+            <TabsTrigger value="branch-profile">
+              <Link to={"?tab=branch-profile"}>Branch Profile</Link>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="user-profile">
+            <UserProfile />
+          </TabsContent>
+          <TabsContent value="laboratory-profile">
+            <LaboratoryProfile form={form} />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
   );
 };
 

@@ -27,7 +27,7 @@ import {
 import React, { useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setSelectedRows } from "@/redux/dataTable/selectedrowsSlice";
 
@@ -46,7 +46,7 @@ export function DataTable({
   const finalData = React.useMemo(() => data, [data]);
   const finalColumnDef = React.useMemo(() => columnDef, [columnDef]);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const table = useReactTable({
     columns: finalColumnDef,
@@ -97,7 +97,7 @@ export function DataTable({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto ">
-              Columns
+              Filters <ChevronDown className="h-5 w-5 ml-2" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

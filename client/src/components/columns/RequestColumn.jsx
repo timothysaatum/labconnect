@@ -15,7 +15,6 @@ import { selectCurrentUser } from "@/redux/auth/authSlice";
 import { createCell, createSortableHeader } from "../../util/tablefxns";
 
 export const useHealthWorkerRequestColumns = () => {
-  const user = useSelector(selectCurrentUser);
   const RequestColumns = [
     {
       id: "select",
@@ -43,10 +42,10 @@ export const useHealthWorkerRequestColumns = () => {
       accessorKey: "id",
       header: "Sample Id",
     },
-    {
-      accessorKey: "Patient",
-      header: createSortableHeader("Patient"),
-    },
+    // {
+    //   accessorKey: "Patient",
+    //   header: createSortableHeader("Patient"),
+    // },
     {
       accessorKey: "laboratory",
       header: createSortableHeader("laboratory"),
@@ -117,8 +116,8 @@ export const useRequestLabColumns = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "id",
-      header: "Sample Id",
+      accessorKey: "sent_from",
+      header: createSortableHeader("Referror"),
     },
     {
       accessorKey: "Patient",

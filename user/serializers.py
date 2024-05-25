@@ -95,7 +95,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 		if not user:
 
-			raise AuthenticationFailed('User does not exist!')
+			raise AuthenticationFailed('Invalid Credentials!')
 
 		if not user.is_verified:
 

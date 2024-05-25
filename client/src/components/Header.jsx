@@ -64,7 +64,9 @@ const Header = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{user?.full_name}</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                {user?.first_name + " " + user?.last_name}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>

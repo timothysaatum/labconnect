@@ -34,7 +34,7 @@ export const SigninSchema = z.object({
 });
 
 //tests schema used in sending sample
-const testsSchema = z.object({
+const multiSelectSchema = z.object({
   label: z.string(),
   value: z.string().min(1),
 });
@@ -53,7 +53,7 @@ export const healthWorkerRequestSchema = z.object({
     invalid_type_error: "enter valid data",
   }),
   lab: z.string().min(1, "laboratory is required"),
-  tests: z.array(testsSchema).min(1),
+  tests: z.array(multiSelectSchema).min(1),
   brief_description: z.string(),
   attachment: z.instanceof(FileList),
 });
@@ -69,7 +69,7 @@ export const labRequestSchema = z.object({
   sample_type: z.string().min(1, "Sample type is required"),
   from_lab: z.string().min(1, "laboratory is required"),
   to_lab: z.string().min(1, "laboratory is required"),
-  tests: z.array(testsSchema).min(1),
+  tests: z.array(multiSelectSchema).min(1),
   brief_description: z.string(),
   // attachment: z.instanceof(FileList),
 });
@@ -99,7 +99,13 @@ export const ResetPassSchema = z
 
 // addTest Schema
 export const AddTestSchema = z.object({
-  email: z.string().email().min(1, "Enter email send invite"),
+  branch: z.array(multiSelectSchema).min(1),
+  price: z.string().min(1, "price is required"),
+  test_code: z.string().min(1, "Test Code is required"),
+  name: z.string().min(1, "Test Name is required"),
+  turn_around_time: z.string().min(1, "Turn around time is required"),
+  unit: z.string().min(1, "unit for turn around time is required"),
+  patient_preparation: z.string(),
 });
 
 //create lab schema
