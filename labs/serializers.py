@@ -8,6 +8,7 @@ from .models import (
 	)
 from .results import TestResult
 from user.serializers import UserCreationSerializer
+from user.models import Client
 
 
 
@@ -74,7 +75,7 @@ class BranchSerializer(serializers.ModelSerializer):
 
 class TestSerializer(serializers.ModelSerializer):
 
-	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all())
+	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
 	#branch = serializers.ListField(child=serializers.CharField())
 
 	class Meta:
@@ -197,8 +198,7 @@ class BranchManagerInvitationSerializer(serializers.ModelSerializer):
 	first_name = serializers.CharField(required=False, write_only=True)
 	last_name = serializers.CharField(required=False, write_only=True)
 	phone_number = serializers.CharField(required=False, write_only=True)
-	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
-	password_confirmation = serializers.CharField(max_length=68, min_length=8, write_only=True)
+	sender = serializers.PrimaryKeyRelatedField(read_only=True)
 
 	class Meta:
 
@@ -206,6 +206,7 @@ class BranchManagerInvitationSerializer(serializers.ModelSerializer):
 
 		fields = (
 
+			'id',
 			'first_name',
 			'last_name',
 			'phone_number',
@@ -214,28 +215,15 @@ class BranchManagerInvitationSerializer(serializers.ModelSerializer):
 			'receiver_email',
 			'branch',
 			'used',
-			'password',
-			'password_confirmation'
 
 		)
 
-	def validate(self, attrs):
-
-		password = attrs.get('password', '')
-		password_confirmation = attrs.get('password_confirmation', '')
-
-		if password != password_confirmation:
-
-			raise serializers.ValidationError('Passwords do not match')
-
-		return attrs
-
 	def create(self, validated_data):
 
-		manager = BranchManagerInvitation.objects.create(
+		invitation = BranchManagerInvitation.objects.create(
 				receiver_email=validated_data.get('receiver_email'),
 				branch=validated_data.get('branch'),
 				sender=validated_data.get('sender'),
 			)
 
-		return manager
+		return invitation

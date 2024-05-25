@@ -18,14 +18,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-#from rest_framework import routers
-#from delivery import views
-#from user import views
-
- 
-# create a router object
-#router = routers.DefaultRouter()
-#router.register(r'deliveries',views.CreateDeliveryView, 'delivery')
 
 
 urlpatterns = [
@@ -35,7 +27,9 @@ urlpatterns = [
     path('api/hospital/', include('hospital.urls')),
     path('api/user/', include('user.urls')),
     path('api/laboratory/', include('labs.urls')),
-    path('api/transactions/', include('transactions.urls'))
+    path('api/transactions/', include('transactions.urls')),
+    path('api/user/profile/', include('profiles.urls')),
+    path('__debug__/', include('debug_toolbar.urls'))
 
 ]
 

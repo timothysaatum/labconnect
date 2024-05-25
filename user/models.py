@@ -4,6 +4,7 @@ from django.utils import timezone
 from .managers import ClientManager
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
+#from hospital.models import Hospital
 
 
 
@@ -17,14 +18,10 @@ USER_TYPE = [
 
 class Client(AbstractBaseUser, PermissionsMixin):
 
-	#setting the paramaters
 	first_name = models.CharField(max_length=50)
 	last_name = models.CharField(max_length=50)
-	gender = models.CharField(max_length=7, choices=SEX)
 	phone_number = models.CharField(max_length=13)
 	email = models.EmailField(unique=True)
-	id_number = models.CharField(max_length=50)
-	digital_address = models.CharField(max_length=12, null=True, blank=True)
 	account_type = models.CharField(max_length=100, choices=USER_TYPE)
 	is_admin = models.BooleanField(default=False)
 	is_staff = models.BooleanField(default=False)

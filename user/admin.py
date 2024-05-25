@@ -6,18 +6,28 @@ from .forms import ClientCreationForm, ClientChangeForm
 
 
 
+
 class ClientAdmin(UserAdmin):
     # The forms to add and change user instances
     form = ClientChangeForm
     add_form = ClientCreationForm
 
-    list_display = ('email', 'first_name', 'last_name', 'phone_number', 'is_verified', 'last_login')
+    list_display = (
+        'email', 
+        'first_name', 
+        'last_name', 
+        'phone_number', 
+        'account_type', 
+        'is_verified', 
+        'date_joined', 
+        'last_login'
+    )
     list_editable = ('is_verified', )
-    list_filter = ('email', 'phone_number')
+    list_filter = ('email', 'phone_number', 'account_type')
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'gender', 'phone_number')}),
-        ('Other details', {'fields': ('id_number', 'digital_address', 'account_type')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number')}),
+        ('Other details', {'fields': ('account_type',)}),
         ('Permissions', {'fields': ('is_admin', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important Dates', {'fields': ('date_joined',)})
     )
@@ -25,7 +35,7 @@ class ClientAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide', 'extrapretty'),
-            'fields': ('first_name', 'last_name', 'gender', 'phone_number', 'email', 'id_number', 'digital_address', 
+            'fields': ('first_name', 'last_name', 'phone_number', 'email', 
                 'account_type','password1', 'password2', 'is_admin', 'is_active', 'is_staff'
                 ),
         }),

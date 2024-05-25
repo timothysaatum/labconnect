@@ -35,7 +35,7 @@ urlpatterns = [
 	#creating, reading, updating and deleting Branch
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
 	path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
-	#path('list/', BranchListView.as_view(), name='laboratory-list'),
+	path('list/', BranchListView.as_view(), name='laboratory-list'),
 	path('branch/all/', AllLaboratories.as_view(), name='all-labs'),
 	path('branch/details/<uuid:pk>/', BranchDetailView.as_view(), name='branch-details'),
 	path('branch/update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
@@ -44,8 +44,13 @@ urlpatterns = [
 	#creating, reading, updating and deleting
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
+<<<<<<< HEAD
 	path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
 	path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
+=======
+	path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
+	path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
+>>>>>>> a127b27b62cb185cc2c7a418d8f3485fc8c8969d
 
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),

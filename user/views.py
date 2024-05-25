@@ -1,6 +1,17 @@
-from .serializers import (UserCreationSerializer, LoginSerializer, VerifyEmailSerializer,
-	PasswordResetViewSerializer, SetNewPasswordSerializer, UserSerializer)
-from rest_framework.generics import GenericAPIView, RetrieveAPIView, CreateAPIView
+from .serializers import (
+	UserCreationSerializer, 
+	LoginSerializer, 
+	VerifyEmailSerializer,
+	PasswordResetViewSerializer, 
+	SetNewPasswordSerializer, 
+	UserSerializer
+)
+from rest_framework.generics import (
+	GenericAPIView, 
+	RetrieveAPIView, 
+	CreateAPIView,
+	UpdateAPIView
+)
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
@@ -18,14 +29,50 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.views import APIView
 import jwt
 from datetime import timedelta, datetime
-from labs.models import BranchManagerInvitation, Branch
+from labs.models import (
+	BranchManagerInvitation, 
+	Branch
+)
 from labs.serializers import BranchManagerInvitationSerializer
 from django.contrib.auth.hashers import make_password
+import random
+import string
 
 
 
-
-
+def generate_password(length=12):
+	"""Generates a random password of the given length.
+	Args:
+	length: The desired length of the password (default: 12).
+	Returns:
+	A random password string.
+	"""
+	# Define all character sets to be used in the password
+	lowercase = string.ascii_lowercase
+	uppercase = string.ascii_uppercase
+	digits = string.digits
+	symbols = string.punctuation
+	
+	# Combine all character sets
+	char_sets = [lowercase, uppercase, digits, symbols]
+	
+	# Shuffle the character sets for more randomness
+	random.shuffle(char_sets)
+	
+	# Create a password by selecting characters from each set
+	password = []
+	for char_set in char_sets:
+		password.append(random.choice(char_set))
+		
+		# Ensure the password meets the minimum length requirement
+	while len(password) < length:
+		password.append(random.choice(random.choice(char_sets)))
+		
+	# Shuffle the password characters for additional security
+	random.shuffle(password)
+	# Return the generated password as a string
+	
+	return ''.join(password)
 
 def verify_token(refresh_token):
 
@@ -95,7 +142,6 @@ class VerifyUserEmail(GenericAPIView):
 		code = request.data.get('code')
 		
 		try:
-
 			user_code_obj = OneTimePassword.objects.get(code=code)
 			secret_key = user_code_obj.secrete
 			totp = pyotp.TOTP(secret_key, interval=180, digits=10)
@@ -136,8 +182,6 @@ class VerifyUserEmail(GenericAPIView):
 					status=status.HTTP_404_NOT_FOUND
 
 				)
-
-
 
 
 class LoginUserView(GenericAPIView):
@@ -300,49 +344,70 @@ class FetchUserData(APIView):
 		return Response({'error': 'Token is invalid or you have been logged out.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+def create_branch_manager_user(invitation, user_data):
+	"""
+	Creates a new user with the provided data and sets the account type and staff status.
+	"""
+	branch = Branch.objects.get(id=invitation.branch_id)
+	try:
+		client = Client.objects.get(email=invitation.receiver_email)
+		branch.branch_manager = client
+	except Client.DoesNotExist:
+		serializer = UserCreationSerializer(data=user_data)
+		serializer.is_valid(raise_exception=True)
+		client = serializer.save()
+		client.account_type = 'Laboratory'
+		client.is_staff = True
+		branch.branch_manager = client
+		client.save()
+
+	branch.save()
+	
+	invitation.used = True
+	invitation.save()
+	
+	return client
+
+
+class BranchManagerAcceptView(UpdateAPIView):
+	
+	def get_queryset(self):
+		"""
+		Retrieves the BranchManagerInvitation object based on pk and invitation_code.
+		Raises DoesNotExist if not found.
+		"""
+		pk, invitation_code = self.kwargs.get('pk'), self.kwargs.get('invitation_code')
+
+		try:
+			return BranchManagerInvitation.objects.get(pk=pk, invitation_code=invitation_code)
+		except DoesNotExist:
+			raise Response({'error': 'Invalid invitation'}, status=status.HTTP_400_BAD_REQUEST)
+			
+	def put(self, request, *args, **kwargs):
+		invitation = self.get_queryset()
+		if invitation.used:
+			return Response({'error': 'Invitation already used'}, status=status.HTTP_400_BAD_REQUEST)
+
+		pwd = generate_password()
+		print(pwd)
+		data = {
+			'email':invitation.receiver_email,
+			'first_name':request.data['first_name'],
+			'last_name':request.data['last_name'],
+			'phone_number':request.data['phone_number'],
+			'account_type':'Laboratory',
+			'password':pwd,
+			'password_confirmation':pwd
+		}			
+		user = create_branch_manager_user(invitation, data)
+		return Response(
+			{'message': f'Invitation accepted, you are now a branch manager at {invitation.branch}'}, 
+      		status=status.HTTP_200_OK
+    	)
 
 class InviteBranchManagerView(CreateAPIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = BranchManagerInvitationSerializer
 
-	def post(self, request):
-
-		return self.create(request)
-
 	def perform_create(self, serializer):
 		serializer.save(sender=self.request.user)
-
-
-
-class InvitationAcceptView(APIView):
-	serializer_class = BranchManagerInvitationSerializer
-
-	def post(self, request, *args, **kwargs):
-		serializer = self.serializer_class(data=request.data)
-		serializer.is_valid(raise_exception=True)
-		try:
-
-			invitation = BranchManagerInvitation.objects.get(invitation_code=self.kwargs.get('invitation_code'), used=False)
-
-		except BranchManagerInvitation.DoesNotExist:
-
-			return Response({'error': 'Invalid invitation code'}, status=status.HTTP_400_BAD_REQUEST)
-
-		invitation.used = True
-		invitation.save()
-
-		manager = Client.objects.get_or_create(
-				email=serializer.data['receiver_email'], 
-				is_staff=True, 
-				first_name=request.data.get('first_name'),
-				last_name=request.data.get('last_name'),
-				phone_number=request.data.get('phone_number'),
-				account_type='Laboratory',
-				password=request.data.get('password')
-			)
-
-		#if created:
-
-		#	manager.set_password(make_password(request.data.get('password')))
-		#	manager.save()
-		return Response('success')
