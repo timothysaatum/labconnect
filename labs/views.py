@@ -19,16 +19,16 @@ from .serializers import (
 	LaboratorySerializer, 
 	TestSerializer, 
 	TestResultSerializer, 
-	BranchSerializer,
-	LaboratorySampleSerializer
+	BranchSerializer
 )
-from .models import Test, Branch, Laboratory, LaboratorySample
+from .models import Test, Branch, Laboratory
 from .results import TestResult
-from hospital.models import Sample
-from hospital.serializers import SampleSerializer
+from sample.models import Sample
+from sample.serializers import SampleSerializer
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
+from sample.serializers import SampleSerializer
 
 
 
@@ -81,6 +81,7 @@ def get_user_branches(user):
 		)
 
 
+
 class CreateLaboratoryView(PermissionMixin, CreateAPIView):
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = LaboratorySerializer
@@ -97,11 +98,13 @@ class CreateLaboratoryView(PermissionMixin, CreateAPIView):
 		serializer.save(created_by=self.request.user)
 
 
+
 class LaboratoryUserListVIew(PermissionMixin, ListAPIView):
 	serializer_class = LaboratorySerializer
 
 	def get_queryset(self):
 		return Laboratory.objects.filter(created_by=self.request.user)
+
 
 
 class CreateBranchView(PermissionMixin, CreateAPIView):
@@ -117,8 +120,8 @@ class CreateBranchView(PermissionMixin, CreateAPIView):
 
 	def perform_create(self, serializer):
 		lab = Laboratory.objects.get(created_by=self.request.user)
-		print(lab)
 		serializer.save(branch_manager=self.request.user, laboratory=lab)
+
 
 
 class BranchListView(PermissionMixin, ListAPIView):
@@ -130,6 +133,7 @@ class BranchListView(PermissionMixin, ListAPIView):
 			Q(laboratory__created_by=self.request.user) |
 			Q(branch_manager=self.request.user)
 		)
+
 
 
 class BranchDetailView(RetrieveAPIView):
@@ -150,6 +154,7 @@ class BranchDetailView(RetrieveAPIView):
 			return Response({'error': 'Not found'}, status=HTTP_404_NOT_FOUND)
 
 
+
 class BranchUpdateView(PermissionMixin, UpdateAPIView):
 	serializer_class = BranchSerializer
 
@@ -167,6 +172,7 @@ class BranchUpdateView(PermissionMixin, UpdateAPIView):
 		return self.update(request, pk, format=None)
 
 
+
 class BranchDeleteView(PermissionMixin, DestroyAPIView):
 
 	def get_queryset(self):
@@ -179,6 +185,7 @@ class BranchDeleteView(PermissionMixin, DestroyAPIView):
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
 		return self.destroy(request, pk, format=None)
+
 
 
 class CreateTestView(PermissionMixin, CreateAPIView):
@@ -199,6 +206,7 @@ class CreateTestView(PermissionMixin, CreateAPIView):
 		test.branch.add(*branches)
 
 
+
 class TestListView(ListAPIView):
 	serializer_class = TestSerializer
 
@@ -208,6 +216,7 @@ class TestListView(ListAPIView):
 			Q(branch__id=self.kwargs.get('pk')) | 
 			Q(branch__laboratory__id=self.kwargs.get('pk'))
 		)
+
 
 
 class TestUpdateView(PermissionMixin, UpdateAPIView):
@@ -237,6 +246,7 @@ class TestUpdateView(PermissionMixin, UpdateAPIView):
 		test.branch.add(*branch)
 
 
+
 class TestDeleteView(PermissionMixin, DestroyAPIView):
 
 	def get_queryset(self):
@@ -250,6 +260,7 @@ class TestDeleteView(PermissionMixin, DestroyAPIView):
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
 		return self.destroy(request, pk, format=None)
+
 
 
 class CreateTestResultView(PermissionMixin, CreateAPIView):
@@ -269,6 +280,7 @@ class CreateTestResultView(PermissionMixin, CreateAPIView):
 		serializer.save(send_by=self.request.user)
 
 
+
 class TestResultListView(BranchListView):
 	serializer_class = TestResultSerializer
 
@@ -277,6 +289,7 @@ class TestResultListView(BranchListView):
 			Q(branch__branch_manager=self.request.user) | 
 			Q(branch__laboratory__created=self.request.user)
 		)
+
 
 
 class TestResultDetailView(RetrieveAPIView):
@@ -301,6 +314,7 @@ class TestResultDetailView(RetrieveAPIView):
 		return Response(serialized_data.data)
 
 
+
 class TestResultUpdateView(PermissionMixin, UpdateAPIView):
 	serializer_class = TestResultSerializer
 
@@ -314,6 +328,7 @@ class TestResultUpdateView(PermissionMixin, UpdateAPIView):
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
 
 		return self.update(request, pk, format=None)
+
 
 
 class TestResultDeleteView(PermissionMixin, DestroyAPIView):
@@ -330,9 +345,10 @@ class TestResultDeleteView(PermissionMixin, DestroyAPIView):
 		return self.destroy(request, pk, format=None)
 
 
+
 class LaboratorySampleSerializerView(PermissionMixin, CreateAPIView):
 
-	serializer_class = LaboratorySampleSerializer
+	serializer_class = SampleSerializer
 	parser_classes = (MultiPartParser, FormParser)
 
 	def post(self, request):
@@ -340,12 +356,13 @@ class LaboratorySampleSerializerView(PermissionMixin, CreateAPIView):
 		if not self.has_laboratory_permission():
 
 			return Response({'error': 'You are not authorized to perform this action'}, status=HTTP_401_UNAUTHORIZED)
-		
+
 		return self.create(request)
 
 	def perform_create(self, serializer):
 
-		sample = serializer.save(send_by=self.request.user)
+		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
+		sample = serializer.save(referring_facility=facility)
 		tests = self.request.data.getlist('tests')
 
 		sample.tests.add(*tests)
@@ -354,7 +371,7 @@ class LaboratorySampleSerializerView(PermissionMixin, CreateAPIView):
 
 class LaboratorySampleUpdateView(PermissionMixin, UpdateAPIView):
 	'''Update details of a specific sample.'''
-	serializer_class = LaboratorySampleSerializer
+	serializer_class = SampleSerializer
 
 	def put(self, request, pk, format=None):
 
@@ -393,15 +410,15 @@ class HospitalSamplesView(PermissionMixin, ListAPIView):
 
 
 class LaboratorySampleList(PermissionMixin, ListAPIView):
-	serializer_class = LaboratorySampleSerializer
+	serializer_class = SampleSerializer
 
 	def get_queryset(self):
 
 		try:
-			return LaboratorySample.objects.filter(
+			return Sample.objects.filter(
 				Q(to_lab__branch_manager=self.request.user) | 
 				Q(to_lab__laboratory__created_by=self.request.user)
 			)
 
-		except LaboratorySample.DoesNotExist:
+		except Sample.DoesNotExist:
 			return Response({'error': 'No sample sent.'}, status=HTTP_404_NOT_FOUND)

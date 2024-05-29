@@ -17,7 +17,7 @@ from .views import (
 	TestResultUpdateView,
     TestResultDeleteView, 
     LaboratorySampleList,
-    AllLaboratories, 
+    AllLaboratories,
     LaboratorySampleSerializerView,
     LaboratorySampleUpdateView,
     LaboratorySampleDeleteView,
@@ -44,13 +44,13 @@ urlpatterns = [
 	#creating, reading, updating and deleting
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
-<<<<<<< HEAD
+
 	path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
 	path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
-=======
-	path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
-	path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
->>>>>>> a127b27b62cb185cc2c7a418d8f3485fc8c8969d
+
+	#path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
+	#path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
+
 
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
@@ -63,10 +63,10 @@ urlpatterns = [
 	path('samples-list/', LaboratorySampleList.as_view(), name='samples-list'),
 
 	#url endpoints for creating, updating and deletion of laboratory samples
-	path('lab/sample/add', LaboratorySampleSerializerView.as_view(), name='add-sample'),
-    path('lab/sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
-    path('lab/sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample'),
+	path('sample/add/', LaboratorySampleSerializerView.as_view(), name='add-sample'),
+    path('sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
+    path('sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample'),
 
     #the endpoint that handles test sample sent to the laboratory.
-    path('lab/test-requests/samples/', HospitalSamplesView.as_view(), name='requested-tests')
+    path('test-requests/samples/', HospitalSamplesView.as_view(), name='requested-tests')
 ]

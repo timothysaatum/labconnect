@@ -1,9 +1,11 @@
-from .serializers import (HospitalSerializer, SampleSerializer)
+from .serializers import HospitalSerializer
+from sample.serializers import  SampleSerializer
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Sample, Hospital
+from .models import Hospital
+from sample.models import Sample
 from labs.results import TestResult
 from labs.serializers import TestResultSerializer
 
@@ -18,6 +20,7 @@ class SamplePermissions(permissions.BasePermission):
 		return request.user.is_authenticated and request.user.account_type == 'Hospital'
 
 
+
 class SampleMixin(generics.GenericAPIView):
 	'''Mixins class for common logic in sample views'''
 
@@ -25,8 +28,10 @@ class SampleMixin(generics.GenericAPIView):
 	serializer_class = SampleSerializer
 
 	def get_queryset(self):
+		facility_id = Hospital.objects.get(created_by=self.request.user)
+		return Sample.objects.filter(referring_facility_id=facility_id)
 
-		return Sample.objects.filter(hospital__administrator=self.request.user)
+
 
 class AddHospitalView(SampleMixin, generics.CreateAPIView):
 	serializer_class = HospitalSerializer
@@ -35,9 +40,9 @@ class AddHospitalView(SampleMixin, generics.CreateAPIView):
 
 		return self.create(request)
 
-
 	def perform_create(self, serializer):
-		serializer.save(administrator=self.request.user)
+
+		serializer.save(created_by=self.request.user)
 
 
 class UpdateHospitalView(SampleMixin, generics.UpdateAPIView):
@@ -45,17 +50,18 @@ class UpdateHospitalView(SampleMixin, generics.UpdateAPIView):
 
 	def get_queryset(self):
 
-		return Hospital.objects.filter(administrator=self.request.user)
+		return Hospital.objects.filter(created_by=self.request.user)
 
 	def put(self, request, pk):
 		return super().put(request, pk)
+
 
 
 class DeleteHospitalView(SampleMixin, generics.DestroyAPIView):
 
 	def get_queryset(self):
 
-		return Hospital.objects.filter(administrator=self.request.user)
+		return Hospital.objects.filter(created_by=self.request.user)
 
 	def delete(self, request, pk, format=None):
 
@@ -70,7 +76,8 @@ class HospitalSerializerView(generics.ListAPIView):
 	filter_backends = [filters.SearchFilter]
 
 	def get_queryset(self):
-		return Hospital.objects.filter(administrator=self.request.user)
+		return Hospital.objects.filter(created_by=self.request.user)
+
 
 
 class SampleSerializerView(SampleMixin, generics.CreateAPIView):
@@ -85,15 +92,18 @@ class SampleSerializerView(SampleMixin, generics.CreateAPIView):
 
 	def perform_create(self, serializer):
 
-		sample = serializer.save(hospital__administrator=self.request.user)
+		facility = Hospital.objects.get(created_by=self.request.user)
+		sample = serializer.save(referring_facility=facility)
 		tests = self.request.data.getlist('tests')
 
 		sample.tests.add(*tests)
 
 
+
 class SampleListView(SampleMixin, generics.ListAPIView):
 	'''List view for samples created by the authenticated user.'''
 	filter_backends = [filters.SearchFilter]
+
 
 
 class SampleDetailView(SampleMixin, generics.RetrieveAPIView):
@@ -106,6 +116,7 @@ class SampleDetailView(SampleMixin, generics.RetrieveAPIView):
 
 		except Sample.DoesNotExist:
 			raise permissions.DoesNotExist()
+
 
 
 class SampleUpdateView(SampleMixin, generics.UpdateAPIView):
@@ -122,6 +133,7 @@ class SampleUpdateView(SampleMixin, generics.UpdateAPIView):
 		sample.tests.add(*tests)
 
 
+
 class SampleDeleteView(SampleMixin, generics.DestroyAPIView):
 	'''Delete a specific sample.'''
 
@@ -135,6 +147,7 @@ class SampleDeleteView(SampleMixin, generics.DestroyAPIView):
 		return super().delete(request, pk, format=None)
 
 
+
 class SampleResultList(generics.ListAPIView):
 	'''List view for Test Results of samples created by the user'''
 
@@ -143,4 +156,5 @@ class SampleResultList(generics.ListAPIView):
 
 	def get_queryset(self):
 
-		return TestResult.objects.filter(sample__hospital__administrator=self.request.user)
+		facility_id = Hospital.objects.get(created_by=self.request.user).id
+		return TestResult.objects.filter(sample__referring_facility_id=facility_id)

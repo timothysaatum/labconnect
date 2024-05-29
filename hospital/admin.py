@@ -1,12 +1,13 @@
 from django.contrib import admin
-from .models import Hospital, Sample
+from .models import Hospital
+from sample.models import Sample
 
 
 class HospitalAdmin(admin.ModelAdmin):
 	list_display = (
-		'administrator',
+		'created_by',
 		'name', 
-		'region_of_location', 
+		'region', 
 		'postal_address', 
 		'digital_address', 
 		'phone', 
@@ -17,18 +18,4 @@ class HospitalAdmin(admin.ModelAdmin):
 	)
 
 
-class SampleAdmin(admin.ModelAdmin):
-	list_display = (
-		'name_of_patient', 
-		'sample_type', 
-		'sender_phone', 
-		'hospital', 
-		'delivery', 
-		'delivery_phone', 
-		'is_paid'
-	)
-
-
-
 admin.site.register(Hospital, HospitalAdmin)
-admin.site.register(Sample, SampleAdmin)

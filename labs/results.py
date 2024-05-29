@@ -1,5 +1,6 @@
 from .models import Test, Branch
-from hospital.models import Hospital, Sample
+from hospital.models import Hospital
+from sample.models import Sample
 from django.contrib.auth import get_user_model
 from django.db import models
 
