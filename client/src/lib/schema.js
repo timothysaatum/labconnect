@@ -7,11 +7,11 @@ export const SignupSchema = z
     account_type: z.string().min(1, "Please select an account type"),
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
-    id_number: z.string().min(1, "Id is required"),
-    email: z.string().email("Invalid email address"),
+    email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Invalid email address"),
     phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
-    gender: z.string().min(1, "please select a gender"),
-    digital_address: z.string().min(1, "Digital address is required"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     password_confirmation: z
       .string()
@@ -106,6 +106,27 @@ export const AddTestSchema = z.object({
   turn_around_time: z.string().min(1, "Turn around time is required"),
   unit: z.string().min(1, "unit for turn around time is required"),
   patient_preparation: z.string(),
+  sample_type: z.array(multiSelectSchema).min(1),
+});
+
+//addBranch schema
+export const AddBranchSchema = z.object({
+  branch_name: z.string().min(1, "Branch name is required"),
+  branch_email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Invalid email address"),
+  branch_phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
+  digital_address: z.string().min(1, "Digital address is required"),
+  location: z.string().min(1, "Location is required"),
+  region: z.string().min(1, "Region is required"),
+});
+export const ManagerInviteSchema = z.object({
+  receiver_email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Invalid email address"),
+  branch: z.string().min(1, "Branch is required"),
 });
 
 //create lab schema

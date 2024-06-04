@@ -30,12 +30,12 @@ import {
 } from "../ui/select";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { PhoneInput } from "../ui/phone-input";
-import AddManager from "./addManager";
-import { useFetchUserLab } from "@/api/queries";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AddBranchSchema } from "@/lib/schema";
 
 export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -163,6 +163,7 @@ const AddBranch = () => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const form = useForm({
+    resolver: zodResolver(AddBranchSchema),
     defaultValues: {
       branch_name: "",
       branch_email: "",
@@ -220,15 +221,17 @@ const AddBranch = () => {
       <DrawerContent className="px-2">
         <div className="max-h-[90vh] overflow-auto ">
           <DrawerHeader className="sticky top-0 bg-background">
-            <div className="flex justify-between gap-2 py-2">
-              <DrawerTitle>Add new Branch</DrawerTitle>
-              <div className="flex items-center space-x-2 mb-2">
+            <div className="flex flex-col items-start gap-2 sm:flex-row sm:justify-between">
+              <DrawerTitle>create a new Branch</DrawerTitle>
+              <div className="flex items-center space-x-2 ">
                 <Checkbox
                   checked={keepOpen}
                   onCheckedChange={setKeepOpen}
                   id="check"
                 />
-                <Label htmlFor="check">Keep open after adding branch</Label>
+                <Label htmlFor="check" className="text-xs">
+                  Keep open after adding branch
+                </Label>
               </div>
             </div>
           </DrawerHeader>
