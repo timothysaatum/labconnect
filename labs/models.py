@@ -1,12 +1,12 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator, validate_email
-user = get_user_model()
 from delivery.models import Delivery
 import uuid
-from django.utils import timezone
+from django.core.exceptions import ValidationError
+from hospital.models import Facility
 
-
+user = get_user_model()
 
 class BaseModel(models.Model):
 
@@ -26,57 +26,34 @@ class Laboratory(BaseModel):
 	name(str): the name of the laboratory
 	'''
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_column='General manager', db_index=True)
-	laboratory_name = models.CharField(max_length=200, db_index=True, validators=[MinLengthValidator(10), MaxLengthValidator(200)])
+	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
+	name = models.CharField(max_length=200)
+	postal_address = models.CharField(max_length=255)
 	main_phone = models.CharField(max_length=15)
 	main_email = models.EmailField()
+	website = models.URLField(blank=True, null=True)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 	logo = models.ImageField(upload_to='labs/logo', default='logo.png')
 	herfra_id = models.CharField('HERFRA ID', max_length=100)
-	website = models.URLField(null=True, blank=True)
 	description = models.TextField()
 
 	def __str__(self) -> str:
-		return self.laboratory_name
+		return self.name
 
 	class Meta:
 		verbose_name_plural = 'Laboratories'
-		unique_together = ('laboratory_name', )
+		unique_together = ('herfra_id', )
 
 
-REGIONS = [
 
-	('Northern', 'Northern'),
-	('Upper West', 'Upper West'),
-	('Upper East', 'Upper East'),
-	('Savannah', 'Savannah'),
-	('Bono', 'Bono'),
-	('Greater Accra', 'Greater Accra'),
-	('Western', 'Western'),
-	('Central', 'Central'),
-	('Volta', 'Volta'),
-	('North East', 'North East'),
-	('Bono East', 'Bono East'),
-	('Oti', 'Oti'),
-	('Ashanti', 'Ashanti'),
-
-]
-
-
-class Branch(BaseModel):
+class Branch(Facility):
 	'''
 	A brach: is a local set up of a particular laboratory that carries out test within that enclave.
 	Branch_name: refers to the name of a branch.
 	'''
-
-	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
 	branch_manager = models.ForeignKey(user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True)
-	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')
-	branch_name = models.CharField(max_length=255)
-	branch_phone = models.CharField(max_length=15)
-	branch_email = models.CharField(max_length=150)
-	location = models.CharField(max_length=255)
-	digital_address = models.CharField(max_length=15)
-	region = models.CharField(choices=REGIONS, max_length=100)
+	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')	
 
 	class Meta:
 
@@ -84,9 +61,14 @@ class Branch(BaseModel):
 
 	def __str__(self) -> str:
 
-		return self.branch_name
+		return self.name
 
 class SampleType(models.Model):
+
+	'''
+	Sample:Is the various mdeical samples that can be used to perform a particular test. This is require
+	to avoid sample mismatched when a test is being requested.
+	'''
 	sample_name = models.CharField(max_length=100)
 
 	def __str__(self):
@@ -119,42 +101,7 @@ class Test(BaseModel):
 
 	def laboratory(self) -> str:
 
-		return self.name
-
-
-
-class LaboratorySample(BaseModel):
-
-	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	send_by = models.ForeignKey(user, on_delete=models.CASCADE)
-	name_of_patient = models.CharField(max_length=200)
-	patient_age = models.DateField()
-	patient_sex = models.CharField(max_length=20)
-	sample_type = models.CharField(max_length=200)
-	delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, null=True, blank=True, db_index=True)
-	to_lab = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='lab_samples', db_index=True)
-	tests = models.ManyToManyField(Test, related_name='tests_requested')
-	from_lab = models.ForeignKey(Branch, on_delete=models.CASCADE, db_index=True)
-	brief_description = models.TextField(null=True, blank=True)
-	attachment = models.FileField(upload_to='sample/attachments', blank=True, null=True)
-	is_rejected = models.BooleanField(default=False)
-	rejection_reason = models.TextField(blank=True, null=True)
-	is_paid = models.BooleanField(default=False)
-	is_received_by_delivery = models.BooleanField(default=False)
-	is_delivered_to_lab = models.BooleanField(default=False)
-	is_accessed_by_lab = models.BooleanField(default=False)
-
-	def __str__(self) -> str:
-		return self.sample_type
-
-	def sender_phone(self) -> str:
-		return self.from_lab.branch_phone
-
-	def dispatched_time(self):
-		return self.date_added
-
-	def email(self):
-		return self.from_lab.branch_email
+		return [branch for branch in self.branch.all()]
 
 
 

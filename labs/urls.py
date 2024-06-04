@@ -17,11 +17,12 @@ from .views import (
 	TestResultUpdateView,
     TestResultDeleteView, 
     LaboratorySampleList,
-    AllLaboratories, 
+    AllLaboratories,
     LaboratorySampleSerializerView,
     LaboratorySampleUpdateView,
     LaboratorySampleDeleteView,
-    HospitalSamplesView
+    UpdateLaboratoryDetails,
+    DeleteLaboratory
 )
 
 
@@ -31,6 +32,8 @@ urlpatterns = [
 	#creating, reading, updating and deleting laboratory
 	path('create/', CreateLaboratoryView.as_view(), name='laboratory'),
 	path('user-laboratory/', LaboratoryUserListVIew.as_view(), name='user-lab'),
+	path('update/<uuid:pk>/', UpdateLaboratoryDetails.as_view(), name='lab-update'),
+	path('delete/<uuid:pk>/', DeleteLaboratory.as_view(), name='lab-delete'),
 
 	#creating, reading, updating and deleting Branch
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
@@ -44,8 +47,13 @@ urlpatterns = [
 	#creating, reading, updating and deleting
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
+
+	#path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
+	#path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
+
 	path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
 	path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
+
 
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
@@ -58,10 +66,7 @@ urlpatterns = [
 	path('samples-list/', LaboratorySampleList.as_view(), name='samples-list'),
 
 	#url endpoints for creating, updating and deletion of laboratory samples
-	path('lab/sample/add', LaboratorySampleSerializerView.as_view(), name='add-sample'),
-    path('lab/sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
-    path('lab/sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample'),
-
-    #the endpoint that handles test sample sent to the laboratory.
-    path('lab/test-requests/samples/', HospitalSamplesView.as_view(), name='requested-tests')
+	path('sample/add/', LaboratorySampleSerializerView.as_view(), name='add-sample'),
+    path('sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
+    path('sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample')
 ]

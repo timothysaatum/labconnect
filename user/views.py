@@ -74,6 +74,8 @@ def generate_password(length=12):
 	
 	return ''.join(password)
 
+
+
 def verify_token(refresh_token):
 
 	if not 'refresh_token':
@@ -124,6 +126,7 @@ class CheckRefreshToken(APIView):
 			}, status=status.HTTP_200_OK)
 
 
+
 class CreateUserView(CreateAPIView):
 
 	serializer_class = UserCreationSerializer
@@ -144,6 +147,7 @@ class UpdateUserAccount(UpdateAPIView):
 		return super().put(request, pk)
 
 
+
 class DeleteUserAccount(UpdateAPIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = UserCreationSerializer
@@ -153,6 +157,7 @@ class DeleteUserAccount(UpdateAPIView):
 
 	def delete(self, request, pk):
 		return super().delete(request, pk)
+
 
 
 class VerifyUserEmail(GenericAPIView):

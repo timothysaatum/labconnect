@@ -19,15 +19,6 @@ class BaseModel(models.Model):
 		abstract = True
 
 
-class HealthWorkerProfile(BaseModel):
-
-	affiliated_facilities = models.ManyToManyField(Hospital, related_name='facilities')
-	specialty = models.CharField(max_length=255)
-
-	def __str__(self):
-		return str(self.client)
-
-
 class LabUserProfile(BaseModel):
 	
 	def __str__(self):

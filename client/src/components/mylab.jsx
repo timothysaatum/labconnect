@@ -169,10 +169,10 @@ export default function MyLab() {
         userbranches?.data.map((branch) => {
           return {
             id: branch.id,
-            branch_name: branch.branch_name,
+            branch_name: branch.name,
             branch_manager: branch.branch_manager,
-            branch_phone: branch.branch_phone,
-            branch_email: branch.branch_email,
+            branch_phone: branch.phone,
+            branch_email: branch.email,
           };
         })
       );

@@ -42,7 +42,7 @@ class UpdateSubscriptionView(UpdateAPIView):
 				serializer.save()
 				return Response({'message': 'Subscription Updated'},status=status.HTTP_201_CREATED)
 
-			return Response({'error': 'You are no authorized to edit subscription details!'},
+			return Response({'error': 'Unauthorized action.'},
 							status=status.HTTP_401_UNAUTHORIZED)
 
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

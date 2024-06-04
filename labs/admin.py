@@ -3,8 +3,8 @@ from .models import (
 		Test,
 		Laboratory, 
 		Branch, 
-		LaboratorySample,
-		BranchManagerInvitation
+		BranchManagerInvitation,
+		SampleType
 	)
 from .results import TestResult
 import csv
@@ -46,11 +46,16 @@ class TestAdmin(admin.ModelAdmin):
 		'date_modified'
 	)
 	list_display_links = ('name',)
-	#list_editable = ('name', 'price', 'discount_price')
 	ordering = ('id',)
 	list_per_page = 10
 	actions = [download_csv]
 
+
+class SampleTypeAdmin(admin.ModelAdmin):
+	list_display = (
+		'id', 
+		'sample_name', 
+	)
 
 
 class LaboratoryAdmin(admin.ModelAdmin):
@@ -58,29 +63,30 @@ class LaboratoryAdmin(admin.ModelAdmin):
 	list_display = (
 		'id', 
 		'created_by', 
-		'laboratory_name',
+		'name',
 		'branches', 
 		'main_phone', 
 		'main_email', 
 		'herfra_id', 
 		'website', 
-		'date_added', 
+		'date_created', 
 		'date_modified'
 	)
 
 	list_display_links = (
 		'created_by', 
-		'laboratory_name'
+		'name'
 	)
 	ordering = ('id',)
 	list_per_page = 10
 
 	def branches(self, obj):
-		return ", ".join([branch.branch_name for branch in obj.branches.all()])
+		return ", ".join([branch.name for branch in obj.branches.all()])
 
 
 
 class TestResultAdmin(admin.ModelAdmin):
+
 	list_display = (
 		'id', 
 		'send_by', 
@@ -93,37 +99,24 @@ class TestResultAdmin(admin.ModelAdmin):
 		'date_added', 
 		'date_modified'
 	)
+
 	list_editable = (
 		'is_verified', 
 		'is_received'
 	)
+
 	list_per_page = 10
 
 
 class BranchAdmin(admin.ModelAdmin):
 	list_display = (
 		'id', 
-		'branch_name', 
+		'name', 
 		'branch_manager', 
-		'location', 
+		'town', 
 		'region', 
 		'laboratory',
-		'date_added', 
-		'date_modified'
-	)
-
-
-class LaboratorySampleAdmin(admin.ModelAdmin):
-	list_display = (
-		'send_by', 
-		'name_of_patient',
-		'patient_age',
-		'sample_type',
-		'from_lab',
-		'to_lab',
-		'delivery',
-		'is_paid',
-		'date_added',
+		'date_created', 
 		'date_modified'
 	)
 
@@ -133,7 +126,7 @@ class BranchManagerInvitationAdmin(admin.ModelAdmin):
     list_display = ('invitation_code', 'sender', 'receiver_email', 'branch', 'used')
 
 
-admin.site.register(LaboratorySample, LaboratorySampleAdmin)
+admin.site.register(SampleType, SampleTypeAdmin)
 admin.site.register(Test, TestAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(BranchManagerInvitation, BranchManagerInvitationAdmin)

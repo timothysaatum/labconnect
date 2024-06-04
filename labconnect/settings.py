@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_filters',
     'debug_toolbar',
     'profiles',
+    'sample',
     'user',
     'hospital',
     'labs',
