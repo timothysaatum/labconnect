@@ -1,14 +1,7 @@
 from .models import Delivery, PriceModel
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import (
-	CreateAPIView,
-	UpdateAPIView,
-	ListAPIView,
-	RetrieveAPIView,
-	DestroyAPIView, 
-	GenericAPIView
-)
+from rest_framework import generics
 from .serializers import DeliverySerializer, PriceModelSerializer
 from rest_framework.permissions import IsAuthenticated, BasePermission
 
@@ -20,7 +13,7 @@ class DeliveryPermissionMixin(BasePermission):
 		return request.user.is_authenticated and request.user.account_type == 'Delivery'
 
 
-class DeliveryMixin(GenericAPIView):
+class DeliveryMixin(generics.GenericAPIView):
 	'''Mixins class for common logic in sample views'''
 
 	permission_classes = [DeliveryPermissionMixin]
@@ -30,7 +23,7 @@ class DeliveryMixin(GenericAPIView):
 		return Delivery.objects.filter(created_by=self.request.user)
 
 
-class CreateDeliveryView(DeliveryMixin, CreateAPIView):
+class CreateDeliveryView(DeliveryMixin, generics.CreateAPIView):
 
 	def post(self, request):
 		
@@ -40,11 +33,11 @@ class CreateDeliveryView(DeliveryMixin, CreateAPIView):
 		serializer.save(created_by=self.request.user)
 
 
-class DeliveryListView(DeliveryMixin, ListAPIView):
+class DeliveryListView(DeliveryMixin, generics.ListAPIView):
 	pass
 
 
-class DeliveryDetailView(RetrieveAPIView):
+class DeliveryDetailView(generics.RetrieveAPIView):
 	serializer_class = DeliverySerializer
 
 	def get_queryset(self, pk):
@@ -62,21 +55,21 @@ class DeliveryDetailView(RetrieveAPIView):
 			return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class DeliveryUpdateView(DeliveryMixin, UpdateAPIView):
+class DeliveryUpdateView(DeliveryMixin, generics.UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 		
 		return super().put(request, pk, format=None)
 
 
-class DeliveryDeleteView(DeliveryMixin, DestroyAPIView):
+class DeliveryDeleteView(DeliveryMixin, generics.DestroyAPIView):
 
 	def delete(self, request, pk, format=None):
 
 		return super().delete(request, pk, format=None)
 		
 
-class AllDelivery(ListAPIView):
+class AllDelivery(generics.ListAPIView):
 
 	serializer_class = DeliverySerializer
 
@@ -94,7 +87,7 @@ class AllDelivery(ListAPIView):
 			return Response({'error': 'Not found'},status=status.HTTP_404_NOT_FOUND)
 
 
-class CreatePriceModelView(DeliveryMixin, CreateAPIView):
+class CreatePriceModelView(DeliveryMixin, generics.CreateAPIView):
 	serializer_class = PriceModelSerializer
 
 	def post(self, request):
@@ -102,7 +95,7 @@ class CreatePriceModelView(DeliveryMixin, CreateAPIView):
 		return self.create(request)
 
 
-class UpdatePriceModelView(DeliveryMixin, UpdateAPIView):
+class UpdatePriceModelView(DeliveryMixin, generics.UpdateAPIView):
 	serializer_class = PriceModelSerializer
 
 	def get_queryset(self):
@@ -113,7 +106,7 @@ class UpdatePriceModelView(DeliveryMixin, UpdateAPIView):
 		return super().put(request, pk, format=None)
 
 
-class DeletePriceModelView(DeliveryMixin, DestroyAPIView):
+class DeletePriceModelView(DeliveryMixin, generics.DestroyAPIView):
 
 	def get_queryset(self):
 		return PriceModel.objects.filter(pk=self.kwargs.get('pk'))
@@ -123,7 +116,7 @@ class DeletePriceModelView(DeliveryMixin, DestroyAPIView):
 		return super().delete(request, pk, format=None)
 
 
-class PriceModels(ListAPIView):
+class PriceModels(generics.ListAPIView):
 
 	serializer_class = PriceModelSerializer
 

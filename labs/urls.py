@@ -54,7 +54,6 @@ urlpatterns = [
 	path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
 	path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
 
-
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
 	path('test/result/list/', TestResultListView.as_view(), name='results-list'),
@@ -69,4 +68,5 @@ urlpatterns = [
 	path('sample/add/', LaboratorySampleSerializerView.as_view(), name='add-sample'),
     path('sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
     path('sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample')
+
 ]

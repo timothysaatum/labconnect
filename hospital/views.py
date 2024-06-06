@@ -115,7 +115,7 @@ class SampleDetailView(HospitalMixin, generics.RetrieveAPIView):
 			return self.get_queryset().get(pk=self.kwargs['pk'])
 
 		except Sample.DoesNotExist:
-			raise permissions.DoesNotExist()
+			return Response('Sample not found')
 
 
 
@@ -123,7 +123,7 @@ class SampleUpdateView(HospitalMixin, generics.UpdateAPIView):
 	'''Update details of a specific sample.'''
 
 	def put(self, request, pk, format=None):
-
+		sample = self.get_queryset()
 		if sample.is_accessed_by_lab:
 			return Response('Cannot update sample')
 		

@@ -38,6 +38,6 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
 
-admin.site.site_header  =  "LabConnect Management"  
-admin.site.site_title  =  "LabConnect Administration"
-admin.site.index_title  =  "LabConnect Administration"
+admin.site.site_header  =  "LabConnect Admin"  
+admin.site.site_title  =  "LabConnect Admin"
+admin.site.index_title  =  "LabConnect Admin"

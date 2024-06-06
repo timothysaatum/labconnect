@@ -15,7 +15,6 @@ from .views import (
 		UpdateUserAccount,
 		DeleteUserAccount
 	)
-from rest_framework_simplejwt import views
 
 
 app_name='user'

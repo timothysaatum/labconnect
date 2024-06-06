@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator, validate_email
-from delivery.models import Delivery
 import uuid
-from django.core.exceptions import ValidationError
 from hospital.models import Facility
 
 user = get_user_model()
@@ -99,7 +97,7 @@ class Test(BaseModel):
 
 		return self.name
 
-	def laboratory(self) -> str:
+	def laboratory(self) -> list:
 
 		return [branch for branch in self.branch.all()]
 

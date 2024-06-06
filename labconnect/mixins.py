@@ -1,12 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-#from labconnect.mixin import Facility
 import uuid
 
 
-
-
-user = get_user_model()
 
 
 REGIONS = [
@@ -40,31 +35,8 @@ class Facility(models.Model):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 
+	class Meta:
+		abstract = False
+
 	def __str__(self):
 		return self.name
-
-
-
-HOSPITAL_TYPES = [
-
-	('Public', 'Public'),
-	('Private', 'Private')
-]
-
-class Hospital(Facility):
-
-	'''
-	Model: Representing a hospital
-	'''
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
-	hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
-	account_number = models.CharField(max_length=100)
-	website = models.URLField(blank=True, null=True)
-	referral_percent_discount = models.CharField(max_length=5)
-	
-
-	def __str__(self) -> str:
-		return self.name
-
-	class Meta:
-		unique_together = ('account_number', )

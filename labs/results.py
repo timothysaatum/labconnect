@@ -30,4 +30,4 @@ class TestResult(models.Model):
 
 
 	def __str__(self) -> str:
-		return self.branch
+		return str(self.branch)

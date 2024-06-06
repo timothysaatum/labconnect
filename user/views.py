@@ -8,7 +8,6 @@ from .serializers import (
 )
 from rest_framework.generics import (
 	GenericAPIView, 
-	RetrieveAPIView, 
 	CreateAPIView,
 	UpdateAPIView
 )
@@ -28,13 +27,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.views import APIView
 import jwt
-from datetime import timedelta, datetime
 from labs.models import (
 	BranchManagerInvitation, 
 	Branch
 )
 from labs.serializers import BranchManagerInvitationSerializer
-from django.contrib.auth.hashers import make_password
 import random
 import string
 
@@ -407,8 +404,11 @@ class BranchManagerAcceptView(UpdateAPIView):
 
 		try:
 			return BranchManagerInvitation.objects.get(pk=pk, invitation_code=invitation_code)
-		except DoesNotExist:
-			raise Response({'error': 'Invalid invitation'}, status=status.HTTP_400_BAD_REQUEST)
+		except BranchManagerInvitation.DoesNotExist:
+			return Response(
+					{'error': 'Invalid invitation'},
+				   	status=status.HTTP_400_BAD_REQUEST
+				   )
 			
 	def put(self, request, *args, **kwargs):
 		invitation = self.get_queryset()
