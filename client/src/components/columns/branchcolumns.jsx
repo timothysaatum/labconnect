@@ -25,6 +25,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { toast } from "sonner";
+import AddManager from "../dashboard/addManager";
 
 export function DeleteDialog({ mutate }) {
   const [open, setOpen] = useState(false);
@@ -32,7 +34,7 @@ export function DeleteDialog({ mutate }) {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <span className="relative gap-2 text-destructive flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-destructive">
-          <Trash className="h-4 w-4" /> Delete Branch
+          Delete Branch
         </span>
       </AlertDialogTrigger>
       <AlertDialogContent className="max-sm:max-w-[90vw]">
@@ -110,7 +112,7 @@ export const branchcolumnDef = [
     id: "actions",
     cell: ({ row }) => {
       const branch = row.original;
-      const { mutate, error } = usedeleteBranchMutation(branch.id);
+      const { mutate } = usedeleteBranchMutation(branch.id);
 
       return (
         <DropdownMenu>
@@ -122,6 +124,7 @@ export const branchcolumnDef = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <AddManager branchId={branch.id} />
             <Link to="../settings">
               <DropdownMenuItem>Update Branch</DropdownMenuItem>
             </Link>

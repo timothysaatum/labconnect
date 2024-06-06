@@ -22,8 +22,8 @@ export default function RequestDialog({ ...rest }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button {...rest} variant="outline">
-          Send a Sample <Truck className="w-5 h-5 text-muted-foreground ml-2" />
+        <Button {...rest} variant="gradient">
+          Send a Sample
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="h-[90dvh] p-4 md:p-8 mx-2 rounded-md">

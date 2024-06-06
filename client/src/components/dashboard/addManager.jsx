@@ -22,14 +22,15 @@ import { Input } from "../ui/input";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddTestSchema } from "@/lib/schema";
+import { ManagerInviteSchema } from "@/lib/schema";
 import { toast } from "sonner";
 
 const ManagerForm = ({ form }) => {
   const axiosPrivate = useAxiosPrivate();
   const onSubmit = async (data) => {
+    console.log(data)
     try {
-      await axiosPrivate.post("/laboratory/test/add/", data);
+      await axiosPrivate.post("user/invite/branch-manager/", data);
       form.reset();
       toast.success("Invite Sent", {
         position: "top-center",
@@ -49,12 +50,12 @@ const ManagerForm = ({ form }) => {
         className="flex flex-col gap-4 p-4"
       >
         <FormBuilder
-          name={"email"}
+          name={"receiver_email"}
           label={"Email"}
           message={true}
           className="flex flex-col gap-3"
           description={
-            "An invitation Email will be sent to this user with instructions to complete their profile after which they can be added as branch managers"
+            "An invitation Email will be sent to this user with instructions to complete their profile. The invitee will be have access to the branch they've been assigned to"
           }
         >
           <Input />
@@ -66,29 +67,25 @@ const ManagerForm = ({ form }) => {
     </Form>
   );
 };
-const AddManager = () => {
+const AddManager = ({ branchId }) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
+  console.log(branchId);
   const form = useForm({
-    resolver: zodResolver(AddTestSchema),
+    resolver: zodResolver(ManagerInviteSchema),
     defaultValues: {
-      email: "",
+      receiver_email: "",
+      branch: "",
     },
   });
+  form.setValue("branch", branchId);
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden"
-            aria-label="add manager"
-          >
-            <Plus className="h-5 w-5 text" />
-            <span className="sr-only">send manger invite</span>
-          </Button>
+          <span className="relative gap-2 flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
+            Assign Manager
+          </span>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader className=" flex-row justify-between items-start">
@@ -103,15 +100,9 @@ const AddManager = () => {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className="overflow-hidden"
-          aria-label="add manager"
-        >
-          <Plus className="h-5 w-5 text" />
-          <span className="sr-only">send manager invite</span>
-        </Button>
+        <span className="relative gap-2  flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
+          Assign Manager
+        </span>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>

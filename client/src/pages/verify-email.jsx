@@ -19,11 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { InputOTP, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { OTPSchema } from "@/lib/schema";
@@ -68,7 +64,7 @@ export function OTPInput() {
       console.error(error);
     }
   };
-  const [seconds, setSeconds] = useState(10);
+  const [seconds, setSeconds] = useState(180);
 
   useEffect(() => {
     if (seconds > 0) {
@@ -131,16 +127,19 @@ export function OTPInput() {
                 Please enter the one-time password sent to your email.
                 <br />
                 {seconds > 0 ? (
-                  <span>
-                    {minutes}:
-                    {remainingSeconds < 10
-                      ? `0${remainingSeconds}`
-                      : remainingSeconds}
-                  </span>
+                  <p className="text-muted-foreground/75 text-right cursor-pointer tabular-nums">
+                    you can request a new code in:{" "}
+                    <span className="text-primary">
+                      {minutes}:
+                      {remainingSeconds < 10
+                        ? `0${remainingSeconds}`
+                        : remainingSeconds}
+                    </span>
+                  </p>
                 ) : (
-                  <Button variant="ghost" className="text-primary">
+                  <p className="text-muted-foreground/75 text-right cursor-pointer">
                     Get a new code
-                  </Button>
+                  </p>
                 )}
               </FormDescription>
               <FormMessage />

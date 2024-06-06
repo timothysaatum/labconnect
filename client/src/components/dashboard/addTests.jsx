@@ -33,7 +33,7 @@ import {
 import { useFetchUserBranches } from "@/api/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,17 +63,21 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
     const branchvalue = data?.branch
       ? data.branch.map((branch) => branch.value)
       : [];
-    const newData = {
-      ...data,
-      turn_around_time: data.turn_around_time,
-      unit: data.unit,
-    };
+    const SampleTypevalue = data?.sample_type
+      ? data.sample_type.map((sample_type) => sample_type.value)
+      : [];
+
+    const turnAroundTimeWithUnit = data?.turn_around_time + " " + data?.unit;
+
     const finalData = {
       ...data,
-      turn_around_time: data?.turn_around_time + " " + data?.unit,
+      turn_around_time: turnAroundTimeWithUnit,
       branch: branchvalue,
+    sample_type: SampleTypevalue,
     };
 
+    // Remove the unit field from the finalData object
+    delete finalData.unit;
     console.log(finalData);
     try {
       await axiosPrivate.post("/laboratory/test/add/", finalData);
@@ -93,15 +97,21 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
       console.error(error);
     }
   };
-  const [Options, setOptions] = useState(null);
+  const [branchOptions, setBranchOptions] = useState(null);
   useEffect(() => {
-    setOptions(
+    setBranchOptions(
       branches?.data?.map((item) => ({
         label: item.branch_name,
         value: item.id,
       }))
     );
   }, [branches]);
+  const sampleTypeOptions = [
+    { label: "Whole blood", value: "Whole blood" },
+    { label: "Serum", value: "Serum" },
+    { label: "Plasma", value: "Plasma" },
+    { label: "Sputum", value: "Sputum" },
+  ];
   return (
     <Form {...form}>
       <form
@@ -118,7 +128,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
               <FormControl>
                 <div className="relative">
                   <MultipleSelector
-                    options={Options}
+                    options={branchOptions}
                     placeholder="select tests to request"
                     hidePlaceholderWhenSelected
                     emptyIndicator={
@@ -132,6 +142,32 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
                           : branches?.data?.length < 1
                           ? "Lab has no branches create a branch to before adding tests"
                           : `No more branches available`}
+                      </p>
+                    }
+                    {...field}
+                  />
+                  <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          name="sample_type"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem className="-mb-2">
+              <FormLabel>Accepted Sample Types</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <MultipleSelector
+                    options={sampleTypeOptions}
+                    placeholder="Accepted sample types"
+                    hidePlaceholderWhenSelected
+                    creatable
+                    emptyIndicator={
+                      <p className="text-center text-md text-muted-foreground">
+                        create a custom sample type
                       </p>
                     }
                     {...field}
@@ -220,6 +256,7 @@ const AddTest = () => {
       patient_preparation: "",
       unit: "",
       branch: "",
+      sample_type: [],
     },
   });
 

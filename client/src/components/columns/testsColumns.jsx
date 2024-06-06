@@ -27,7 +27,7 @@ import {
 
 export function DeleteDialog({ testId, mutate }) {
   return (
-    <AlertDialog>
+    <AlertDialog >
       <AlertDialogTrigger asChild>
         <span className="relative text-destructive flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground">
           Delete Test
