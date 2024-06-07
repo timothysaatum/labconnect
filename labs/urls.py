@@ -22,7 +22,8 @@ from .views import (
     LaboratorySampleUpdateView,
     LaboratorySampleDeleteView,
     UpdateLaboratoryDetails,
-    DeleteLaboratory
+    DeleteLaboratory,
+    LaboratorySampleRequests
 )
 
 
@@ -48,11 +49,11 @@ urlpatterns = [
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
 
-	#path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
-	#path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
+	path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
+	path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
 
-	path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
-	path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
+	#path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
+	#path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
 
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
@@ -63,6 +64,7 @@ urlpatterns = [
 
 	#samples received by the laboratory routes
 	path('samples-list/', LaboratorySampleList.as_view(), name='samples-list'),
+    path('lab-requests/<uuid:pk>/', LaboratorySampleRequests.as_view(), name='lab-requests'),
 
 	#url endpoints for creating, updating and deletion of laboratory samples
 	path('sample/add/', LaboratorySampleSerializerView.as_view(), name='add-sample'),

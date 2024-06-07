@@ -64,10 +64,12 @@ class Branch(Facility):
 class SampleType(models.Model):
 
 	'''
-	Sample:Is the various mdeical samples that can be used to perform a particular test. This is require
-	to avoid sample mismatched when a test is being requested.
+	Sample:Is the various medical samples that can be used to perform a particular test. 
+	This is require to avoid sample mismatched when a test is being requested.
 	'''
 	sample_name = models.CharField(max_length=100)
+	collection_procedure = models.TextField()
+	collection_time = models.CharField(max_length=155)
 
 	def __str__(self):
 		return self.sample_name

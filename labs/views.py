@@ -301,10 +301,9 @@ class TestListView(generics.ListAPIView):
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = TestSerializer
 	
-	def get_queryset(self):
+	def get_queryset(self, pk):
 
-		branch_pk, test_pk = self.kwargs.get('branch_pk'), self.kwargs.get('pk')
-		return Test.objects.filter(branch=branch_pk).filter(pk=test_pk)
+		return Test.objects.filter(pk=pk)
 
 	def put(self, request, pk):
 		
@@ -328,9 +327,8 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 
-	def get_queryset(self):
-		branch_pk, test_pk = self.kwargs.get('branch_pk'), self.kwargs.get('pk')
-		return Test.objects.filter(branch=branch_pk).filter(pk=test_pk)
+	def get_queryset(self, pk):
+		return Test.objects.filter(pk=pk)
 
 	def delete(self, request, pk, branch_pk, format=None):
 
@@ -491,3 +489,11 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 
 		except Sample.DoesNotExist:
 			return Response({'error': 'No sample sent.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
+
+	serializer_class = SampleSerializer
+
+	def get_queryset(self, pk):
+		return Sample.objects.filter(branch_id=pk)
