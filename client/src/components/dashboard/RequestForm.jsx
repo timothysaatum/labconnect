@@ -49,11 +49,11 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
   const user = useSelector(selectCurrentUser);
   const queryClient = useQueryClient();
   const form = useForm({
-    // resolver: zodResolver(
-    //   user?.account_type === "Laboratory"
-    //     ? labRequestSchema
-    //     : healthWorkerRequestSchema
-    // ),
+    resolver: zodResolver(
+      user?.account_type === "Laboratory"
+        ? labRequestSchema
+        : healthWorkerRequestSchema
+    ),
     defaultValues:
       user.account_type === "Laboratory"
         ? {
@@ -122,7 +122,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
       }
       await axiosPrivate.post(
         user.account_type === "Laboratory"
-          ? "laboratory/lab/sample/add"
+          ? "laboratory/sample/add/"
           : "hospital/health-worker/add/sample/",
         formData,
 

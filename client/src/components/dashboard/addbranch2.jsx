@@ -64,7 +64,7 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
     try {
       await axiosPrivate.post("/laboratory/create-branch/", data);
       queryClient.invalidateQueries(["userbranches"]);
-      toast.success(`New branch - ${data?.branch_name} added`, {
+      toast.success(`New branch - ${data?.name} added`, {
         position: "top-center",
         duration: 5000,
       });
@@ -102,7 +102,7 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
         noValidate
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <FormBuilder name={"branch_name"} label={"Branch name"}>
+        <FormBuilder name={"name"} label={"Branch name"}>
           <Input type="text" placeholder="branch name" />
         </FormBuilder>
         <FormBuilder name={"branch_email"} label={"Branch Email"}>
@@ -162,9 +162,9 @@ const AddBranchCreateLab = ({ open, setOpen }) => {
 
   const form = useForm({
     defaultValues: {
-      branch_name: "",
-      branch_email: "",
-      branch_phone: "",
+      name: "",
+      email: "",
+      phone: "",
       region: "",
       location: "",
       digital_address: "",

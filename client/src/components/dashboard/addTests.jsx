@@ -101,7 +101,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
   useEffect(() => {
     setBranchOptions(
       branches?.data?.map((item) => ({
-        label: item.branch_name,
+        label: item.name,
         value: item.id,
       }))
     );
