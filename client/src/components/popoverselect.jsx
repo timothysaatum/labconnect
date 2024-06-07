@@ -54,10 +54,10 @@ const PopoverSelect = ({
                         "|" +
                         " " +
                         items?.data?.find((option) => option.id === field.value)
-                          ?.branch_name
+                          ?.name
                       : title === "Branches"
                       ? items?.data?.find((option) => option.id === field.value)
-                          ?.branch_name
+                          ?.name
                       : items?.data?.find((option) => option.id === field.value)
                           ?.name
                     : label}
@@ -94,9 +94,9 @@ const PopoverSelect = ({
                           )}
                         />
                         {title === "Laboratories"
-                          ? item.laboratory + " " + "|" + " " + item.branch_name
+                          ? item.laboratory + " " + "|" + " " + item.name
                           : title === "Branches"
-                          ? item.branch_name
+                          ? item.name
                           : item.name}
                       </CommandItem>
                     ))}

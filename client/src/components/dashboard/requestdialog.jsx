@@ -22,11 +22,17 @@ export default function RequestDialog({ ...rest }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button {...rest} variant="gradient">
-          Send a Sample
-        </Button>
+        <button className="relative w-full inline-flex h-12 overflow-hidden rounded-lg p-[2px] focus:outline-none">
+          <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+          <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg bg-card px-3 py-1 text-sm font-medium backdrop-blur-3xl">
+            Send a sample
+          </span>
+        </button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="h-[90dvh] p-4 md:p-8 mx-2 rounded-md">
+      <SheetContent
+        side="bottom"
+        className="h-[90dvh] p-4 md:p-8 rounded-md"
+      >
         <SheetHeader className="flex flex-col sm:flex-row sm:items-start items-start text-start px-2 mb-4 space-y-4">
           <div className="sm:flex-1 pt-2">
             <SheetTitle>Send a new sample</SheetTitle>

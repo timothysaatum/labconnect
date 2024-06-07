@@ -111,14 +111,15 @@ export const AddTestSchema = z.object({
 
 //addBranch schema
 export const AddBranchSchema = z.object({
-  branch_name: z.string().min(1, "Branch name is required"),
-  branch_email: z
+  name: z.string().min(1, "Branch name is required"),
+  email: z
     .string()
     .min(1, "Email is required")
     .email("Invalid email address"),
-  branch_phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
+  phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
   digital_address: z.string().min(1, "Digital address is required"),
-  location: z.string().min(1, "Location is required"),
+  town: z.string().min(1, "Location is required"),
+  postal_address:z.string().min(1, "Postal address is required"),
   region: z.string().min(1, "Region is required"),
 });
 export const ManagerInviteSchema = z.object({

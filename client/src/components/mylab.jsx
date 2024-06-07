@@ -290,7 +290,7 @@ export default function MyLab() {
                                   ? "Error loading branches"
                                   : userbranches?.data?.find(
                                       (branch) => branch.id === checked
-                                    )?.branch_name}
+                                    )?.name}
 
                                 <ChevronDown className="w-4 h-4" />
                               </Button>
@@ -302,7 +302,7 @@ export default function MyLab() {
                                   checked={checked === branch.id}
                                   onCheckedChange={() => setChecked(branch.id)}
                                 >
-                                  {branch.branch_name}
+                                  {branch.name}
                                 </DropdownMenuCheckboxItem>
                               ))}
                             </DropdownMenuContent>
