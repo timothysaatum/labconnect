@@ -38,14 +38,15 @@ class TestAdmin(admin.ModelAdmin):
 	list_display = (
 		'id', 
 		'test_code', 
-		'name',  
+		'name',
+		'laboratory',
 		'price', 
 		'turn_around_time', 
 		'patient_preparation', 
 		'date_added', 
 		'date_modified'
 	)
-	list_display_links = ('name',)
+	list_display_links = ('id',)
 	ordering = ('id',)
 	list_per_page = 10
 	actions = [download_csv]
@@ -74,8 +75,7 @@ class LaboratoryAdmin(admin.ModelAdmin):
 	)
 
 	list_display_links = (
-		'created_by', 
-		'name'
+		'id',
 	)
 	ordering = ('id',)
 	list_per_page = 10

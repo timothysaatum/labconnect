@@ -8,6 +8,11 @@ OPTIONS = [
 	('is_rejected', 'reject sample')
 ]
 
+PATIENT_SEX = [
+	('Male', 'Male'),
+	('Female', 'Female')
+]
+
 class Sample(models.Model):
 
 	'''
@@ -27,7 +32,7 @@ class Sample(models.Model):
 	sender_email = models.EmailField()
 	patient_name = models.CharField(max_length=200)
 	patient_age = models.DateField()
-	patient_sex = models.CharField(max_length=20)
+	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
 	sample_type = models.CharField(max_length=200)
 
 	delivery = models.ForeignKey(
@@ -69,7 +74,5 @@ class Sample(models.Model):
 
 			return del_phone
 
-		return None
-
-	def referral_percent_discount(self):
-		return self.hospital.referral_percent_discount
+		return 'Not selected'
+	

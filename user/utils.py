@@ -1,9 +1,7 @@
-import random
 from django.core.mail import EmailMessage
 from .models import Client, OneTimePassword
 from django.conf import settings
 import pyotp
-import time
 
 
 
