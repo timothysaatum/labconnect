@@ -48,12 +48,8 @@ urlpatterns = [
 	#creating, reading, updating and deleting
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
-
-	path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
-	path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
-
-	#path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
-	#path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
+	path('test/update/<uuid:pk>/<uuid:branch_pk>/', TestUpdateView.as_view(), name='test-update'),
+	path('test/delete/<uuid:pk>/<uuid:branch_pk>/', TestDeleteView.as_view(), name='test-delete'),
 
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
