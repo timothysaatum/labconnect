@@ -7,9 +7,10 @@ from .serializers import (
 	LaboratorySerializer, 
 	TestSerializer, 
 	TestResultSerializer, 
-	BranchSerializer
+	BranchSerializer,
+	SampleTypeSerializer
 )
-from .models import Test, Branch, Laboratory
+from .models import Test, Branch, Laboratory, SampleType
 from .results import TestResult
 from sample.models import Sample
 from sample.serializers import SampleSerializer
@@ -364,10 +365,7 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 		return Test.objects.filter(pk=self.kwargs.get('pk'))
 
-	def delete(self, request, branch_pk=None, pk=None, format=None):
-
-		#branches = request.GET.get('branch_pk')
-		print(branch_pk)
+	def delete(self, request, pk, format=None):
 
 		if not self.has_laboratory_permission(self.request.user):
 
@@ -376,17 +374,18 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 
-		test = self.get_object()
+		return self.destroy(request, pk, format=None)
+		#test = self.get_object()
 
-		try:
-			#test.branch.remove(branch_pk)
-			test.delete()
-			return Response({'message': 'successful'}, status=status.HTTP_204_NO_CONTENT)
-		except Exception as e:
-			return Response(
-				{'error': str(e)}, 
-				status=status.HTTP_400_BAD_REQUEST
-			)
+		#try:
+		#	test.branch.remove(*branches)
+		#	test.delete()
+		#	return Response({'message': 'successful'}, status=status.HTTP_204_NO_CONTENT)
+		#except Exception as e:
+		#	return Response(
+		#		{'error': str(e)}, 
+		#		status=status.HTTP_400_BAD_REQUEST
+		#	)
 
 
 
@@ -569,3 +568,46 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 	def get_queryset(self, pk):
 
 		return Sample.objects.filter(branch_id=pk)
+
+
+class SampleTypeView(PermissionMixin, generics.CreateAPIView):
+	serializer_class = SampleTypeSerializer
+
+	def post(self, request):
+
+		if not self.has_laboratory_permission(self.request.user):
+
+			return Response(
+				{'error': 'Invalid credentials'}, 
+				status=status.HTTP_401_UNAUTHORIZED
+			)
+
+		return self.create(request)
+
+
+class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
+	serializer_class = SampleTypeSerializer
+
+	def get_queryset(self):
+		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
+
+	def put(self, request, pk, format=None):
+
+		if not self.has_laboratory_permission(self.request.user):
+
+			return Response(
+				{'error': 'Invalid credentials'}, 
+				status=status.HTTP_401_UNAUTHORIZED
+			)
+
+		return self.update(request, pk, format=None)
+
+
+class SampleTypeDeleteView(PermissionMixin, generics.DestroyAPIView):
+	'''Deletes a specific sample type.'''
+	def get_queryset(self):
+		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
+
+	def delete(self, request, pk, format=None):
+
+		return super().delete(request, pk, format=None)
