@@ -41,9 +41,10 @@ const CreateLab = () => {
     // resolver: zodResolver(CreateLabSchema),
     defaultValues: {
       created_by: user.id,
-      laboratory_name: "",
+      name: "",
       main_email: "",
       main_phone: "",
+      postal_address: "",
       herfra_id: "",
       description: "",
       website: "",
@@ -93,7 +94,7 @@ const CreateLab = () => {
       toast.success("Laboratory Created , Just one more step to get started", {
         position: "top-center",
       });
-      setServerErrors(null)
+      setServerErrors(null);
     } catch (error) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       if (error?.response?.status === 401 || error?.response?.status === 403) {
@@ -145,7 +146,7 @@ const CreateLab = () => {
               noValidate
               onSubmit={form.handleSubmit(onSubmit)}
             >
-              <FormBuilder name={"laboratory_name"} label="First name">
+              <FormBuilder name={"name"} label="First name">
                 <Input type="text" placeholder="first name" />
               </FormBuilder>
               <FormBuilder name={"main_email"} label="Laboratory Email">
@@ -156,6 +157,9 @@ const CreateLab = () => {
               </FormBuilder>
               <FormBuilder name={"main_phone"} label="Laboratory Phone number">
                 <PhoneInput defaultCountry="GH" international />
+              </FormBuilder>
+              <FormBuilder name={"postal_address"} label="Postal Address">
+                <Input type="text" placeholder="Postal address" />
               </FormBuilder>
               <FormBuilder name="website" label="Laboratory Website (Optional)">
                 <Input type="text" placeholder="website" />

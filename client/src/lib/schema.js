@@ -133,8 +133,9 @@ export const ManagerInviteSchema = z.object({
 //create lab schema
 export const CreateLabSchema = z.object({
   created_by: z.any(),
-  laboratory_name: z.string().min(1, "Laboratory name is requires"),
+  name: z.string().min(1, "Laboratory name is requires"),
   herfra_id: z.string().min(1, "Herfra Id is required"),
+  postal_address: z.string().min(1, "Postal address is required"),
   main_email: z.string().email("Invalid email address"),
   main_phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
   website: z.string().min(1, "Invalid website"),
