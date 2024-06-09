@@ -172,3 +172,16 @@ class BranchManagerInvitationSerializer(serializers.ModelSerializer):
 			)
 
 		return invitation
+
+
+class SampleTypeSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = SampleType
+
+		fields = (
+			'id',
+			'sample_name',
+			'collection_procedure',
+			'collection_time'
+		)

@@ -9,7 +9,8 @@ from .serializers import (
 from rest_framework.generics import (
 	GenericAPIView, 
 	CreateAPIView,
-	UpdateAPIView
+	UpdateAPIView,
+	ListAPIView
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -432,9 +433,18 @@ class BranchManagerAcceptView(UpdateAPIView):
       		status=status.HTTP_200_OK
     	)
 
+
 class InviteBranchManagerView(CreateAPIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = BranchManagerInvitationSerializer
 
 	def perform_create(self, serializer):
 		serializer.save(sender=self.request.user)
+
+
+class FetchLabManagers(ListAPIView):
+	permission_classes = [IsAuthenticated]
+	serializer_class = UserSerializer
+
+	def get_queryset(self):
+		return Client.objects.filter(branch__laboratory_id=self.kwargs.get('pk'))
