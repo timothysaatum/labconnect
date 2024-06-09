@@ -360,9 +360,14 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 
-	def delete(self, request, pk=None, format=None):
+	def get_queryset(self):
 
-		branches = request.GET.get('branch_list')
+		return Test.objects.filter(pk=self.kwargs.get('pk'))
+
+	def delete(self, request, branch_pk=None, pk=None, format=None):
+
+		#branches = request.GET.get('branch_pk')
+		print(branch_pk)
 
 		if not self.has_laboratory_permission(self.request.user):
 
@@ -374,8 +379,9 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 		test = self.get_object()
 
 		try:
-			test.branch.remove(*branches)
+			#test.branch.remove(branch_pk)
 			test.delete()
+			return Response({'message': 'successful'}, status=status.HTTP_204_NO_CONTENT)
 		except Exception as e:
 			return Response(
 				{'error': str(e)}, 
