@@ -1,18 +1,21 @@
 from django.db import models
-from labs.models import Branch, Test
+from labs.models import Branch, Test, SampleType
 from hospital.models import Facility
 from delivery.models import Delivery
 
 OPTIONS = [
-	('is_received', 'receive sample'),
-	('is_rejected', 'reject sample')
+	('received', 'receive sample'),
+	('rejected', 'reject sample')
 ]
 
 PATIENT_SEX = [
 	('Male', 'Male'),
 	('Female', 'Female')
 ]
-
+REFERRING_FACILITY_TYPE = [
+	('Laboratory', 'Laboratory'),
+	('Hospital', 'Hospital')
+]
 class Sample(models.Model):
 
 	'''
@@ -26,14 +29,14 @@ class Sample(models.Model):
 			db_index=True
 
 		)
-
+	facility_type = models.CharField(max_length=50, choices=REFERRING_FACILITY_TYPE)
 	sender_full_name = models.CharField(max_length=200)
 	sender_phone = models.CharField(max_length=20)
 	sender_email = models.EmailField()
 	patient_name = models.CharField(max_length=200)
 	patient_age = models.DateField()
 	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
-	sample_type = models.CharField(max_length=200)
+	sample_type = models.ForeignKey(SampleType, on_delete=models.CASCADE)
 
 	delivery = models.ForeignKey(
 
@@ -54,7 +57,7 @@ class Sample(models.Model):
 		null=True
 	)
 
-	options = models.CharField(max_length=30, choices=OPTIONS)
+	status = models.CharField(max_length=30, choices=OPTIONS)
 	rejection_reason = models.TextField(blank=True, null=True)
 	is_paid = models.BooleanField(default=False)
 	is_received_by_delivery = models.BooleanField(default=False)

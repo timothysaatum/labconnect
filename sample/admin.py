@@ -8,10 +8,11 @@ class SampleAdmin(admin.ModelAdmin):
 		'patient_age',
 		'sample_type', 
 		'sender_phone', 
-		'referring_facility', 
+		'referring_facility',
+		'facility_type',
 		'attachment', 
 		'to_laboratory', 
-		'options',
+		'status',
 		'is_paid'
 	)
 
