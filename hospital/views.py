@@ -76,7 +76,7 @@ class HospitalSerializerView(generics.ListAPIView):
 	filter_backends = [filters.SearchFilter]
 
 	def get_queryset(self):
-		return Hospital.objects.filter(created_by=self.request.user)
+		return Hospital.objects.all()
 
 
 

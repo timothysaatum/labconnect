@@ -67,7 +67,7 @@ class Sample(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
-		return self.sample_type
+		return str(self.sample_type)
 
 	def delivery_phone(self) -> str:
 
