@@ -26,7 +26,8 @@ from .views import (
     LaboratorySampleRequests,
     SampleTypeView,
     SampleTypeUpdateView,
-    SampleTypeDeleteView
+    SampleTypeDeleteView,
+    GetTestSampleType
 )
 
 
@@ -58,6 +59,8 @@ urlpatterns = [
 	path('sample-type/add/', SampleTypeView.as_view(), name='add-sample-type'),
     path('sample-type/update/<uuid:pk>/', SampleTypeUpdateView.as_view(), name='sample-type-update'),
     path('sample-type/delete/<uuid:pk>/', SampleTypeDeleteView.as_view(), name='sample-type-delete'),
+    path('get-test/sample-type/<uuid:pk>/', GetTestSampleType.as_view(), name='test-sample-type'),
+    
 
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),

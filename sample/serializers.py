@@ -9,6 +9,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
+	sample_type = serializers.PrimaryKeyRelatedField(read_only=True)
 	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
 
 	class Meta:
@@ -17,7 +18,8 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		fields = (
 			'id', 
-			'referring_facility', 
+			'referring_facility',
+			'facility_type', 
 			'patient_name', 
 			'patient_age',
 			'sender_full_name',
@@ -30,8 +32,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'options',
 			'is_received_by_delivery', 
 			'is_delivered_to_lab', 
-			'is_accessed_by_lab', 
-			'sample_type', 
+			'is_accessed_by_lab',  
 			'to_laboratory', 
 			'tests', 
 			'clinical_history', 
@@ -47,6 +48,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		data = super().to_representation(instance)
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = instance.referring_facility.name
+		data['sample_type'] = instance.sample_type.sample_name
 		data['lab'] = instance.to_laboratory.name
 
 		if data['delivery']:

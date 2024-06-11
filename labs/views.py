@@ -192,7 +192,7 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 class BranchListView(PermissionMixin, generics.ListAPIView):
 
 	"""
-	The API endpoint that allows either the Laboratory CEO or Branch manager to view their Branch.
+	API endpoint that allows either the Laboratory CEO or Branch manager to view their Branch.
 	This returns a list of objects, if the user multiple branches, a query set is returned.
 	"""
 
@@ -212,7 +212,7 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 
 class BranchDetailView(generics.RetrieveAPIView):
 	"""
-	The API endpoint that allows the user a detailed view
+	API endpoint that allows the user a detailed view
 	of their facility. 
 	This view is equally accessible to other users in the system and not just the facility owner.
 	"""
@@ -294,7 +294,7 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 class CreateTestView(PermissionMixin, generics.CreateAPIView):
 	"""
 	API endpoitn to allow the user to add a test to their Branch,
-	It allows the user to add the test to multiple BRanches at a go.
+	It allows the user to add the test to multiple Branches at a go.
 	"""
 	serializer_class = TestSerializer
 
@@ -318,6 +318,12 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 
 
 class TestListView(generics.ListAPIView):
+	"""
+	Api endpoint that allows the client to fetch tests for a particular laboratory
+	or its branch
+
+	It takes either the branch id or the Laboratory id
+	"""
 	serializer_class = TestSerializer
 
 	def get_queryset(self):
@@ -330,11 +336,15 @@ class TestListView(generics.ListAPIView):
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
+	"""
+	Api end point for updating test for a laboratory.
+	It accepts the test id
+	"""
 	serializer_class = TestSerializer
 	
-	def get_queryset(self, pk):
+	def get_queryset(self):
 
-		return Test.objects.filter(pk=pk)
+		return Test.objects.filter(pk=self.kwargs.get('pk'))
 
 	def put(self, request, pk):
 		
@@ -350,16 +360,24 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 	def perform_update(self, serializer):
 
 		test = serializer.save()
-
+		#Clears the current branct set for the tests
 		test.branch.clear()
 
-		branches = self.request.data.getlist('branch')
 
+		branches = self.request.data.getlist('branch')
+		#Updates the test with the new branches if there is any.
 		test.branch.add(*branches)
 
 
 
 class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
+
+	"""
+	API endpoint foe delete test for a laboratory or Branch.
+	This deletes the test for all the branches where it is being
+	done.
+	Caution must be taken when calling this endpoint.
+	"""
 
 	def get_queryset(self):
 
@@ -375,18 +393,6 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 			)
 
 		return self.destroy(request, pk, format=None)
-		#test = self.get_object()
-
-		#try:
-		#	test.branch.remove(*branches)
-		#	test.delete()
-		#	return Response({'message': 'successful'}, status=status.HTTP_204_NO_CONTENT)
-		#except Exception as e:
-		#	return Response(
-		#		{'error': str(e)}, 
-		#		status=status.HTTP_400_BAD_REQUEST
-		#	)
-
 
 
 class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
@@ -547,10 +553,11 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 
 	def get_queryset(self):
 
+		pk = self.kwargs.get('pk')
 		try:
 			return Sample.objects.filter(
-				Q(to_laboratory__branch_manager=self.request.user) |
-				Q(to_laboratory__laboratory__created_by=self.request.user)
+				Q(to_laboratory=pk) |
+				Q(to_laboratory__laboratory=pk)
 			)
 
 		except Sample.DoesNotExist:
@@ -567,7 +574,7 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	def get_queryset(self):
 
-		return Sample.objects.filter(referring_facility = self.kwargs.get('pk'))
+		return Sample.objects.filter(referring_facility=self.kwargs.get('pk'))
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):
@@ -586,6 +593,7 @@ class SampleTypeView(PermissionMixin, generics.CreateAPIView):
 
 
 class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
+
 	serializer_class = SampleTypeSerializer
 
 	def get_queryset(self):
@@ -604,10 +612,24 @@ class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 
 class SampleTypeDeleteView(PermissionMixin, generics.DestroyAPIView):
-	'''Deletes a specific sample type.'''
+	'''
+	Deletes a specific sample type.
+	params: sample type id: int
+	'''
 	def get_queryset(self):
 		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
 
 	def delete(self, request, pk, format=None):
 
 		return super().delete(request, pk, format=None)
+
+
+class GetTestSampleType(generics.ListAPIView):
+	"""
+	Api endpoint that fetches the sample type relating to a particular test.
+	params: test id=UUID
+	"""
+	serializer_class = SampleTypeSerializer
+
+	def get_queryset(self):
+		return SampleType.objects.filter(test=self.kwargs.get('pk'))
