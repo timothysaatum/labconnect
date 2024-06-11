@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AlertCircle } from "lucide-react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   FormControl,
   FormDescription,
@@ -11,7 +9,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 
-export function TermsandConditions({ control,}) {
+export function TermsandConditions({ control }) {
   return (
     <FormField
       control={control}
@@ -25,7 +23,9 @@ export function TermsandConditions({ control,}) {
             <FormLabel>Accept terms and conditions</FormLabel>
             <FormDescription>
               by toggling the checkbox above you agree to our{" "}
-              <Link>terms and conditions.</Link>
+              <Link to={"#"} className="text-primary">
+                terms and conditions.
+              </Link>
             </FormDescription>
           </div>
         </FormItem>

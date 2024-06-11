@@ -1,7 +1,4 @@
-import {
-  ChevronDown,
-  RefreshCcw,
-} from "lucide-react";
+import { ChevronDown, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,7 +8,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import RequestDialog from "./requestdialog";
-import { useFetchLabRequests, useFetchUserBranches } from "@/api/queries";
+import {
+  useFetchLabRequests,
+  useFetchLabRequestsSent,
+  useFetchUserBranches,
+} from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
@@ -26,6 +27,7 @@ import {
 } from "../ui/dropdown-menu";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import StackedCardsOverview from "../overviewcards";
+import SampleDetails from "@/components/dashboard/sampleDetails";
 
 function EmptyLab() {
   return (
@@ -35,7 +37,7 @@ function EmptyLab() {
           You have received no samples yet
         </h3>
         <p className="text-sm text-muted-foreground">
-          you will see requests made to your lab here{" "}
+          you will see requestsReceived made to your lab here{" "}
         </p>
       </div>
     </div>
@@ -81,33 +83,81 @@ function ErrorLab({ refetch }) {
 }
 
 export default function LaboratoryDashboardOverview() {
-  const [requests, setTableRequests] = useState([]);
-  const [checked, setChecked] = useState("Sent Samples");
+  const [requestsReceived, setTableRequestsReceived] = useState([]);
+  const [requestsSent, setTableRequestsSent] = useState([]);
+  const [checked, setChecked] = useState();
   const requestColumns = useRequestLabColumns();
+  const [selectedSamples, setSelectedSamples] = useState();
+  const [selected, setSelected] = useState();
   const {
     isError,
-    data: allrequests,
+    data: receivedRequests,
     isLoading,
     isRefetching,
     refetch,
     isRefetchError,
+    dataUpdatedAt,
   } = useFetchLabRequests();
+
+  const {
+    data: sentRequests,
+    isFetching: sentfetching,
+    isError: sentError,
+    isRefetchError: sentFetchError,
+    refetch: sentRefetch,
+    isRefetching: sentrefetching,
+  } = useFetchLabRequestsSent(checked);
+
+  useEffect(() => {
+    if (selectedSamples) {
+      setSelected(
+        receivedRequests?.data?.find((sample) => {
+          return sample.id === selectedSamples;
+        })
+      );
+    } else {
+      setSelected(null);
+    }
+  }, [selectedSamples]);
+
+  const index = receivedRequests?.data?.findIndex(
+    (sample) => sample.id === selected?.id
+  );
+  const nextSample = () => {
+    if (index < tests?.data.length - 1) {
+      setSelectedSamples(receivedRequests?.data[index + 1]?.id);
+    } else {
+      setSelectedSamples(receivedRequests?.data[0]?.id);
+    }
+  };
+  const prevSample = () => {
+    if (index < receivedRequests?.data.length - 1) {
+      setSelectedSamples(receivedRequests?.data[index + 1]?.id);
+    } else {
+      setSelectedSamples(receivedRequests?.data[0]?.id);
+    }
+  };
 
   const {
     data: branches,
     isLoading: branchesLoading,
     isError: branchesError,
   } = useFetchUserBranches();
+
   useEffect(() => {
     setChecked(branches?.data[0]?.id);
   }, [branches?.data]);
+
   useEffect(() => {
-    if (allrequests) {
-      setTableRequests(
-        allrequests.data.map((request) => {
+    if (receivedRequests) {
+      setTableRequestsReceived(
+        receivedRequests.data.map((request) => {
           return {
-            sent_by: request.from_lab,
-            Patient: request.name_of_patient,
+            id: request.id,
+            referring_facility: request.referring_facility,
+            Patient: request.patient_name,
+            referring_facility_phone: request.sender_phone,
+            referror_name: request.sender_full_name,
             Patient_age: calcAge(request.patient_age),
             Sent_by: request.send_by,
             date: request.date_created,
@@ -115,14 +165,37 @@ export default function LaboratoryDashboardOverview() {
         })
       );
     }
-  }, [allrequests]);
+  }, [receivedRequests]);
+  useEffect(() => {
+    if (sentRequests) {
+      setTableRequestsSent(
+        sentRequests?.data?.map((request) => {
+          return {
+            id: request.id,
+            referring_facility: request.referring_facility,
+            Patient: request.patient_name,
+            referring_facility_phone: request.sender_phone,
+            referror_name: request.sender_full_name,
+            Patient_age: calcAge(request.patient_age),
+            Sent_by: request.send_by,
+            date: request.date_created,
+          };
+        })
+      );
+    }
+  }, [sentRequests]);
+
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return (
-    <main className="px-4 sm:pl-16 ">
-      <div className="lg:col-span-3 flex flex-col gap-8">
+    <main className="px-4 sm:pl-16   grid grid-cols-12 gap-x-4">
+      <div
+        className={`${
+          selected ? "col-span-12 lg:col-span-8" : "col-span-12"
+        } flex flex-col gap-8`}
+      >
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 sticky top-2 left-0 ">
           <RequestDialog className="w-full shadow-sm col-span-3 " />
-          {isDesktop ? (
+          {isDesktop && !selected ? (
             <>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between p-4">
@@ -150,7 +223,7 @@ export default function LaboratoryDashboardOverview() {
               </Card>
             </>
           ) : (
-            <StackedCardsOverview />
+            <StackedCardsOverview selected={selected} />
           )}
         </div>
         <div className="">
@@ -204,16 +277,18 @@ export default function LaboratoryDashboardOverview() {
                       isRefetchError={isRefetchError}
                       isRefetching={isRefetching}
                     />
-                  ) : allrequests?.data.length < 1 ? (
+                  ) : receivedRequests?.data.length < 1 ? (
                     <EmptyLab />
                   ) : (
                     <DataTable
-                      data={requests}
+                      data={requestsReceived}
                       error={isError}
                       loading={isLoading}
                       columnDef={requestColumns}
                       title={"Requests"}
                       filter={"Patient"}
+                      selected={selectedSamples}
+                      setSelected={setSelectedSamples}
                     />
                   )}
                 </CardContent>
@@ -256,24 +331,26 @@ export default function LaboratoryDashboardOverview() {
                   </DropdownMenu>
                 </CardHeader>
                 <CardContent>
-                  {isLoading ? (
+                  {sentfetching ? (
                     <LoadingLab />
-                  ) : isError ? (
+                  ) : sentError ? (
                     <ErrorLab
-                      refetch={refetch}
-                      isRefetchError={isRefetchError}
-                      isRefetching={isRefetching}
+                      refetch={sentRefetch}
+                      isRefetchError={sentFetchError}
+                      isRefetching={sentrefetching}
                     />
-                  ) : allrequests?.data.length < 1 ? (
+                  ) : receivedRequests?.data.length < 1 ? (
                     <EmptyLab />
                   ) : (
                     <DataTable
-                      data={requests}
-                      error={isError}
-                      loading={isLoading}
+                      data={requestsSent}
+                      error={sentError}
+                      loading={sentfetching}
                       columnDef={requestColumns}
                       title={"Requests"}
                       filter={"Patient"}
+                      selected={selectedSamples}
+                      setSelected={setSelectedSamples}
                     />
                   )}
                 </CardContent>
@@ -282,6 +359,17 @@ export default function LaboratoryDashboardOverview() {
           </Tabs>
         </div>
       </div>
+      {selected && (
+        <div className="hidden lg:block col-span-4">
+          <SampleDetails
+            selected={selected}
+            setSelectedSamples={setSelectedSamples}
+            updatedAt={dataUpdatedAt}
+            nextSample={nextSample}
+            prevSample={prevSample}
+          />
+        </div>
+      )}
     </main>
   );
 }

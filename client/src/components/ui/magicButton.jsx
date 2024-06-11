@@ -2,9 +2,9 @@ import React from 'react'
 
 const MagicButton = ({title,icon,position,handleClick,otherClasses}) => {
   return (
-    <button className="relative w-full inline-flex h-12 overflow-hidden rounded-lg p-[2px] focus:outline-none">
+  <button className="max-w-56 w-full sm:w-56  relative inline-flex h-12 overflow-hidden rounded-lg p-[2px] focus:outline-none">
       <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-      <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg bg-card px-3 py-1 text-sm font-medium backdrop-blur-3xl">
+      <span className="inline-flex h-full hover:bg-neutral-50 dark:hover:text-slate-900  transition-all w-full cursor-pointer  bg-card items-center justify-center rounded-lg px-3 py-1 text-sm font-medium backdrop-blur-3xl">
         {title}
       </span>
     </button>

@@ -28,7 +28,6 @@ import { toast } from "sonner";
 const ManagerForm = ({ form }) => {
   const axiosPrivate = useAxiosPrivate();
   const onSubmit = async (data) => {
-    console.log(data)
     try {
       await axiosPrivate.post("user/invite/branch-manager/", data);
       form.reset();
@@ -67,10 +66,9 @@ const ManagerForm = ({ form }) => {
     </Form>
   );
 };
-const AddManager = ({ branchId }) => {
+const AddManager = ({ branchId, children }) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  console.log(branchId);
   const form = useForm({
     resolver: zodResolver(ManagerInviteSchema),
     defaultValues: {
@@ -82,11 +80,7 @@ const AddManager = ({ branchId }) => {
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <span className="relative gap-2 flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
-            Assign Manager
-          </span>
-        </DialogTrigger>
+        <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent>
           <DialogHeader className=" flex-row justify-between items-start">
             <DialogTitle>Send Invite</DialogTitle>
@@ -99,11 +93,7 @@ const AddManager = ({ branchId }) => {
   }
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        <span className="relative gap-2  flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
-          Assign Manager
-        </span>
-      </DrawerTrigger>
+      <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Send Invite</DrawerTitle>

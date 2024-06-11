@@ -138,7 +138,7 @@ export const CreateLabSchema = z.object({
   postal_address: z.string().min(1, "Postal address is required"),
   main_email: z.string().email("Invalid email address"),
   main_phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
-  website: z.string().min(1, "Invalid website"),
+  website: z.string(),
   description: z.string().min(1, "Description is required"),
   logo: z.instanceof(FileList),
 });

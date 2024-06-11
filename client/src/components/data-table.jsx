@@ -19,8 +19,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -143,14 +141,15 @@ export function DataTable({
             {table.getRowModel().rows.map((rowEl) => (
               <TableRow
                 key={rowEl.id}
-                onDoubleClick={() => {
+                onClick={() => {
                   if (rowEl.original.id === selected) {
                     setSelected(null);
                   } else {
                     setSelected(rowEl.original.id);
+                    console.log(rowEl.original);
                   }
                 }}
-                className="cursor-pointer"
+                className={`cursor-pointer ${rowEl.original.id === selected?"bg-accent":""} transition-all`}
               >
                 {rowEl.getVisibleCells().map((cellEl) => (
                   <TableCell key={cellEl.id}>

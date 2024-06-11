@@ -565,9 +565,9 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	serializer_class = SampleSerializer
 
-	def get_queryset(self, pk):
+	def get_queryset(self):
 
-		return Sample.objects.filter(branch_id=pk)
+		return Sample.objects.filter(referring_facility = self.kwargs.get('pk'))
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):

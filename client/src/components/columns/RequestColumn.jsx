@@ -10,8 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useSelector } from "react-redux";
-import { selectCurrentUser } from "@/redux/auth/authSlice";
+
 import { createCell, createSortableHeader } from "../../util/tablefxns";
 
 export const useHealthWorkerRequestColumns = () => {
@@ -116,20 +115,28 @@ export const useRequestLabColumns = () => {
       enableHiding: false,
     },
     {
-      accessorKey: "sent_from",
-      header: createSortableHeader("Referror"),
-    },
-    {
       accessorKey: "Patient",
       header: createSortableHeader("Patient"),
     },
     {
       accessorKey: "Patient_age",
       header: createSortableHeader("Patient's Age"),
+      cell: createCell("Patient_age"),
     },
     {
-      accessorKey: "Sent_by",
-      header: createSortableHeader("Sent by"),
+      accessorKey: "referring_facility",
+      header: createSortableHeader("Referring facility"),
+      cell: createCell("referring_facility"),
+    },
+    {
+      accessorKey: "referring_facility_phone",
+      header: createSortableHeader("Referror Contact"),
+      cell: createCell("referring_facility_phone"),
+    },
+    {
+      accessorKey: "referror_name",
+      header: createSortableHeader("Referror"),
+      cell: createCell("referror_name"),
     },
     {
       accessorKey: "date",
@@ -158,6 +165,7 @@ export const useRequestLabColumns = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View Laboratory</DropdownMenuItem>
+              <DropdownMenuItem>Download Attachment</DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Upload Results</DropdownMenuItem>

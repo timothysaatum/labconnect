@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 let interval;
 
-export const CardStack = ({ items, offset, scaleFactor }) => {
+export const CardStack = ({ items, offset, scaleFactor, selected }) => {
   const [hovered, setHovered] = useState(false);
   const CARD_OFFSET = hovered ? 15 : offset || 10;
   const SCALE_FACTOR = scaleFactor || 0.06;
@@ -39,7 +39,7 @@ export const CardStack = ({ items, offset, scaleFactor }) => {
   };
   return (
     <div
-      className="relative full min-h-8 my-4 "
+      className={`relative full min-h-8 my-4 w-full ${selected ? "col-span-3" : ""}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
         setHovered(false);
@@ -49,7 +49,7 @@ export const CardStack = ({ items, offset, scaleFactor }) => {
         return (
           <motion.div
             key={card.id}
-            className="absolute bg-card w-full rounded-lg shadow-sm hover:cursor-pointer"
+            className="bg-card w-full rounded-lg shadow-sm hover:cursor-pointer"
             style={{
               transformOrigin: "top center",
             }}

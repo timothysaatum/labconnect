@@ -48,7 +48,7 @@ export default function Signup() {
         fieldToValidate = ["first_name", "last_name", "email", "phone_number"];
         break;
       case 3:
-        fieldToValidate = ["password", "password_confirmation","tc"];
+        fieldToValidate = ["password", "password_confirmation", "tc"];
         break;
       default:
         fieldToValidate = [];
@@ -73,9 +73,12 @@ export default function Signup() {
         },
       });
       navigate("/verify-email");
-      toast.success("confirm email with otp sent to your email", {
-        position: "top-center",
-      });
+      toast.info(
+        "A one-time password has been sent to your email, enter it below.",
+        {
+          position: "top-center",
+        }
+      );
     } catch (error) {
       for (const field in error?.response?.data) {
         form.setError(field, {
