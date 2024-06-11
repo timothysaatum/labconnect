@@ -21,15 +21,14 @@ import {
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
 import { ChevronDown, RefreshCcw } from "lucide-react";
-import moment from "moment";
 import TestDetails from "./dashboard/testsDetails";
 import AddTest from "./dashboard/addTests";
 import AddBranch from "./dashboard/addbranch";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import { Link } from "react-router-dom";
 import { selectSelectedRows } from "@/redux/dataTable/selectedrowsSlice";
-import { AlertDialog, AlertDialogTrigger } from "./ui/alert-dialog";
+import { changeTab, selectCurrentTab } from "@/redux/mylabtab/mylabtabSlice";
 
 function EmptyLab({ title, user }) {
   return (
@@ -102,19 +101,23 @@ function ErrorLab({ refetch }) {
     </div>
   );
 }
-const DeleteAlert = () => {
-  return <AlertDialog open></AlertDialog>;
-};
+
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
   const [branches, setBranches] = useState([]);
   const [checked, setChecked] = useState();
   const [selectedTests, setSelectedTests] = useState();
   const [selected, setSelected] = useState();
-  const [currentTab, setTab] = useState("Tests");
   const user = useSelector(selectCurrentUser);
   const selectedRows = useSelector(selectSelectedRows);
   const [action, setAction] = useState("Perform Action");
+
+  const dispatch = useDispatch();
+  const currentTab = useSelector(selectCurrentTab); // get the current tab from the Redux state
+
+    const handleTabChange = (newTab) => {
+      dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
+    };
   const {
     dataUpdatedAt,
     data: userbranches,
@@ -221,16 +224,13 @@ export default function MyLab() {
       filter: "branch_name",
     },
   ];
-  const DeleteAlert = () => {
-    return <AlertDialog open={action === "Delete Selected"}></AlertDialog>;
-  };
   return (
     <main className="sm:ml-14 px-4 lg:px-10 grid grid-cols-12 gap-x-4 max-sm:mt-2">
       <div
         className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
       >
         <section>
-          <Tabs defaultValue={currentTab} onValueChange={setTab}>
+          <Tabs defaultValue={currentTab} onValueChange={handleTabChange}>
             <div className="flex justify-between">
               <TabsList>
                 <TabsTrigger value="Tests">Tests</TabsTrigger>

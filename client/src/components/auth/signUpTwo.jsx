@@ -8,7 +8,7 @@ const UserDetails = () => {
   return (
     <FormWrapper>
       <FormBuilder label={"First name"} name={"first_name"} message={true}>
-        <Input type="text" placeholder="first name" />
+        <Input type="text" placeholder="first name" autoFocus/>
       </FormBuilder>
       <FormBuilder label={"Last name"} name={"last_name"} message={true}>
         <Input type="text" placeholder="last name" />

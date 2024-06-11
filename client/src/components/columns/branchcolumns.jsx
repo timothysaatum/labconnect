@@ -124,7 +124,11 @@ export const branchcolumnDef = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <AddManager branchId={branch.id} />
+            <AddManager branchId={branch.id}>
+              <span className="relative gap-2 flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
+                Assign Manager
+              </span>
+            </AddManager>
             <Link to="../settings">
               <DropdownMenuItem>Update Branch</DropdownMenuItem>
             </Link>

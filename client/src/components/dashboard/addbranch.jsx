@@ -36,30 +36,14 @@ import { Label } from "../ui/label";
 import { PhoneInput } from "../ui/phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddBranchSchema } from "@/lib/schema";
+import AddManager from "./addManager";
+import { regions } from "@/data/data";
 
 export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
   const [serverErrors, setServerErrors] = useState(null);
 
-  const regions = [
-    { value: "Western", label: "Western Region" },
-    { value: "Western North", label: "Western North Region" },
-    { value: "Brong-Ahafo", label: "Brong-Ahafo Region" },
-    { value: "Ashanti", label: "Ashanti Region" },
-    { value: "Eastern", label: "Eastern Region" },
-    { value: "Ahafo", label: "Ahafo Region" },
-    { value: "Bono", label: "Bono Region" },
-    { value: "Bono East", label: "Bono East Region" },
-    { value: "Central", label: "Central Region" },
-    { value: "Greater Accra", label: "Greater Accra Region" },
-    { value: "Volta", label: "Volta Region" },
-    { value: "Oti", label: "Oti Region" },
-    { value: "Northern", label: "Northern Region" },
-    { value: "Savannah", label: "Savannah Region" },
-    { value: "North East", label: "North East Region" },
-    { value: "Upper East", label: "Upper East Region" },
-  ];
   const onSubmit = async (data) => {
     console.log(data);
     try {
@@ -103,9 +87,32 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
         noValidate
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <FormBuilder name={"name"} label={"Branch name"}  message={true}>
+        <FormBuilder name={"name"} label={"Branch name"} message={true}>
           <Input type="text" placeholder="branch name" />
         </FormBuilder>
+        <FormField
+          name="manager"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Assign Branch Manager</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Region" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {regions?.map((region) => (
+                    <SelectItem value={region.value} key={region.value}>
+                      {region?.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
         <FormBuilder name={"email"} label={"Branch Email"}>
           <Input type="email" placeholder="branch email" />
         </FormBuilder>

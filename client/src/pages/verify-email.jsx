@@ -41,14 +41,7 @@ export function OTPInput() {
     formState: { isSubmitting, isSubmitSuccessful },
     reset,
   } = form;
-  useEffect(() => {
-    toast.info(
-      "A one-time password has been sent to your email, enter it below.",
-      {
-        position: "top-center",
-      }
-    );
-  }, []);
+ 
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful]);

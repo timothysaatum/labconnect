@@ -3,7 +3,10 @@ import { Route, Routes } from "react-router-dom";
 import Signin from "./pages/Signin";
 import Home from "./pages/Home";
 import Signup from "@/pages/Signup";
-import RequireAuth, { LabRoutes } from "./components/RequireAuth";
+import RequireAuth, {
+  HasLaboratory,
+  LabRoutes,
+} from "./components/RequireAuth";
 import PersistLogin from "./components/persistLogin";
 import Layout from "./components/Layout";
 import VerifyEmail from "./pages/verify-email";
@@ -13,6 +16,8 @@ import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import CreateLab from "./pages/create-lab";
 import SettingProfile from "./components/dashboard/Profile";
+import Loading from "./components/loading";
+import Labgettingstarted from "./pages/labgettingstarted";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 const BranchManagerProfileComplete = React.lazy(() =>
   import("@/components/dashboard/branch-manager-complete-profile")
@@ -57,54 +62,57 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
+              <Route path="getting-started" element={<Labgettingstarted />} />
               <Route path="create-lab" element={<CreateLab />} />
-              <Route
-                path="dashboard"
-                element={
-                  <React.Suspense fallback={<div>...</div>}>
-                    <Dashboard />
-                  </React.Suspense>
-                }
-              >
-                <Route index element={<DashboardOverview />} />
+              <Route element={<HasLaboratory />}>
                 <Route
-                  path="settings"
+                  path="dashboard"
                   element={
-                    <React.Suspense>
-                      <DashboardSettings />
+                    <React.Suspense fallback={<Loading />}>
+                      <Dashboard />
                     </React.Suspense>
                   }
                 >
-                  <Route index element={<SettingProfile />} />
-                  <Route path="profile" element={<SettingProfile />} />
-                  <Route path="*" element={<div>not found</div>} />
-                </Route>
-                <Route
-                  path="tracking"
-                  element={
-                    <React.Suspense>
-                      <Tracking />
-                    </React.Suspense>
-                  }
-                />
-                {/* laboratory routes */}
-                <Route element={<LabRoutes />}>
+                  <Route index element={<DashboardOverview />} />
                   <Route
-                    path="my-laboratory"
+                    path="settings"
                     element={
-                      <React.Suspense>
-                        <MyLab />
+                      <React.Suspense fallback={<Loading />}>
+                        <DashboardSettings />
+                      </React.Suspense>
+                    }
+                  >
+                    <Route index element={<SettingProfile />} />
+                    <Route path="profile" element={<SettingProfile />} />
+                    <Route path="*" element={<div>not found</div>} />
+                  </Route>
+                  <Route
+                    path="tracking"
+                    element={
+                      <React.Suspense fallback={<Loading />}>
+                        <Tracking />
                       </React.Suspense>
                     }
                   />
-                  <Route
-                    path="/dashboard/my-laboratory/branches/:branch_Id/"
-                    element={
-                      <React.Suspense>
-                        <BranchDetails />
-                      </React.Suspense>
-                    }
-                  />
+                  {/* laboratory routes */}
+                  <Route element={<LabRoutes />}>
+                    <Route
+                      path="my-laboratory"
+                      element={
+                        <React.Suspense fallback={<Loading />}>
+                          <MyLab />
+                        </React.Suspense>
+                      }
+                    />
+                    <Route
+                      path="/dashboard/my-laboratory/branches/:branch_Id/"
+                      element={
+                        <React.Suspense fallback={<Loading />}>
+                          <BranchDetails />
+                        </React.Suspense>
+                      }
+                    />
+                  </Route>
                 </Route>
               </Route>
             </Route>

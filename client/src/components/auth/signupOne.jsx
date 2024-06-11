@@ -20,6 +20,7 @@ const AccountType = ({form}) => {
             items={accounts}
             field={field}
             placeholder={"Choose your account type"}
+        
           />
           <FormMessage />
           <FormDescription>

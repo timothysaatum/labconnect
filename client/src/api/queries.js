@@ -20,15 +20,16 @@ export const useFetchLabRequests = () => {
     staleTime: 1000 * 60 * 5,
   });
 };
-// export const useFetchLabRequestsSent = () => {
-//   const axiosPrivate = useAxiosPrivate();
-//   return useQuery({
-//     queryKey: ["RequestsSent"],
-//     queryFn: async () =>
-//       await axiosPrivate.get("/laboratory/lab/test-requests/samples/"),
-//     staleTime: 1000 * 60 * 5,
-//   });
-// };
+export const useFetchLabRequestsSent = (id) => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["RequestsSent",id],
+    queryFn: async () =>
+      await axiosPrivate.get(`/laboratory/lab-requests/${id}/`),
+    staleTime: 1000 * 60 * 5,
+    enabled:!!id
+  });
+};
 export const useFetchHealthWorkerRequests = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({

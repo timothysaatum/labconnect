@@ -31,8 +31,16 @@ import {
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
 import FormWrapper from "../FormWrapper";
+import { calcAge } from "@/util/ageCalculate";
 
-const RequestDetails = ({ selectedRequest, setSelectedRequest }) => {
+const RequestDetails = ({
+  selected,
+  setSelectedSamples,
+  updatedAt,
+  prevSample,
+  nextSample,
+}) => {
+  console.log(selected);
   return (
     <FormWrapper>
       <div>
@@ -41,7 +49,7 @@ const RequestDetails = ({ selectedRequest, setSelectedRequest }) => {
             <div className="flex flex-row items-start">
               <div className="grid gap-0.5">
                 <CardTitle className="group flex items-center gap-2 text-lg">
-                  Sample Id: {selectedRequest.id}
+                  Sample Id: {selected.id}
                   <Button
                     size="icon"
                     variant="outline"
@@ -51,9 +59,7 @@ const RequestDetails = ({ selectedRequest, setSelectedRequest }) => {
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
                 </CardTitle>
-                <CardDescription>
-                  Date: {selectedRequest.date_modified}
-                </CardDescription>
+                <CardDescription>Date:{selected.dated_created}</CardDescription>
               </div>
               <div className="ml-auto flex items-center gap-1">
                 <Button size="sm" variant="outline" className="h-8 gap-1">
@@ -76,7 +82,12 @@ const RequestDetails = ({ selectedRequest, setSelectedRequest }) => {
                     <DropdownMenuItem>Trash</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Button className="h-8 w-8" size="icons" variant="outline" onClick={()=>setSelectedRequest(null)}>
+                <Button
+                  className="h-8 w-8"
+                  size="icons"
+                  variant="outline"
+                  onClick={() => setSelectedRequest(null)}
+                >
                   <X className="h-3.5 w-3.5" />
                 </Button>
               </div>
@@ -84,44 +95,40 @@ const RequestDetails = ({ selectedRequest, setSelectedRequest }) => {
           </CardHeader>
           <CardContent className="p-6 text-sm">
             <div className="grid gap-3">
-              <div className="font-semibold">Sample Details</div>
+              <div className="font-semibold">Patient Details</div>
               <ul className="grid gap-3">
                 <li className="flex items-center justify-between">
                   <span className="text-muted-foreground">Patient name</span>
-                  <span>{selectedRequest.name_of_patient}</span>
+                  <span>{selected.patient_name}</span>
                 </li>
                 <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Sent by</span>
-                  <span>{selectedRequest.send_by}</span>
+                  <span className="text-muted-foreground">Patient age</span>
+                  <span>{calcAge(selected.patient_age)}</span>
                 </li>
                 <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Sample Type</span>
-                  <span>{selectedRequest.sample_type}</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    Sample Container
-                  </span>
-                  <span>{selectedRequest.sample_container}</span>
+                  <span className="text-muted-foreground">Patient sex</span>
+                  <span>{selected.patient_sex}</span>
                 </li>
               </ul>
+
               <Separator className="my-2" />
+              <div className="font-semibold">Tests Requested</div>
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground/90">Test</span>
+                <span className="text-muted-foreground/90">
+                  Sample received
+                </span>
+              </div>
               <ul className="grid gap-3">
                 <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Cost of test</span>
-                  <span>$299.00</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Delivery</span>
-                  <span>$5.00</span>
-                </li>
-                <li className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Tax</span>
-                  <span>$25.00</span>
-                </li>
-                <li className="flex items-center justify-between font-semibold">
-                  <span className="text-muted-foreground">Total</span>
-                  <span>$329.00</span>
+                  {selected.tests.map((test) => (
+                    <>
+                      <span>{test}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {selected.sample_type}
+                      </span>
+                    </>
+                  ))}
                 </li>
               </ul>
             </div>
@@ -185,13 +192,23 @@ const RequestDetails = ({ selectedRequest, setSelectedRequest }) => {
             <Pagination className="ml-auto mr-0 w-auto">
               <PaginationContent>
                 <PaginationItem>
-                  <Button size="icon" variant="outline" className="h-6 w-6">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="h-6 w-6"
+                    onClick={prevSample}
+                  >
                     <ChevronLeft className="h-3.5 w-3.5" />
                     <span className="sr-only">Previous Order</span>
                   </Button>
                 </PaginationItem>
                 <PaginationItem>
-                  <Button size="icon" variant="outline" className="h-6 w-6">
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    className="h-6 w-6"
+                    onClick={nextSample}
+                  >
                     <ChevronRight className="h-3.5 w-3.5" />
                     <span className="sr-only">Next Order</span>
                   </Button>
