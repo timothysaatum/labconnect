@@ -53,7 +53,7 @@ export default function GettingStartedLab() {
           </div>
         </div>
       </GridBackground>
-      <DotBackground>
+      <DotBackground >
         <CreateLab labcreated={labcreated} setLabcreated={setLabcreated} />
         <CreateBranch labcreated={labcreated} setLabcreated={setLabcreated} />
       </DotBackground>

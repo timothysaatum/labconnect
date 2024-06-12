@@ -41,6 +41,6 @@ export const HasLaboratory = () => {
   return userlab?.data.length > 0 ? (
     <Outlet />
   ) : (
-    <Navigate to="/create-lab" state={{ from: location }} replace />
+    <Navigate to="/getting-started" state={{ from: location }} replace />
   );
 };

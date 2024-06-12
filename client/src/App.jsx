@@ -14,7 +14,6 @@ import ConfirmForgotPassword from "./pages/password-reset-confirm";
 import React from "react";
 import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
-import CreateLab from "./pages/create-lab";
 import SettingProfile from "./components/dashboard/Profile";
 import Loading from "./components/loading";
 import Labgettingstarted from "./pages/labgettingstarted";
@@ -63,7 +62,6 @@ export default function App() {
             {/* protected routes */}
             <Route element={<RequireAuth />}>
               <Route path="getting-started" element={<Labgettingstarted />} />
-              <Route path="create-lab" element={<CreateLab />} />
               <Route element={<HasLaboratory />}>
                 <Route
                   path="dashboard"
