@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { Spotlight } from "@/components/ui/spotlight";
 import { Textarea } from "@/components/ui/textarea";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
@@ -24,10 +23,12 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateLabSchema } from "@/lib/schema";
-import Mic from "../../public/images/Microscope.webp";
+import LabLogo from "../../public/images/defaultlabLogo.jpg";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
+import { useFetchUserLab } from "@/api/queries";
 
-const CreateLab = ({ labcreated, setLabcreated }) => {
+
+const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
   const user = useSelector(selectCurrentUser);
   const axiosPrivate = useAxiosPrivate();
   const [imagefile, setImagefile] = useState(null);
@@ -61,6 +62,23 @@ const CreateLab = ({ labcreated, setLabcreated }) => {
   useEffect(() => {
     AOS.init();
   }, []);
+
+  const { data: userlab, isError, isFetching } = useFetchUserLab();
+
+  useEffect(() => {
+    if (userlab?.data?.length > 0) {
+      form.setValue("name", userlab?.data[0]?.name);
+      form.setValue("main_email", userlab?.data[0]?.main_email);
+      form.setValue("main_phone", userlab?.data[0]?.main_phone);
+      form.setValue("herfra_id", userlab?.data[0]?.herfra_id);
+      form.setValue("description", userlab?.data[0]?.description);
+      form.setValue("website", userlab?.data[0]?.website);
+      form.setValue("postal_address", userlab?.data[0]?.postal_address);
+      form.setValue("logo", userlab?.data[0]?.logo);
+      setImagefileUrl(userlab?.data[0]?.logo);
+      setLabcreated(true);
+    }
+  }, [userlab]);
 
   const filePickeRef = useRef();
   const handleImageChange = (e) => {
@@ -139,20 +157,11 @@ const CreateLab = ({ labcreated, setLabcreated }) => {
   }, [labcreated]);
   return (
     <div
-      className={`container max-sm:px-4 overflow-x-hidden my-5 ${
+      className={`container relative max-sm:px-4 overflow-hidden  ${
         labcreated ? "opacity-50 cursor-not-allowed" : ""
       }`}
       id="create-lab"
     >
-      <Spotlight
-        className="-top-40 -left-10 md:-top-10 md:-left-72 h-screen"
-        fill={"white"}
-      />
-      <Spotlight
-        className="top-10 left-full  h-[80vh] w-[50vw]"
-        fill="purple"
-      />
-      <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="blue" />
       <div className="max-w-6xl mx-auto">
         <h3 className="text-lg lg:hidden md:text-2xl lg:text-4xl my-4 from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">
           Create laboratory
@@ -225,7 +234,11 @@ const CreateLab = ({ labcreated, setLabcreated }) => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="md:col-span-2">
+              <Button
+                type="submit"
+                className="md:col-span-2"
+                disabled={form.formState.isSubmitting}
+              >
                 Create laboratory profile
                 {form.formState.isSubmitting && (
                   <Loader2 className="ml-2 h-4 w-4 animate-spin" />
@@ -247,7 +260,7 @@ const CreateLab = ({ labcreated, setLabcreated }) => {
               </p>
               <BackgroundGradient className="rounded-full">
                 <img
-                  src={imagefileUrl || Mic}
+                  src={imagefileUrl || LabLogo}
                   alt="laboratory logo"
                   onClick={() => filePickeRef.current.click()}
                   className="rounded-full w-72 h-72 object-center"

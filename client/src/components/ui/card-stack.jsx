@@ -49,7 +49,7 @@ export const CardStack = ({ items, offset, scaleFactor, selected }) => {
         return (
           <motion.div
             key={card.id}
-            className="bg-card w-full rounded-lg shadow-sm hover:cursor-pointer"
+            className="absolute bg-card w-full rounded-lg shadow-sm hover:cursor-pointer"
             style={{
               transformOrigin: "top center",
             }}

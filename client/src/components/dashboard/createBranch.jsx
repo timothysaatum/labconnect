@@ -15,7 +15,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { GitBranchPlus, Loader2 } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,6 +35,7 @@ const CreateBranch = ({ labcreated }) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [branchcreated, setBranchcreated] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(AddBranchSchema),
@@ -65,13 +66,14 @@ const CreateBranch = ({ labcreated }) => {
 
   const onSubmit = async (data) => {
     try {
+      setBranchcreated(false);
       await axiosPrivate.post("/laboratory/create-branch/", data);
       queryClient.invalidateQueries(["userbranches"]);
       toast.success(`New branch - ${data?.name} added`, {
         position: "top-center",
         duration: 5000,
       });
-      navigate("/dashboard", { replace: true });
+      setBranchcreated(true);
     } catch (error) {
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         const errorValues = [Object.values(error?.response?.data || {})];
@@ -94,14 +96,22 @@ const CreateBranch = ({ labcreated }) => {
       }
     }
   };
+  useEffect(() => {
+    if (branchcreated) {
+      const element = document.getElementById("create-test");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [branchcreated]);
   if (labcreated)
     return (
       <div
-        className={`container max-sm:px-4 overflow-x-hidden my-10`}
-        id="create-lab"
+        className={`container relative max-sm:px-4 overflow-hidden my-10`}
+        id="create-branch"
       >
         <div className="max-w-6xl mx-auto">
-          <h3 className="text-lg font-medium md:text-2xl lg:text-4xl my-4 from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">
+          <h3 className="text-lg font-semibold tracking-wider  md:text-2xl  my-4 from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">
             Add a branch
           </h3>
           <Form {...form}>
@@ -126,22 +136,6 @@ const CreateBranch = ({ labcreated }) => {
                   <FormBuilder name={"phone"} label={"Branch Contact"}>
                     <PhoneInput defaultCountry="GH" international />
                   </FormBuilder>
-                  <Button
-                    type="submit"
-                    disabled={form.formState.isSubmitting}
-                    className="hidden lg:flex "
-                  >
-                    {form.formState.isSubmitting ? (
-                      <span className="flex items-center">
-                        Branch is being added{" "}
-                        <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                      </span>
-                    ) : (
-                      <span className="flex items-center">
-                        Add Branch <GitBranchPlus className="ml-2 h-4 w-4" />
-                      </span>
-                    )}
-                  </Button>{" "}
                 </div>
                 <div className="flex flex-col gap-4">
                   <FormField
@@ -189,7 +183,7 @@ const CreateBranch = ({ labcreated }) => {
                 <Button
                   type="submit"
                   disabled={form.formState.isSubmitting}
-                  className="lg:hidden"
+                  className="md:col-span-2"
                 >
                   {form.formState.isSubmitting ? (
                     <span className="flex items-center">
@@ -201,7 +195,7 @@ const CreateBranch = ({ labcreated }) => {
                       Add Branch <GitBranchPlus className="ml-2 h-4 w-4" />
                     </span>
                   )}
-                </Button>{" "}
+                </Button>
               </div>
             </form>
           </Form>

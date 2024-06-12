@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
 import { Spotlight } from "@/components/ui/spotlight";
 import { TextGenerateEffect } from "@/components/ui/text-generate";
 import { GridBackground } from "@/components/ui/gridboxes";
 import CreateLab from "./create-lab";
 import MagicButton from "@/components/ui/magicButton";
 import CreateBranch from "@/components/dashboard/createBranch";
-import { DotBackground } from "@/components/ui/dotbackground";
 import { useTheme } from "@/components/themeProvider";
+import { TracingBeam } from "@/components/ui/tracingbeam";
+import CreateTest from "@/components/dashboard/CreateTest";
+import Loading from "@/components/loading";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export default function GettingStartedLab() {
   const { theme } = useTheme();
   const [labcreated, setLabcreated] = useState(false);
+  const [progress, setProgress] = useState(33);
 
   return (
     <>
@@ -20,13 +24,9 @@ export default function GettingStartedLab() {
           className="-top-40 -left-10 md:-top-20 md:-left-32 h-screen"
           fill={theme === "light" ? "gray" : "white"}
         />
-        <Spotlight
-          className="top-10 left-full  h-[80vh] w-[50vw]"
-          fill="purple"
-        />
         <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="blue" />
         <div className="h-[95dvh] w-full flex md:items-center md:justify-center antialiased relative overflow-hidden">
-          <div className=" flex flex-col justify-center items-center  mx-auto relative z-10  w-full">
+          <div className=" flex mt-20 flex-col justify-center items-center  mx-auto relative z-10  w-full">
             <TextGenerateEffect
               time={1}
               words="Just one last step"
@@ -53,10 +53,33 @@ export default function GettingStartedLab() {
           </div>
         </div>
       </GridBackground>
-      <DotBackground >
-        <CreateLab labcreated={labcreated} setLabcreated={setLabcreated} />
-        <CreateBranch labcreated={labcreated} setLabcreated={setLabcreated} />
-      </DotBackground>
+      <TracingBeam className="">
+        <Spotlight
+          className="-top-40 -left-10 md:-top-20 md:-left-32 h-screen"
+          fill={theme === "light" ? "gray" : "white"}
+        />
+        <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="blue" />
+        <div className="relative">
+          <CreateLab
+            labcreated={labcreated}
+            setLabcreated={setLabcreated}
+            progress={progress}
+            setProgress={setProgress}
+          />
+          <CreateBranch
+            labcreated={labcreated}
+            setLabcreated={setLabcreated}
+            progress={progress}
+            setProgress={setProgress}
+          />
+          <CreateTest
+            labcreated={labcreated}
+            setLabcreated={setLabcreated}
+            progress={progress}
+            setProgress={setProgress}
+          />
+        </div>
+      </TracingBeam>
     </>
   );
 }
