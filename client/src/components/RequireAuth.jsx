@@ -2,7 +2,7 @@ import { useLocation, Navigate, Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser, selectCurrenttoken } from "@/redux/auth/authSlice";
 import { toast } from "sonner";
-import { useFetchUserLab } from "@/api/queries";
+import { useFetchUserBranches, useFetchUserLab } from "@/api/queries";
 import Loading from "./loading";
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
@@ -32,15 +32,19 @@ export const LabRoutes = () => {
 export const HasLaboratory = () => {
   const user = useSelector(selectCurrentUser);
   const { isError, data: userlab, isFetching } = useFetchUserLab();
+  const { isError:brancherror, data: branches, isFetching:branchesfetching } = useFetchUserBranches();
   const location = useLocation();
   if (user?.account_type !== "Laboratory") return;
-  if (isFetching) return <Loading />;
+  if (isFetching || branchesfetching) return <Loading />;
   if (isError) {
     toast.error("Error loading laboratory");
   }
-  return userlab?.data.length > 0 ? (
+  if (brancherror) { 
+    toast.error("Error loading branches");
+  }
+  return userlab?.data.length > 0 && branches?.data.length > 0 ? (
     <Outlet />
   ) : (
-    <Navigate to="/create-lab" state={{ from: location }} replace />
+    <Navigate to="/getting-started" state={{ from: location }} replace />
   );
 };

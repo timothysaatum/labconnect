@@ -158,13 +158,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
       }))
     );
   }, [tests]);
-  useEffect(() => {}, []);
-  //hospitals
-  const {
-    isLoading: hospitalsLoading,
-    isError: hospitalsError,
-    data: hospitals,
-  } = useFetchAllHospitals();
+ 
   // id of lab to fetch tests for
   useEffect(() => {
     const value = form.watch(
@@ -273,19 +267,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
               search={"Search branches..."}
               info={"branch_name"}
             />
-          ) : (
-            <PopoverSelect
-              form={form}
-              name={"hospital"}
-              error={hospitalsError}
-              loading={hospitalsLoading}
-              items={hospitals}
-              label={"Choose current Hospital"}
-              title={"Hospitals"}
-              search={"Search hospital..."}
-              info="name"
-            />
-          )}
+          ) : null}
 
           <PopoverSelect
             form={form}

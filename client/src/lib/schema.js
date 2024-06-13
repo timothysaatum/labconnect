@@ -8,9 +8,9 @@ export const SignupSchema = z
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
     email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Invalid email address"),
+      .string()
+      .min(1, "Email is required")
+      .email("Invalid email address"),
     phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     password_confirmation: z
@@ -106,20 +106,17 @@ export const AddTestSchema = z.object({
   turn_around_time: z.string().min(1, "Turn around time is required"),
   unit: z.string().min(1, "unit for turn around time is required"),
   patient_preparation: z.string(),
-  sample_type: z.array(multiSelectSchema).min(1),
+  sample_type: z.array(multiSelectSchema),
 });
 
 //addBranch schema
 export const AddBranchSchema = z.object({
   name: z.string().min(1, "Branch name is required"),
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Invalid email address"),
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
   phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
   digital_address: z.string().min(1, "Digital address is required"),
   town: z.string().min(1, "Location is required"),
-  postal_address:z.string().min(1, "Postal address is required"),
+  postal_address: z.string().min(1, "Postal address is required"),
   region: z.string().min(1, "Region is required"),
 });
 export const ManagerInviteSchema = z.object({
@@ -141,4 +138,12 @@ export const CreateLabSchema = z.object({
   website: z.string(),
   description: z.string().min(1, "Description is required"),
   logo: z.instanceof(FileList),
+});
+
+//sample type
+
+export const SampleTypeSchema = z.object({
+  sample_name: z.string().min(1, "Sample type is required"),
+  collection_procedure: z.string().min(1, "Collection procedure is required"),
+  collection_time: z.string().min(1, "time is required"),
 });

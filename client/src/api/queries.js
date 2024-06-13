@@ -1,6 +1,8 @@
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useQuery } from "@tanstack/react-query";
 import axios from "./axios";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
 
 // users
 export const useFetchUserDetails = () => {
@@ -52,12 +54,15 @@ export const useFetchAllDeliveries = () => {
 
 // laboratories
 export const useFetchUserLab = () => {
+    const user = useSelector(selectCurrentUser);
+
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["Laboratory"],
     queryFn: async () => await axiosPrivate.get("/laboratory/user-laboratory/"),
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 600,
+    enabled: user?.account_type === "Laboratory",
   });
 };
 export const useFetchAllLabsBranches = () => {

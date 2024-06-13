@@ -9,29 +9,30 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { Spotlight } from "@/components/ui/spotlight";
-import { TextGenerateEffect } from "@/components/ui/text-generate";
 import { Textarea } from "@/components/ui/textarea";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import { Loader2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateLabSchema } from "@/lib/schema";
-import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import LabLogo from "../../public/images/defaultlabLogo.jpg";
+import { BackgroundGradient } from "@/components/ui/background-gradient";
+import { useFetchUserLab } from "@/api/queries";
 
-const CreateLab = ({ labcreated }) => {
+
+const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
   const user = useSelector(selectCurrentUser);
   const axiosPrivate = useAxiosPrivate();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const [imagefile, setImagefile] = useState(null);
+  const [imagefileUrl, setImagefileUrl] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(CreateLabSchema),
@@ -42,6 +43,7 @@ const CreateLab = ({ labcreated }) => {
       main_phone: "",
       herfra_id: "",
       description: "",
+      postal_address: "",
       website: "",
     },
     disabled: labcreated,
@@ -61,10 +63,38 @@ const CreateLab = ({ labcreated }) => {
     AOS.init();
   }, []);
 
+  const { data: userlab, isError, isFetching } = useFetchUserLab();
+
   useEffect(() => {
-    console.log(form.formState.errors);
-  }, [form.formState.errors]);
+    if (userlab?.data?.length > 0) {
+      form.setValue("name", userlab?.data[0]?.name);
+      form.setValue("main_email", userlab?.data[0]?.main_email);
+      form.setValue("main_phone", userlab?.data[0]?.main_phone);
+      form.setValue("herfra_id", userlab?.data[0]?.herfra_id);
+      form.setValue("description", userlab?.data[0]?.description);
+      form.setValue("website", userlab?.data[0]?.website);
+      form.setValue("postal_address", userlab?.data[0]?.postal_address);
+      form.setValue("logo", userlab?.data[0]?.logo);
+      setImagefileUrl(userlab?.data[0]?.logo);
+      setLabcreated(true);
+    }
+  }, [userlab]);
+
+  const filePickeRef = useRef();
+  const handleImageChange = (e) => {
+    const file = e.target.files;
+    if (file) {
+      setImagefile(file);
+      setImagefileUrl(URL.createObjectURL(file[0]));
+    }
+  };
+  useEffect(() => {
+    console.log(imagefile);
+    form.setValue("logo", imagefile);
+  }, [imagefile]);
+
   const onSubmit = async (data) => {
+    console.log(data);
     if (data.logo instanceof FileList && data.logo.length > 0) {
       data.logo = data.logo[0];
     }
@@ -90,15 +120,12 @@ const CreateLab = ({ labcreated }) => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      queryClient.invalidateQueries(["Laboratory"]);
-      const element = document.getElementById("create-branch");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      setLabcreated(true);
       toast.success("Laboratory Created , Just one more step to get started", {
         position: "top-center",
       });
     } catch (error) {
+      setLabcreated(false);
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         const errorValues = [Object.values(error?.response?.data || {})];
         if (errorValues.length > 0) {
@@ -120,82 +147,128 @@ const CreateLab = ({ labcreated }) => {
       }
     }
   };
+  useEffect(() => {
+    if (labcreated) {
+      const element = document.getElementById("create-branch");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [labcreated]);
   return (
     <div
-      className={`container max-sm:px-4 ${
-        labcreated ? "pointer-events-none opacity-0.2" : ""
+      className={`container relative max-sm:px-4 overflow-hidden  ${
+        labcreated ? "opacity-50 cursor-not-allowed" : ""
       }`}
       id="create-lab"
     >
-      <TextGenerateEffect
-        words="Create laboratory"
-        className="text-lg md:text-2xl my-4 from-[#6366F1] via-[#D946EF] to-[#FB7185] bg-gradient-to-r bg-clip-text text-transparent"
-      />
-      <Spotlight
-        className="-top-40 -left-10 md:-top-20 md:-left-32 h-screen"
-        fill="gray"
-      />
-      <div className="grid lg:grid-cols-2 gap-x-4">
+      <div className="max-w-6xl mx-auto">
+        <h3 className="text-lg lg:hidden md:text-2xl lg:text-4xl my-4 from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">
+          Create laboratory
+        </h3>
         <Form {...form}>
           <form
-            className="flex flex-col gap-4 lg:p-6 rounded-lg"
+            className="p-3 lg:p-6 grid md:grid-cols-3 gap-10 rounded-lg border-2  "
             noValidate
             onSubmit={form.handleSubmit(onSubmit)}
             data-aos="zoom-out"
-            aria-disabled
           >
-            <FormBuilder name={"name"} label="Laboratory name">
-              <Input type="text" placeholder="laboratory name" />
-            </FormBuilder>
-            <FormBuilder name={"main_email"} label="Laboratory Email">
-              <Input type="email" placeholder="laboratory email" />
-            </FormBuilder>
-            <FormBuilder name={"main_phone"} label="Laboratory Phone number">
-              <PhoneInput defaultCountry="GH" international />
-            </FormBuilder>
-            <FormBuilder
-              name={"postal_address"}
-              label="Laboratory Postal Address"
-            >
-              <Input type="text" placeholder="laboratory postal address" />
-            </FormBuilder>
-            <FormBuilder name={"herfra_id"} label="Herfra Id">
-              <Input type="text" placeholder="herfra Id" />
-            </FormBuilder>
-            <FormBuilder name="website" label="Laboratory Website (Optional)">
-              <Input type="text" placeholder="website" />
-            </FormBuilder>
-            <FormBuilder name={"description"} label="Laboratory Bio">
-              <Textarea
-                className="resize-none"
-                placeholder="laboratory description"
+            <div className="col-span-3 lg:col-span-2 grid md:grid-cols-2 gap-10">
+              <div className="flex flex-col gap-4">
+                <FormBuilder name={"name"} label="Laboratory name">
+                  <Input type="text" placeholder="laboratory name" />
+                </FormBuilder>
+                <FormBuilder name={"main_email"} label="Laboratory Email">
+                  <Input type="email" placeholder="laboratory email" />
+                </FormBuilder>
+                <FormBuilder
+                  name={"main_phone"}
+                  label="Laboratory Phone number"
+                >
+                  <PhoneInput defaultCountry="GH" international />
+                </FormBuilder>
+              </div>
+              <div className="flex flex-col gap-4">
+                <FormBuilder
+                  name={"postal_address"}
+                  label="Laboratory Postal Address"
+                >
+                  <Input type="text" placeholder="laboratory postal address" />
+                </FormBuilder>
+                <FormBuilder name={"herfra_id"} label="Herfra Id">
+                  <Input type="text" placeholder="herfra Id" />
+                </FormBuilder>
+                <FormBuilder
+                  name="website"
+                  label="Laboratory Website (Optional)"
+                >
+                  <Input type="text" placeholder="website" />
+                </FormBuilder>
+              </div>
+              <FormBuilder
+                name={"description"}
+                label="Laboratory Bio"
+                className="md:col-span-2"
+              >
+                <Textarea
+                  className="resize-none"
+                  placeholder="laboratory description"
+                />
+              </FormBuilder>
+              <FormField
+                name="logo"
+                render={({}) => (
+                  <FormItem className="lg:hidden md:col-span-2">
+                    <FormLabel>Choose Logo (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={labcreated}
+                        type="file"
+                        {...fileref}
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        ref={filePickeRef}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </FormBuilder>
-            <FormField
-              name="logo"
-              render={({}) => (
-                <FormItem>
-                  <FormLabel>Choose Logo (Optional)</FormLabel>
-                  <FormControl>
-                    <Input type="file" {...fileref} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button type="submit">
-              Create laboratory profile
-              {form.formState.isSubmitting && (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              )}
-            </Button>
+              <Button
+                type="submit"
+                className="md:col-span-2"
+                disabled={form.formState.isSubmitting}
+              >
+                Create laboratory profile
+                {form.formState.isSubmitting && (
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                )}
+              </Button>
+            </div>
+            <div className="hidden  lg:flex justify-center items-center flex-col gap-6">
+              <h3 className="text-lg text-center md:text-2xl lg:text-4xl my-4 from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">
+                Create laboratory
+              </h3>
+              <p
+                className={`text-xl font-bold tracking-widest  ${
+                  form?.formState?.errors?.logo
+                    ? "text-destructive/75"
+                    : "text-muted-foreground"
+                }`}
+              >
+                Choose your logo
+              </p>
+              <BackgroundGradient className="rounded-full">
+                <img
+                  src={imagefileUrl || LabLogo}
+                  alt="laboratory logo"
+                  onClick={() => filePickeRef.current.click()}
+                  className="rounded-full w-72 h-72 object-center"
+                />
+              </BackgroundGradient>
+            </div>
           </form>
         </Form>
-        <div
-          className="hidden lg:flex justify-center items-center"
-          data-aos="fade-left"
-        >
-          <h1 className="text-6xl">An image will be here</h1>
-        </div>
       </div>
     </div>
   );
