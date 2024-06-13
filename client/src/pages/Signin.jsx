@@ -70,11 +70,9 @@ export default function Signin() {
       navigate(from, { replace: true });
       toast.success("sign in sucess");
     } catch (error) {
-      console.log(error);
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         const errorValues = [Object.values(error?.response?.data || {})];
         if (errorValues.length > 0) {
-          console.log(errorValues[0]);
           setServerErrors(errorValues[0]);
         }
       } else if (error?.response?.status === 400) {

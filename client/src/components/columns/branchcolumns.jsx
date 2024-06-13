@@ -25,7 +25,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { toast } from "sonner";
 import AddManager from "../dashboard/addManager";
 
 export function DeleteDialog({ mutate }) {

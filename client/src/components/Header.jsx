@@ -16,12 +16,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useLogout from "@/hooks/uselogout";
 import { Badge } from "./ui/badge";
+import { useFetchUserLab } from "@/api/queries";
 
 const Header = () => {
   const location = useLocation();
   const user = useSelector(selectCurrentUser);
   const logout = useLogout();
-
+  
+  const { data } = useFetchUserLab();
   return (
     <nav
       aria-label="main navigation bar"
@@ -60,7 +62,7 @@ const Header = () => {
               >
                 <Avatar>
                   <AvatarImage
-                    src={"http://localhost:8000/media/labs/logo/Capture.PNG"}
+                    src={data?.data[0].logo||"http://localhost:8000/media/labs/logo/Capture.PNG"}
                   />
                   <AvatarFallback></AvatarFallback>
                 </Avatar>

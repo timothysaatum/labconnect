@@ -27,7 +27,7 @@ export const usedeleteBranchMutation = (id) => {
   const axiosPrivate = useAxiosPrivate();
   return useMutation({
     mutationFn: async () => {
-      await axiosPrivate.delete(`laboratory/branch/dlete/${id}/`);
+      await axiosPrivate.delete(`laboratory/branch/delete/${id}/`);
     },
     onError: () => {
       toast.error("An error occured, Could not delete Branch");

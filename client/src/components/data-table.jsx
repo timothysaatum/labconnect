@@ -143,10 +143,13 @@ export function DataTable({
                 key={rowEl.id}
                 onClick={() => {
                   if (rowEl.original.id === selected) {
-                    setSelected(null);
+                     setSelected &&
+                       typeof setSelected === "function" &&
+                       setSelected(null);
                   } else {
-                    setSelected(rowEl.original.id);
-                    console.log(rowEl.original);
+                    setSelected &&
+                      typeof setSelected === "function" &&
+                      setSelected(rowEl.original.id);
                   }
                 }}
                 className={`cursor-pointer ${rowEl.original.id === selected?"bg-accent":""} transition-all`}
