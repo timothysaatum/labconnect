@@ -84,6 +84,12 @@ class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
 
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
+		# try:
+		# 	data = serializer.save(created_by=self.request.user)
+		# 	return Response({'lab': data})
+		# except Exception as e:
+		# 	return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+		
 
 
 
@@ -146,7 +152,7 @@ class DeleteLaboratory(PermissionMixin, generics.DestroyAPIView):
 
 
 
-class LaboratoryUserListVIew(PermissionMixin, generics.ListAPIView):
+class LaboratoryUserVIew(PermissionMixin, generics.ListAPIView):
 	"""
 	The API endpoint to get Laboratory associated with user
 	"""
@@ -574,7 +580,7 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	def get_queryset(self):
 
-		return Sample.objects.filter(referring_facility=self.kwargs.get('pk'))
+		return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(collect_sample=True)
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):
@@ -632,4 +638,8 @@ class GetTestSampleType(generics.ListAPIView):
 	serializer_class = SampleTypeSerializer
 
 	def get_queryset(self):
-		return SampleType.objects.filter(test=self.kwargs.get('pk'))
+		obj_id = self.kwargs.get('pk')
+		return SampleType.objects.filter(
+				Q(test=obj_id)|
+				Q(test__branch__laboratory=obj_id)
+			)

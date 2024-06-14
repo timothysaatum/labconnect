@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     CreateLaboratoryView,
-    LaboratoryUserListVIew,
+    LaboratoryUserVIew,
     CreateTestView, 
     CreateTestResultView,
 	BranchDetailView, 
@@ -36,7 +36,7 @@ urlpatterns = [
 
 	#creating, reading, updating and deleting laboratory
 	path('create/', CreateLaboratoryView.as_view(), name='laboratory'),
-	path('user-laboratory/', LaboratoryUserListVIew.as_view(), name='user-lab'),
+	path('user-laboratory/', LaboratoryUserVIew.as_view(), name='user-lab'),
 	path('update/<uuid:pk>/', UpdateLaboratoryDetails.as_view(), name='lab-update'),
 	path('delete/<uuid:pk>/', DeleteLaboratory.as_view(), name='lab-delete'),
 
@@ -70,7 +70,7 @@ urlpatterns = [
 	path('test/result/delete/<uuid:pk>/', TestResultDeleteView.as_view(), name='result-delete'),
 
 	#samples received by the laboratory routes
-	path('samples-list/', LaboratorySampleList.as_view(), name='samples-list'),
+	path('samples-list/<uuid:pk>/', LaboratorySampleList.as_view(), name='samples-list'),
     path('lab-requests/<uuid:pk>/', LaboratorySampleRequests.as_view(), name='lab-requests'),
 
 	#url endpoints for creating, updating and deletion of laboratory samples

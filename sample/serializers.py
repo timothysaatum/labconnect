@@ -29,7 +29,9 @@ class SampleSerializer(serializers.ModelSerializer):
 			'patient_sex',
 			'delivery', 
 			'is_paid',
-			'options',
+			'collect_sample',
+			'reject_sample',
+			'rejection_reason',
 			'is_received_by_delivery', 
 			'is_delivered_to_lab', 
 			'is_accessed_by_lab',  
@@ -49,7 +51,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = instance.referring_facility.name
 		data['sample_type'] = instance.sample_type.sample_name
-		data['lab'] = instance.to_laboratory.name
+		data['to_laboratory'] = instance.to_laboratory.name
 
 		if data['delivery']:
 

@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator, validate_email
 import uuid
 from hospital.models import Facility
+from django.core.exceptions import ValidationError
 
 user = get_user_model()
 
@@ -36,13 +37,17 @@ class Laboratory(BaseModel):
 	herfra_id = models.CharField('HERFRA ID', max_length=100)
 	description = models.TextField()
 
-	def __str__(self) -> str:
-		return self.name
-
 	class Meta:
 		verbose_name_plural = 'Laboratories'
-		unique_together = ('herfra_id', )
+		unique_together = ('herfra_id', 'created_by')
 
+	def __str__(self) -> str:
+		return self.name
+	
+	#def save(self, *args, **kwargs):
+	#	if not self.pk and Laboratory.objects.filter(created_by=self.created_by).exists():
+	#		raise ValidationError('You can only have one laboratory.')
+	#	return super().save(*args, **kwargs)
 
 
 class Branch(Facility):
@@ -60,6 +65,7 @@ class Branch(Facility):
 	def __str__(self) -> str:
 
 		return self.name
+
 
 class SampleType(models.Model):
 
