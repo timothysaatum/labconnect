@@ -302,8 +302,8 @@ const CreateTest = ({ step, setStep }) => {
             </div>
           </form>
           <div className="flex justify-end my-6">
-            <Link to="/dashboard">
-              <MagicButton title={"Proceed to dashboard"} />
+            <Link to="/dashboard" className="text-">
+              skip
             </Link>
           </div>
         </Form>

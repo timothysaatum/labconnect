@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import AccountType from "@/components/auth/signupOne";
 import UserDetails from "@/components/auth/signUpTwo";
 import Passwords from "@/components/auth/signupThree";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import axios from "@/api/axios";
 
 export default function Signup() {
@@ -35,6 +35,16 @@ export default function Signup() {
       tc: false,
     },
   });
+  const fieldToStep = {
+    account_type: 1,
+    first_name: 2,
+    last_name: 2,
+    email: 2,
+    phone: 2,
+    password: 3,
+    password_confirmation: 3,
+    tc: 3,
+  };
   const navigate = useNavigate();
 
   const handleNextStep = async () => {
@@ -85,6 +95,12 @@ export default function Signup() {
           type: "manual",
           message: error.response.data[field][0],
         });
+        // Look up the step associated with the field and set the current step
+        const step = fieldToStep[field];
+        if (step !== undefined) {
+          setStep(step);
+          break; // Exit the loop after finding the first error
+        }
       }
     }
   };
@@ -131,9 +147,20 @@ export default function Signup() {
                 ) : (
                   <Button
                     type="submit"
-                    disabled={form.watch("password") === ""}
+                    disabled={
+                      form.formState.isSubmitting ||
+                      form.watch("password") === "" ||
+                      form.watch("password_confirmation") === ""
+                    }
                   >
-                    Create account
+                    {form.formState.isSubmitting ? (
+                      <span className="flex items-center">
+                        Creating Account
+                        <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                      </span>
+                    ) : (
+                      <span className="flex items-center">Create account</span>
+                    )}
                   </Button>
                 )}
               </div>

@@ -225,18 +225,18 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
         >
           <Textarea />
         </FormBuilder>
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? (
-            <span className="flex items-center">
-              Test is being added{" "}
-              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-            </span>
-          ) : (
-            <span className="flex items-center">
-              Add Test <Plus className="ml-2 h-4 w-4" />
-            </span>
-          )}
-        </Button>
+      <Button type="submit" disabled={form.formState.isSubmitting}>
+        {form.formState.isSubmitting ? (
+          <span className="flex items-center">
+            Test is being added{" "}
+            <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+          </span>
+        ) : (
+          <span className="flex items-center">
+            Add Test <Plus className="ml-2 h-4 w-4" />
+          </span>
+        )}
+      </Button>
       </form>
     </Form>
   );

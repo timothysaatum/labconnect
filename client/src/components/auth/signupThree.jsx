@@ -9,14 +9,14 @@ const Passwords = ({ form }) => {
   return (
     <FormWrapper>
       <FormBuilder label={"Password"} name={"password"} message={true}>
-        <Input type="password" placeholder="Choose a password" />
+        <Input type="password" placeholder="Choose a password" autoFocus/>
       </FormBuilder>
       <FormBuilder
-        label={"confirm Password"}
+        label={"Confirm password"}
         name={"password_confirmation"}
         message={true}
       >
-        <Input type="password" placeholder="Choose a password" />
+        <Input type="password" placeholder="Confirm password" />
       </FormBuilder>
 
       <TermsandConditions control={form.control} />

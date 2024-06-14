@@ -246,7 +246,7 @@ export default function LaboratoryDashboardOverview() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="flex gap-2">
-                        <span className="text-muted-foreground">Viewing:</span>{" "}
+                        <span className="text-muted-foreground hidden sm:inline">Viewing:</span>{" "}
                         {
                           branches?.data?.find(
                             (branch) => branch.id === checked
@@ -291,6 +291,7 @@ export default function LaboratoryDashboardOverview() {
                       setSelected={setSelectedSamples}
                     />
                   )}
+                  
                 </CardContent>
               </Card>
             </TabsContent>
@@ -307,8 +308,8 @@ export default function LaboratoryDashboardOverview() {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="flex gap-2">
-                        <span className="text-muted-foreground">Viewing:</span>{" "}
+                      <Button variant="outline" className="flex gap-2 ">
+                        <span className="hidden sm:inline text-muted-foreground">Viewing:</span>{" "}
                         {
                           branches?.data?.find(
                             (branch) => branch.id === checked

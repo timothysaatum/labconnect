@@ -37,7 +37,7 @@ export default function Signin() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const from = location.state?.from?.pathname || "/";
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const togglePassword = () => setShowPassword((prev) => !prev);
   const form = useForm({

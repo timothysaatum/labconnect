@@ -1,53 +1,55 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { LogOutIcon, Menu } from "lucide-react";
+import { useGetMainSideLinks, useGetSideLinks } from "@/hooks/usesidelinks";
+import { LogOutIcon, Menu, Package2, PanelLeft } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export function Sidebar() {
+  const mainSideLinks = useGetMainSideLinks();
   return (
-    <Sheet side="left">
+    <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Menu />
+        <Button size="icon" variant="outline" className="sm:hidden">
+          <PanelLeft className="h-5 w-5" />
+          <span className="sr-only">Toggle Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent
-        side="left"
-        className=" p-0 w-[55%] flex flex-col divide-y-2 pb-10"
-      >
-        <ul className="flex flex-col gap-2 mt-10 flex-1">
+      <SheetContent side="left" className="sm:max-w-xs">
+        <nav className="flex flex-col justify-between h-full text-lg font-medium">
+          <div className="flex flex-col gap-4">
+            <NavLink
+              href="#"
+              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+            >
+              <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
+              <span className="sr-only">LabConnect</span>
+            </NavLink>
+            {mainSideLinks?.map((item) => (
+              <NavLink
+                to={item.link}
+                key={item.link}
+                className={` ${
+                  location.pathname.endsWith(item.link)
+                    ? "bg-accent text-accent-foreground"
+                    : ""
+                } flex items-center gap-4 px-2.5 py-2 rounded-md text-muted-foreground hover:text-foreground`}
+              >
+                {item.icon}
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
+
           <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive ? "text-blue-500 bg-gray-50 dark:bg-slate-700 shadow-sm" : ""
-            }
+            to="settings"
+            className="flex pb-5 items-end flex-1 gap-4 px-2.5 text-muted-foreground hover:text-foreground"
           >
-            <li className="p-2">Home</li>
+            <div className="flex items-center gap-2">
+              <LogOutIcon className="h-5 w-5" />
+              Logout
+            </div>
           </NavLink>
-          <NavLink
-            to="/contact-us"
-            className={({ isActive }) => (isActive ? "text-blue-500" : "")}
-          >
-            <li className="p-2">Contact us</li>
-          </NavLink>
-          <NavLink
-            to="/about"
-            className={({ isActive }) => (isActive ? "text-blue-500" : "")}
-          >
-            <li className="p-2">About</li>
-          </NavLink>
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) => (isActive ? "text-blue-500" : "")}
-          >
-            <li className="p-2">Dashboard</li>
-          </NavLink>
-        </ul>
-        <div className="">
-          <Button variant="outline" className="w-[80%] flex gap-4 mx-auto mt-4 hover:bg-primary">
-            Log out <LogOutIcon/>
-          </Button>
-        </div>
+        </nav>
       </SheetContent>
     </Sheet>
   );

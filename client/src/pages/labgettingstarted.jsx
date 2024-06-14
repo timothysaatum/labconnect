@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Spotlight } from "@/components/ui/spotlight";
 import { TextGenerateEffect } from "@/components/ui/text-generate";
 import { GridBackground } from "@/components/ui/gridboxes";
@@ -9,6 +9,8 @@ import { useTheme } from "@/components/themeProvider";
 import { TracingBeam } from "@/components/ui/tracingbeam";
 import CreateTest from "@/components/dashboard/CreateTest";
 import { Progress } from "@/components/ui/progress";
+import { useFetchUserLab } from "@/api/queries";
+import Loading from "@/components/loading";
 
 const Hero = ({ setStep }) => {
   return (
@@ -82,7 +84,18 @@ const StepToView = ({ step, setStep }) => {
   }
 };
 export default function GettingStartedLab() {
+  const { data, isError, isFetching, error } = useFetchUserLab();
   const [step, setStep] = useState(0);
+  useEffect(() => {
+    if (isError) {
+      console.log(error);
+    }
+    if (data && data?.data?.length > 0) {
+      setTimeout(() => {
+        setStep(3);
+      }, 2000);
+    }
+  }, [data]);
 
   const { theme } = useTheme();
   return (
