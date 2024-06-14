@@ -51,7 +51,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = instance.referring_facility.name
 		data['sample_type'] = instance.sample_type.sample_name
-		data['lab'] = instance.to_laboratory.name
+		data['to_laboratory'] = instance.to_laboratory.name
 
 		if data['delivery']:
 
