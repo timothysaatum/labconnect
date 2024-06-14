@@ -62,7 +62,7 @@ const Header = () => {
               >
                 <Avatar>
                   <AvatarImage
-                    src={data?.data[0].logo||"http://localhost:8000/media/labs/logo/Capture.PNG"}
+                    src={data?.data[0]?.logo||"http://localhost:8000/media/labs/logo/Capture.PNG"}
                   />
                   <AvatarFallback></AvatarFallback>
                 </Avatar>
