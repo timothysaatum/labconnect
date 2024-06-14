@@ -36,7 +36,6 @@ export const SampleTypeForm = ({ form, setOpen }) => {
   const [serverErrors, setServerErrors] = useState(null);
 
   const onSubmit = async (data) => {
-    console.log(data);
     try {
       await axiosPrivate.post("/laboratory/sample-type/add/", data);
       queryClient.invalidateQueries(["userbranches"]);
@@ -76,7 +75,10 @@ export const SampleTypeForm = ({ form, setOpen }) => {
       <form
         className="flex flex-col gap-2"
         noValidate
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          return form.handleSubmit(onSubmit)(e);
+        }}
       >
         <FormBuilder name={"sample_name"} label={"Sample Type"}>
           <Input placeholder="Sample Type" />
@@ -137,10 +139,7 @@ const AddSampleType = ({ children }) => {
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add new test</DialogTitle>
-            <DialogDescription>
-              Fill in this form to add a new test
-            </DialogDescription>
+            <DialogTitle>Add new sample type</DialogTitle>
           </DialogHeader>
           <SampleTypeForm setOpen={setOpen} form={form} />
         </DialogContent>
@@ -150,10 +149,9 @@ const AddSampleType = ({ children }) => {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className="px-4 py-4">
         <DrawerHeader>
-          <DrawerTitle>Add new test</DrawerTitle>
-          <DrawerDescription>Keep open after adding test</DrawerDescription>
+          <DrawerTitle>Add new sample type</DrawerTitle>
         </DrawerHeader>
         <SampleTypeForm setOpen={setOpen} form={form} />
       </DrawerContent>

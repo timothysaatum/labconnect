@@ -23,12 +23,12 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateLabSchema } from "@/lib/schema";
-import LabLogo from "../../public/images/defaultlabLogo.jpg";
+import LabLogo from "/images/defaultlabLogo.jpg";
 import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { useFetchUserLab } from "@/api/queries";
+import MagicButton from "@/components/ui/magicButton";
 
-
-const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
+const CreateLab = ({ step, setStep }) => {
   const user = useSelector(selectCurrentUser);
   const axiosPrivate = useAxiosPrivate();
   const [imagefile, setImagefile] = useState(null);
@@ -46,7 +46,6 @@ const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
       postal_address: "",
       website: "",
     },
-    disabled: labcreated,
   });
   const fileref = form.register("logo");
   useEffect(() => {
@@ -76,7 +75,6 @@ const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
       form.setValue("postal_address", userlab?.data[0]?.postal_address);
       form.setValue("logo", userlab?.data[0]?.logo);
       setImagefileUrl(userlab?.data[0]?.logo);
-      setLabcreated(true);
     }
   }, [userlab]);
 
@@ -87,6 +85,7 @@ const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
       setImagefile(file);
       setImagefileUrl(URL.createObjectURL(file[0]));
     }
+    form.clearErrors("logo");
   };
   useEffect(() => {
     console.log(imagefile);
@@ -120,12 +119,11 @@ const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      setLabcreated(true);
       toast.success("Laboratory Created , Just one more step to get started", {
         position: "top-center",
       });
+      setStep(2);
     } catch (error) {
-      setLabcreated(false);
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         const errorValues = [Object.values(error?.response?.data || {})];
         if (errorValues.length > 0) {
@@ -147,19 +145,10 @@ const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
       }
     }
   };
-  useEffect(() => {
-    if (labcreated) {
-      const element = document.getElementById("create-branch");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }
-  }, [labcreated]);
+
   return (
     <div
-      className={`container relative max-sm:px-4 overflow-hidden  ${
-        labcreated ? "opacity-50 cursor-not-allowed" : ""
-      }`}
+      className={`container relative max-sm:px-4 overflow-x-hidden pt-4 md:pt-10`}
       id="create-lab"
     >
       <div className="max-w-6xl mx-auto">
@@ -222,7 +211,6 @@ const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
                     <FormLabel>Choose Logo (Optional)</FormLabel>
                     <FormControl>
                       <Input
-                        disabled={labcreated}
                         type="file"
                         {...fileref}
                         accept="image/*"
@@ -234,16 +222,17 @@ const CreateLab = ({ labcreated, setLabcreated, progress, setProgress }) => {
                   </FormItem>
                 )}
               />
-              <Button
+              <MagicButton
                 type="submit"
-                className="md:col-span-2"
+                title={"Proceed"}
                 disabled={form.formState.isSubmitting}
-              >
-                Create laboratory profile
-                {form.formState.isSubmitting && (
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                )}
-              </Button>
+                icon={
+                  form.formState.isSubmitting ? (
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  ) : null
+                }
+                position={"right"}
+              />
             </div>
             <div className="hidden  lg:flex justify-center items-center flex-col gap-6">
               <h3 className="text-lg text-center md:text-2xl lg:text-4xl my-4 from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">

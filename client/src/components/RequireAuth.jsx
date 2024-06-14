@@ -32,17 +32,14 @@ export const LabRoutes = () => {
 export const HasLaboratory = () => {
   const user = useSelector(selectCurrentUser);
   const { isError, data: userlab, isFetching } = useFetchUserLab();
-  const { isError:brancherror, data: branches, isFetching:branchesfetching } = useFetchUserBranches();
   const location = useLocation();
   if (user?.account_type !== "Laboratory") return;
-  if (isFetching || branchesfetching) return <Loading />;
+  if (isFetching) return <Loading />;
   if (isError) {
     toast.error("Error loading laboratory");
   }
-  if (brancherror) { 
-    toast.error("Error loading branches");
-  }
-  return userlab?.data.length > 0 && branches?.data.length > 0 ? (
+ 
+  return userlab?.data.length > 0? (
     <Outlet />
   ) : (
     <Navigate to="/getting-started" state={{ from: location }} replace />
