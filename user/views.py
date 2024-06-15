@@ -452,7 +452,7 @@ class InviteBranchManagerView(CreateAPIView):
 			Thank you, kind regards.
 			''')		
 		}
-		send_normal_email(data)
+		#send_normal_email(data)
 
 
 
