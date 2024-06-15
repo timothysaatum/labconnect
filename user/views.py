@@ -17,7 +17,7 @@ from rest_framework import status
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from .models import OneTimePassword
-from .utils import send_code_to_user
+from .utils import send_normal_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -439,7 +439,20 @@ class InviteBranchManagerView(CreateAPIView):
 	serializer_class = BranchManagerInvitationSerializer
 
 	def perform_create(self, serializer):
-		serializer.save(sender=self.request.user)
+
+		invite = serializer.save(sender=self.request.user)
+		data = {
+			'email_subject': f'Hello {invite.receiver_email}, {self.request.user.full_name} Has Sent an Import Request.',
+			'to_email': invite.receiver_email,
+			'email_body': f'''
+			Hello, I am inviting you to take the role as the branch manager at {invite.branch.name}.
+			Click on the link to accept my invitaion and assume the role as the branch manager.
+			http://127.0.0.1:8000/api/user/branch-manager-accept-invite/{invite.branch}/{invite.invitation_code}/
+			Thank you, kind regards.
+			'''			
+		}
+		send_normal_email(data)
+
 
 
 class FetchLabManagers(ListAPIView):

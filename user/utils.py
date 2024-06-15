@@ -2,6 +2,7 @@ from django.core.mail import EmailMessage
 from .models import Client, OneTimePassword
 from django.conf import settings
 import pyotp
+from django.core.exceptions import ValidationError
 
 
 
@@ -37,7 +38,7 @@ def send_code_to_user(email):
 
 	except Exception as e:
 
-		print(e)
+		raise ValidationError(str(e))
 
 
 def send_normal_email(data):
@@ -54,7 +55,7 @@ def send_normal_email(data):
 		email.send()
 
 	except Exception as e:
-		print(e)
+		raise ValidationError(str(e))
 
 
 
