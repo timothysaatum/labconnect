@@ -55,8 +55,5 @@ def send_normal_email(data):
 		email.send()
 
 	except Exception as e:
-		raise ValidationError(str(e))
-
-
-
-		
+		#raise ValidationError(str(e))
+		print(e)		
