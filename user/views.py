@@ -442,12 +442,12 @@ class InviteBranchManagerView(CreateAPIView):
 
 		invite = serializer.save(sender=self.request.user)
 		data = {
-			'email_subject': f'Hello {invite.receiver_email}, {self.request.user.full_name} Has Sent an Import Request.',
+			'email_subject': f'Hello {invite.receiver_email}, {self.request.user.full_name} Has Sent You an Import Request.',
 			'to_email': invite.receiver_email,
 			'email_body': f'''
 			Hello, I am inviting you to take the role as the branch manager at {invite.branch.name}.
 			Click on the link to accept my invitaion and assume the role as the branch manager.
-			http://127.0.0.1:8000/api/user/branch-manager-accept-invite/{invite.branch}/{invite.invitation_code}/
+			http://127.0.0.1:8000/api/user/branch-manager-accept-invite/{invite.branch.id}/{invite.invitation_code}/
 			Thank you, kind regards.
 			'''			
 		}
