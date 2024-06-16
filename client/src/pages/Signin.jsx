@@ -28,6 +28,8 @@ import axios from "./../api/axios";
 import { SigninSchema } from "@/lib/schema";
 import { logOut, setCredentials } from "@/redux/auth/authSlice";
 import { toast } from "sonner";
+import { DotBackground } from "@/components/ui/dotbackground";
+import { Spotlight } from "@/components/ui/spotlight";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -87,108 +89,115 @@ export default function Signin() {
     dispatch(logOut());
   });
   return (
-    <div className="px-2">
-      <Card className="mx-auto max-w-sm mt-16">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="grid gap-4"
-              noValidate
-            >
-              <FormField
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Enter your email</FormLabel>
-                    <FormControl>
-                      <Input
-                        autoFocus
-                        {...field}
-                        type="email"
-                        placeholder="email..."
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="password">
-                      Enter your password
-                    </FormLabel>
-                    <FormControl>
-                      <div className="relative">
+    <DotBackground>
+      <div className="px-2">
+        <Card className="mx-auto max-w-sm mt-16">
+          <CardHeader>
+            <CardTitle className="text-2xl">Login</CardTitle>
+            <CardDescription>
+              Enter your email below to login to your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="grid gap-4"
+                noValidate
+              >
+                <FormField
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Enter your email</FormLabel>
+                      <FormControl>
                         <Input
+                          autoFocus
                           {...field}
-                          id="password"
-                          type={showPassword ? "text" : "password"}
-                          placeholder="password..."
+                          type="email"
+                          placeholder="email..."
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="password">
+                        Enter your password
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="password..."
+                          />
 
-                        {showPassword ? (
-                          <EyeOff
-                            className="absolute right-0 top-0 h-full mr-2 cursor-pointer"
-                            onClick={togglePassword}
-                          />
-                        ) : (
-                          <Eye
-                            className="absolute right-0 top-0 h-full mr-2 cursor-pointer"
-                            onClick={togglePassword}
-                          />
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="text-right">
-                <Link to="/forgot-password">
-                  <Button
-                    variant="link"
-                    className="text-sm p-0 h-auto"
-                    type="button"
-                  >
-                    Forgot password?
-                  </Button>
-                </Link>
-              </div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <span className="flex items-center">
-                    Logging in <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                  </span>
-                ) : (
-                  "Login"
-                )}
-              </Button>
-              <div className="mt-4 text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link to="/sign-up" className="underline">
-                  Sign up
-                </Link>
-              </div>
-            </form>
-          </Form>
-          {serverErrors && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{serverErrors}</AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+                          {showPassword ? (
+                            <EyeOff
+                              className="absolute right-0 top-0 h-full mr-2 cursor-pointer"
+                              onClick={togglePassword}
+                            />
+                          ) : (
+                            <Eye
+                              className="absolute right-0 top-0 h-full mr-2 cursor-pointer"
+                              onClick={togglePassword}
+                            />
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="text-right">
+                  <Link to="/forgot-password">
+                    <Button
+                      variant="link"
+                      className="text-sm p-0 h-auto"
+                      type="button"
+                    >
+                      Forgot password?
+                    </Button>
+                  </Link>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center">
+                      Logging in{" "}
+                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    </span>
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
+                <div className="mt-4 text-center text-sm">
+                  Don&apos;t have an account?{" "}
+                  <Link to="/sign-up" className="underline">
+                    Sign up
+                  </Link>
+                </div>
+              </form>
+            </Form>
+            {serverErrors && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{serverErrors}</AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </DotBackground>
   );
 }

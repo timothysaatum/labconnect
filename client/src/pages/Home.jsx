@@ -1,7 +1,7 @@
 
 const Home = () => {
   return (
-    <div className="text-secondary">Home</div>
+    <div className="text-input">Home</div>
   )
 }
 

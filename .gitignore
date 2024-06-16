@@ -2,9 +2,13 @@ delivery/migrations
 hospital/migrations
 labs/migrations
 user/migrations
+profiles/migrations
+transactions/migrations
+user/middleware/__pycache__
+sample/__pycache__
+sample/migrations
 client/node_modules
 .env
 db.sqlite3
-db.sqlite3
-db.sqlite3
-db.sqlite3
+__pycache__
+migrations

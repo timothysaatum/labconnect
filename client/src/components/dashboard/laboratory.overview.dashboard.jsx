@@ -57,8 +57,8 @@ function ErrorLab({ refetch }) {
   return (
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
       <div className="flex flex-col items-center  text-center py-16 ">
-        <h3 className="text-xl font-semibold text-destructive ">
-          An Error has Occured
+        <h3 className="text-md font-semibold text-destructive ">
+          An Error has occured
         </h3>
         <p className="text-sm text-muted-foreground">
           check your internet connection and try again{" "}
@@ -75,7 +75,9 @@ function ErrorLab({ refetch }) {
         </Button>
         <p className="text-muted-foreground text-xs mt-2">
           If error persists{" "}
-          <Link className="hover:underline underline-offset-2">Contact us</Link>
+          <Link className="hover:underline underline-offset-2 text-primary">
+            Contact us
+          </Link>
         </p>
       </div>
     </div>
@@ -97,7 +99,7 @@ export default function LaboratoryDashboardOverview() {
     refetch,
     isRefetchError,
     dataUpdatedAt,
-  } = useFetchLabRequests();
+  } = useFetchLabRequests(checked);
 
   const {
     data: sentRequests,
@@ -246,7 +248,9 @@ export default function LaboratoryDashboardOverview() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="flex gap-2">
-                        <span className="text-muted-foreground hidden sm:inline">Viewing:</span>{" "}
+                        <span className="text-muted-foreground hidden sm:inline">
+                          Viewing:
+                        </span>{" "}
                         {
                           branches?.data?.find(
                             (branch) => branch.id === checked
@@ -291,7 +295,6 @@ export default function LaboratoryDashboardOverview() {
                       setSelected={setSelectedSamples}
                     />
                   )}
-                  
                 </CardContent>
               </Card>
             </TabsContent>
@@ -309,7 +312,9 @@ export default function LaboratoryDashboardOverview() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" className="flex gap-2 ">
-                        <span className="hidden sm:inline text-muted-foreground">Viewing:</span>{" "}
+                        <span className="hidden sm:inline text-muted-foreground">
+                          Viewing:
+                        </span>{" "}
                         {
                           branches?.data?.find(
                             (branch) => branch.id === checked

@@ -17,7 +17,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
@@ -30,7 +37,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useFetchUserBranches } from "@/api/queries";
+import {
+  useFetchSampleTypes,
+  useFetchUserBranches,
+  useFetchUserLab,
+} from "@/api/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -38,11 +49,30 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddTestSchema } from "@/lib/schema";
-import MultipleSelector from "../ui/multi-select";
+import MultipleSelector from "@/components/ui/multi-select";
+import AddSampleType from "./addsampleType";
+import { useSelector } from "react-redux";
+import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
+import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
 
 const TestForm = ({ setOpen, keepOpen, form }) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
+
+  const [sampleTypes, setSampleTypes] = useState(null);
+  const [uniqueSampleTypesState, setUniqueSampleTypesState] = useState([]);
+
+  const addedSampleType = useSelector(selectSampleTypes);
+  const {
+    data: lab,
+    isError: laberror,
+    isFetching: labfetching,
+  } = useFetchUserLab();
+  const {
+    data: sample_type,
+    isError: sample_type_error,
+    isFetching: sample_type_fetching,
+  } = useFetchSampleTypes(lab?.data[0]?.id);
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
@@ -59,7 +89,9 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
     isPaused,
     data: branches,
   } = useFetchUserBranches();
+
   const onSubmit = async (data) => {
+    console.log(data);
     const branchvalue = data?.branch
       ? data.branch.map((branch) => branch.value)
       : [];
@@ -73,7 +105,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
       ...data,
       turn_around_time: turnAroundTimeWithUnit,
       branch: branchvalue,
-    sample_type: SampleTypevalue,
+      sample_type: SampleTypevalue,
     };
 
     // Remove the unit field from the finalData object
@@ -106,12 +138,29 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
       }))
     );
   }, [branches]);
-  const sampleTypeOptions = [
-    { label: "Whole blood", value: "Whole blood" },
-    { label: "Serum", value: "Serum" },
-    { label: "Plasma", value: "Plasma" },
-    { label: "Sputum", value: "Sputum" },
-  ];
+  useEffect(() => {
+    if (sample_type_fetching || sample_type_error) return;
+    let combinedSampleTypes = [
+      ...(sample_type?.data || []),
+      ...(addedSampleType || []),
+    ];
+    let uniqueSampleTypes = [];
+
+    combinedSampleTypes.forEach((item) => {
+      if (!uniqueSampleTypes.some((uniqueItem) => uniqueItem.id === item.id)) {
+        uniqueSampleTypes.push(item);
+      }
+    });
+
+    setUniqueSampleTypesState(uniqueSampleTypes);
+
+    const transformedSampleTypes = uniqueSampleTypes.map((item) => ({
+      label: item?.sample_name,
+      value: item?.id,
+    }));
+
+    setSampleTypes(transformedSampleTypes);
+  }, [sample_type, addedSampleType]);
   return (
     <Form {...form}>
       <form
@@ -129,7 +178,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
                 <div className="relative">
                   <MultipleSelector
                     options={branchOptions}
-                    placeholder="select tests to request"
+                    placeholder="Select branches to add test to"
                     hidePlaceholderWhenSelected
                     emptyIndicator={
                       <p className="text-center text-md text-muted-foreground">
@@ -152,32 +201,41 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
             </FormItem>
           )}
         />
-        <FormField
-          name="sample_type"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className="-mb-2">
-              <FormLabel>Accepted Sample Types</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <MultipleSelector
-                    options={sampleTypeOptions}
-                    placeholder="Accepted sample types"
-                    hidePlaceholderWhenSelected
-                    creatable
-                    emptyIndicator={
-                      <p className="text-center text-md text-muted-foreground">
-                        create a custom sample type
-                      </p>
-                    }
-                    {...field}
-                  />
-                  <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
-                </div>
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <div className="flex items-end gap-2">
+          <FormField
+            name="sample_type"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="-mb-2 flex-1">
+                <FormLabel>Accepted Sample Types</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <MultipleSelectorWithHover
+                      options={sampleTypes}
+                      title="sample"
+                      detailedContent={uniqueSampleTypesState}
+                      placeholder="Accepted sample types"
+                      hidePlaceholderWhenSelected
+                      emptyIndicator={
+                        <p className="text-center text-md text-muted-foreground">
+                          Click the plus sign to add a new sample type
+                        </p>
+                      }
+                      {...field}
+                    />
+                    <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <AddSampleType>
+            <Button variant="outline" size="icon" className="mt-2">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </AddSampleType>
+        </div>
         <FormBuilder name={"test_code"} label={"Test Code"}>
           <Input />
         </FormBuilder>
@@ -225,18 +283,18 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
         >
           <Textarea />
         </FormBuilder>
-      <Button type="submit" disabled={form.formState.isSubmitting}>
-        {form.formState.isSubmitting ? (
-          <span className="flex items-center">
-            Test is being added{" "}
-            <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-          </span>
-        ) : (
-          <span className="flex items-center">
-            Add Test <Plus className="ml-2 h-4 w-4" />
-          </span>
-        )}
-      </Button>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? (
+            <span className="flex items-center">
+              Test is being added{" "}
+              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+            </span>
+          ) : (
+            <span className="flex items-center">
+              Add Test <Plus className="ml-2 h-4 w-4" />
+            </span>
+          )}
+        </Button>
       </form>
     </Form>
   );

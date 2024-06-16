@@ -36,7 +36,7 @@ export const SigninSchema = z.object({
 //tests schema used in sending sample
 const multiSelectSchema = z.object({
   label: z.string(),
-  value: z.string().min(1),
+  value: z.string(),
 });
 
 //send sample by health worker schema
@@ -106,7 +106,14 @@ export const AddTestSchema = z.object({
   turn_around_time: z.string().min(1, "Turn around time is required"),
   unit: z.string().min(1, "unit for turn around time is required"),
   patient_preparation: z.string(),
-  sample_type: z.array(multiSelectSchema),
+  sample_type: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.number(),
+      })
+    )
+    .min(1),
 });
 
 //addBranch schema
