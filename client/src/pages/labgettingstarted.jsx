@@ -9,10 +9,28 @@ import { useTheme } from "@/components/themeProvider";
 import { TracingBeam } from "@/components/ui/tracingbeam";
 import CreateTest from "@/components/dashboard/CreateTest";
 import { Progress } from "@/components/ui/progress";
-import { useFetchUserLab } from "@/api/queries";
-import Loading from "@/components/loading";
+import { useFetchUserBranches, useFetchUserLab } from "@/api/queries";
+import { DotBackground } from "@/components/ui/dotbackground";
 
 const Hero = ({ setStep }) => {
+  const { data, isError, isFetching, error } = useFetchUserLab();
+  const {
+    data: branches,
+    isFetching: branchesFetching,
+    error: brancheserror,
+  } = useFetchUserBranches();
+  useEffect(() => {
+    if (isError || brancheserror || branchesFetching || isFetching) return;
+    if (data && data?.data?.length > 0) {
+      setTimeout(() => {
+        if (branches && branches?.data?.length > 0) {
+          setStep(3);
+        } else {
+          setStep(2);
+        }
+      }, 2000);
+    }
+  }, [data, branches]);
   return (
     <GridBackground>
       <div className="h-[95dvh] w-full flex md:items-center md:justify-center antialiased relative overflow-hidden">
@@ -39,6 +57,7 @@ const Hero = ({ setStep }) => {
               title={"Get Started"}
               otherClasses={"self-center"}
               onClick={() => setStep(1)}
+              btnClasses={"w-full sm:w-56 max-w-56"}
             />
           </div>
         </div>
@@ -47,7 +66,7 @@ const Hero = ({ setStep }) => {
   );
 };
 
-const StepToView = ({ step, setStep }) => {
+const StepToView = ({ step, setStep, from }) => {
   switch (step) {
     case 0:
       return (
@@ -58,25 +77,31 @@ const StepToView = ({ step, setStep }) => {
     case 1:
       return (
         <div>
-          <TracingBeam>
-            <CreateLab step={step} setStep={setStep} />
-          </TracingBeam>
+          <DotBackground>
+            <TracingBeam>
+              <CreateLab step={step} setStep={setStep} />
+            </TracingBeam>
+          </DotBackground>
         </div>
       );
     case 2:
       return (
         <div>
-          <TracingBeam>
-            <CreateBranch step={step} setStep={setStep} />
-          </TracingBeam>
+          <DotBackground>
+            <TracingBeam>
+              <CreateBranch step={step} setStep={setStep} />
+            </TracingBeam>
+          </DotBackground>
         </div>
       );
     case 3:
       return (
         <div>
-          <TracingBeam>
-            <CreateTest step={step} setStep={setStep} />
-          </TracingBeam>
+          <DotBackground>
+            <TracingBeam>
+              <CreateTest step={step} setStep={setStep} from={from} />
+            </TracingBeam>
+          </DotBackground>
         </div>
       );
     default:
@@ -84,22 +109,12 @@ const StepToView = ({ step, setStep }) => {
   }
 };
 export default function GettingStartedLab() {
-  const { data, isError, isFetching, error } = useFetchUserLab();
   const [step, setStep] = useState(0);
-  useEffect(() => {
-    if (isError) {
-      console.log(error);
-    }
-    if (data && data?.data?.length > 0) {
-      setTimeout(() => {
-        setStep(3);
-      }, 2000);
-    }
-  }, [data]);
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const { theme } = useTheme();
   return (
-    <div className="relative">
+    <div className="relative overflow-x-clip">
       <Progress
         value={(step / 4) * 100}
         className="absolute top-0 left-0 h-[2px]"
@@ -109,8 +124,12 @@ export default function GettingStartedLab() {
         className="-top-40 -left-10 md:-top-20 md:-left-32 h-screen"
         fill={theme === "light" ? "gray" : "white"}
       />
-      <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="blue" />
-      <StepToView step={step} setStep={setStep} />
+      <Spotlight
+        className="-top-40 -left-10 md:top-0 md:left-full h-[100vh] w-"
+        fill={"skyblue"}
+      />
+      <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="gray" />
+      <StepToView step={step} setStep={setStep} from={from} />
     </div>
   );
 }

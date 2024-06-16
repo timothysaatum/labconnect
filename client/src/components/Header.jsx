@@ -22,7 +22,7 @@ const Header = () => {
   const location = useLocation();
   const user = useSelector(selectCurrentUser);
   const logout = useLogout();
-  
+
   const { data } = useFetchUserLab();
   return (
     <nav
@@ -41,14 +41,14 @@ const Header = () => {
         <NavLink to="/">
           <li>Home</li>
         </NavLink>
+        <NavLink to="dashboard">
+          <li>Dashboard</li>
+        </NavLink>
         <NavLink to="/contact-us">
           <li>Contact us</li>
         </NavLink>
         <NavLink to="/about">
           <li>About</li>
-        </NavLink>
-        <NavLink to="dashboard">
-          <li>Dashboard</li>
         </NavLink>
       </ul>
       <div className=" flex items-center gap-2">
@@ -62,7 +62,10 @@ const Header = () => {
               >
                 <Avatar>
                   <AvatarImage
-                    src={data?.data[0]?.logo||"http://localhost:8000/media/labs/logo/Capture.PNG"}
+                    src={
+                      data?.data[0]?.logo ||
+                      "http://localhost:8000/media/labs/logo/Capture.PNG"
+                    }
                   />
                   <AvatarFallback></AvatarFallback>
                 </Avatar>

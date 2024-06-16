@@ -28,23 +28,46 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Link, useNavigate } from "react-router-dom";
-import MultipleSelector from "../ui/multi-select";
-import { useFetchUserBranches } from "@/api/queries";
+import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
+import {
+  useFetchSampleTypes,
+  useFetchUserBranches,
+  useFetchUserLab,
+} from "@/api/queries";
 import { Textarea } from "../ui/textarea";
 import AddSampleType from "./addsampleType";
 import MagicButton from "../ui/magicButton";
+import { useSelector } from "react-redux";
+import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
+import MultipleSelector from "../ui/multi-select";
 
-const CreateTest = ({ step, setStep }) => {
+const CreateTest = ({ from }) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
   const [branchOptions, setBranchOptions] = useState(null);
+  const [uniqueSampleTypesState, setUniqueSampleTypesState] = useState([]);
 
+  const [sampleTypes, setSampleTypes] = useState(null);
+  const navigate = useNavigate();
+
+  const addedSampleType = useSelector(selectSampleTypes);
   const {
-    isLoading,
-    isError,
-    isPaused,
+    data: lab,
+    isError: laberror,
+    isFetching: labfetching,
+  } = useFetchUserLab();
+  const {
+    data: sample_type,
+    isError: sample_type_error,
+    isFetching: sample_type_fetching,
+  } = useFetchSampleTypes(lab?.data[0]?.id);
+  const {
+    branchesloading,
+    brancheserror,
+    branchespaused,
     data: branches,
   } = useFetchUserBranches();
+
   useEffect(() => {
     setBranchOptions(
       branches?.data?.map((item) => ({
@@ -53,8 +76,37 @@ const CreateTest = ({ step, setStep }) => {
       }))
     );
   }, [branches]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries(["userbranches"]);
+  }, []);
+
+  useEffect(() => {
+    if (sample_type_fetching || sample_type_error) return;
+    let combinedSampleTypes = [
+      ...(sample_type?.data || []),
+      ...(addedSampleType || []),
+    ];
+    let uniqueSampleTypes = [];
+
+    combinedSampleTypes.forEach((item) => {
+      if (!uniqueSampleTypes.some((uniqueItem) => uniqueItem.id === item.id)) {
+        uniqueSampleTypes.push(item);
+      }
+    });
+
+    setUniqueSampleTypesState(uniqueSampleTypes);
+
+    const transformedSampleTypes = uniqueSampleTypes.map((item) => ({
+      label: item?.sample_name,
+      value: item?.id,
+    }));
+
+    setSampleTypes(transformedSampleTypes);
+  }, [sample_type, addedSampleType]);
+
   const form = useForm({
-    // resolver: zodResolver(AddTestSchema),
+    resolver: zodResolver(AddTestSchema),
     defaultValues: {
       test_code: "",
       name: "",
@@ -63,16 +115,9 @@ const CreateTest = ({ step, setStep }) => {
       patient_preparation: "",
       unit: "",
       branch: "",
-      sample_type: [8],
+      sample_type: [],
     },
   });
-
-  const sampleTypeOptions = [
-    { label: "Whole blood", value: "Whole blood" },
-    { label: "Serum", value: "Serum" },
-    { label: "Plasma", value: "Plasma" },
-    { label: "Sputum", value: "Sputum" },
-  ];
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) {
@@ -120,6 +165,7 @@ const CreateTest = ({ step, setStep }) => {
         }
       );
       form.reset();
+      navigate(from, { replace: true });
     } catch (error) {
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         const errorValues = [Object.values(error?.response?.data || {})];
@@ -151,155 +197,143 @@ const CreateTest = ({ step, setStep }) => {
         <h3 className="text-lg font-semibold tracking-wider py-4 md:text-xl from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">
           Add a test
         </h3>
-        <p className="text-sm text-muted-foreground">
-          Add atleast one test to continue{" "}
-        </p>
         <Form {...form}>
           <form
-            className="p-3 lg:p-6 grid md:grid-cols-2 gap-10 rounded-lg border-2  "
+            className="p-3 lg:p-6 grid md:grid-cols-2 rounded-lg border-2 items-end gap-4 gap-x-8"
             noValidate
             onSubmit={form.handleSubmit(onSubmit)}
-            data-aos="fade-right"
+            data-aos="fade-left"
           >
-            <div className="col-span-3 lg:col-span-2 grid md:grid-cols-2 gap-10 ">
-              <div className="flex flex-col gap-4">
-                <FormField
-                  name="branch"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="-mb-2">
-                      <FormLabel>
-                        Which branches are you adding the test for
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <MultipleSelector
-                            options={branchOptions}
-                            placeholder="What branches are you this test to"
-                            hidePlaceholderWhenSelected
-                            emptyIndicator={
-                              <p className="text-center text-md text-muted-foreground">
-                                {isPaused
-                                  ? "Check your internet Connection and try again"
-                                  : isLoading
-                                  ? "loading..."
-                                  : isError
-                                  ? "Error loading Branches"
-                                  : branches?.data?.length < 1
-                                  ? "Lab has no branches create a branch to before adding tests"
-                                  : `No more branches available`}
-                              </p>
-                            }
-                            {...field}
-                          />
-                          <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
-                        </div>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <div className="flex items-end gap-2">
-                  <FormField
-                    name="sample_type"
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem className="-mb-2 flex-1">
-                        <FormLabel>Accepted Sample Types</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <MultipleSelector
-                              options={sampleTypeOptions}
-                              placeholder="Accepted sample types"
-                              hidePlaceholderWhenSelected
-                              creatable
-                              emptyIndicator={
-                                <p className="text-center text-md text-muted-foreground">
-                                  create a custom sample type
-                                </p>
-                              }
-                              {...field}
-                            />
-                            <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
-                          </div>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <AddSampleType>
-                    <Button variant="outline" size="icon" className="mt-2">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </AddSampleType>
-                </div>
-                <FormBuilder name={"test_code"} label={"Test Code"}>
-                  <Input placeholder="Test code" />
-                </FormBuilder>
-                <FormBuilder name={"name"} label={"Test Name"}>
-                  <Input placeholder="Test name" />
-                </FormBuilder>
-                <FormBuilder
-                  name={"price"}
-                  label={"Price (GHS)"}
-                  description={"Discounts can be applied to tests later"}
-                >
-                  <Input type="number" placeholder="price of Tests" />
-                </FormBuilder>
-              </div>
-              <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-6 gap-2">
-                  <div className="col-span-4">
-                    <FormBuilder
-                      name={"turn_around_time"}
-                      label={"Turn around time"}
-                    >
-                      <Input type="number" />
-                    </FormBuilder>
-                  </div>
-                  <FormField
-                    name="unit"
-                    render={({ field }) => (
-                      <FormItem className="col-span-2">
-                        <FormLabel>unit</FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select unit" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="minutes">Minutes</SelectItem>
-                              <SelectItem value="hours">Hours</SelectItem>
-                              <SelectItem value="Days">Days</SelectItem>
-                              <SelectItem value="Weeks">Weeks</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormBuilder
-                  name={"patient_preparation"}
-                  label={"Patient Preparation required"}
-                  control={form.control}
-                >
-                  <Textarea placeholder="Patient Preparation" />
-                </FormBuilder>
-                <MagicButton
-                  type="submit"
-                  title={"Proceed"}
-                  disabled={form.formState.isSubmitting}
-                  icon={
-                    form.formState.isSubmitting ? (
-                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                    ) : null
-                  }
-                  position={"right"}
-                />
-              </div>
+            <FormField
+              name="branch"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className="-mb-2">
+                  <FormLabel>
+                    Which branches are you adding the test for
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <MultipleSelector
+                        options={branchOptions}
+                        placeholder="What branches are you this test to"
+                        hidePlaceholderWhenSelected
+                        emptyIndicator={
+                          <p className="text-center text-md text-muted-foreground">
+                            {branchespaused
+                              ? "Check your internet Connection and try again"
+                              : branchesloading
+                              ? "loading..."
+                              : brancheserror
+                              ? "Error loading Branches"
+                              : branches?.data?.length < 1
+                              ? "Lab has no branches create a branch to before adding tests"
+                              : `No more branches available`}
+                          </p>
+                        }
+                        {...field}
+                      />
+                      <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <div className="flex items-end gap-2">
+              <FormField
+                name="sample_type"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem className="-mb-2 flex-1">
+                    <FormLabel>Accepted Sample Types</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <MultipleSelectorWithHover
+                          title="sample"
+                          detailedContent={uniqueSampleTypesState}
+                          options={sampleTypes}
+                          placeholder="Accepted sample types"
+                          hidePlaceholderWhenSelected
+                          emptyIndicator={
+                            <p className="text-center text-md text-muted-foreground">
+                              Click the plus sign to add a new sample type
+                            </p>
+                          }
+                          {...field}
+                        />
+                        <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <AddSampleType>
+                <Button variant="outline" size="icon" className="mt-2">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </AddSampleType>
             </div>
+            <FormBuilder name={"test_code"} label={"Test Code"}>
+              <Input placeholder="Test code" />
+            </FormBuilder>
+            <FormBuilder name={"name"} label={"Test Name"}>
+              <Input placeholder="Test name" />
+            </FormBuilder>
+            <FormBuilder name={"price"} label={"Price (GHS)"}>
+              <Input type="number" placeholder="price of Tests" />
+            </FormBuilder>
+            <div className="grid grid-cols-6 gap-2">
+              <div className="col-span-4">
+                <FormBuilder
+                  name={"turn_around_time"}
+                  label={"Turn around time"}
+                >
+                  <Input type="number" />
+                </FormBuilder>
+              </div>
+              <FormField
+                name="unit"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>unit</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select unit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="minutes">Minutes</SelectItem>
+                          <SelectItem value="hours">Hours</SelectItem>
+                          <SelectItem value="Days">Days</SelectItem>
+                          <SelectItem value="Weeks">Weeks</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormBuilder
+              name={"patient_preparation"}
+              label={"Patient Preparation required"}
+              control={form.control}
+            >
+              <Textarea placeholder="Patient Preparation" />
+            </FormBuilder>
+            <MagicButton
+              type="submit"
+              title={"Proceed"}
+              disabled={form.formState.isSubmitting}
+              icon={
+                form.formState.isSubmitting ? (
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                ) : null
+              }
+              position={"right"}
+            />
           </form>
           <div className="flex justify-end my-6">
             <Link to="/dashboard" className="text-">

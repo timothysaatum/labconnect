@@ -10,7 +10,6 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -29,20 +28,29 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectSampleTypes,
+  setSampleTypes,
+} from "@/redux/samples/sampleTypeSlice";
 
 export const SampleTypeForm = ({ form, setOpen }) => {
   const axiosPrivate = useAxiosPrivate();
-  const queryClient = useQueryClient();
   const [serverErrors, setServerErrors] = useState(null);
+  const dispatch = useDispatch();
+  const SampleTypes = useSelector(selectSampleTypes);
 
   const onSubmit = async (data) => {
     try {
-      await axiosPrivate.post("/laboratory/sample-type/add/", data);
-      queryClient.invalidateQueries(["userbranches"]);
+      const response = await axiosPrivate.post(
+        "/laboratory/sample-type/add/",
+        data
+      );
       toast.success(`sample type added successfully`, {
         position: "top-center",
         duration: 5000,
       });
+      dispatch(setSampleTypes([...(SampleTypes || []), response.data]));
       form.reset();
       setOpen(false);
     } catch (error) {
@@ -87,6 +95,7 @@ export const SampleTypeForm = ({ form, setOpen }) => {
           name={"collection_procedure"}
           label={"Collection Procedure"}
           control={form.control}
+          description={"Also include sample container to be used"}
         >
           <Textarea placeholder="Collection Procedure" />
         </FormBuilder>

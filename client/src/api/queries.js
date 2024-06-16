@@ -14,22 +14,24 @@ export const useFetchUserDetails = () => {
     staleTime: 1000 * 60 * 60,
   });
 };
-export const useFetchLabRequests = () => {
+export const useFetchLabRequests = (id) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["Requests"],
-    queryFn: async () => await axiosPrivate.get("/laboratory/samples-list/"),
+    queryFn: async () =>
+      await axiosPrivate.get(`/laboratory/lab-requests/${id}/`),
     staleTime: 1000 * 60 * 5,
+    enabled: !!id,
   });
 };
 export const useFetchLabRequestsSent = (id) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["RequestsSent",id],
+    queryKey: ["RequestsSent", id],
     queryFn: async () =>
       await axiosPrivate.get(`/laboratory/lab-requests/${id}/`),
     staleTime: 1000 * 60 * 5,
-    enabled:!!id
+    enabled: !!id,
   });
 };
 export const useFetchHealthWorkerRequests = () => {
@@ -54,7 +56,7 @@ export const useFetchAllDeliveries = () => {
 
 // laboratories
 export const useFetchUserLab = () => {
-    const user = useSelector(selectCurrentUser);
+  const user = useSelector(selectCurrentUser);
 
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
@@ -79,6 +81,17 @@ export const useFetchLabTests = (id) => {
   return useQuery({
     queryKey: ["tests", id],
     queryFn: async () => await axiosPrivate.get(`/laboratory/test/list/${id}/`),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
+    staleTime: 1000 * 60 * 60,
+  });
+};
+export const useFetchSampleTypes = (id) => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["sample_types", id],
+    queryFn: async () =>
+      await axiosPrivate.get(`/laboratory/get-test/sample-type/${id}/`),
     refetchOnWindowFocus: false,
     enabled: !!id,
     staleTime: 1000 * 60 * 60,

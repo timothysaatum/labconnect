@@ -105,12 +105,11 @@ const CreateBranch = ({ step, setStep }) => {
         </h3>
         <Form {...form}>
           <form
-            className="p-3 lg:p-6 grid md:grid-cols-2 gap-10 rounded-lg border-2  "
+            className="p-3 lg:p-6 grid md:grid-cols-2 gap-4 gap-x-8 items-end rounded-lg border-2  "
             noValidate
             onSubmit={form.handleSubmit(onSubmit)}
             data-aos="fade-left"
           >
-            <div className="col-span-3 lg:col-span-2 grid md:grid-cols-2 gap-4 gap-x-10 ">
               <FormBuilder name={"name"} label={"Branch name"} message={true}>
                 <Input type="text" placeholder="branch name" />
               </FormBuilder>
@@ -166,7 +165,6 @@ const CreateBranch = ({ step, setStep }) => {
                 }
                 position={"right"}
               />
-            </div>
           </form>
         </Form>
       </div>

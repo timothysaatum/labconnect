@@ -226,6 +226,7 @@ const CreateLab = ({ step, setStep }) => {
                 type="submit"
                 title={"Proceed"}
                 disabled={form.formState.isSubmitting}
+                btnClasses={"col-span-2 "}
                 icon={
                   form.formState.isSubmitting ? (
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />
@@ -252,7 +253,7 @@ const CreateLab = ({ step, setStep }) => {
                   src={imagefileUrl || LabLogo}
                   alt="laboratory logo"
                   onClick={() => filePickeRef.current.click()}
-                  className="rounded-full w-72 h-72 object-center"
+                  className="rounded-full w-72 h-72 object-center cursor-pointer"
                 />
               </BackgroundGradient>
             </div>
