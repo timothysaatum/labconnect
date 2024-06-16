@@ -408,8 +408,8 @@ class BranchManagerAcceptView(UpdateAPIView):
 			return BranchManagerInvitation.objects.get(pk=pk, invitation_code=invitation_code)
 		except BranchManagerInvitation.DoesNotExist:
 			return Response(
-					{'error': 'Invalid invitation'},
-				   	status=status.HTTP_400_BAD_REQUEST
+					{'error': 'Invite not found'},
+				   	status=status.HTTP_404_NOT_FOUND
 				   )
 			
 	def put(self, request, *args, **kwargs):
