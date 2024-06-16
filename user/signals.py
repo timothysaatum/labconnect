@@ -9,7 +9,7 @@ from textwrap import dedent
 
 
 @receiver(post_save, sender=Client)
-def create_room(sender, instance, created, **kwargs):
+def email_user_on_creation(sender, instance, created, **kwargs):
 
 	if created:
 		email = instance.email

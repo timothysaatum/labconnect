@@ -8,7 +8,7 @@ from textwrap import dedent
 
 
 @receiver(post_save, sender=BranchManagerInvitation)
-def create_room(sender, instance, created, **kwargs):
+def mail_one_time_password(sender, instance, created, **kwargs):
 
 	if created:
 		email = instance.receiver_email
@@ -30,7 +30,7 @@ def create_room(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Laboratory)
-def create_room(sender, instance, created, **kwargs):
+def mail_lab_user(sender, instance, created, **kwargs):
 
 	if created:
 		email = instance.created_by.email
@@ -42,9 +42,8 @@ def create_room(sender, instance, created, **kwargs):
 			You have successfully added your laboratory, {instance.name} to your account.
 
 			Your are this {close_icon} close to finishing your set up.
-
 			Use any of the links below to set your branches and tests,  you haven't done so yet.
-			Click on the link to accept my invitaion and assume the role as the branch manager.
+		
 			Created a Branches for Laboratory here: http://127.0.0.1:8000/api/laboratory/create-branch/
 			Add tests to your branch here: http://127.0.0.1:8000/api/laboratory/test/add/
 
