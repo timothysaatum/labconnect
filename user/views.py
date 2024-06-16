@@ -17,7 +17,7 @@ from rest_framework import status
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from .models import OneTimePassword
-from .utils import send_code_to_user
+from .utils import send_normal_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -35,6 +35,7 @@ from labs.models import (
 from labs.serializers import BranchManagerInvitationSerializer
 import random
 import string
+from textwrap import dedent
 
 
 
@@ -439,8 +440,9 @@ class InviteBranchManagerView(CreateAPIView):
 	serializer_class = BranchManagerInvitationSerializer
 
 	def perform_create(self, serializer):
-		serializer.save(sender=self.request.user)
 
+		serializer.save(sender=self.request.user)
+		
 
 class FetchLabManagers(ListAPIView):
 	permission_classes = [IsAuthenticated]
