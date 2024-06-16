@@ -32,6 +32,6 @@ urlpatterns = [
 	path('refresh/token/', CheckRefreshToken.as_view(), name='token-refresh'),
 	path('fetch-user-data/', FetchUserData.as_view(), name='user-data')	,
 	path('invite/branch-manager/', InviteBranchManagerView.as_view(), name='invite-branch-manager'),
-	path('branch-manager-accept-invite/<int:pk>/<uuid:invitation_code>/', BranchManagerAcceptView.as_view(), name='invite-accept'),
+	path('branch-manager-accept-invite/<uuid:pk>/<uuid:invitation_code>/', BranchManagerAcceptView.as_view(), name='invite-accept'),
     path('fetch-lab-managers/<uuid:pk>/', FetchLabManagers.as_view(), name='fetch-managers'),
 ]

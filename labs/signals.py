@@ -21,8 +21,8 @@ def mail_one_time_password(sender, instance, created, **kwargs):
 			Hello, I am inviting you to take the role as the branch manager at {instance.branch.name} of {instance.branch.laboratory}.
 
 			Click on the link to accept my invitaion and assume the role as the branch manager.
-			http://127.0.0.1:8000/api/user/branch-manager-accept-invite/{instance.branch.id}/{invitation_code}/
-			Thank you, kind regards.
+			http://localhost:5173/accept-invite/{instance.branch.id}/{invitation_code}/
+			Thank you, kind regard.
 			''')		
 		}
 		send_normal_email(data)

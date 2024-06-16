@@ -66,7 +66,7 @@ const LaboratoryProfile = () => {
             <Input type="email" />
           </FormBuilder>
           <FormBuilder name={"main_phone"} label={"Laboratory Tel."}>
-            <PhoneInput defaultCountry="GH" international />
+            <PhoneInput defaultCountry="GH"/>
           </FormBuilder>
           <FormBuilder name={"hefra_id"} label={"HEFRA ID"}>
             <Input type="text" />

@@ -18,7 +18,7 @@ const UserDetails = () => {
       </FormBuilder>
 
       <FormBuilder label={"Phone number"} name={"phone_number"}>
-        <PhoneInput defaultCountry="GH" international />
+        <PhoneInput defaultCountry="GH" />
       </FormBuilder>
     </FormWrapper>
   );

@@ -8,21 +8,22 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: hsla(217.2 32.6% 17.5%);
+  background: hsla(240 3.7% 15.9%);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsla(214.3 31.8% 91.4%);
+  background: hsla(240 4.8% 95.9%);
   border-radius: 8px;
   width: 50px;
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: hsla(222.2 84% 4.9);
+  background: transparent;
+
 }
 
 ::-webkit-scrollbar-track {
-  background: hsla(0 0% 100%);
+  background: transparent;
 }
 
 html {
@@ -45,7 +46,6 @@ html {
 nav ul li {
   display: inline-block;
   list-style: none;
-  margin-inline: 10px;
   white-space: nowrap;
 }
 

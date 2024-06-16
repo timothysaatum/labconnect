@@ -23,6 +23,9 @@ const BranchManagerProfileComplete = React.lazy(() =>
 );
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const MyLab = React.lazy(() => import("@/components/mylab"));
+const BranchManagerInviteAccept = React.lazy(() =>
+  import("@/pages/branchManagerInviteAccept")
+);
 const BranchDetails = React.lazy(() =>
   import("@/components/dashboard/branchDetails")
 );
@@ -42,15 +45,20 @@ export default function App() {
             <Route path="sign-in" element={<Signin />} />
             <Route path="sign-up" element={<Signup />} />
             <Route path="verify-email" element={<VerifyEmail />} />
-            <Route
-              path="/complete-manager-profile"
-              element={<BranchManagerProfileComplete />}
-            />
+            
             <Route
               path="forgot-password"
               element={
                 <React.Suspense fallback={<div>...</div>}>
                   <ForgotPassword />
+                </React.Suspense>
+              }
+            />
+            <Route
+              path="accept-invite/:uidb64/:token"
+              element={
+                <React.Suspense fallback={<div>...</div>}>
+                  <BranchManagerInviteAccept />
                 </React.Suspense>
               }
             />

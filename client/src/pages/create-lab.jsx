@@ -174,7 +174,7 @@ const CreateLab = ({ step, setStep }) => {
                   name={"main_phone"}
                   label="Laboratory Phone number"
                 >
-                  <PhoneInput defaultCountry="GH" international />
+                  <PhoneInput defaultCountry="GH" placeholder="Phone number" />
                 </FormBuilder>
               </div>
               <div className="flex flex-col gap-4">
@@ -226,7 +226,7 @@ const CreateLab = ({ step, setStep }) => {
                 type="submit"
                 title={"Proceed"}
                 disabled={form.formState.isSubmitting}
-                btnClasses={"col-span-2 "}
+                btnClasses={"col-span-1 "}
                 icon={
                   form.formState.isSubmitting ? (
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />

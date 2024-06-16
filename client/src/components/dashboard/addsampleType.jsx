@@ -25,7 +25,6 @@ import { SampleTypeSchema } from "@/lib/schema";
 import { Button } from "../ui/button";
 import { AlertCircle, Loader2, Plus } from "lucide-react";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { useQueryClient } from "@tanstack/react-query";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
@@ -114,7 +113,7 @@ export const SampleTypeForm = ({ form, setOpen }) => {
             </span>
           ) : (
             <span className="flex items-center">
-              Add Branch <Plus className="ml-2 h-4 w-4" />
+              Add sample type <Plus className="ml-2 h-4 w-4" />
             </span>
           )}
         </Button>
