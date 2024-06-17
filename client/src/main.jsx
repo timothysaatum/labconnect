@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <QueryClientProvider client={queryClient}>
           <ThemeProvider defaultTheme="dark" storageKey="theme_key">
             <App />
-            <Toaster richColors  />
+            <Toaster  />
             <ReactQueryDevtools initialIsOpen={false} />
           </ThemeProvider>
         </QueryClientProvider>

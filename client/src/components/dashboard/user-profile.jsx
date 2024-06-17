@@ -1,10 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "../ui/form";
+import { Form, FormField, FormItem, FormLabel } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { PhoneInput } from "../ui/phone-input";
@@ -59,7 +54,7 @@ const UserProfile = () => {
             <Input type="text" placeholder="email" disabled />
           </FormBuilder>
           <FormBuilder name={"phone_number"} label={"Phone number"}>
-            <PhoneInput defaultCountry="GH" international />
+            <PhoneInput defaultCountry="GH" />
           </FormBuilder>
           <FormField
             control={form.control}

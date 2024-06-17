@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  sampleTypes: null,
+  sampleTypes: [],
 };
 
 const SampleTypeSlice = createSlice({
@@ -9,7 +9,7 @@ const SampleTypeSlice = createSlice({
   initialState,
   reducers: {
     setSampleTypes: (state, action) => {
-      state.labInfo = action.payload;
+      state.sampleTypes = action.payload;
     },
   },
 });

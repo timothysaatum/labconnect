@@ -90,7 +90,7 @@ const BranchManagerProfileComplete = () => {
                 <Input type="email" placeholder="email" />
               </FormBuilder>
               <FormBuilder name={"phone_number"} label="Phone number">
-                <PhoneInput defaultCountry="GH" international />
+                <PhoneInput defaultCountry="GH" placeholder="Phone number" />
               </FormBuilder>
               <FormBuilder name={"id_number"} label="National Id">
                 <Input type="text" placeholder="National Id" />

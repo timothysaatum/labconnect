@@ -154,3 +154,27 @@ export const SampleTypeSchema = z.object({
   collection_procedure: z.string().min(1, "Collection procedure is required"),
   collection_time: z.string().min(1, "time is required"),
 });
+
+export const ManagerAcceptSchema = z
+  .object({
+    first_name: z.string().min(1, "First name is required"),
+    last_name: z.string().min(1, "Last name is required"),
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Invalid email address"),
+    phone_number: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    password_confirmation: z
+      .string()
+      .min(1, "Password confirmation is required"),
+    tc: z.boolean(),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: "Passwords do not match",
+    path: ["password_confirmation"],
+  })
+  .refine((data) => data.tc === true, {
+    message: "you must agree to the terms and conditions to continue",
+    path: ["tc"],
+  });

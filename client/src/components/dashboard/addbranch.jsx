@@ -117,7 +117,7 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
           <Input type="email" placeholder="branch email" />
         </FormBuilder>
         <FormBuilder name={"phone"} label={"Branch Contact"}>
-          <PhoneInput defaultCountry="GH" international />
+          <PhoneInput defaultCountry="GH" />
         </FormBuilder>
         <FormField
           name="region"

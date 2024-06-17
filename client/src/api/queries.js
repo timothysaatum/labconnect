@@ -1,5 +1,5 @@
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "./axios";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
@@ -84,6 +84,7 @@ export const useFetchLabTests = (id) => {
     refetchOnWindowFocus: false,
     enabled: !!id,
     staleTime: 1000 * 60 * 60,
+    placeholderData: keepPreviousData,
   });
 };
 export const useFetchSampleTypes = (id) => {

@@ -320,9 +320,11 @@ const CreateTest = ({ from }) => {
               name={"patient_preparation"}
               label={"Patient Preparation required"}
               control={form.control}
+              className="col-span-2"
             >
               <Textarea placeholder="Patient Preparation" />
             </FormBuilder>
+
             <MagicButton
               type="submit"
               title={"Proceed"}
