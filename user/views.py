@@ -388,7 +388,6 @@ def create_branch_manager_user(invitation, user_data):
 		client.save()
 
 	branch.save()
-	
 	invitation.used = True
 	invitation.save()
 	

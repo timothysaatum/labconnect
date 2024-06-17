@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
-    'debug_toolbar',
+    #'debug_toolbar',
     'profiles',
     'sample',
     'user',
@@ -58,7 +58,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     #'user.middleware.IpAdressMiddleWare.FindUserIpAddress',
     'corsheaders.middleware.CorsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
     'user.middleware.validator.PermissionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
