@@ -579,7 +579,7 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	def get_queryset(self):
 
-		return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(collect_sample=True)
+		return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(collected_sample=True)
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):

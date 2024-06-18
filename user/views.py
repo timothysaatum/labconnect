@@ -133,6 +133,7 @@ class CreateUserView(CreateAPIView):
 class UpdateUserAccount(UpdateAPIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = UserCreationSerializer
+	partial = True
 
 	def get_queryset(self):
 		return Client.objects.filter(pk=self.kwargs.get('pk'))
@@ -330,7 +331,6 @@ class FetchUserData(APIView):
 
 	permission_classes = [IsAuthenticated]
 	serializer_class = UserSerializer
-	
 
 	def get(self, request, format=None):
 
@@ -398,11 +398,13 @@ class BranchManagerAcceptView(UpdateAPIView):
 			
 	def put(self, request, *args, **kwargs):
 		invitation = self.get_queryset()
+		
 		if invitation.used:
 			return Response({'error': 'Invitation already used'}, status=status.HTTP_400_BAD_REQUEST)
 
 		pwd = generate_password()
 		print(pwd)
+		print(request.data)
 		data = {
 			'email':invitation.receiver_email,
 			'first_name':request.data['first_name'],

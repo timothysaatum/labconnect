@@ -55,8 +55,8 @@ class Sample(models.Model):
 	)
 
 	mark_sent = models.BooleanField(default=False)
-	collect_sample = models.BooleanField(default=False)
-	reject_sample = models.BooleanField(default=False)
+	collected_sample = models.BooleanField(default=False)
+	rejected_sample = models.BooleanField(default=False)
 	rejection_reason = models.TextField(blank=True, null=True)
 	is_paid = models.BooleanField(default=False)
 	is_received_by_delivery = models.BooleanField(default=False)

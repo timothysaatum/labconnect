@@ -12,8 +12,8 @@ class SampleAdmin(admin.ModelAdmin):
 		'facility_type',
 		'attachment', 
 		'to_laboratory', 
-		'collect_sample',
-		'reject_sample',
+		'collected_sample',
+		'rejected_sample',
 		'rejection_reason',
 		'is_received_by_delivery',
 		'is_delivered_to_lab',
@@ -22,8 +22,8 @@ class SampleAdmin(admin.ModelAdmin):
 		'is_paid'
 	)
 	list_editable = (
-		'collect_sample',
-		'reject_sample',
+		'collected_sample',
+		'rejected_sample',
 		'is_received_by_delivery',
 		'is_delivered_to_lab',
 		'is_accessed_by_lab',
