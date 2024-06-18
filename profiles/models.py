@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from hospital.models import Hospital
 
 client = get_user_model()
 

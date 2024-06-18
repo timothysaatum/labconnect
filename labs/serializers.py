@@ -7,8 +7,7 @@ from .models import (
 		SampleType
 	)
 from .results import TestResult
-from user.serializers import UserCreationSerializer
-from user.models import Client
+
 
 
 class LaboratorySerializer(serializers.ModelSerializer):

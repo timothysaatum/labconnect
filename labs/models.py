@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator, validate_email
 import uuid
 from hospital.models import Facility
-from django.core.exceptions import ValidationError
 
 user = get_user_model()
 

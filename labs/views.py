@@ -573,7 +573,6 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 			)
 
 
-
 class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	serializer_class = SampleSerializer

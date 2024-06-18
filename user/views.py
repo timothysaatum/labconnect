@@ -35,7 +35,6 @@ from labs.models import (
 from labs.serializers import BranchManagerInvitationSerializer
 import random
 import string
-from textwrap import dedent
 
 
 
@@ -74,7 +73,6 @@ def generate_password(length=12):
 	return ''.join(password)
 
 
-
 def verify_token(refresh_token):
 
 	if not 'refresh_token':
@@ -95,8 +93,6 @@ def verify_token(refresh_token):
 		return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)
 
 	return user
-
-
 
 
 class CheckRefreshToken(APIView):
@@ -125,7 +121,6 @@ class CheckRefreshToken(APIView):
 			}, status=status.HTTP_200_OK)
 
 
-
 class CreateUserView(CreateAPIView):
 
 	serializer_class = UserCreationSerializer
@@ -146,7 +141,6 @@ class UpdateUserAccount(UpdateAPIView):
 		return super().put(request, pk)
 
 
-
 class DeleteUserAccount(UpdateAPIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = UserCreationSerializer
@@ -156,7 +150,6 @@ class DeleteUserAccount(UpdateAPIView):
 
 	def delete(self, request, pk):
 		return super().delete(request, pk)
-
 
 
 class VerifyUserEmail(GenericAPIView):
@@ -245,8 +238,6 @@ class LoginUserView(GenericAPIView):
 			return response
 
 
-
-
 class PasswordResetView(GenericAPIView):
 
 	serializer_class = PasswordResetViewSerializer
@@ -265,7 +256,6 @@ class PasswordResetView(GenericAPIView):
 		return Response({
 					'message': 'A link has been sent to your email to reset your password'},
 					status=status.HTTP_200_OK)
-
 
 
 class PasswordResetConfirm(GenericAPIView):
@@ -297,8 +287,6 @@ class PasswordResetConfirm(GenericAPIView):
 					status=status.HTTP_401_UNAUTHORIZED)
 
 
-
-
 class SetNewPassword(GenericAPIView):
 
 	serializer_class = SetNewPasswordSerializer
@@ -311,8 +299,6 @@ class SetNewPassword(GenericAPIView):
 			return Response({
 					'message': 'Password reset successful'
 				}, status=status.HTTP_200_OK)
-
-
 
 
 class LogoutView(APIView):
@@ -338,7 +324,6 @@ class LogoutView(APIView):
 			return response
 
 		return Response({'message': 'Already logged out'})
-
 
 
 class FetchUserData(APIView):
@@ -441,7 +426,7 @@ class InviteBranchManagerView(CreateAPIView):
 	def perform_create(self, serializer):
 
 		serializer.save(sender=self.request.user)
-		
+
 
 class FetchLabManagers(ListAPIView):
 	permission_classes = [IsAuthenticated]
