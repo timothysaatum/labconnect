@@ -141,7 +141,7 @@ export function DataTable({
             {table.getRowModel().rows.map((rowEl) => (
               <TableRow
                 key={rowEl.id}
-                onClick={() => {
+                onDoubleClick={() => {
                   if (rowEl.original.id === selected) {
                      setSelected &&
                        typeof setSelected === "function" &&

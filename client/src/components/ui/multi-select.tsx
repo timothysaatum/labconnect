@@ -393,7 +393,7 @@ const MultipleSelector = React.forwardRef<
               return (
                 <Badge
                   variant="outline"
-                  key={option.value}
+                  key={option.value || Math.random()}
                   className={cn(
                     "data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",

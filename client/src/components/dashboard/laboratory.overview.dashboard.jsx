@@ -37,7 +37,7 @@ function EmptyLab() {
           You have received no samples yet
         </h3>
         <p className="text-sm text-muted-foreground">
-          you will see requestsReceived made to your lab here{" "}
+          you will see Requests made to your lab here{" "}
         </p>
       </div>
     </div>

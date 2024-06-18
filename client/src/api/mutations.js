@@ -15,9 +15,7 @@ export const usedeleteTestMutation = (id) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["tests", id]);
-      toast.info("Test Deleted", {
-        duration: 5000,
-      });
+      toast.info("Test Deleted");
     },
   });
 };

@@ -138,6 +138,7 @@ class CreateUserView(CreateAPIView):
 class UpdateUserAccount(UpdateAPIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = UserCreationSerializer
+	partial = True
 
 	def get_queryset(self):
 		return Client.objects.filter(pk=self.kwargs.get('pk'))

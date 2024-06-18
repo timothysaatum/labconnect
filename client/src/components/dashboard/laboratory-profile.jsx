@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Form } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -9,13 +9,25 @@ import { useFetchUserLab } from "@/api/queries";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { BackgroundGradient } from "../ui/background-gradient";
+import LabLogo from "/images/defaultlabLogo.jpg";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "../ui/form";
 
 const LaboratoryProfile = () => {
   const { data: userlab } = useFetchUserLab();
   const axiosPrivate = useAxiosPrivate();
+  const [imagefile, setImagefile] = useState(null);
+  const [imagefileUrl, setImagefileUrl] = useState(null);
+
   const form = useForm({
     defaultValues: {
-      laboratory_name: "",
+      name: "",
       main_email: "",
       main_phone: "",
       website: "",
@@ -23,32 +35,105 @@ const LaboratoryProfile = () => {
       hefra_id: "",
     },
   });
+  const fileref = form.register("logo");
   useEffect(() => {
     if (userlab) {
-      form.setValue("laboratory_name", userlab?.data[0]?.laboratory_name);
+      form.setValue("name", userlab?.data[0]?.name);
       form.setValue("main_email", userlab?.data[0]?.main_email);
       form.setValue("main_phone", userlab?.data[0]?.main_phone);
       form.setValue("hefra_id", userlab?.data[0]?.herfra_id);
       form.setValue("description", userlab?.data[0]?.description);
       form.setValue("website", userlab?.data[0]?.website);
+      form.setValue("logo", userlab?.data[0]?.logo);
     }
   }, [userlab]);
+
   const onSubmit = async (data) => {
+    console.log(data);
+    if (data.logo instanceof FileList && data.logo.length > 0) {
+      data.logo = data.logo[0];
+    }
+    let newData = {
+      ...data,
+      website:
+        data?.website && !data.website.startsWith("http")
+          ? `http://${data.website}`
+          : data.website,
+    };
     try {
-      await axiosPrivate.patch();
+      const formData = new FormData();
+
+      for (const key in newData) {
+        formData.append(key, newData[key]);
+      }
+      console.log(newData);
+      await axiosPrivate.put(
+        `laboratory/update/${userlab?.data[0]?.id}/`,
+        formData,
+
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      toast.success("Profile updated successfully");
     } catch (error) {
-      toast.error("An error occured, unable to update lab");
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        const errorValues = [Object.values(error?.response?.data || {})];
+        if (errorValues.length > 0) {
+          toast.error(errorValues[0]);
+        }
+      } else if (error?.response?.status === 400) {
+        toast.error("All fields are required", {
+          position: "top-center",
+        });
+      } else {
+        toast.error("Something went went, try again, report if error persist");
+      }
     }
   };
+
+  const filePickeRef = useRef();
+  useEffect(() => {
+    setImagefileUrl(userlab?.data[0]?.logo);
+  }, []);
+  const handleImageChange = (e) => {
+    const file = e.target.files;
+    if (file) {
+      setImagefile(file);
+      setImagefileUrl(URL.createObjectURL(file[0]));
+    }
+    form.clearErrors("logo");
+  };
+  useEffect(() => {
+    console.log(imagefile);
+    form.setValue("logo", imagefile);
+  }, [imagefile]);
   return (
     <Form {...form}>
       <form className="flex-1" onSubmit={form.handleSubmit(onSubmit)}>
         <h3 className="pb-2 pt-4 border-b text-lg md:text-xl font-medium">
           Laboratory Profile{" "}
         </h3>
+        <div className="flex flex-col items-center gap-4 mb-4 py-2">
+          <p
+            className={`text-xl font-bold tracking-widest  ${
+              form?.formState?.errors?.logo
+                ? "text-destructive/75"
+                : "text-muted-foreground"
+            }`}
+          >
+            Choose your logo
+          </p>
+          <img
+            src={imagefileUrl || LabLogo}
+            alt="laboratory logo"
+            onClick={() => filePickeRef.current.click()}
+            className="rounded-full w-44 h-44 object-center max-h-44 max-w-44 cursor-pointer ring-2 ring-primary drop-shadow-xl shadow-lg"
+          />
+        </div>
         <div className="flex flex-col gap-4 mb-4 py-2">
           <FormBuilder
-            name={"laboratory_name"}
+            name={"name"}
             description={
               "The name of your laboratory as it will appear on your reports"
             }
@@ -66,7 +151,10 @@ const LaboratoryProfile = () => {
             <Input type="email" />
           </FormBuilder>
           <FormBuilder name={"main_phone"} label={"Laboratory Tel."}>
-            <PhoneInput defaultCountry="GH"/>
+            <PhoneInput defaultCountry="GH" />
+          </FormBuilder>
+          <FormBuilder name={"postal_address"} label={"Postal."}>
+            <PhoneInput defaultCountry="GH" />
           </FormBuilder>
           <FormBuilder name={"hefra_id"} label={"HEFRA ID"}>
             <Input type="text" />
@@ -80,6 +168,24 @@ const LaboratoryProfile = () => {
           >
             <Input type="text" />
           </FormBuilder>
+          <FormField
+            name="logo"
+            render={({}) => (
+              <FormItem className="hidden">
+                <FormLabel>Update logo</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    {...fileref}
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    ref={filePickeRef}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormBuilder
             name={"description"}
             label={"Laboratory Bio"}

@@ -31,7 +31,7 @@ export default function RequestDialog({ ...rest }) {
       </SheetTrigger>
       <SheetContent
         side="bottom"
-        className="h-[90dvh] p-4 md:p-8 rounded-md rounded-b-none"
+        className=" min-h-fit h-[90dvh] max-h-fit p-4 md:p-8 rounded-md rounded-b-none"
       >
         <SheetHeader className="flex flex-col sm:flex-row sm:items-start items-start text-start px-2 mb-4 space-y-4">
           <div className="sm:flex-1 pt-2">
@@ -49,7 +49,6 @@ export default function RequestDialog({ ...rest }) {
         </SheetHeader>
         <ScrollArea className="h-[80%] pr-2">
           <RequestForm ref={submitRef} setOpen={setOpen} />
-          <ScrollBar />
         </ScrollArea>
       </SheetContent>
     </Sheet>

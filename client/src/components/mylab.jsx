@@ -20,7 +20,7 @@ import {
 } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
-import { ChevronDown, RefreshCcw } from "lucide-react";
+import { ChevronDown, RefreshCcw, RotateCw } from "lucide-react";
 import TestDetails from "./dashboard/testsDetails";
 import AddTest from "./dashboard/addTests";
 import AddBranch from "./dashboard/addbranch";
@@ -72,13 +72,18 @@ function LoadingLab() {
     </div>
   );
 }
-function ErrorLab({ refetch }) {
+function ErrorLab({ refetch, error }) {
+  console.log(error);
   return (
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
       <div className="flex flex-col items-center  text-center py-16 ">
-        <h3 className="text-xl font-semibold ">An Error has Occured</h3>
+        <h3 className="text-xl font-semibold ">
+          {error.name === "CanceledError"
+            ? "We're having trouble connecting"
+            : "unable to load tests"}
+        </h3>
         <p className="text-sm text-destructive">
-          check your internet connection and try again{" "}
+          verify your internet connection and retry.
         </p>
         <Button
           variant="outline"
@@ -88,8 +93,7 @@ function ErrorLab({ refetch }) {
             refetch();
           }}
         >
-          Try Again{" "}
-          <RefreshCcw className="h-4 w-4 ml-2 text-muted-foreground" />
+          Try Again <RotateCw className="h-4 w-4 ml-2 text-muted-foreground" />
         </Button>
         <p className="text-muted-foreground text-xs mt-2">
           If error persists{" "}
@@ -115,9 +119,9 @@ export default function MyLab() {
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab); // get the current tab from the Redux state
 
-    const handleTabChange = (newTab) => {
-      dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
-    };
+  const handleTabChange = (newTab) => {
+    dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
+  };
   const {
     dataUpdatedAt,
     data: userbranches,
@@ -143,8 +147,8 @@ export default function MyLab() {
   }, [userbranches?.data]);
 
   const {
-    isError: testError,
-    isLoading: testsLoading,
+    error: testError,
+    isPending: testsLoading,
     data: tests,
     refetch: refetchTests,
   } = useFetchLabTests(checked);
@@ -314,7 +318,7 @@ export default function MyLab() {
                       {tab.loading ? (
                         <LoadingLab />
                       ) : tab.error ? (
-                        <ErrorLab refetch={tab.refetch} />
+                        <ErrorLab refetch={tab.refetch} error={tab.error} />
                       ) : tab.data?.length < 1 ? (
                         <EmptyLab title={tab.title} user={user} />
                       ) : (
