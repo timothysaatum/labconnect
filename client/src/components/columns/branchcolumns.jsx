@@ -128,7 +128,7 @@ export const branchcolumnDef = [
                 Assign Manager
               </span>
             </AddManager>
-            <Link to="../settings">
+            <Link to="../settings?tab=branch-profile">
               <DropdownMenuItem>Update Branch</DropdownMenuItem>
             </Link>
             <DropdownMenuSeparator />

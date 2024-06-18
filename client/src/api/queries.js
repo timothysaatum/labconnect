@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "./axios";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
+import { newAbortSignal } from "./abortsignal";
 
 // users
 export const useFetchUserDetails = () => {
@@ -63,7 +64,8 @@ export const useFetchUserLab = () => {
     queryKey: ["Laboratory"],
     queryFn: async () => await axiosPrivate.get("/laboratory/user-laboratory/"),
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 600,
+    staleTime: Infinity,
+    cacheTime: Infinity,
     enabled: user?.account_type === "Laboratory",
   });
 };
@@ -77,14 +79,17 @@ export const useFetchAllLabsBranches = () => {
   });
 };
 export const useFetchLabTests = (id) => {
+  const controller = new AbortController();
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["tests", id],
-    queryFn: async () => await axiosPrivate.get(`/laboratory/test/list/${id}/`),
+    queryFn: async () =>
+      await axiosPrivate.get(`/laboratory/test/list/${id}/?limit=2`, {
+        signal: newAbortSignal(30000),
+      }),
     refetchOnWindowFocus: false,
     enabled: !!id,
     staleTime: 1000 * 60 * 60,
-    placeholderData: keepPreviousData,
   });
 };
 export const useFetchSampleTypes = (id) => {

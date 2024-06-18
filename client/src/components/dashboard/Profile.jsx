@@ -13,7 +13,7 @@ const Sidebar = ({ tab }) => {
         <Link
           to="?tab=user-profile"
           className={`${
-            tab === null || tab === "user-profile" ? "active" : ""
+            tab === null || tab === "user-profile" ? "bg-muted-foreground/5" : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           User profile
@@ -21,7 +21,7 @@ const Sidebar = ({ tab }) => {
         <Link
           to="?tab=laboratory-profile"
           className={`${
-            tab === "laboratory-profile" ? "active" : ""
+            tab === "laboratory-profile" ? "bg-muted-foreground/5" : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           Laboratory profile
@@ -29,7 +29,7 @@ const Sidebar = ({ tab }) => {
         <Link
           to="?tab=branch-profile"
           className={`${
-            tab === "branch-profile" ? "active" : ""
+            tab === "branch-profile" ? "bg-muted-foreground/5" : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           Branches

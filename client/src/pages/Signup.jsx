@@ -84,7 +84,6 @@ export default function Signup() {
           "Content-Type": "application/Json",
         },
       });
-      setStep(3);
       navigate("/verify-email");
       toast(
         "A one-time password has been sent to your email, enter it below.",

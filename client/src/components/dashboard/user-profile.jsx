@@ -7,16 +7,23 @@ import { FormBuilder } from "../formbuilder";
 import SelectComponent from "../selectcomponent";
 import { useFetchUserDetails } from "@/api/queries";
 import { useForm } from "react-hook-form";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { selectCurrenttoken, setCredentials } from "@/redux/auth/authSlice";
 
 const UserProfile = () => {
+  const dispatch = useDispatch();
   const gender = [
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ];
   const { data: user } = useFetchUserDetails();
+  const accessToken = useSelector(selectCurrenttoken);
+  const axiosPrivate = useAxiosPrivate();
+  const userdata = user?.data?.data;
   const form = useForm({
     defaultValues: {
-      account_type: "",
       first_name: "",
       last_name: "",
       email: "",
@@ -26,20 +33,42 @@ const UserProfile = () => {
       digital_address: "",
     },
   });
+  const onSubmit = async (data) => {
+    try {
+      const response = await axiosPrivate.put(
+        `user/update-account/${userdata?.id}/`,
+        data
+      );
+      toast.success("Profile updated successfully");
+      dispatch(
+        setCredentials({
+          accessToken,
+          data: response.data.data,
+        })
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     if (user) {
-      form.setValue("first_name", user?.data?.data?.first_name);
-      form.setValue("last_name", user?.data?.data?.last_name);
-      form.setValue("email", user?.data?.data?.email);
-      form.setValue("phone_number", user?.data?.data?.phone_number);
-      form.setValue("gender", user?.data?.data?.gender);
-      form.setValue("id_number", user?.data?.data?.id_number);
-      form.setValue("digital_address", user?.data?.data?.digital_address);
+      form.setValue("first_name", userdata?.first_name);
+      form.setValue("last_name", userdata?.last_name);
+      form.setValue("email", userdata?.email);
+      form.setValue("phone_number", userdata?.phone_number);
+      form.setValue("gender", userdata?.gender);
+      form.setValue("id_number", userdata?.id_number);
+      form.setValue("digital_address", userdata?.digital_address);
     }
   }, [user]);
   return (
     <Form {...form}>
-      <form className="flex-1">
+      <form
+        className="flex-1"
+        noValidate
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <h3 className="pb-2 pt-4 border-b text-lg md:text-xl font-medium">
           User Profile
         </h3>

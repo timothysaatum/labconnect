@@ -1,4 +1,13 @@
-import { Home, LineChart, Truck, TestTubes, Microscope, LayoutDashboardIcon, PhoneCall, Notebook } from "lucide-react";
+import {
+  Home,
+  LineChart,
+  Truck,
+  TestTubes,
+  Microscope,
+  LayoutDashboardIcon,
+  PhoneCall,
+  Notebook,
+} from "lucide-react";
 
 export const useGetSideLinks = (account_type) => {
   const commonLinks = [
@@ -49,7 +58,7 @@ export const useGetMainSideLinks = () => {
     },
     {
       name: "About us",
-      icon: <Notebook/>,
+      icon: <Notebook />,
       link: "/about-us",
     },
     {
@@ -64,4 +73,29 @@ export const useGetMainSideLinks = () => {
     },
   ];
   return mainSideLinks;
+};
+export const useGetSettingsSideLinks = () => {
+  const SettingsSideLinks = [
+    {
+      name: "Profile",
+      link: "profile",
+    },
+    {
+      name: "Account",
+      link: "account",
+    },
+    {
+      name: "Preferences",
+      link: "preferences",
+    },
+    {
+      name: "Security",
+      link: "security",
+    },
+    {
+      name: "Notifications",
+      link: "notifications",
+    },
+  ];
+  return SettingsSideLinks;
 };

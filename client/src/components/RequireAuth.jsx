@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { useFetchUserLab } from "@/api/queries";
 import Loading from "./loading";
 
-
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
   const location = useLocation();
@@ -31,18 +30,17 @@ export const LabRoutes = () => {
   );
 };
 
-
 export const HasLaboratory = () => {
   const user = useSelector(selectCurrentUser);
-  const { isError, data: userlab, isFetching } = useFetchUserLab();
+  const { isError, data: userlab, isPending } = useFetchUserLab();
   const location = useLocation();
   if (user?.account_type !== "Laboratory") return;
-  if (isFetching) return <Loading />;
+  if (isPending) return <Loading />;
   if (isError) {
     toast.error("Error loading laboratory");
   }
- 
-  return userlab?.data.length > 0? (
+
+  return userlab?.data.length > 0 ? (
     <Outlet />
   ) : (
     <Navigate to="/getting-started" state={{ from: location }} replace />

@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "../ui/button";
 import { PanelTopOpen } from "lucide-react";
+import { useGetSettingsSideLinks } from "@/hooks/usesidelinks";
 
 const SideBarSheet = () => {
   return (
@@ -20,7 +21,7 @@ const SideBarSheet = () => {
           <span className="sr-only">Toggle Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="top">
+      <SheetContent side="top" className="pr-14">
         <nav>
           <SidebarSheetLinks />
         </nav>
@@ -29,103 +30,50 @@ const SideBarSheet = () => {
   );
 };
 const SidebarSheetLinks = () => {
+  const sideLinks = useGetSettingsSideLinks();
   return (
     <aside className="settings font-medium md:flex flex-col">
       <nav className="flex flex-col gap-4">
-        <Link
-          to="profile"
-          className={`${
-            location.pathname.endsWith("settings") ||
-            location.pathname.includes("profile")
-              ? "active"
-              : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Profile
-        </Link>
-        <Link
-          to="account"
-          className={`${
-            location.pathname.includes("account") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Account
-        </Link>
-        <Link
-          to="preferences"
-          className={`${
-            location.pathname.includes("preferences") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Preferences
-        </Link>
-        <Link
-          to="security"
-          className={`${
-            location.pathname.includes("security") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Security
-        </Link>
-        <Link
-          to="notifications"
-          className={`${
-            location.pathname.includes("notifications") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Notifications
-        </Link>
+        {sideLinks.map((item) => (
+          <Link
+            key={item.link}
+            to={item.link}
+            className={`${
+              (item.link === "profile" &&
+                location.pathname.endsWith("settings")) ||
+              location.pathname.includes(item.link)
+                ? "bg-muted-foreground/10"
+                : ""
+            } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+          >
+            {item.name}
+          </Link>
+        ))}
       </nav>
     </aside>
   );
 };
 const Sidebar = () => {
+  const sideLinks = useGetSettingsSideLinks();
+  const location = useLocation();
   return (
     <aside className="settings hidden w-36 lg:w-60 font-medium md:flex flex-col">
       <nav className="flex flex-col gap-4">
-        <Link
-          to="profile"
-          className={`${
-            location.pathname.endsWith("settings") ||
-            location.pathname.includes("profile")
-              ? "active"
-              : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Profile
-        </Link>
-        <Link
-          to="account"
-          className={`${
-            location.pathname.includes("account") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Account
-        </Link>
-        <Link
-          to="preferences"
-          className={`${
-            location.pathname.includes("preferences") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Preferences
-        </Link>
-        <Link
-          to="security"
-          className={`${
-            location.pathname.includes("security") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Security
-        </Link>
-        <Link
-          to="notifications"
-          className={`${
-            location.pathname.includes("notifications") ? "active" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Notifications
-        </Link>
+        {sideLinks.map((item) => (
+          <Link
+            key={item.link}
+            to={item.link}
+            className={`${
+              (item.link === "profile" &&
+                location.pathname.endsWith("settings")) ||
+              location.pathname.includes(item.link)
+                ? "bg-muted-foreground/10"
+                : ""
+            } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
+          >
+            {item.name}
+          </Link>
+        ))}
       </nav>
     </aside>
   );

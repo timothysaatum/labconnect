@@ -117,7 +117,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
       queryClient.invalidateQueries(["tests", data?.branch]);
       toast.success(
         `New test- ${data?.name} added ${
-          data.branch.length < 2 ? "" : `to ${data.branches.length} Branches`
+          data.branch.length < 2 ? `${data.branch[0].label}` : `to ${data.branch.length} branches`
         } successfully`,
         {
           position: "top-center",
