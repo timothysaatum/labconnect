@@ -151,7 +151,6 @@ class DeleteLaboratory(PermissionMixin, generics.DestroyAPIView):
 		return self.destroy(request, pk)
 
 
-
 class LaboratoryUserVIew(PermissionMixin, generics.ListAPIView):
 	"""
 	The API endpoint to get Laboratory associated with user
