@@ -3,6 +3,7 @@ from .models import Client, OneTimePassword
 from django.conf import settings
 import pyotp
 from django.core.exceptions import ValidationError
+import asyncio
 
 
 
@@ -16,8 +17,9 @@ def generateotp():
 	return otp
 
 
-def send_code_to_user(email):
+async def send_code_to_user(email):
 
+	loop = asyncio.get_event_loop()
 	subject = 'Your one time verification code'
 	otp_code = generateotp()
 
@@ -34,7 +36,7 @@ def send_code_to_user(email):
 
 	try:
 
-		message.send(fail_silently=False)
+		await loop.run_in_executor(None, message.send(fail_silently=False)) 
 
 	except Exception as e:
 
