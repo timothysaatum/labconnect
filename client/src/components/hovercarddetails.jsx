@@ -1,6 +1,7 @@
 import React from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import SampleTypehoverCard from "./sampleTypehoverCard";
+import TestsHoverCard from "./dashboard/testshoverCard";
 
 const HoverCardDetails = ({ children, option, items, title }) => {
   const hoveredcard = items.find((item) => item.id === option);
@@ -9,6 +10,8 @@ const HoverCardDetails = ({ children, option, items, title }) => {
     switch (title) {
       case "sample":
         return <SampleTypehoverCard hoveredcard={hoveredcard} />;
+      case "tests":
+        return <TestsHoverCard hoveredcard={hoveredcard} />;
       default:
         return null;
     }
@@ -16,7 +19,7 @@ const HoverCardDetails = ({ children, option, items, title }) => {
   return (
     <HoverCard>
       <HoverCardTrigger>{children}</HoverCardTrigger>
-      <HoverCardContent >{CardType()}</HoverCardContent>
+      <HoverCardContent>{CardType()}</HoverCardContent>
     </HoverCard>
   );
 };

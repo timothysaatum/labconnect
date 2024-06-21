@@ -74,12 +74,13 @@ export default function App() {
                 <Route
                   path="dashboard"
                   element={
-                    <React.Suspense fallback={<Loading />}>
+                    <React.Suspense fallback={null}>
                       <Dashboard />
                     </React.Suspense>
                   }
                 >
                   <Route index element={<DashboardOverview />} />
+                  <Route path="overview" element={<DashboardOverview />} />
                   <Route
                     path="settings"
                     element={

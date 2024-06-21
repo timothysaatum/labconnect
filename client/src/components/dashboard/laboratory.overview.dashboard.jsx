@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
 import { calcAge } from "@/util/ageCalculate";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   DropdownMenu,
@@ -28,11 +28,13 @@ import {
 import { useMediaQuery } from "@/hooks/use-media-query";
 import StackedCardsOverview from "../overviewcards";
 import SampleDetails from "@/components/dashboard/sampleDetails";
+import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
+import { useDispatch, useSelector } from "react-redux";
 
 function EmptyLab() {
   return (
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-      <div className="flex flex-col items-center  text-center py-16 ">
+      <div className="px-4 flex flex-col items-center  text-center py-16 ">
         <h3 className="text-xl font-semibold ">
           You have received no samples yet
         </h3>
@@ -91,6 +93,22 @@ export default function LaboratoryDashboardOverview() {
   const requestColumns = useRequestLabColumns();
   const [selectedSamples, setSelectedSamples] = useState();
   const [selected, setSelected] = useState();
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const currentTab = useSelector(selectCurrentTab);
+  const handleTabChange = (newTab) => {
+    dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
+  };
+
+  useEffect(() => {
+    // This will change the pathname to /dashboard/overview when the component mounts
+    if (currentTab === "Received") {
+      navigate("/dashboard/overview#Samples-received", { replace: true });
+    } else {
+      navigate("/dashboard/overview#Samples-sent", { replace: true });
+    }
+  }, [navigate]);
   const {
     isError,
     data: receivedRequests,
@@ -189,13 +207,13 @@ export default function LaboratoryDashboardOverview() {
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return (
-    <main className="px-4 sm:pl-16   grid grid-cols-12 gap-x-4">
+    <main className="p-2 sm:pl-20 sm:pr-6 grid grid-cols-12 gap-x-4">
       <div
         className={`${
           selected ? "col-span-12 lg:col-span-8" : "col-span-12"
         } flex flex-col gap-8`}
       >
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 sticky top-2 left-0 ">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
           <RequestDialog className="w-full shadow-sm col-span-3 " />
           {isDesktop && !selected ? (
             <>
@@ -229,10 +247,14 @@ export default function LaboratoryDashboardOverview() {
           )}
         </div>
         <div className="">
-          <Tabs defaultValue="Received">
+          <Tabs defaultValue={currentTab} onValueChange={handleTabChange}>
             <TabsList className="max-w-full">
-              <TabsTrigger value="Received">Received Samples</TabsTrigger>
-              <TabsTrigger value="Sent Samples">Sent Samples</TabsTrigger>
+              <Link to={"#Samples-received"}>
+                <TabsTrigger value="Received">Received Samples</TabsTrigger>
+              </Link>
+              <Link to={"#Samples-sent"}>
+                <TabsTrigger value="Sent Samples">Sent Samples</TabsTrigger>
+              </Link>
             </TabsList>
             <TabsContent value="Received">
               <Card>

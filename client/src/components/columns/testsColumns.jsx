@@ -113,6 +113,18 @@ export const testscolumnDef = [
       const { mutate, error } = usedeleteTestMutation(test.id);
       return (
         <div className="space-x-4">
+          <TooltipProvider>
+            <Tooltip>
+              <ApplyDisCount test={test}>
+                <TooltipTrigger asChild>
+                  <Button variant="outline" size="icon" className="w-5 h-5">
+                    <BadgeCent className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+              </ApplyDisCount>
+              <TooltipContent side="right">Apply discount</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -128,18 +140,6 @@ export const testscolumnDef = [
               <DeleteDialog testId={test.id} mutate={mutate} />
             </DropdownMenuContent>
           </DropdownMenu>
-          <TooltipProvider>
-            <Tooltip>
-              <ApplyDisCount test={test}>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" className="w-5 h-5">
-                    <BadgeCent className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-              </ApplyDisCount>
-              <TooltipContent side="right">Apply discount</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
       );
     },
