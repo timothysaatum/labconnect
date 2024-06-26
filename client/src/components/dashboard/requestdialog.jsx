@@ -11,7 +11,8 @@ import {
 import RequestForm from "./RequestForm";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import React, { useRef } from "react";
-import { CreditCardIcon, Truck } from "lucide-react";
+import { ChevronRight, CreditCardIcon, Truck } from "lucide-react";
+import { MovingButton } from "@/components/ui/movingborder";
 
 export default function RequestDialog({ ...rest }) {
   const [open, setOpen] = React.useState(false);
@@ -22,12 +23,12 @@ export default function RequestDialog({ ...rest }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="relative w-full inline-flex h-12 overflow-hidden rounded-lg p-[2px] focus:outline-none">
-          <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,gray_0%,black_50%,white_100%)]" />
-          <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg bg-card px-3 py-1 text-sm font-medium backdrop-blur-3xl">
-            Send a sample
-          </span>
-        </button>
+        <MovingButton
+          duration={3000}
+          className="w-full bg-card rounded-full text-inherit font-semibold"
+        >
+          Send Sample <ChevronRight  className="w-4 h-4 ml-2"/>
+        </MovingButton>
       </SheetTrigger>
       <SheetContent
         side="bottom"

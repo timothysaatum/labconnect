@@ -119,7 +119,7 @@ export default function Dashboard() {
           </TooltipProvider>
         </nav>
       </aside>
-      <div className="flex flex-col sm:gap-4">
+      <div className="flex flex-col">
         <header className="sticky justify-between top-0 z-30 sm:hidden flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <Sheet>
             <SheetTrigger asChild>
@@ -179,7 +179,7 @@ export default function Dashboard() {
             <ThemeToggler />
           </div>
         </header>
-        <header className="sm:flex pl-20 hidden w-full pr-6 items-center sticky top-0 left-0 bg-background/40">
+        <header className="sm:flex pl-20 hidden w-full pr-6 items-center py-2">
           <Breadcrumb>
             <BreadcrumbList>
               {pathnames.map((name, index) => {
@@ -209,72 +209,11 @@ export default function Dashboard() {
                   <Bell className="w-4 h-4 text-muted-foreground" />
                 </Button>
               </NotiicationsPopover>
-              <span className=" absolute w-5 h-5 opacity-55 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-0 right-0 dark:text-black text-white">
+              <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
                 2
               </span>
             </div>
           </div>
-          {/* <div className="relative ml-auto flex-1 sm:grow-0 flex gap-2 items-center">
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="overflow-hidden rounded-full"
-                  >
-                    <Avatar>
-                      <AvatarImage
-                        src={
-                          data?.data[0]?.logo ||
-                          "http://localhost:8000/media/labs/logo/Capture.PNG"
-                        }
-                      />
-                      <AvatarFallback></AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel className="">
-                    {user?.first_name}{" "}
-                    {user.is_admin && (
-                      <Badge
-                        className="float-right clear-right"
-                        variant="outline"
-                      >
-                        Admin
-                      </Badge>
-                    )}
-                    <br />
-                    <span className="text-muted-foreground/45 text-xs">
-                      {user?.email}
-                    </span>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <Link to="/dashboard/settings">
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem>Contact us</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => logout()}>
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="md:flex gap-2 hidden">
-                <Link to={"/sign-in"}>
-                  <Button variant="outline">Sign in</Button>
-                </Link>
-                <Link to={"/sign-up"}>
-                  <Button variant="gradient">Sign up</Button>
-                </Link>
-              </div>
-            )}
-            <div className="hidden sm:block ml-2">
-              <ThemeToggler />
-            </div>
-          </div> */}
         </header>
         <Outlet />
       </div>

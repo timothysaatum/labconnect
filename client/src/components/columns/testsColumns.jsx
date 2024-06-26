@@ -112,7 +112,7 @@ export const testscolumnDef = [
       const test = row.original;
       const { mutate, error } = usedeleteTestMutation(test.id);
       return (
-        <div className="space-x-4">
+        <div className=" flex items-center space-x-6">
           <TooltipProvider>
             <Tooltip>
               <ApplyDisCount test={test}>

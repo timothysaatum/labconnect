@@ -17,13 +17,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import useLogout from "@/hooks/uselogout";
 import { Badge } from "./ui/badge";
 import { useFetchUserLab } from "@/api/queries";
+import { useMemo } from "react";
 
 const Header = () => {
   const location = useLocation();
   const user = useSelector(selectCurrentUser);
   const logout = useLogout();
 
-  const { data } = useFetchUserLab();
+  const { data: userData } = useFetchUserLab();
+  const data = useMemo(() => userData, [userData]);
   return (
     <nav
       aria-label="main navigation bar"
