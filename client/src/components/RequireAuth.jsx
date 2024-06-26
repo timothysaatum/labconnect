@@ -35,7 +35,7 @@ export const HasLaboratory = () => {
   const { isError, data: userlab, isPending } = useFetchUserLab();
   const location = useLocation();
   if (user?.account_type !== "Laboratory") return;
-  if (isPending) return <Loading />;
+  if (isPending) return;
   if (isError) {
     toast.error("Error loading laboratory");
   }

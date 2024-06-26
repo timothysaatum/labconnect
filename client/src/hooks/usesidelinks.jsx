@@ -13,7 +13,7 @@ export const useGetSideLinks = (account_type) => {
   const commonLinks = [
     {
       icon: <Home className="h-5 w-5" />,
-      link: "/dashboard",
+      link: "overview",
       name: "Overview",
     },
     {

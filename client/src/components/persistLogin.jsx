@@ -27,7 +27,7 @@ const PersistLogin = () => {
   }, []);
  
 
-  return loading ? <Loading /> : <Outlet />;
+  return loading ? null : <Outlet />;
 };
 
 export default PersistLogin;

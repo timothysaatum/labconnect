@@ -229,7 +229,7 @@ export default function MyLab() {
     },
   ];
   return (
-    <main className="sm:ml-14 px-4 lg:px-10 grid grid-cols-12 gap-x-4 max-sm:mt-2">
+    <main className="sm:pl-20 sm:pr-6 max-sm:px-2 grid grid-cols-12 gap-x-4 max-sm:mt-2">
       <div
         className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
       >
@@ -331,8 +331,10 @@ export default function MyLab() {
                           selected={tab.selected}
                         />
                       )}
+                    
                     </CardContent>
                   </Card>
+          
                 </div>
               </TabsContent>
             ))}

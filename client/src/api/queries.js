@@ -88,6 +88,7 @@ export const useFetchLabTests = (id) => {
         signal: newAbortSignal(30000),
       }),
     refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
     enabled: !!id,
     staleTime: 1000 * 60 * 60,
   });

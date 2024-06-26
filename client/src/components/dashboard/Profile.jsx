@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import UserProfile from "./user-profile";
 import LaboratoryProfile from "./laboratory-profile";
@@ -7,13 +7,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const Sidebar = ({ tab }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname.endsWith("profile")) {
+      return;
+    }
+    navigate("profile", { replace: true });
+  }, [navigate]);
   return (
     <aside className="settings hidden w-36 lg:w-48 font-medium lg:flex flex-col text-sm">
       <nav className="flex flex-col gap-4">
         <Link
           to="?tab=user-profile"
           className={`${
-            tab === null || tab === "user-profile" ? "bg-muted-foreground/5" : ""
+            tab === null || tab === "user-profile"
+              ? "bg-muted-foreground/5"
+              : ""
           } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
         >
           User profile

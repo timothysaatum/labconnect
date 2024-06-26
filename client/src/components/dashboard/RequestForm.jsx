@@ -46,6 +46,7 @@ import moment from "moment";
 import { SheetDescription, SheetTitle } from "../ui/sheet";
 import { Label } from "../ui/label";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
+import PopoverSelectwithhover from "@/components/dashboard/popoverselectwithhover";
 
 const RequestForm = React.forwardRef(({ setOpen }, ref) => {
   const user = useSelector(selectCurrentUser);
@@ -184,198 +185,194 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
     <section>
       <Form {...form}>
         <form
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 py-10 place-items-start"
           onSubmit={form.handleSubmit(onSubmit)}
+          className="grid lg:grid-cols-3 lg:gap-x-10 place-items-start px-2"
         >
-          <div className="md:col-span-1 lg:col-span-2 grid gap-3 grid-cols-2  gap-x-5 ">
-            <FormBuilder name="name_of_patient" label="Name of patient">
-              <Input type="text" placeholder="Name of patient" />
-            </FormBuilder>
-            <FormField
-              name="patient_age"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Patient's Date of birth</FormLabel>
-                  <FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full  text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "dd-MM-yyyy")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0" align="start">
-                        <DayPicker
-                          mode="single"
-                          captionLayout="dropdown-buttons"
-                          fromYear={1900}
-                          toYear={new Date().getFullYear()}
-                          selected={field.value}
-                          onSelect={field.onChange}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="patient_sex"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Patient gender</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+          <div className="lg:col-span-2 grid md:grid-cols-2 lg:gap-x-5 w-full md:gap-x-3">
+            <div className=" flex flex-col gap-6 max-md:mb-6">
+              <p className="text-sm uppercase font-semibold lg:mb-4 md:mb-2">
+                Patient details
+              </p>
+              <FormBuilder name="name_of_patient" label="Name of patient">
+                <Input type="text" placeholder="Name of patient" />
+              </FormBuilder>
+              <FormField
+                name="patient_age"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Patient's Date of birth</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Patient sex" />
-                      </SelectTrigger>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full  text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "dd-MM-yyyy")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0" align="start">
+                          <DayPicker
+                            mode="single"
+                            captionLayout="dropdown-buttons"
+                            fromYear={1900}
+                            toYear={new Date().getFullYear()}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Male">Male</SelectItem>
-                      <SelectItem value="Female">Female</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
+                  </FormItem>
+                )}
+              />
 
-            <PopoverSelect
-              form={form}
-              name={"delivery"}
-              error={deliveriesError}
-              loading={deliveriesLoading}
-              items={deliveries}
-              label={"Choose Delivery Service (Optional)"}
-              title={"Deliveries"}
-              search={"Search delivery service..."}
-            />
-            {user.account_type === "Laboratory" ? (
+              <FormField
+                control={form.control}
+                name="patient_sex"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Patient gender</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Patient sex" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className=" flex flex-col gap-6">
+              <p className="text-sm uppercase font-semibold lg:mb-4 md:mb-2">
+                Request details
+              </p>
+
+              {user.account_type === "Laboratory" ? (
+                <PopoverSelect
+                  form={form}
+                  name={"from_lab"}
+                  error={branchesError}
+                  loading={branchesLoading}
+                  items={branches}
+                  label={"Which branch are you sending sample from?"}
+                  title={"Branches"}
+                  search={"Search branches..."}
+                  info={"branch_name"}
+                />
+              ) : null}
+
               <PopoverSelect
                 form={form}
-                name={"from_lab"}
-                error={branchesError}
-                loading={branchesLoading}
-                items={branches}
-                label={"Choose Sending Branch"}
-                title={"Branches"}
-                search={"Search branches..."}
-                info={"branch_name"}
+                name={user.account_type === "Laboratory" ? "to_lab" : "lab"}
+                error={labsError}
+                loading={labsLoading}
+                items={labs}
+                label={"Which laboratory are you sending sample to?"}
+                title={"Laboratories"}
+                search={"Search laboratory..."}
               />
-            ) : null}
+              <FormField
+                control={form.control}
+                name="attachment"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>upload any relevant files</FormLabel>
+                      <FormControl>
+                        <Input type="file" {...fileRef} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            </div>
 
-            <PopoverSelect
-              form={form}
-              name={user.account_type === "Laboratory" ? "to_lab" : "lab"}
-              error={labsError}
-              loading={labsLoading}
-              items={labs}
-              label={"Choose Laboratory"}
-              title={"Laboratories"}
-              search={"Search laboratory..."}
-            />
-            <FormField
-              control={form.control}
-              name="attachment"
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel>upload any relevant files</FormLabel>
-                    <FormControl>
-                      <Input type="file" placeholder="shadcn" {...fileRef} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
-            />
-            <FormBuilder
-              name="brief_description"
-              label="Patient History (Optional)"
-              control={form.control}
-              className="lg:col-span-2"
-            >
-              <Textarea
-                placeholder="Brief description"
-                className="resize-none"
+            <div className="md:col-span-2 mb-6 mt-4 flex flex-col gap-4">
+              <p className="text-sm uppercase font-semibold">others</p>
+              <PopoverSelect
+                form={form}
+                name={"delivery"}
+                error={deliveriesError}
+                loading={deliveriesLoading}
+                items={deliveries}
+                label={"Choose Delivery Service (Optional)"}
+                title={"Deliveries"}
+                search={"Search delivery service..."}
               />
-            </FormBuilder>
+
+              <FormBuilder
+                name="brief_description"
+                label="Patient History (Optional)"
+                control={form.control}
+                className=""
+              >
+                <Textarea
+                  placeholder="Brief description"
+                  className="resize-none"
+                />
+              </FormBuilder>
+            </div>
           </div>
-          <div className="">
-            <SheetDescription className="-mt-4 mb-2">
-              Select the tests with their corresponding sample type being sent
-            </SheetDescription>
+          <div className=" flex flex-col gap-4 max-md:mb-6 w-full">
+            <p className="text-sm uppercase font-semibold lg:mb-4 md:mb-2">
+              Tests details
+            </p>
             <ul className="flex flex-col gap-2">
               {fields.map((item, index) => (
-                <li key={item.id} className="gap-2">
-                  {index === 0 && (
-                    <Button
-                      size="icon"
-                      variant="secondary"
-                      className="self-end float-end mb-2 -mt-4"
-                      onClick={() => prepend({ test: "", sample_type: "" })}
-                    >
-                      <Plus />
-                    </Button>
-                  )}
+                <li key={item.id} className=" flex gap-2">
                   <div className="border-2 border-dotted rounded-md p-4 flex-1 drop-shadow-">
                     <div>
-                      <FormField
-                        control={form.control}
+                      <PopoverSelectwithhover
+                        form={form}
                         name={`tests.${index}.test`}
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Tests</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <MultipleSelectorWithHover
-                                  options={Options}
-                                  placeholder="select tests to request"
-                                  hidePlaceholderWhenSelected
-                                  emptyIndicator={
-                                    <p className="text-center text-md text-muted-foreground">
-                                      {testspaused
-                                        ? "Check your internet Connection and try again"
-                                        : testsLoading
-                                        ? "loading..."
-                                        : testsError
-                                        ? "Error loading tests"
-                                        : tests?.data?.length < 1
-                                        ? "Selected Lab has no tests"
-                                        : `No more tests available`}
-                                    </p>
-                                  }
-                                  {...field}
-                                />
-                                <ChevronsUpDown className=" absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
-                              </div>
-                            </FormControl>
-                          </FormItem>
-                        )}
+                        error={testsError}
+                        loading={testsLoading}
+                        items={tests}
+                        label={"Choose a test to request"}
+                        title={"tests"}
+                        search={"Search tests..."}
                       />
                     </div>
                     <div className="flex gap-2 items-end">
                       <div className="flex-1">
                         <Label>Select sample type</Label>
-                        <Input {...form.register(`tests.${index}.sample_type`)} />
+                        <Input
+                          {...form.register(`tests.${index}.sample_type`)}
+                        />
                       </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-between">
+                    {index === 0 && (
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => prepend({ test: "", sample_type: "" })}
+                      >
+                        <Plus />
+                      </Button>
+                    )}
                       <Button
                         size="icon"
                         variant="ghost"
@@ -383,19 +380,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
                       >
                         <Minus />
                       </Button>
-                    </div>
                   </div>
-
-                  {/* <Controller
-                    render={({ field }) => <input {...field} />}
-                    name={`test.${index}.lastName`}
-                    control={form.control}
-                  )}
-                  {/* <Controller
-                    render={({ field }) => <input {...field} />}
-                    name={`test.${index}.lastName`}
-                    control={form.control}
-                  /> */}
                 </li>
               ))}
             </ul>

@@ -17,12 +17,12 @@ import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import SettingProfile from "./components/dashboard/Profile";
 import Loading from "./components/loading";
 import Labgettingstarted from "./pages/labgettingstarted";
+import MyLab from "@/components/mylab";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 const BranchManagerProfileComplete = React.lazy(() =>
   import("@/components/dashboard/branch-manager-complete-profile")
 );
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
-const MyLab = React.lazy(() => import("@/components/mylab"));
 const BranchManagerInviteAccept = React.lazy(() =>
   import("@/pages/branchManagerInviteAccept")
 );
@@ -49,7 +49,7 @@ export default function App() {
             <Route
               path="forgot-password"
               element={
-                <React.Suspense fallback={<div>...</div>}>
+                <React.Suspense fallback={null}>
                   <ForgotPassword />
                 </React.Suspense>
               }
@@ -63,7 +63,7 @@ export default function App() {
               }
             />
             <Route
-              path="api/user/password-reset-confirm/:uidb64/:token/"
+              path="/password-reset-confirm/:uidb64/:token/"
               element={<ConfirmForgotPassword />}
             />
 
@@ -74,12 +74,13 @@ export default function App() {
                 <Route
                   path="dashboard"
                   element={
-                    <React.Suspense fallback={<Loading />}>
+                    <React.Suspense fallback={null}>
                       <Dashboard />
                     </React.Suspense>
                   }
                 >
                   <Route index element={<DashboardOverview />} />
+                  <Route path="overview" element={<DashboardOverview />} />
                   <Route
                     path="settings"
                     element={
@@ -105,9 +106,7 @@ export default function App() {
                     <Route
                       path="my-laboratory"
                       element={
-                        <React.Suspense fallback={<Loading />}>
                           <MyLab />
-                        </React.Suspense>
                       }
                     />
                     <Route

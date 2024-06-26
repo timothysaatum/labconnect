@@ -117,7 +117,9 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
       queryClient.invalidateQueries(["tests", data?.branch]);
       toast.success(
         `New test- ${data?.name} added ${
-          data.branch.length < 2 ? `${data.branch[0].label}` : `to ${data.branch.length} branches`
+          data.branch.length < 2
+            ? `${data.branch[0].label}`
+            : `to ${data.branch.length} branches`
         } successfully`,
         {
           position: "top-center",
@@ -125,7 +127,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
       );
       queryClient.invalidateQueries(["tests"]);
       if (!keepOpen) setOpen(false);
-      form.reset();
+      // form.reset();
     } catch (error) {
       console.error(error);
     }
@@ -238,18 +240,18 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
           </AddSampleType>
         </div>
         <FormBuilder name={"test_code"} label={"Test Code"}>
-          <Input />
+          <Input placeholder="Test code" />
         </FormBuilder>
         <FormBuilder name={"name"} label={"Test Name"}>
-          <Input />
+          <Input placeholder="Name of test" />
         </FormBuilder>
         <FormBuilder name={"price"} label={"Price (GHS)"}>
-          <Input type="number" />
+          <Input type="number" placeholder="Price of test" />
         </FormBuilder>
         <div className="grid grid-cols-6 gap-2">
           <div className="col-span-4">
             <FormBuilder name={"turn_around_time"} label={"Turn around time"}>
-              <Input type="number" />
+              <Input type="number" placeholder="Turn around time of test" />
             </FormBuilder>
           </div>
           <FormField
@@ -282,7 +284,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
           label={"Patient Preparation required"}
           control={form.control}
         >
-          <Textarea />
+          <Textarea placeholder="Patient preration required for this test" />
         </FormBuilder>
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? (
@@ -365,7 +367,7 @@ const AddTest = () => {
       <DrawerContent className="px-2">
         <div className="max-h-[90vh] overflow-auto ">
           <DrawerHeader className="z-50 sticky top-0 bg-background">
-            <div className="flex justify-between gap-2">
+            <div className="flex justify-between gap-2 flex-col">
               <div>
                 <DrawerTitle>Add new test</DrawerTitle>
                 <DrawerDescription>

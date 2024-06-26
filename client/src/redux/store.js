@@ -7,9 +7,11 @@ import labReducer from "./lab/userLabSlice";
 import selectedRowsReducer from "./dataTable/selectedrowsSlice";
 import sessionExpiredReducer from "./session/sessionSlice";
 import branchOpenReducer from "./DialogStates/BranchOpenSlice";
-import mylabtabReducer from "./mylabtab/mylabtabSlice";
 import SampleTypeReducer from "./samples/sampleTypeSlice";
+import mylabtabReducer from "./mylabtab/mylabtabSlice";
+import sampletabReducer from "./mylabtab/sampletab";
 import TestsDialogReducer from "./DialogStates/TestOpenSlice";
+
 const rootReducer = combineReducers({
   auth: authReducer,
   lab: labReducer,
@@ -17,6 +19,7 @@ const rootReducer = combineReducers({
   session: sessionExpiredReducer,
   branchOpen: branchOpenReducer,
   mylabtab: mylabtabReducer,
+  sampletab: sampletabReducer,
   sampleType: SampleTypeReducer,
   testsDialog: TestsDialogReducer,
 });
@@ -33,6 +36,7 @@ const persistConfig = {
     "mylabtab",
     "sampleType",
     "testsDialog",
+    // "sampletab"
   ], // name of the slice to be excluded from the persistor
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);

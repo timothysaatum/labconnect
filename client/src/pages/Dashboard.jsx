@@ -1,12 +1,37 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Package2, Settings, PanelLeft, LogOut } from "lucide-react";
+import {
+  Package2,
+  Settings,
+  PanelLeft,
+  LogOut,
+  BellDot,
+  Bell,
+} from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-  TooltipProvider
+  TooltipProvider,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
+import NotiicationsPopover from "@/components/dashboard/notificationsPopover";
 import { Button } from "@/components/ui/button";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -14,12 +39,19 @@ import { useGetSideLinks } from "@/hooks/usesidelinks";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import useLogout from "@/hooks/uselogout";
+import ThemeToggler from "@/components/ThemeToggler";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useFetchUserLab } from "@/api/queries";
+import { Badge } from "@/components/ui/badge";
+import React from "react";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
   const sideLinks = useGetSideLinks(user?.account_type);
   const location = useLocation();
   const logout = useLogout();
+  const { data } = useFetchUserLab();
+  const pathnames = location.pathname.split("/").filter((x) => x);
 
   return (
     <div className="flex flex-col min-h-screen bg-muted/10">
@@ -87,8 +119,8 @@ export default function Dashboard() {
           </TooltipProvider>
         </nav>
       </aside>
-      <div className="flex flex-col sm:gap-4 sm:py-4">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+      <div className="flex flex-col">
+        <header className="sticky justify-between top-0 z-30 sm:hidden flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="sm:hidden">
@@ -133,6 +165,55 @@ export default function Dashboard() {
               </nav>
             </SheetContent>
           </Sheet>
+          <div className="flex gap-2 items-center">
+            <div className="relative sm:hidden ">
+              <NotiicationsPopover>
+                <Button variant="outline" size="icon">
+                  <Bell className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              </NotiicationsPopover>
+              <span className=" absolute w-5 h-5 opacity-55 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-0 right-0 z-40 dark:text-black text-white">
+                2
+              </span>
+            </div>
+            <ThemeToggler />
+          </div>
+        </header>
+        <header className="sm:flex pl-20 hidden w-full pr-6 items-center py-2">
+          <Breadcrumb>
+            <BreadcrumbList>
+              {pathnames.map((name, index) => {
+                const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
+                const isLast = index === pathnames.length - 1;
+                return (
+                  <React.Fragment key={name}>
+                    {index !== 0 && <BreadcrumbSeparator />}
+                    <BreadcrumbItem>
+                      <BreadcrumbLink asChild>
+                        {isLast ? (
+                          <span>{name}</span>
+                        ) : (
+                          <Link to={routeTo}>{name}</Link>
+                        )}
+                      </BreadcrumbLink>
+                    </BreadcrumbItem>
+                  </React.Fragment>
+                );
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
+          <div className="relative ml-auto flex-1 sm:grow-0 flex gap-2 items-center">
+            <div className="relative ">
+              <NotiicationsPopover>
+                <Button variant="outline" size="icon">
+                  <Bell className="w-4 h-4 text-muted-foreground" />
+                </Button>
+              </NotiicationsPopover>
+              <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
+                2
+              </span>
+            </div>
+          </div>
         </header>
         <Outlet />
       </div>
