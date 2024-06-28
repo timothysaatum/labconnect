@@ -105,7 +105,7 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 	def get_queryset(self):
 		return Laboratory.objects.filter(created_by=self.request.user)
 
-	def put(self, request, pk):
+	def patch(self, request, pk):
 		"""
 		Permission check to ensure the right user is interracting with right model.
 		"""
@@ -115,7 +115,7 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 				{'error': 'Invalid user'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-		return self.update(request, pk)
+		return self.partial_update(request, pk)
 
 
 
@@ -253,7 +253,7 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 	def get_queryset(self):
 		return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
-	def put(self, request, pk, format=None):
+	def patch(self, request, pk, format=None):
 
 		branch = self.get_queryset()
 		"""
@@ -267,7 +267,7 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 
-		return self.update(request, pk, format=None)
+		return self.partial_update(request, pk, format=None)
 
 
 
@@ -351,7 +351,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 		return Test.objects.filter(pk=self.kwargs.get('pk'))
 
-	def put(self, request, pk):
+	def patch(self, request, pk):
 		
 		if not self.has_laboratory_permission(self.request.user):
 
@@ -360,7 +360,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 
-		return super().put(request, pk, format=None)
+		return self.partial_update(request, pk)
 
 	def perform_update(self, serializer):
 
@@ -464,7 +464,7 @@ class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 	def get_queryset(self):
 		return TestResult.objects.all()
 
-	def put(self, request, pk, format=None):
+	def patch(self, request, pk):
 
 		if not self.has_laboratory_permission(self.request.user):
 
@@ -473,7 +473,7 @@ class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 
-		return self.update(request, pk, format=None)
+		return self.partial_update(request, pk)
 
 
 
@@ -525,9 +525,9 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 	'''Update details of a specific sample.'''
 	serializer_class = SampleSerializer
 
-	def put(self, request, pk, format=None):
+	def patch(self, request, pk):
 
-		return super().put(request, pk, format=None)
+		return self.partial_update(request, pk)
 
 	def perform_update(self, serializer):
 		sample = serializer.save()
@@ -603,7 +603,7 @@ class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
 	def get_queryset(self):
 		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
 
-	def put(self, request, pk, format=None):
+	def patch(self, request, pk):
 
 		if not self.has_laboratory_permission(self.request.user):
 
@@ -612,7 +612,7 @@ class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 
-		return self.update(request, pk, format=None)
+		return self.partial_update(request, pk)
 
 
 class SampleTypeDeleteView(PermissionMixin, generics.DestroyAPIView):

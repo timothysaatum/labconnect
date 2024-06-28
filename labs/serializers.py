@@ -79,8 +79,9 @@ class SampleTypeSerializer(serializers.ModelSerializer):
 class TestSerializer(serializers.ModelSerializer):
 
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
+	#branch = BranchSerializer(many=True, required=True)
 	#sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
-	sample_type = SampleTypeSerializer()
+	sample_type = SampleTypeSerializer(many=True)
 
 	class Meta:
 
@@ -104,7 +105,7 @@ class TestSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		data['branch'] = [branch.name for branch in instance.branch.all()]
+		#data['branch'] = [branch.name for branch in instance.branch.all()]
 		data['name'] = instance.__str__()
 
 		return data
