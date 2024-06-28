@@ -124,6 +124,12 @@ const CreateLab = ({ step, setStep }) => {
       });
       setStep(2);
     } catch (error) {
+      for (const field in error?.response?.data) {
+        form.setError(field, {
+          type: "manual",
+          message: error.response.data[field][0],
+        });
+      }
       if (error?.response?.status === 401 || error?.response?.status === 403) {
         const errorValues = [Object.values(error?.response?.data || {})];
         if (errorValues.length > 0) {
@@ -184,12 +190,13 @@ const CreateLab = ({ step, setStep }) => {
                 >
                   <Input type="text" placeholder="laboratory postal address" />
                 </FormBuilder>
-                <FormBuilder name={"herfra_id"} label="Herfra Id">
+                <FormBuilder name={"herfra_id"} label="Herfra Id" message>
                   <Input type="text" placeholder="herfra Id" />
                 </FormBuilder>
                 <FormBuilder
                   name="website"
                   label="Laboratory Website (Optional)"
+                  message={true}
                 >
                   <Input type="text" placeholder="website" />
                 </FormBuilder>

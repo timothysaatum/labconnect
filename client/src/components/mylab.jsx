@@ -288,7 +288,7 @@ export default function MyLab() {
                               <Button
                                 disabled={branchesLoading || branchesError}
                                 variant="outline"
-                                className="flex justify-between items-center text-sm px-2 gap-3"
+                                className="flex justify-between items-center text-sm px-2 gap-3 max-sm:w-full"
                               >
                                 {branchesError
                                   ? "Error loading branches"

@@ -11,6 +11,7 @@ import SampleTypeReducer from "./samples/sampleTypeSlice";
 import mylabtabReducer from "./mylabtab/mylabtabSlice";
 import sampletabReducer from "./mylabtab/sampletab";
 import TestsDialogReducer from "./DialogStates/TestOpenSlice";
+import rowCountReducer from "./dataTable/rowcount";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   sampletab: sampletabReducer,
   sampleType: SampleTypeReducer,
   testsDialog: TestsDialogReducer,
+  rowCount: rowCountReducer,
 });
 const persistConfig = {
   key: "root",

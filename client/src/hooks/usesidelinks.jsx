@@ -53,22 +53,22 @@ export const useGetMainSideLinks = () => {
   const mainSideLinks = [
     {
       name: "Home",
-      icon: <Home />,
+      icon: <Home className="w-4 h-4"/>,
       link: "/",
     },
     {
       name: "About us",
-      icon: <Notebook />,
+      icon: <Notebook className="w-4 h-5"/>,
       link: "/about-us",
     },
     {
       name: "Contact us",
-      icon: <PhoneCall />,
+      icon: <PhoneCall className="w-4 h-5"/>,
       link: "/contact-us",
     },
     {
       name: "Dashboard",
-      icon: <LayoutDashboardIcon />,
+      icon: <LayoutDashboardIcon className="w-4 h-5"/>,
       link: "/dashboard",
     },
   ];

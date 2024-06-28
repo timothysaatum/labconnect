@@ -107,7 +107,7 @@ const Header = () => {
             </Link>
           </div>
         )}
-        <div className="hidden sm:block ml-2">
+        <div className="hidden md:block ml-2">
           <ThemeToggler />
         </div>
 

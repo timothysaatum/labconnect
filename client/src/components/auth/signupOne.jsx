@@ -4,8 +4,8 @@ import SelectComponent from '../selectcomponent';
 
 
   const accounts = [
-    { value: "Laboratory", label: "Laboratory Services" },
-    { value: "Health Worker", label: "Health Service Provider" },
+    { value: "Laboratory", label: "Provide Laboratory Services" },
+    { value: "Hospital", label: "As a hospital" },
     { value: "Delivery", label: "Delivery Agent" },
   ];
 const AccountType = ({form}) => {

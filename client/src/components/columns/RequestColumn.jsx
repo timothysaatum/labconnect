@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { createCell, createSortableHeader } from "../../util/tablefxns";
 
-export const useHealthWorkerRequestColumns = () => {
+export const useHospitalRequestColumns = () => {
   const RequestColumns = [
     {
       id: "select",

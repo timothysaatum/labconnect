@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import RequestDialog from "./requestdialog";
 import {
-  useFetchLabRequests,
+  useFetchLabRequestsReceived,
   useFetchLabRequestsSent,
   useFetchUserBranches,
 } from "@/api/queries";
@@ -30,16 +30,17 @@ import StackedCardsOverview from "../overviewcards";
 import SampleDetails from "@/components/dashboard/sampleDetails";
 import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
+import { MovingButton } from "../ui/movingborder";
 
-function EmptyLab() {
+function EmptyLab({ keywords }) {
   return (
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
       <div className="px-4 flex flex-col items-center  text-center py-16 ">
         <h3 className="text-xl font-semibold ">
-          You have received no samples yet
+          You have {keywords[0]} no samples yet
         </h3>
         <p className="text-sm text-muted-foreground">
-          you will see Requests made to your lab here{" "}
+          you will see Requests made {keywords[1]} your lab here{" "}
         </p>
       </div>
     </div>
@@ -112,12 +113,12 @@ export default function LaboratoryDashboardOverview() {
   const {
     isError,
     data: receivedRequests,
-    isLoading,
+    isPending,
     isRefetching,
     refetch,
     isRefetchError,
     dataUpdatedAt,
-  } = useFetchLabRequests(checked);
+  } = useFetchLabRequestsReceived(checked);
 
   const {
     data: sentRequests,
@@ -160,7 +161,7 @@ export default function LaboratoryDashboardOverview() {
 
   const {
     data: branches,
-    isLoading: branchesLoading,
+    isPending: branchesLoading,
     isError: branchesError,
   } = useFetchUserBranches();
 
@@ -214,7 +215,11 @@ export default function LaboratoryDashboardOverview() {
         } flex flex-col gap-8`}
       >
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <RequestDialog className="w-full shadow-sm col-span-3 " />
+          <RequestDialog className="w-full shadow-sm col-span-3 ">
+            <MovingButton>
+              Send a sample
+            </MovingButton>
+          </RequestDialog>
           {isDesktop && !selected ? (
             <>
               <Card>
@@ -295,7 +300,7 @@ export default function LaboratoryDashboardOverview() {
                   </DropdownMenu>
                 </CardHeader>
                 <CardContent>
-                  {isLoading ? (
+                  {isPending ? (
                     <LoadingLab />
                   ) : isError ? (
                     <ErrorLab
@@ -304,12 +309,12 @@ export default function LaboratoryDashboardOverview() {
                       isRefetching={isRefetching}
                     />
                   ) : receivedRequests?.data.length < 1 ? (
-                    <EmptyLab />
+                    <EmptyLab keywords={["Received", "to"]} />
                   ) : (
                     <DataTable
                       data={requestsReceived}
                       error={isError}
-                      loading={isLoading}
+                      loading={isPending}
                       columnDef={requestColumns}
                       title={"Requests"}
                       filter={"Patient"}
@@ -367,8 +372,8 @@ export default function LaboratoryDashboardOverview() {
                       isRefetchError={sentFetchError}
                       isRefetching={sentrefetching}
                     />
-                  ) : receivedRequests?.data.length < 1 ? (
-                    <EmptyLab />
+                  ) : sentRequests?.data?.length < 1 ? (
+                    <EmptyLab keywords={["Sent", "from"]} />
                   ) : (
                     <DataTable
                       data={requestsSent}
