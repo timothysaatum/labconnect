@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator, validate_email
 import uuid
 from hospital.models import Facility
-from django.core.exceptions import ValidationError
 
 user = get_user_model()
 
@@ -17,7 +16,6 @@ class BaseModel(models.Model):
 
 
 class Laboratory(BaseModel):
-
 	'''
 	A laboratory where tests are conducted.
 
@@ -43,7 +41,7 @@ class Laboratory(BaseModel):
 
 	def __str__(self) -> str:
 		return self.name
-	
+
 	#def save(self, *args, **kwargs):
 	#	if not self.pk and Laboratory.objects.filter(created_by=self.created_by).exists():
 	#		raise ValidationError('You can only have one laboratory.')
@@ -97,6 +95,8 @@ class Test(BaseModel):
 	name = models.CharField(max_length=200, db_index=True)
 	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
+	discount_price = models.DecimalField(decimal_places=2, max_digits=10)
+	discount_percent = models.CharField(max_length=10)
 	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField(blank=True, null=True)
 	sample_type = models.ManyToManyField(SampleType)

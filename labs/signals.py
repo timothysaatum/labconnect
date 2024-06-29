@@ -22,6 +22,7 @@ def mail_one_time_password(sender, instance, created, **kwargs):
 
 			Click on the link to accept my invitaion and assume the role as the branch manager.
 			http://localhost:5173/accept-invite/{instance.id}/{invitation_code}/
+			
 			Thank you, kind regard.
 			''')		
 		}

@@ -7,8 +7,7 @@ from .models import (
 		SampleType
 	)
 from .results import TestResult
-from user.serializers import UserCreationSerializer
-from user.models import Client
+
 
 
 class LaboratorySerializer(serializers.ModelSerializer):
@@ -64,10 +63,25 @@ class BranchSerializer(serializers.ModelSerializer):
 		return data
 
 
+class SampleTypeSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = SampleType
+
+		fields = (
+			'id',
+			'sample_name',
+			'collection_procedure',
+			'collection_time'
+		)
+
+
 class TestSerializer(serializers.ModelSerializer):
 
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
+	#branch = BranchSerializer(many=True, required=True)
+	#sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
+	sample_type = SampleTypeSerializer(many=True)
 
 	class Meta:
 
@@ -78,6 +92,7 @@ class TestSerializer(serializers.ModelSerializer):
 			'name',
 			'turn_around_time',
 			'price',
+			'discount_price',
 			'patient_preparation',
 			'sample_type',
 			'branch',
@@ -90,7 +105,7 @@ class TestSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		data['branch'] = [branch.name for branch in instance.branch.all()]
+		#data['branch'] = [branch.name for branch in instance.branch.all()]
 		data['name'] = instance.__str__()
 
 		return data
@@ -172,16 +187,3 @@ class BranchManagerInvitationSerializer(serializers.ModelSerializer):
 			)
 
 		return invitation
-
-
-class SampleTypeSerializer(serializers.ModelSerializer):
-
-	class Meta:
-		model = SampleType
-
-		fields = (
-			'id',
-			'sample_name',
-			'collection_procedure',
-			'collection_time'
-		)

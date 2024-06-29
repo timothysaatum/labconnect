@@ -1,16 +1,13 @@
 from rest_framework import serializers
 from .models import Client, OneTimePassword
-from django.conf import settings
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import smart_str, smart_bytes, force_str
+from django.utils.encoding import smart_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_normal_email
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-
 
 
 
@@ -109,7 +106,6 @@ class LoginSerializer(serializers.ModelSerializer):
 			'first_name': user.first_name,
 			'email':user.email
 		}
-
 
 
 class VerifyEmailSerializer(serializers.ModelSerializer):

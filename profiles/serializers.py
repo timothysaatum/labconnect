@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from hospital.models import Hospital
-from .models import LabUserProfile, DeliveryUserProfile
+from .models import LabUserProfile
 
 
 
