@@ -19,7 +19,7 @@ const HoverCardDetails = ({ children, option, items, title }) => {
   return (
     <HoverCard>
       <HoverCardTrigger>{children}</HoverCardTrigger>
-      <HoverCardContent>{CardType()}</HoverCardContent>
+      <HoverCardContent className="w-fit">{CardType()}</HoverCardContent>
     </HoverCard>
   );
 };

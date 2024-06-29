@@ -1,28 +1,5 @@
-import { Link } from "react-router-dom";
-import {
-  ChevronLeft,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  ShoppingCart,
-  Upload,
-  Users2,
-} from "lucide-react";
+import { ChevronLeft, Upload } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -32,14 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -49,36 +19,48 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Textarea } from "@/components/ui/textarea";
-// import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useForm } from "react-hook-form";
+
+import { useFieldArray, useForm } from "react-hook-form";
 import { Form } from "../ui/form";
 import { FormBuilder } from "../formbuilder";
 import SelectComponent from "../selectcomponent";
 import CalenderDatePicker from "./datepicker";
 import PopoverSelectwithhover from "./popoverselectwithhover";
-import { useFetchAllLabsBranches, useFetchUserBranches } from "@/api/queries";
+import {
+  useFetchAllLabsBranches,
+  useFetchLabTests,
+  useFetchUserBranches,
+} from "@/api/queries";
 import PopoverSelect from "../popoverselect";
-import { useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearSampleData,
+  selectSampleData,
+  setSampleData,
+} from "@/redux/formData/sendsampleSave";
+import { toast } from "sonner";
 
 export default function SendSample() {
+  const [id, setId] = useState(null);
+  const dispatch = useDispatch();
+  const savedData = useSelector(selectSampleData);
+  const [saving, setSaving] = useState(false);
+
   //form declaration
   const form = useForm({
-    defaultValues: {},
+    defaultValues: {
+      name_of_patient: "",
+      patient_age: "",
+      patient_sex: "",
+      sample_type: "",
+      delivery: "",
+      to_lab: "",
+      from_lab: "",
+      brief_description: "",
+    },
   });
 
   //genders declaration
@@ -104,6 +86,86 @@ export default function SendSample() {
   //filepicker ref
   const filePickeRef = useRef();
 
+  //field array for tests
+  const { fields, prepend, remove } = useFieldArray({
+    control: form.control,
+    name: "tests",
+  });
+
+  // id of lab to fetch tests for
+  useEffect(() => {
+    setId(form.watch("to_lab"));
+    form.setValue("tests", []);
+  }, [form.watch("to_lab")]);
+
+  //intialize with a single field
+  useEffect(() => {
+    // if (savedData?.tests) {
+    //   for (let index = 0; index < savedData?.test?.length; index++) {
+    //     prepend(savedData?.test[index]);
+    //   }
+    // }
+  }, [savedData, prepend]);
+
+  //fetching selected lab test
+  const {
+    data: tests,
+    isError: testsError,
+    isPending: testsLoading,
+  } = useFetchLabTests(id);
+
+  //tests card ref
+  const TestsCardRef = useRef(null);
+
+  useEffect(() => {
+    if (TestsCardRef.current) {
+      // Scroll into view
+      TestsCardRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+      // Optional: Focus if the element can be focused
+      TestsCardRef.current.focus();
+    }
+  }, [tests]);
+
+  //saving form to redux
+  const handleSave = (data) => {
+    try {
+      setSaving(true);
+      dispatch(setSampleData(data));
+      setSaving(false);
+      toast.success("form saved. you can complete it later");
+    } catch (error) {
+      toast.error("error saving form");
+    } finally {
+      setSaving(false);
+    }
+  };
+  const handleReset = (data) => {
+    try {
+      form.reset();
+      dispatch(clearSampleData());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // populating the form with data from redux
+
+  useEffect(() => {
+    if (savedData) {
+      form.setValue("name_of_patient", savedData.name_of_patient);
+      form.setValue("patient_age", savedData.patient_age);
+      form.setValue("patient_sex", savedData.patient);
+      form.setValue("sample_type", savedData.sample_type);
+      form.setValue("delivery", savedData.delivery);
+      form.setValue("to_lab", savedData.to_lab);
+      form.setValue("from_lab", savedData.from_lab);
+      form.setValue("brief_description", savedData.brief_description);
+    }
+  }, [savedData]);
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -118,10 +180,13 @@ export default function SendSample() {
                 Send Sample
               </h1>
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleReset}>
                   Discard
                 </Button>
-                <Button size="sm">Save and continue later</Button>
+                <Button size="sm" onClick={form.handleSubmit(handleSave)}>
+                  Save and continue later{" "}
+                  {saving && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
+                </Button>
               </div>
             </div>
             <Form {...form}>
@@ -138,7 +203,7 @@ export default function SendSample() {
                       <div className="grid gap-6">
                         <div>
                           <FormBuilder
-                            name={"patient_name"}
+                            name={"name_of_patient"}
                             label={"Patient Name"}
                             className="grid gap-3"
                           >
@@ -215,59 +280,65 @@ export default function SendSample() {
                       can see the tests available
                     </CardFooter>
                   </Card>
-                  <Card x-chunk="dashboard-07-chunk-2">
-                    <CardHeader>
-                      <CardTitle>Choose Tests</CardTitle>
-                      <CardDescription>
-                        These tests are available in the laboratory you
-                        selected.
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid gap-6 sm:grid-cols-3">
-                        <div className="grid gap-3">
-                          <Label htmlFor="category">Category</Label>
-                          <Select>
-                            <SelectTrigger
-                              id="category"
-                              aria-label="Select category"
-                            >
-                              <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="clothing">Clothing</SelectItem>
-                              <SelectItem value="electronics">
-                                Electronics
-                              </SelectItem>
-                              <SelectItem value="accessories">
-                                Accessories
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="grid gap-3">
-                          <Label htmlFor="subcategory">
-                            Subcategory (optional)
-                          </Label>
-                          <Select>
-                            <SelectTrigger
-                              id="subcategory"
-                              aria-label="Select subcategory"
-                            >
-                              <SelectValue placeholder="Select subcategory" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="t-shirts">T-Shirts</SelectItem>
-                              <SelectItem value="hoodies">Hoodies</SelectItem>
-                              <SelectItem value="sweatshirts">
-                                Sweatshirts
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+
+                  {form.watch("to_lab") && (
+                    <div ref={TestsCardRef} className="py-4">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Choose Tests</CardTitle>
+                          <CardDescription>
+                            These tests are available in the laboratory you
+                            selected.
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid gap-6 sm:grid-cols-[1fr_200px]">
+                            {fields.map((item, index) => (
+                              <div className="grid gap-3">
+                                <PopoverSelectwithhover
+                                  form={form}
+                                  name={`tests.${index}.test`}
+                                  error={testsError}
+                                  loading={testsLoading}
+                                  items={tests}
+                                  label={"Choose a test to request"}
+                                  title={"tests"}
+                                  search={"Search tests..."}
+                                />
+                              </div>
+                            ))}
+                            <div className="grid gap-3">
+                              <Label htmlFor="subcategory">
+                                Subcategory (optional)
+                              </Label>
+                              <Select>
+                                <SelectTrigger
+                                  id="subcategory"
+                                  aria-label="Select subcategory"
+                                >
+                                  <SelectValue placeholder="Select subcategory" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="t-shirts">
+                                    T-Shirts
+                                  </SelectItem>
+                                  <SelectItem value="hoodies">
+                                    Hoodies
+                                  </SelectItem>
+                                  <SelectItem value="sweatshirts">
+                                    Sweatshirts
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
+                  {form.watch("to_lab") && (
+                    <Button className="-mt-4">Proceed to checkout</Button>
+                  )}
                 </div>
                 <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                   <Card x-chunk="dashboard-07-chunk-3">
@@ -297,9 +368,7 @@ export default function SendSample() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card
-                    className="overflow-hidden"
-                  >
+                  <Card className="overflow-hidden">
                     <CardHeader>
                       <CardTitle className="whitespace-nowrap text-lg">
                         Upload necessary documents
@@ -314,7 +383,7 @@ export default function SendSample() {
                       <button
                         onClick={() => filePickeRef.current.click()}
                         type="button"
-                        className="flex md:aspect-square w-full items-center justify-center rounded-md border border-dashed max-md:h-20"
+                        className="flex md:aspect-video w-full items-center justify-center rounded-md border border-dashed max-md:h-20"
                       >
                         <Upload className="h-4 w-4 text-muted-foreground" />
                         <span className="sr-only">Upload</span>
@@ -339,7 +408,12 @@ export default function SendSample() {
               </form>
             </Form>
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => form.reset()}
+                type="button"
+              >
                 Discard
               </Button>
               <Button size="sm">Save Product</Button>

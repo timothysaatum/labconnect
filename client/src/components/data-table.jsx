@@ -94,7 +94,8 @@ export function DataTable({
   }, [rowSelection, title]);
   const possiblePageSizes = [5, 10, 15, 20, 25];
   useEffect(() => {
-    setPagination((prev) => ({ ...prev, pageSize: rowCount }));
+    table.setPageSize(rowCount)
+    table.setPageIndex(0)
   }, [rowCount]);
   return (
     <>
