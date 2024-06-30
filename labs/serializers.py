@@ -102,6 +102,35 @@ class TestSerializer(serializers.ModelSerializer):
 
 		pagination_class = QueryPagination
 
+	def create(self, validated_data):
+		branches_data = validated_data.pop('branch')
+		sample_types_data = validated_data.pop('sample_type')
+		test = Test.objects.create(**validated_data)
+		test.branch.set(branches_data)
+
+		for sample_type_data in sample_types_data:
+			sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
+			test.sample_type.add(sample_type)
+		return test
+	
+	def update(self, instance, validated_data):
+		branches_data = validated_data.pop('branch', None)
+		sample_types_data = validated_data.pop('sample_type', None)
+
+		for attr, value in validated_data.items():
+			setattr(isinstance, attr, value)
+
+		if branches_data is not None:
+			instance.branch.set(branches_data)
+			
+		if sample_types_data is not None:
+			instance.sample_type.clear()
+			for sample_type_data in sample_types_data:
+				sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
+				instance.sample_type.add(sample_type)
+		instance.save()
+		return instance
+
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)

@@ -13,6 +13,19 @@ REFERRING_FACILITY_TYPE = [
 	('Laboratory', 'Laboratory'),
 	('Hospital', 'Hospital')
 ]
+SAMPLE_STATUS = [
+	('Received by delivery', 'Received by delivery'),
+	('Received by laboratory', 'Received by laboratory'),
+	('Rejected by laboratory', 'Rejected by laboratory')
+]
+PAYMENT_MODE = [
+	('Manual', 'Manual'),
+	('Online', 'Online')
+]
+PAYMENT_STATUS = [
+	('Paid', 'Paid'),
+	('Pending', 'Pending')
+]
 class Sample(models.Model):
 
 	'''
@@ -27,9 +40,9 @@ class Sample(models.Model):
 
 		)
 	facility_type = models.CharField(max_length=50, choices=REFERRING_FACILITY_TYPE)
-	sender_full_name = models.CharField(max_length=200)
-	sender_phone = models.CharField(max_length=20)
-	sender_email = models.EmailField()
+	sender_full_name = models.CharField(max_length=200, null=True, blank=True)
+	sender_phone = models.CharField(max_length=20, null=True, blank=True)
+	sender_email = models.EmailField(null=True, blank=True)
 	patient_name = models.CharField(max_length=200)
 	patient_age = models.DateField()
 	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
@@ -55,13 +68,10 @@ class Sample(models.Model):
 	)
 
 	mark_sent = models.BooleanField(default=False)
-	collected_sample = models.BooleanField(default=False)
-	rejected_sample = models.BooleanField(default=False)
+	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
 	rejection_reason = models.TextField(blank=True, null=True)
-	is_paid = models.BooleanField(default=False)
-	is_received_by_delivery = models.BooleanField(default=False)
-	is_delivered_to_lab = models.BooleanField(default=False)
-	is_accessed_by_lab = models.BooleanField(default=False)
+	payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE)
+	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 

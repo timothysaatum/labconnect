@@ -31,7 +31,7 @@ class Laboratory(BaseModel):
 	website = models.URLField(blank=True, null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	logo = models.ImageField(upload_to='labs/logo', default='logo.png')
+	logo = models.ImageField(upload_to='labs/logo', default='logo.jpg')
 	herfra_id = models.CharField('HERFRA ID', max_length=100)
 	description = models.TextField()
 
