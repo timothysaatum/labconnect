@@ -7,6 +7,7 @@ import {
   LayoutDashboardIcon,
   PhoneCall,
   Notebook,
+  Locate,
 } from "lucide-react";
 
 export const useGetSideLinks = (account_type) => {
@@ -18,6 +19,11 @@ export const useGetSideLinks = (account_type) => {
     },
     {
       icon: <Truck className="h-5 w-5" />,
+      link: "send-sample",
+      name: "Send sample",
+    },
+    {
+      icon: <Locate className="h-5 w-5" />,
       link: "tracking",
       name: "Tracking",
     },
@@ -53,22 +59,22 @@ export const useGetMainSideLinks = () => {
   const mainSideLinks = [
     {
       name: "Home",
-      icon: <Home className="w-4 h-4"/>,
+      icon: <Home className="w-4 h-4" />,
       link: "/",
     },
     {
       name: "About us",
-      icon: <Notebook className="w-4 h-5"/>,
+      icon: <Notebook className="w-4 h-5" />,
       link: "/about-us",
     },
     {
       name: "Contact us",
-      icon: <PhoneCall className="w-4 h-5"/>,
+      icon: <PhoneCall className="w-4 h-5" />,
       link: "/contact-us",
     },
     {
       name: "Dashboard",
-      icon: <LayoutDashboardIcon className="w-4 h-5"/>,
+      icon: <LayoutDashboardIcon className="w-4 h-5" />,
       link: "/dashboard",
     },
   ];

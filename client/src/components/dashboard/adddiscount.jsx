@@ -10,18 +10,19 @@ import { useEffect, useState } from "react";
 import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
 import { Form } from "../ui/form";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 export function ApplyDisCount({ children, test }) {
   const [percent, setPercent] = useState(0);
+  const axiosPrivate = useAxiosPrivate();
 
   const form = useForm({
     defaultValues: {
-      discount: "",
-      discountPercent: percent,
+      discount_price: "",
     },
   });
 
-  const discount = form.watch("discount");
+  const discount = form.watch("discount_price");
   useEffect(() => {
     const calculateDiscountPercentage = () => {
       if (!discount) return;
@@ -32,6 +33,12 @@ export function ApplyDisCount({ children, test }) {
     calculateDiscountPercentage();
   }, [discount]);
 
+  // update discount
+  const onSubmit = async (data) => {
+    try {
+      await axiosPrivate.patch(`laboratory/test/update/${test?.id}/`, data);
+    } catch (error) {}
+  };
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -49,7 +56,11 @@ export function ApplyDisCount({ children, test }) {
             </p>
           </div>
           <Form {...form}>
-            <form className="grid gap-2 space-y-3">
+            <form
+              className="grid gap-2 space-y-3"
+              noValidate
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="width">Original (GHS)</Label>
                 <span id="original" className="text-xs">
@@ -57,7 +68,7 @@ export function ApplyDisCount({ children, test }) {
                 </span>
               </div>
               <FormBuilder
-                name={"discount"}
+                name={"discount_price"}
                 label={"Discount amount "}
                 className="grid grid-cols-3 items-center gap-4"
               >

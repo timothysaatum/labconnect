@@ -42,6 +42,9 @@ import {
   setSampleData,
 } from "@/redux/formData/sendsampleSave";
 import { toast } from "sonner";
+import SelectComponentWithHover from "./hoverselect";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { labRequestSchema } from "@/lib/schema";
 
 export default function SendSample() {
   const [id, setId] = useState(null);
@@ -51,6 +54,7 @@ export default function SendSample() {
 
   //form declaration
   const form = useForm({
+    resolver: zodResolver(labRequestSchema),
     defaultValues: {
       name_of_patient: "",
       patient_age: "",
@@ -100,12 +104,10 @@ export default function SendSample() {
 
   //intialize with a single field
   useEffect(() => {
-    // if (savedData?.tests) {
-    //   for (let index = 0; index < savedData?.test?.length; index++) {
-    //     prepend(savedData?.test[index]);
-    //   }
-    // }
-  }, [savedData, prepend]);
+    if (fields.length === 0) {
+      prepend({ test: "", sample_type: "" });
+    }
+  }, [prepend, fields.length]);
 
   //fetching selected lab test
   const {
@@ -166,11 +168,16 @@ export default function SendSample() {
     }
   }, [savedData]);
 
+  //form submission
+  const onSubmit = (data) => {
+    console.log(data);
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <div className="mx-auto grid max-w-5xl flex-1 auto-rows-max gap-4">
+          <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
               <Button variant="outline" size="icon" className="h-7 w-7">
                 <ChevronLeft className="h-4 w-4" />
@@ -190,7 +197,11 @@ export default function SendSample() {
               </div>
             </div>
             <Form {...form}>
-              <form className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
+              <form
+                className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8"
+                noValidate
+                onSubmit={form.handleSubmit(onSubmit)}
+              >
                 <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
                   <Card x-chunk="dashboard-07-chunk-0">
                     <CardHeader>
@@ -235,7 +246,6 @@ export default function SendSample() {
                             label={"Relevant Clinical History"}
                           >
                             <Textarea
-                              lab
                               className="min-h-28 resize-none"
                               maxLength={200}
                             />
@@ -253,7 +263,7 @@ export default function SendSample() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-6">
-                      <PopoverSelectwithhover
+                      <PopoverSelect
                         form={form}
                         name={"from_lab"}
                         error={branchesError}
@@ -292,47 +302,45 @@ export default function SendSample() {
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          <div className="grid gap-6 sm:grid-cols-[1fr_200px]">
+                          <div>
                             {fields.map((item, index) => (
-                              <div className="grid gap-3">
-                                <PopoverSelectwithhover
-                                  form={form}
-                                  name={`tests.${index}.test`}
-                                  error={testsError}
-                                  loading={testsLoading}
-                                  items={tests}
-                                  label={"Choose a test to request"}
-                                  title={"tests"}
-                                  search={"Search tests..."}
-                                />
+                              <div
+                                key={item.id}
+                                className="grid gap-2 md:gap-6 md:grid-cols-[2fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
+                              >
+                                <div>
+                                  <PopoverSelectwithhover
+                                    form={form}
+                                    name={`tests.${index}.test`}
+                                    error={testsError}
+                                    loading={testsLoading}
+                                    items={tests}
+                                    label={"Choose a test to request"}
+                                    title={"tests"}
+                                    search={"Search tests..."}
+                                  />
+                                </div>
+                                <div>
+                                  <SelectComponentWithHover
+                                    form={form}
+                                    name={`tests.${index}.sample_type`}
+                                    error={testsError}
+                                    loading={testsLoading}
+                                    index={index}
+                                    data={tests?.data}
+                                    id={form.watch(`tests.${index}.test`)}
+                                    label={"what sample are you sending"}
+                                    title={"sample types"}
+                                    search={"Search sample type..."}
+                                  />
+                                </div>
                               </div>
                             ))}
-                            <div className="grid gap-3">
-                              <Label htmlFor="subcategory">
-                                Subcategory (optional)
-                              </Label>
-                              <Select>
-                                <SelectTrigger
-                                  id="subcategory"
-                                  aria-label="Select subcategory"
-                                >
-                                  <SelectValue placeholder="Select subcategory" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="t-shirts">
-                                    T-Shirts
-                                  </SelectItem>
-                                  <SelectItem value="hoodies">
-                                    Hoodies
-                                  </SelectItem>
-                                  <SelectItem value="sweatshirts">
-                                    Sweatshirts
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
                           </div>
                         </CardContent>
+                        <CardFooter className="justify-center border-t p-4 text-xs tracking-tight text-center text-muted-foreground">
+                          Add more tests
+                        </CardFooter>
                       </Card>
                     </div>
                   )}
@@ -409,14 +417,22 @@ export default function SendSample() {
             </Form>
             <div className="flex items-center justify-center gap-2 md:hidden">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={() => form.reset()}
+                onClick={() => handleReset}
                 type="button"
               >
                 Discard
               </Button>
-              <Button size="sm">Save Product</Button>
+              <Button
+                size="sm"
+                type="button"
+                variant="outline"
+                onClick={handleSave}
+              >
+                Continue later
+              </Button>
+              <Button className="flex-grow ml-4">Proceed to checkout</Button>
             </div>
           </div>
         </main>
