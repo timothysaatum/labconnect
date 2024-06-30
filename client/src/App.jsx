@@ -83,7 +83,7 @@ export default function App() {
                   <Route index element={<DashboardOverview />} />
                   <Route path="overview" element={<DashboardOverview />} />
                   <Route
-                    path="/dashboard/send-sample"
+                    path="send-sample"
                     element={<SendSample />}
                   />
                   <Route

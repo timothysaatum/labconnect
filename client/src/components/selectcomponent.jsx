@@ -1,8 +1,10 @@
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import {
   Select,
@@ -18,6 +20,8 @@ export default function SelectComponent({
   name,
   control,
   label,
+  message = null,
+  description = null,
 }) {
   return (
     <FormField
@@ -44,6 +48,8 @@ export default function SelectComponent({
               ))}
             </SelectContent>
           </Select>
+          {message && <FormMessage />}
+          {description && <FormDescription>{description}</FormDescription>}
         </FormItem>
       )}
     />

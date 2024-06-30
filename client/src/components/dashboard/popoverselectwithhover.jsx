@@ -22,6 +22,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import HoverCardDetails from "../hovercarddetails";
+import { Badge } from "../ui/badge";
 
 const PopoverSelectwithhover = ({
   form,
@@ -84,20 +85,34 @@ const PopoverSelectwithhover = ({
                             form.setValue(name, item.id);
                             form.clearErrors(name);
                           }}
+                          className="flex"
                         >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              item.id === field.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {title === "Laboratories"
-                            ? item.laboratory + " " + "|" + " " + item.name
-                            : title === "Branches"
-                            ? item.name
-                            : item.name}
+                          <div className="flex-grow">
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                item.id === field.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {title === "Laboratories"
+                              ? item.laboratory + " " + "|" + " " + item.name
+                              : title === "Branches"
+                              ? item.name
+                              : item.name}
+                          </div>
+                          {item?.discount_price && (
+                            <Badge variant="outline">
+                              {parseFloat(
+                                (
+                                  (item?.discount_price / item?.price) *
+                                  100
+                                ).toFixed(1)
+                              )}
+                              % off
+                            </Badge>
+                          )}
                         </CommandItem>
                       </HoverCardDetails>
                     ))}
