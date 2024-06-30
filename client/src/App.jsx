@@ -18,6 +18,7 @@ import SettingProfile from "./components/dashboard/Profile";
 import Loading from "./components/loading";
 import Labgettingstarted from "./pages/labgettingstarted";
 import MyLab from "@/components/mylab";
+import SendSample from "./components/dashboard/sendSample";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 const BranchManagerProfileComplete = React.lazy(() =>
   import("@/components/dashboard/branch-manager-complete-profile")
@@ -45,7 +46,7 @@ export default function App() {
             <Route path="sign-in" element={<Signin />} />
             <Route path="sign-up" element={<Signup />} />
             <Route path="verify-email" element={<VerifyEmail />} />
-            
+
             <Route
               path="forgot-password"
               element={
@@ -82,6 +83,10 @@ export default function App() {
                   <Route index element={<DashboardOverview />} />
                   <Route path="overview" element={<DashboardOverview />} />
                   <Route
+                    path="/dashboard/send-sample"
+                    element={<SendSample />}
+                  />
+                  <Route
                     path="settings"
                     element={
                       <React.Suspense fallback={<Loading />}>
@@ -103,12 +108,7 @@ export default function App() {
                   />
                   {/* laboratory routes */}
                   <Route element={<LabRoutes />}>
-                    <Route
-                      path="my-laboratory"
-                      element={
-                          <MyLab />
-                      }
-                    />
+                    <Route path="my-laboratory" element={<MyLab />} />
                     <Route
                       path="/dashboard/my-laboratory/branches/:branch_Id/"
                       element={

@@ -2,14 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useGetMainSideLinks, useGetSideLinks } from "@/hooks/usesidelinks";
 import { LogOutIcon, Menu, Package2, PanelLeft } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import ThemeToggler from "./ThemeToggler";
+import { useSelector } from "react-redux";
+import { selectCurrenttoken } from "@/redux/auth/authSlice";
+import { useState } from "react";
 
 export function Sidebar() {
   const mainSideLinks = useGetMainSideLinks();
+  const token = useSelector(selectCurrenttoken);
+  const [open, setOpen] = useState(false);
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button size="icon" variant="outline" className="sm:hidden">
+        <Button size="icon" variant="outline">
           <PanelLeft className="h-5 w-5" />
           <span className="sr-only">Toggle Menu</span>
         </Button>
@@ -28,6 +34,9 @@ export function Sidebar() {
               <NavLink
                 to={item.link}
                 key={item.link}
+                onClick={() => {
+                  setOpen(false);
+                }}
                 className={` ${
                   location.pathname.endsWith(item.link)
                     ? "bg-accent text-accent-foreground"
@@ -39,16 +48,49 @@ export function Sidebar() {
               </NavLink>
             ))}
           </div>
-
-          <NavLink
-            to="settings"
-            className="flex pb-5 items-end flex-1 gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-          >
-            <div className="flex items-center gap-2">
-              <LogOutIcon className="h-5 w-5" />
-              Logout
+          {token ? (
+            <div className="flex items-center justify-between text-base">
+              <div
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 text-muted-foreground"
+                >
+                  <LogOutIcon className="h-5 w-5" />
+                  Logout
+                </Button>
+              </div>
+              <div>
+                <ThemeToggler />
+              </div>
             </div>
-          </NavLink>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Link
+                className="w-full"
+                to={"/sign-in"}
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <Button className="w-full" variant="outline">
+                  Sign in
+                </Button>
+              </Link>
+              <Link
+                className="w-full"
+                to={"/sign-up"}
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <Button className="w-full">Sign up</Button>
+              </Link>
+            </div>
+          )}
         </nav>
       </SheetContent>
     </Sheet>

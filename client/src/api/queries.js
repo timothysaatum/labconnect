@@ -15,12 +15,12 @@ export const useFetchUserDetails = () => {
     staleTime: 1000 * 60 * 60,
   });
 };
-export const useFetchLabRequests = (id) => {
+export const useFetchLabRequestsReceived = (id) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["Requests"],
+    queryKey: ["RequestsReceived", id],
     queryFn: async () =>
-      await axiosPrivate.get(`/laboratory/lab-requests/${id}/`),
+      await axiosPrivate.get(`/laboratory/samples-list/${id}/`),
     staleTime: 1000 * 60 * 5,
     enabled: !!id,
   });

@@ -23,12 +23,9 @@ export default function RequestDialog({ ...rest }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <MovingButton
-          duration={3000}
-          className="w-full bg-card rounded-full text-inherit font-semibold"
-        >
-          Send Sample <ChevronRight  className="w-4 h-4 ml-2"/>
-        </MovingButton>
+        <button className="inline-flex dark:shadow-md dark:ring-2 animate-shimmer items-center justify-center rounded-md  bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-white  transition-colors focus:outline-none">
+          Send a sample
+        </button>
       </SheetTrigger>
       <SheetContent
         side="bottom"

@@ -137,6 +137,8 @@ export const testscolumnDef = [
               <DropdownMenuSeparator />
               <DropdownMenuItem>Update Test</DropdownMenuItem>
               <DropdownMenuSeparator />
+              <DropdownMenuItem>Deactivate test</DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DeleteDialog testId={test.id} mutate={mutate} />
             </DropdownMenuContent>
           </DropdownMenu>

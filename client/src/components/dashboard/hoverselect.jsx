@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import HoverCardDetails from "../hovercarddetails";
 
 export default function SelectComponent({
   items,
@@ -38,9 +39,11 @@ export default function SelectComponent({
             </FormControl>
             <SelectContent>
               {items.map((item) => (
-                <SelectItem value={item.value} key={item.value}>
-                  {item.label}
-                </SelectItem>
+                <HoverCardDetails option={item.value} items={item}>
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
+                </HoverCardDetails>
               ))}
             </SelectContent>
           </Select>

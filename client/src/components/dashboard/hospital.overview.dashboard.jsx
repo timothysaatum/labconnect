@@ -16,7 +16,7 @@ import {
 import RequestDialog from "./requestdialog";
 import {
   useFetchHealthWorkerRequests,
-  useFetchLabRequests,
+  useFetchLabRequestsReceived,
   useFetchUserBranches,
 } from "@/api/queries";
 import { useEffect, useState } from "react";
@@ -83,7 +83,7 @@ function ErrorLab({ refetch }) {
   );
 }
 
-export default function LaboratoryDashboardOverview() {
+export default function HospitalDashboardOverview() {
   const [requests, setTableRequests] = useState([]);
   const [checked, setChecked] = useState("Sent Samples");
   const requestColumns = useRequestLabColumns();

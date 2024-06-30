@@ -39,8 +39,8 @@ const multiSelectSchema = z.object({
   value: z.string(),
 });
 
-//send sample by health worker schema
-export const healthWorkerRequestSchema = z.object({
+//send sample by hospital schema
+export const hospitalRequestSchema = z.object({
   name_of_patient: z.string().min(1, "Patient name is required"),
   patient_age: z.date({
     required_error: "Date of birth is required",

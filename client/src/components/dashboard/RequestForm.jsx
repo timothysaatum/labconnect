@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { healthWorkerRequestSchema, labRequestSchema } from "@/lib/schema";
+import { hospitalRequestSchema, labRequestSchema } from "@/lib/schema";
 import { Input } from "../ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Textarea } from "../ui/textarea";
@@ -55,7 +55,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
     // resolver: zodResolver(
     //   user?.account_type === "Laboratory"
     //     ? labRequestSchema
-    //     : healthWorkerRequestSchema
+    //     : hospitalRequestSchema
     // ),
     defaultValues:
       user.account_type === "Laboratory"
@@ -148,7 +148,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
       console.log(error.data);
     }
   };
-  const [id, setId] = useState(null);
+const [id, setId] = useState(null);
 
   const {
     data: tests,

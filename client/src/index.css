@@ -34,11 +34,17 @@ html {
 .rdp-dropdown {
   background-color: hsla(0 0% 100%);
   color: hsla(222.2 84% 4.9%);
-  width: 100px;
+  width: 150px;
+  padding-inline: 1rem;
+
+}
+
+.rdp-dropdown option {
+  height: 100px;
 }
 
 .dark .rdp-dropdown {
-  background-color: hsla(222.2 84% 4.9%);
+  background-color: hsla(240 10% 3.9%);
   color: hsla(210 40% 98%);
 }
 

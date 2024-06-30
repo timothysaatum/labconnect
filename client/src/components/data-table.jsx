@@ -25,9 +25,20 @@ import {
 import React, { useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { ChevronDown, ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { useDispatch } from "react-redux";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronsUpDown,
+  CirclePlus,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { setSelectedRows } from "@/redux/dataTable/selectedrowsSlice";
+import { selectRowCount, setRowCount } from "@/redux/dataTable/rowcount";
+import { Popover, PopoverTrigger } from "./ui/popover";
 
 export function DataTable({
   data,
@@ -45,7 +56,12 @@ export function DataTable({
   const finalColumnDef = React.useMemo(() => columnDef, [columnDef]);
 
   const dispatch = useDispatch();
+  const rowCount = useSelector(selectRowCount);
 
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
   const table = useReactTable({
     columns: finalColumnDef,
     data: finalData,
@@ -58,12 +74,14 @@ export function DataTable({
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
   });
   useEffect(() => {
     if (title === "Branches") {
@@ -74,17 +92,22 @@ export function DataTable({
       );
     }
   }, [rowSelection, title]);
+  const possiblePageSizes = [5, 10, 15, 20, 25];
+  useEffect(() => {
+    table.setPageSize(rowCount)
+    table.setPageIndex(0)
+  }, [rowCount]);
   return (
     <>
-      <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-2">
+      <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-4">
         <div className="flex-1">
-          <div className="relative">
+          <div className="relative ">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               id="search"
               placeholder={`Search ${title} ...`}
-              className="w-full rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10 max-w-[350px]"
+              className="w-full h-10 rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10 max-w-[350px]"
               value={table.getColumn(`${filter}`)?.getFilterValue() ?? ""}
               onChange={(event) =>
                 table.getColumn(`${filter}`)?.setFilterValue(event.target.value)
@@ -94,8 +117,9 @@ export function DataTable({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto ">
-              Filters <ChevronDown className="h-5 w-5 ml-2" />
+            <Button variant="outline" className="ml-auto text-xs">
+              <SlidersHorizontal className="w-4 h-4 mr-2" />
+              View
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -125,7 +149,11 @@ export function DataTable({
             {table.getHeaderGroups().map((headerEl) => (
               <TableRow key={headerEl.id}>
                 {headerEl.headers.map((columnEl) => (
-                  <TableHead key={columnEl.id} colSpan={columnEl.colSpan}>
+                  <TableHead
+                    key={columnEl.id}
+                    colSpan={columnEl.colSpan}
+                    className="font-bold"
+                  >
                     {columnEl.isPlaceholder
                       ? null
                       : flexRender(
@@ -143,16 +171,18 @@ export function DataTable({
                 key={rowEl.id}
                 onDoubleClick={() => {
                   if (rowEl.original.id === selected) {
-                     setSelected &&
-                       typeof setSelected === "function" &&
-                       setSelected(null);
+                    setSelected &&
+                      typeof setSelected === "function" &&
+                      setSelected(null);
                   } else {
                     setSelected &&
                       typeof setSelected === "function" &&
                       setSelected(rowEl.original.id);
                   }
                 }}
-                className={`cursor-pointer ${rowEl.original.id === selected?"bg-accent":""} transition-all`}
+                className={`cursor-pointer ${
+                  rowEl.original.id === selected ? "bg-accent" : ""
+                } transition-all`}
               >
                 {rowEl.getVisibleCells().map((cellEl) => (
                   <TableCell key={cellEl.id}>
@@ -167,32 +197,85 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center mt-2">
-        <div className="text-muted-foreground flex-1 text-xs">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+      {table.getFilteredRowModel().rows.length > 10 && (
+        <div className="flex items-center mt-2">
+          <div className="text-muted-foreground flex-1 text-xs hidden sm:block">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+
+          <div className=" flex justify-between gap-2 sm:gap-8 items-center">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium sm:text-sm text-[10px] whitespace-nowrap"> Rows per page</span>{" "}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="flex items-center justify-between h-8 gap-4"
+                  >
+                    {pagination.pageSize}
+                    <ChevronsUpDown className="w-3 h-3 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {possiblePageSizes.map((page, index) => (
+                    <DropdownMenuCheckboxItem
+                      checked={pagination.pageSize === page}
+                      key={index}
+                      onCheckedChange={() => dispatch(setRowCount(page))}
+                    >
+                      {page}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="hidden md:block">
+              <p className="text-xs font-medium uppercase tracking-wider">
+                page {pagination.pageIndex + 1} of {table.getPageCount()}
+              </p>
+            </div>
+            <div className="items-center space-x-1 whitespace-nowrap">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => table.firstPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="w-8 h-8"
+              >
+                <ChevronsLeft />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                className="w-8 h-8"
+              >
+                <ChevronLeft />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                className="w-8 h-8"
+              >
+                <ChevronRight />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => table.lastPage()}
+                disabled={!table.getCanNextPage()}
+                className="w-8 h-8"
+              >
+                <ChevronsRight />
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className="items-center space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            className="w-8 h-8"
-          >
-            <ChevronLeft />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-            className="w-8 h-8"
-          >
-            <ChevronRight />
-          </Button>
-        </div>
-      </div>
+      )}
     </>
   );
 }

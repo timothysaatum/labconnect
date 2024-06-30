@@ -14,6 +14,8 @@ import { DotBackground } from "@/components/ui/dotbackground";
 
 const Hero = ({ setStep }) => {
   const { data, isError, isFetching, error } = useFetchUserLab();
+  const { theme } = useTheme();
+
   const {
     data: branches,
     isFetching: branchesFetching,
@@ -31,18 +33,22 @@ const Hero = ({ setStep }) => {
       }, 2000);
     }
   }, [data, branches]);
+
   return (
     <GridBackground>
+      {theme === "dark" && (
+        <Spotlight
+          className="-top-40 -left-10 md:-top-20 md:-left-32 h-screen"
+          fill={"blue"}
+        />
+      )}
+      <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="blue" />
       <div className="h-[95dvh] w-full flex md:items-center md:justify-center antialiased relative overflow-hidden">
         <div className=" flex mt-20 flex-col justify-center items-center  mx-auto relative z-10  w-full">
+          <p className="uppercase tracking-widest text-xs text-center max-w-80">
+            Just one last step
+          </p>
           <TextGenerateEffect
-            time={1}
-            words="Just one last step"
-            className="uppercase tracking-widest text-xs text-center max-w-80"
-          />
-          <TextGenerateEffect
-            time={2}
-            color
             words="You are Almost done."
             className=" text-2xl  md:text-4xl lg:text-6xl leading-7 tracking-widest text-slate-700 dark:text-neutral-50"
           />
@@ -112,23 +118,12 @@ export default function GettingStartedLab() {
   const [step, setStep] = useState(0);
   const from = location.state?.from?.pathname || "/dashboard";
 
-  const { theme } = useTheme();
   return (
     <div className="relative overflow-x-clip">
       <Progress
         value={(step / 4) * 100}
         className="absolute top-0 left-0 h-[2px]"
       />
-
-      <Spotlight
-        className="-top-40 -left-10 md:-top-20 md:-left-32 h-screen"
-        fill={theme === "light" ? "gray" : "white"}
-      />
-      <Spotlight
-        className="-top-40 -left-10 md:top-0 md:left-full h-[100vh] w-"
-        fill={"skyblue"}
-      />
-      <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="gray" />
       <StepToView step={step} setStep={setStep} from={from} />
     </div>
   );

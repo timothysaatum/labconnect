@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormControl, FormField, FormItem, FormLabel } from "./ui/form";
 import {
   Popover,
@@ -28,6 +28,7 @@ const PopoverSelect = ({
   search,
   info,
 }) => {
+  const [open, setOpen] = useState(false);
   return (
     <FormField
       control={form.control}
@@ -35,7 +36,7 @@ const PopoverSelect = ({
       render={({ field }) => (
         <FormItem className="">
           <FormLabel>{label}</FormLabel>
-          <Popover>
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <FormControl>
                 <Button
@@ -83,6 +84,7 @@ const PopoverSelect = ({
                         onSelect={() => {
                           form.setValue(name, item.id);
                           form.clearErrors(name);
+                          setOpen(false);
                         }}
                       >
                         <Check
