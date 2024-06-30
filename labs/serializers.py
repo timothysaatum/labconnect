@@ -109,7 +109,7 @@ class TestSerializer(serializers.ModelSerializer):
 		test.branch.set(branches_data)
 
 		for sample_type_data in sample_types_data:
-			sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
+			sample_type, _ = SampleType.objects.get_or_create(**sample_type_data)
 			test.sample_type.add(sample_type)
 		return test
 	
@@ -126,7 +126,7 @@ class TestSerializer(serializers.ModelSerializer):
 		if sample_types_data is not None:
 			instance.sample_type.clear()
 			for sample_type_data in sample_types_data:
-				sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
+				sample_type, _ = SampleType.objects.get_or_create(**sample_type_data)
 				instance.sample_type.add(sample_type)
 		instance.save()
 		return instance
