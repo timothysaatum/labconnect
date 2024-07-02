@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from sample.models import Sample
 from labs.paginators import QueryPagination
-from labs.models import Test
+from labs.models import Test, SampleType
 
 
 
@@ -9,7 +9,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
-	sample_type = serializers.PrimaryKeyRelatedField(read_only=True)
+	sample_type = serializers.PrimaryKeyRelatedField(queryset=SampleType.objects.all())
 	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
