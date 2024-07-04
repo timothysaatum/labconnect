@@ -346,8 +346,8 @@ class FetchUserData(APIView):
 
 				return Response({'data': serialized_data.data}, status=status.HTTP_200_OK)
 
-			except AttributeError:
-				return Response({'error': 'User could not be retrieved'}, status=status.HTTP_400_BAD_REQUEST)
+			except AttributeError as e:
+				return Response({'error': f'User could not be retrieved{str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
 			except NameError:
 				return Response({'error': 'Argument provided does not make sense'}, status=status.HTTP_400_BAD_REQUEST)

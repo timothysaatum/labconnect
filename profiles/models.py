@@ -5,7 +5,7 @@ client = get_user_model()
 
 
 SEX = [('Male', 'Male'), ('Female', 'Female')]
-class BaseModel(models.Model):
+class ClientProfile(models.Model):
 
 	client = models.OneToOneField(client, on_delete=models.CASCADE)
 	gender = models.CharField(max_length=7, choices=SEX)
@@ -14,17 +14,20 @@ class BaseModel(models.Model):
 	emmergency_contact = models.CharField(max_length=20)
 	bio = models.TextField()
 
-	class Meta:
-		abstract = True
+	# class Meta:
+	# 	abstract = True
+
+	def __str__(self) -> str:
+		return self.client.full_name
 
 
-class LabUserProfile(BaseModel):
+# class LabUserProfile(BaseModel):
 	
-	def __str__(self):
-		return str(self.client)	
+# 	def __str__(self):
+# 		return str(self.client)	
 
 
-class DeliveryUserProfile(BaseModel):
+# class DeliveryUserProfile(BaseModel):
 	
-	def __str__(self):
-		return str(self.client)	
+# 	def __str__(self):
+# 		return str(self.client)	

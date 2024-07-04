@@ -1,10 +1,10 @@
 from .models import (
-    LabUserProfile, 
-    DeliveryUserProfile
+    ClientProfile, 
+    #DeliveryUserProfile
 )
 from .serializers import (
-    LabUserProfileSerializer,
-    DeliveryUserProfileSerializers
+    ClientProfileSerializer,
+    #DeliveryUserProfileSerializers
 )
 from rest_framework.generics import (
 	UpdateAPIView
@@ -12,22 +12,22 @@ from rest_framework.generics import (
 
 
 
-class UpdateLabUserProfile(UpdateAPIView):
-    serializer_class = LabUserProfileSerializer
+class UpdateUserProfile(UpdateAPIView):
+    serializer_class = ClientProfileSerializer
 
     def get_queryset(self):
-        return LabUserProfile.objects.filter(client=self.request.user).filter(pk=self.kwargs.get('pk'))
+        return ClientProfile.objects.filter(client=self.request.user).filter(pk=self.kwargs.get('pk'))
 
 
-    def put(self, request, pk, format=None):
+    def patch(self, request, pk):
 
     	#profile =self.get_queryset()
 
-    	return self.update(request, pk, format=None)
+    	return self.partial_update(request, pk)
 
 
-class UpdateDeliveryUserProfile(UpdateLabUserProfile):
-    serializer_class = DeliveryUserProfileSerializers
+# class UpdateDeliveryUserProfile(UpdateLabUserProfile):
+#     serializer_class = DeliveryUserProfileSerializers
 
-    def get_queryset(self):
-        return DeliveryUserProfile.objects.filter(client=self.request.user).filter(pk=self.kwargs.get('pk'))
+#     def get_queryset(self):
+#         return DeliveryUserProfile.objects.filter(client=self.request.user).filter(pk=self.kwargs.get('pk'))

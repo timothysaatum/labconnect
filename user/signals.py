@@ -1,6 +1,6 @@
 from .utils import send_code_to_user, send_normal_email
 from .models import Client
-from profiles.models import LabUserProfile, DeliveryUserProfile
+from profiles.models import ClientProfile#, DeliveryUserProfile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from textwrap import dedent
@@ -16,7 +16,7 @@ def email_user_on_creation(sender, instance, created, **kwargs):
 		send_code_to_user(email)
 		
 		if instance.account_type == 'Laboratory':
-			LabUserProfile.objects.create(client=instance)
+			ClientProfile.objects.create(client=instance)
 
 			data = {
 				'to_email': email,
@@ -32,5 +32,5 @@ def email_user_on_creation(sender, instance, created, **kwargs):
 			}
 			send_normal_email(data)
 
-		if instance.account_type == 'Delivery':
-			DeliveryUserProfile.objects.create(client=instance)
+		# if instance.account_type == 'Delivery':
+		# 	DeliveryUserProfile.objects.create(client=instance)
