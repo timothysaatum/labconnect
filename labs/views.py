@@ -298,7 +298,7 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 class CreateTestView(PermissionMixin, generics.CreateAPIView):
 	"""
-	API endpoitn to allow the user to add a test to their Branch,
+	API endpoint to allow the user to add a test to their Branch,
 	It allows the user to add the test to multiple Branches at a go.
 	"""
 	serializer_class = TestSerializer
@@ -314,12 +314,11 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 		
 		return self.create(request)
 
-	#def perform_create(self, serializer):
+	def perform_create(self, serializer):
 
-	#	test = serializer.save()
-	#	branches = self.request.data.get('branch', [])
-	#	test.branch.add(*branches)
-
+		test = serializer.save()
+		branches = self.request.data.getlist('branch', [])
+		test.branch.add(*branches)
 
 
 class TestListView(generics.ListAPIView):

@@ -80,8 +80,8 @@ class TestSerializer(serializers.ModelSerializer):
 
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
 	#branch = BranchSerializer(many=True, required=True)
-	#sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
-	sample_type = SampleTypeSerializer(many=True)
+	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
+	# sample_type = SampleTypeSerializer(many=True)
 
 	class Meta:
 
@@ -102,41 +102,41 @@ class TestSerializer(serializers.ModelSerializer):
 
 		pagination_class = QueryPagination
 
-	def create(self, validated_data):
-		branches_data = validated_data.pop('branch')
-		sample_types_data = validated_data.pop('sample_type')
-		test = Test.objects.create(**validated_data)
-		test.branch.set(branches_data)
+	# def create(self, validated_data):
+	# 	branches_data = validated_data.pop('branch')
+	# 	sample_types_data = validated_data.pop('sample_type', [])
+		
+	# 	test = Test.objects.create(**validated_data)
+	# 	test.branch.set(branches_data)
+		
+	# 	for sample_type_data in sample_types_data:
+	# 		sample_type, _ = SampleType.objects.get_or_create(**sample_type_data)
+	# 		test.sample_type.add(sample_type)
+	# 	return test
 
-		for sample_type_data in sample_types_data:
-			sample_type, _ = SampleType.objects.get_or_create(**sample_type_data)
-			test.sample_type.add(sample_type)
-		return test
-	
-	def update(self, instance, validated_data):
-		branches_data = validated_data.pop('branch', None)
-		sample_types_data = validated_data.pop('sample_type', None)
-
-		for attr, value in validated_data.items():
-			setattr(isinstance, attr, value)
-
-		if branches_data is not None:
-			instance.branch.set(branches_data)
-			
-		if sample_types_data is not None:
-			instance.sample_type.clear()
-			for sample_type_data in sample_types_data:
-				sample_type, _ = SampleType.objects.get_or_create(**sample_type_data)
-				instance.sample_type.add(sample_type)
-		instance.save()
-		return instance
+	# def update(self, instance, validated_data):
+	# 	branches_data = validated_data.pop('branch', None)
+	# 	sample_types_data = validated_data.pop('sample_type', None)
+        
+	# 	for attr, value in validated_data.items():
+	# 		setattr(instance, attr, value)
+        
+	# 	if branches_data is not None:
+	# 		instance.branch.set(branches_data)
+        
+	# 	if sample_types_data is not None:
+	# 		instance.sample_type.clear()
+	# 		for sample_type_data in sample_types_data:
+	# 			sample_type, _ = SampleType.objects.get_or_create(**sample_type_data)
+	# 			instance.sample_type.add(sample_type)
+        
+	# 	instance.save()
+	# 	return instance
 
 	def to_representation(self, instance):
-
 		data = super().to_representation(instance)
-		#data['branch'] = [branch.name for branch in instance.branch.all()]
-		data['name'] = instance.__str__()
-
+		data['name'] = str(instance)
+		data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
 		return data
 
 
