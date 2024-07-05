@@ -164,6 +164,7 @@ export default function MyLab() {
             price: test.price,
             turn_around_time: test.turn_around_time,
             date_added: test.date_added,
+            discount_price: test.discount_price,
           };
         })
       );
@@ -331,10 +332,8 @@ export default function MyLab() {
                           selected={tab.selected}
                         />
                       )}
-                    
                     </CardContent>
                   </Card>
-          
                 </div>
               </TabsContent>
             ))}

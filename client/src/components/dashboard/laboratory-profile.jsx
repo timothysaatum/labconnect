@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Form } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -33,10 +33,11 @@ const LaboratoryProfile = () => {
       website: "",
       description: "",
       hefra_id: "",
+      postal_address: "",
     },
   });
   const fileref = form.register("logo");
-  useEffect(() => {
+  useMemo(() => {
     if (userlab) {
       form.setValue("name", userlab?.data[0]?.name);
       form.setValue("main_email", userlab?.data[0]?.main_email);
@@ -44,9 +45,10 @@ const LaboratoryProfile = () => {
       form.setValue("hefra_id", userlab?.data[0]?.herfra_id);
       form.setValue("description", userlab?.data[0]?.description);
       form.setValue("website", userlab?.data[0]?.website);
+      form.setValue("postal_address", userlab?.data[0]?.postal_address);
       form.setValue("logo", userlab?.data[0]?.logo);
     }
-  }, [userlab]);
+  }, []);
 
   const onSubmit = async (data) => {
     console.log(data);
@@ -67,7 +69,7 @@ const LaboratoryProfile = () => {
         formData.append(key, newData[key]);
       }
       console.log(newData);
-      await axiosPrivate.put(
+      await axiosPrivate.patch(
         `laboratory/update/${userlab?.data[0]?.id}/`,
         formData,
 
@@ -105,7 +107,6 @@ const LaboratoryProfile = () => {
     form.clearErrors("logo");
   };
   useEffect(() => {
-    console.log(imagefile);
     form.setValue("logo", imagefile);
   }, [imagefile]);
   return (
@@ -116,10 +117,8 @@ const LaboratoryProfile = () => {
         </h3>
         <div className="flex flex-col items-center gap-4 mb-4 py-2">
           <p
-            className={`text-xl font-bold tracking-widest  ${
-              form?.formState?.errors?.logo
-                ? "text-destructive/75"
-                : "text-muted-foreground"
+            className={`text-md font-bold tracking-wider  ${
+              form?.formState?.errors?.logo ? "text-destructive/75" : ""
             }`}
           >
             Choose your logo
@@ -128,7 +127,7 @@ const LaboratoryProfile = () => {
             src={imagefileUrl || LabLogo}
             alt="laboratory logo"
             onClick={() => filePickeRef.current.click()}
-            className="rounded-full w-44 h-44 object-center max-h-44 max-w-44 cursor-pointer ring-2 ring-primary drop-shadow-xl shadow-lg"
+            className="rounded-full w-44 h-44 object-cover max-h-36 max-w-36 cursor-pointer ring-2 ring-primary drop-shadow-xl shadow-lg"
           />
         </div>
         <div className="flex flex-col gap-4 mb-4 py-2">
@@ -153,8 +152,8 @@ const LaboratoryProfile = () => {
           <FormBuilder name={"main_phone"} label={"Laboratory Tel."}>
             <PhoneInput defaultCountry="GH" />
           </FormBuilder>
-          <FormBuilder name={"postal_address"} label={"Postal."}>
-            <PhoneInput defaultCountry="GH" />
+          <FormBuilder name={"postal_address"} label={"Postal address"}>
+            <Input type="text" />
           </FormBuilder>
           <FormBuilder name={"hefra_id"} label={"HEFRA ID"}>
             <Input type="text" />

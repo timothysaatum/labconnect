@@ -38,54 +38,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AddBranchSchema } from "@/lib/schema";
 import AddManager from "./addManager";
 import { regions } from "@/data/data";
+import { useBranchAdd } from "@/lib/formactions";
 
 export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
-  const axiosPrivate = useAxiosPrivate();
-  const queryClient = useQueryClient();
   const [serverErrors, setServerErrors] = useState(null);
 
-  const onSubmit = async (data) => {
-    console.log(data);
-    try {
-      await axiosPrivate.post("/laboratory/create-branch/", data);
-      queryClient.invalidateQueries(["userbranches"]);
-      toast.success(`New branch - ${data?.name} added`, {
-        position: "top-center",
-        duration: 5000,
-      });
-      if (!keepOpen) setOpen(false);
-      form.reset();
-    } catch (error) {
-      for (const field in error?.response?.data) {
-        form.setError(field, {
-          type: "manual",
-          message: error.response.data[field][0],
-        });
-      }
-      console.log(error);
-      if (error?.response?.status === 401 || error?.response?.status === 403) {
-        const errorValues = [Object.values(error?.response?.data || {})];
-        if (errorValues.length > 0) {
-          console.log(errorValues[0]);
-          setServerErrors(errorValues[0]);
-        }
-      } else if (error?.response?.status === 400) {
-        setServerErrors("All fields are required");
-      } else {
-        setServerErrors("Something went wrong, try again");
-      }
-      toast.error(serverErrors, {
-        position: "top-center",
-        duration: 5000,
-      });
-    }
-  };
+  //form submission
+  const onBranchAdd = useBranchAdd(
+    form,
+    keepOpen,
+    setOpen,
+    serverErrors,
+    setServerErrors
+  );
+  
   return (
     <Form {...form}>
       <form
         className={className}
         noValidate
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onBranchAdd)}
       >
         <FormBuilder name={"name"} label={"Branch name"} message={true}>
           <Input type="text" placeholder="branch name" />

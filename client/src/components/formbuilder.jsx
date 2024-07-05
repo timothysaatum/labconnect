@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   FormControl,
   FormDescription,
@@ -15,6 +16,8 @@ export const FormBuilder = ({
   description = null,
   message = null,
   control = undefined,
+  messageClassName,
+  descriptionClassName,
   ...rest
 }) => {
   return (
@@ -25,8 +28,12 @@ export const FormBuilder = ({
         <FormItem {...rest}>
           <FormLabel>{label}</FormLabel>
           <FormControl>{React.cloneElement(children, field)}</FormControl>
-          {message && <FormMessage />}
-          {description && <FormDescription>{description}</FormDescription>}
+          {message && <FormMessage className={cn("", messageClassName)} />}
+          {description && (
+            <FormDescription className={cn("", descriptionClassName)}>
+              {description}
+            </FormDescription>
+          )}
         </FormItem>
       )}
     />

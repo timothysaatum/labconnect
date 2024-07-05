@@ -65,14 +65,22 @@ const PopoverSelectwithhover = ({
               <Command loop>
                 <CommandInput placeholder={search} />
                 <CommandEmpty>
-                  {loading
+                  {!form.watch("to_lab")
+                    ? "please choose the lab to receive the sample first"
+                    : loading
                     ? "Loading..."
                     : error
                     ? `Error loading ${title}`
                     : `No ${title} found`}
                 </CommandEmpty>
                 <CommandGroup>
-                  <CommandList>
+                  {items && (
+                    <span className="text-[12px] text-center text-muted-foreground block">
+                      hover over tests for details
+                    </span>
+                  )}
+
+                  <CommandList className="pt-2">
                     {items?.data?.map((item) => (
                       <HoverCardDetails
                         key={item.id}
@@ -85,9 +93,9 @@ const PopoverSelectwithhover = ({
                             form.setValue(name, item.id);
                             form.clearErrors(name);
                           }}
-                          className="flex"
+                          className="flex gap-5"
                         >
-                          <div className="flex-grow">
+                          <div className="flex-grow flex">
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
@@ -103,7 +111,10 @@ const PopoverSelectwithhover = ({
                               : item.name}
                           </div>
                           {item?.discount_price && (
-                            <Badge variant="outline">
+                            <Badge
+                              // variant="secondary"
+                              className="whitespace-nowrap tabular-nums min-w-16"
+                            >
                               {parseFloat(
                                 (
                                   (item?.discount_price / item?.price) *

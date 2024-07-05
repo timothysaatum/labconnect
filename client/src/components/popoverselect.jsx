@@ -43,7 +43,7 @@ const PopoverSelect = ({
                   variant="outline"
                   role="combobox"
                   className={cn(
-                    "w-full justify-between",
+                    "w-full justify-between max-w-full",
                     !field.value && "text-muted-foreground"
                   )}
                 >

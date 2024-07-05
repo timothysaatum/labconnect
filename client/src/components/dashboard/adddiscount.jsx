@@ -6,23 +6,38 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
 import { Form } from "../ui/form";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { useAddDiscount } from "@/lib/formactions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AddDiscountSchema } from "@/lib/schema";
+import { Loader2 } from "lucide-react";
 
 export function ApplyDisCount({ children, test }) {
   const [percent, setPercent] = useState(0);
-  const axiosPrivate = useAxiosPrivate();
 
   const form = useForm({
+    resolver: zodResolver(AddDiscountSchema),
     defaultValues: {
       discount_price: "",
+      price: test?.price,
     },
   });
 
   const discount = form.watch("discount_price");
+
+  //intializing discount is there is one
+
+  const prevDiscount = useMemo(() => {
+    if (test?.discount_price) {
+      form.setValue("discount_price", test?.discount_price);
+    }
+    return test?.discount_price;
+  }, []);
+
   useEffect(() => {
     const calculateDiscountPercentage = () => {
       if (!discount) return;
@@ -34,11 +49,7 @@ export function ApplyDisCount({ children, test }) {
   }, [discount]);
 
   // update discount
-  const onSubmit = async (data) => {
-    try {
-      await axiosPrivate.patch(`laboratory/test/update/${test?.id}/`, data);
-    } catch (error) {}
-  };
+  const onaddDiscount = useAddDiscount(form, test);
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -59,7 +70,7 @@ export function ApplyDisCount({ children, test }) {
             <form
               className="grid gap-2 space-y-3"
               noValidate
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onaddDiscount)}
             >
               <div className="grid grid-cols-3 items-center gap-4">
                 <Label htmlFor="width">Original (GHS)</Label>
@@ -71,6 +82,10 @@ export function ApplyDisCount({ children, test }) {
                 name={"discount_price"}
                 label={"Discount amount "}
                 className="grid grid-cols-3 items-center gap-4"
+                message
+                messageClassName={"col-span-3"}
+                description={"enter 0 to remove discount"}
+                descriptionClassName={"col-span-3 text-xs"}
               >
                 <Input
                   id="maxWidth"
@@ -78,8 +93,25 @@ export function ApplyDisCount({ children, test }) {
                   type="number"
                 />
               </FormBuilder>
-              <Button disabled={!discount}>
-                {discount ? `Apply ${percent} discount` : "Apply discount"}
+              <Button
+                disabled={
+                  form.formState.isSubmitting ||
+                  !discount ||
+                  prevDiscount === form.watch("discount_price") ||
+                  parseFloat(discount) > parseFloat(test?.price)
+                }
+              >
+                {form.formState.isSubmitting ? (
+                  <span className="flex items-center">
+                    Applying discount{" "}
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  </span>
+                ) : discount &&
+                  parseFloat(discount) < parseFloat(test?.price) ? (
+                  `Apply ${percent} discount`
+                ) : (
+                  "Apply discount"
+                )}
               </Button>
             </form>
           </Form>

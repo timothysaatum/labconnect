@@ -1,7 +1,6 @@
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
@@ -24,59 +23,25 @@ import { useState } from "react";
 import { SampleTypeSchema } from "@/lib/schema";
 import { Button } from "../ui/button";
 import { AlertCircle, Loader2, Plus } from "lucide-react";
-import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   selectSampleTypes,
-  setSampleTypes,
 } from "@/redux/samples/sampleTypeSlice";
+import { useAddSampleType } from "@/lib/formactions";
 
 export const SampleTypeForm = ({ form, setOpen }) => {
-  const axiosPrivate = useAxiosPrivate();
   const [serverErrors, setServerErrors] = useState(null);
-  const dispatch = useDispatch();
   const SampleTypes = useSelector(selectSampleTypes);
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await axiosPrivate.post(
-        "/laboratory/sample-type/add/",
-        data
-      );
-      toast.success(`sample type added successfully`, {
-        position: "top-center",
-        duration: 5000,
-      });
-      dispatch(setSampleTypes([...(SampleTypes || []), response.data]));
-      form.reset();
-      setOpen(false);
-    } catch (error) {
-      for (const field in error?.response?.data) {
-        form.setError(field, {
-          type: "manual",
-          message: error.response.data[field][0],
-        });
-      }
-      console.log(error);
-      if (error?.response?.status === 401 || error?.response?.status === 403) {
-        const errorValues = [Object.values(error?.response?.data || {})];
-        if (errorValues.length > 0) {
-          console.log(errorValues[0]);
-          setServerErrors(errorValues[0]);
-        }
-      } else if (error?.response?.status === 400) {
-        setServerErrors("All fields are required");
-      } else {
-        setServerErrors("Something went wrong, try again");
-      }
-      toast.error(serverErrors, {
-        position: "top-center",
-        duration: 5000,
-      });
-    }
-  };
+  const onAddSampleType = useAddSampleType(
+    form,
+    setOpen,
+    SampleTypes,
+    serverErrors,
+    setServerErrors
+  );
+
   return (
     <Form {...form}>
       <form
@@ -84,7 +49,7 @@ export const SampleTypeForm = ({ form, setOpen }) => {
         noValidate
         onSubmit={(e) => {
           e.stopPropagation();
-          return form.handleSubmit(onSubmit)(e);
+          return form.handleSubmit(onAddSampleType)(e);
         }}
       >
         <FormBuilder name={"sample_name"} label={"Sample Type"}>

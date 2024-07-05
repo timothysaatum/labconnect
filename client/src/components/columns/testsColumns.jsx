@@ -110,6 +110,7 @@ export const testscolumnDef = [
     id: "actions",
     cell: ({ row }) => {
       const test = row.original;
+      
       const { mutate, error } = usedeleteTestMutation(test.id);
       return (
         <div className=" flex items-center space-x-6">
@@ -117,7 +118,7 @@ export const testscolumnDef = [
             <Tooltip>
               <ApplyDisCount test={test}>
                 <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" className="w-5 h-5">
+                  <Button variant="ghost" size="icon">
                     <BadgeCent className="w-4 h-4" />
                   </Button>
                 </TooltipTrigger>

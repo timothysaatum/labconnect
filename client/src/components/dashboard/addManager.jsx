@@ -24,28 +24,16 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ManagerInviteSchema } from "@/lib/schema";
 import { toast } from "sonner";
+import { useAddManager } from "@/lib/formactions";
 
 const ManagerForm = ({ form }) => {
   const axiosPrivate = useAxiosPrivate();
-  const onSubmit = async (data) => {
-    try {
-      await axiosPrivate.post("user/invite/branch-manager/", data);
-      form.reset();
-      toast.success("Invite Sent", {
-        position: "top-center",
-      });
-    } catch (error) {
-      console.log(error);
-      toast.error("Error Sending Invite try again", {
-        position: "top-center",
-      });
-    }
-  };
+  const onAddManager = useAddManager(form);
   return (
     <Form {...form}>
       <form
         noValidate
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onAddManager)}
         className="flex flex-col gap-4 p-4"
       >
         <FormBuilder

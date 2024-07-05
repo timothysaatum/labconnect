@@ -245,9 +245,17 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
         <FormBuilder name={"name"} label={"Test Name"}>
           <Input placeholder="Name of test" />
         </FormBuilder>
-        <FormBuilder name={"price"} label={"Price (GHS)"}>
-          <Input type="number" placeholder="Price of test" />
-        </FormBuilder>
+        <div className="grid grid-cols-[2fr_1fr] gap-2">
+          <FormBuilder name={"price"} label={"Price (GHS)"}>
+            <Input type="number" placeholder="Price of test" />
+          </FormBuilder>
+          <FormBuilder
+            name={"discount_price"}
+            label={"Dicount (GHS) (optional) "}
+          >
+            <Input type="number" placeholder="Price of test" />
+          </FormBuilder>
+        </div>
         <div className="grid grid-cols-6 gap-2">
           <div className="col-span-4">
             <FormBuilder name={"turn_around_time"} label={"Turn around time"}>
@@ -317,6 +325,7 @@ const AddTest = () => {
       patient_preparation: "",
       unit: "",
       branch: "",
+      dicount_price: "",
       sample_type: [],
     },
   });

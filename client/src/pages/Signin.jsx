@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -38,6 +38,7 @@ export default function Signin() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [pending,StartTransition] = useTransition()
 
   const from = location.state?.from?.pathname || "/dashboard";
 

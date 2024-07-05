@@ -1,4 +1,4 @@
-import { ChevronLeft, Upload } from "lucide-react";
+import { ChevronLeft, Minus, PlusCircle, Upload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +29,7 @@ import SelectComponent from "../selectcomponent";
 import CalenderDatePicker from "./datepicker";
 import PopoverSelectwithhover from "./popoverselectwithhover";
 import {
+  useFetchAllDeliveries,
   useFetchAllLabsBranches,
   useFetchLabTests,
   useFetchUserBranches,
@@ -45,16 +46,52 @@ import { toast } from "sonner";
 import SelectComponentWithHover from "./hoverselect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { labRequestSchema } from "@/lib/schema";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useSendSample } from "@/lib/formactions";
+
+//the prompt dialog
+export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
+  const isOpen = useMemo(() => open, [open]);
+  return (
+    <AlertDialog open={isOpen} onOpenChange={setOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>uncompleted request?</AlertDialogTitle>
+          <AlertDialogDescription>
+            you have an uncompleted request.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={handleDiscard}>Discard</AlertDialogCancel>
+          <AlertDialogAction onClick={handleRestore}>Restore</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 
 export default function SendSample() {
+  const [open, setOpen] = useState(false);
   const [id, setId] = useState(null);
   const dispatch = useDispatch();
   const savedData = useSelector(selectSampleData);
   const [saving, setSaving] = useState(false);
+  const [restore, setRestore] = useState(false);
+
+  const onSendSample = useSendSample();
 
   //form declaration
   const form = useForm({
-    resolver: zodResolver(labRequestSchema),
+    // resolver: zodResolver(labRequestSchema),
     defaultValues: {
       name_of_patient: "",
       patient_age: "",
@@ -80,6 +117,13 @@ export default function SendSample() {
     isLoading: branchesLoading,
   } = useFetchUserBranches();
 
+  // fetching deliveries
+  const {
+    data: deliveries,
+    isLoading: deliveriesLoading,
+    isError: deliveriesError,
+  } = useFetchAllDeliveries();
+
   //fetching all labs
   const {
     data: labs,
@@ -91,7 +135,7 @@ export default function SendSample() {
   const filePickeRef = useRef();
 
   //field array for tests
-  const { fields, prepend, remove } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "tests",
   });
@@ -105,10 +149,18 @@ export default function SendSample() {
   //intialize with a single field
   useEffect(() => {
     if (fields.length === 0) {
-      prepend({ test: "", sample_type: "" });
+      append({ test: "", sample_type: "" });
     }
-  }, [prepend, fields.length]);
+  }, [append, fields.length]);
 
+  // removing test fields
+  const handleRemove = (index) => {
+    if (fields.length === 1) {
+      toast.message("you need to choose at least one test");
+      return;
+    }
+    remove(index);
+  };
   //fetching selected lab test
   const {
     data: tests,
@@ -132,10 +184,10 @@ export default function SendSample() {
   }, [tests]);
 
   //saving form to redux
-  const handleSave = (data) => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      dispatch(setSampleData(data));
+      dispatch(setSampleData(form.getValues()));
       setSaving(false);
       toast.success("form saved. you can complete it later");
     } catch (error) {
@@ -156,7 +208,7 @@ export default function SendSample() {
   // populating the form with data from redux
 
   useEffect(() => {
-    if (savedData) {
+    if (savedData && restore) {
       form.setValue("name_of_patient", savedData.name_of_patient);
       form.setValue("patient_age", savedData.patient_age);
       form.setValue("patient_sex", savedData.patient);
@@ -166,18 +218,39 @@ export default function SendSample() {
       form.setValue("from_lab", savedData.from_lab);
       form.setValue("brief_description", savedData.brief_description);
     }
-  }, [savedData]);
+  }, [savedData, restore]);
 
-  //form submission
-  const onSubmit = (data) => {
-    console.log(data);
+  // checking to see if there is savedData to show the dialog
+
+  useEffect(() => {
+    if (savedData) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
+  }, []);
+
+  //handle dialog discard
+
+  const handleDiscard = () => {
+    setRestore(false);
+    dispatch(clearSampleData());
+  };
+  const handleRestore = () => {
+    setRestore(true);
   };
 
   return (
     <div className="flex min-h-screen w-full flex-col">
+      <RestoreDialog
+        setOpen={setOpen}
+        open={open}
+        handleDiscard={handleDiscard}
+        handleRestore={handleRestore}
+      />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-          <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
+          <div className="mx-auto grid max-w-5xl flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
               <Button variant="outline" size="icon" className="h-7 w-7">
                 <ChevronLeft className="h-4 w-4" />
@@ -190,8 +263,8 @@ export default function SendSample() {
                 <Button variant="outline" size="sm" onClick={handleReset}>
                   Discard
                 </Button>
-                <Button size="sm" onClick={form.handleSubmit(handleSave)}>
-                  Save and continue later{" "}
+                <Button size="sm" onClick={handleSave} type="button">
+                  Save and continue later
                   {saving && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
                 </Button>
               </div>
@@ -200,7 +273,7 @@ export default function SendSample() {
               <form
                 className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8"
                 noValidate
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(onSendSample)}
               >
                 <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
                   <Card x-chunk="dashboard-07-chunk-0">
@@ -222,11 +295,11 @@ export default function SendSample() {
                           </FormBuilder>
                         </div>
 
-                        <div className="grid grid-cols-[1fr_200px] gap-4">
+                        <div className="grid sm:grid-cols-[1fr_200px] gap-4">
                           <div>
                             <SelectComponent
                               label={"Select patient gender"}
-                              name={"patient_gender"}
+                              name={"patient_sex"}
                               placeholder={"Select Patient's gender"}
                               control={form.control}
                               items={gender}
@@ -242,8 +315,8 @@ export default function SendSample() {
                         <div className="grid gap-3">
                           <FormBuilder
                             control={form.control}
-                            name="clinical_history"
-                            label={"Relevant Clinical History"}
+                            name="description"
+                            label={"Relevant Clinical History (Optional)"}
                           >
                             <Textarea
                               className="min-h-28 resize-none"
@@ -291,35 +364,35 @@ export default function SendSample() {
                     </CardFooter>
                   </Card>
 
-                  {form.watch("to_lab") && (
-                    <div ref={TestsCardRef} className="py-4">
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Choose Tests</CardTitle>
-                          <CardDescription>
-                            These tests are available in the laboratory you
-                            selected.
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div>
-                            {fields.map((item, index) => (
-                              <div
-                                key={item.id}
-                                className="grid gap-2 md:gap-6 md:grid-cols-[2fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
-                              >
-                                <div>
-                                  <PopoverSelectwithhover
-                                    form={form}
-                                    name={`tests.${index}.test`}
-                                    error={testsError}
-                                    loading={testsLoading}
-                                    items={tests}
-                                    label={"Choose a test to request"}
-                                    title={"tests"}
-                                    search={"Search tests..."}
-                                  />
-                                </div>
+                  <div ref={TestsCardRef} className="py-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Choose Tests</CardTitle>
+                        <CardDescription>
+                          These tests are available in the laboratory you
+                          selected.
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div>
+                          {fields.map((item, index) => (
+                            <div
+                              key={item.id}
+                              className="grid gap-2 md:gap-6 lg:grid-cols-[1fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0 max-lg:border max-lg:border-dotted rounded-md shadow-md max-lg: p-2"
+                            >
+                              <div>
+                                <PopoverSelectwithhover
+                                  form={form}
+                                  name={`tests.${index}.test`}
+                                  error={testsError}
+                                  loading={testsLoading}
+                                  items={tests}
+                                  label={"Choose a test to request"}
+                                  title={"tests"}
+                                  search={"Search tests..."}
+                                />
+                              </div>
+                              <div className="flex justify-between items-end gap-2">
                                 <div>
                                   <SelectComponentWithHover
                                     form={form}
@@ -334,22 +407,37 @@ export default function SendSample() {
                                     search={"Search sample type..."}
                                   />
                                 </div>
+                                <div>
+                                  <Button
+                                    variant="secondary"
+                                    size="icon"
+                                    type="button"
+                                    onClick={() => handleRemove(index)}
+                                  >
+                                    <Minus />
+                                  </Button>
+                                </div>
                               </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                        <CardFooter className="justify-center border-t p-4 text-xs tracking-tight text-center text-muted-foreground">
-                          Add more tests
-                        </CardFooter>
-                      </Card>
-                    </div>
-                  )}
-                  {form.watch("to_lab") && (
-                    <Button className="-mt-4">Proceed to checkout</Button>
-                  )}
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                      <CardFooter className="justify-center border-t p-0 py-2 text-xs tracking-tight text-center text-muted-foreground">
+                        <Button
+                          variant="ghost"
+                          onClick={() => append({ test: "", sample_type: "" })}
+                        >
+                          Add more tests <PlusCircle className="w-4 h-4 ml-1" />
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </div>
+                  <Button className="-mt-4 hidden md:block">
+                    Proceed to checkout
+                  </Button>
                 </div>
                 <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-                  <Card x-chunk="dashboard-07-chunk-3">
+                  <Card>
                     <CardHeader>
                       <CardTitle>Sample Priority</CardTitle>
                     </CardHeader>
@@ -378,8 +466,9 @@ export default function SendSample() {
                   </Card>
                   <Card className="overflow-hidden">
                     <CardHeader>
-                      <CardTitle className="whitespace-nowrap text-lg">
-                        Upload necessary documents
+                      <CardTitle className="whitespace-pre-line text-lg">
+                        Upload necessary documents{" "}
+                        <span className="text-sm">(Optional)</span>
                       </CardTitle>
                       <CardDescription>
                         you can Upload document such as request cards or other
@@ -398,18 +487,26 @@ export default function SendSample() {
                       </button>
                     </CardContent>
                   </Card>
-                  <Card x-chunk="dashboard-07-chunk-5">
+                  <Card>
                     <CardHeader>
-                      <CardTitle>Archive Product</CardTitle>
+                      <CardTitle className="text-md">
+                        Delivery (Optional)
+                      </CardTitle>
                       <CardDescription>
-                        Lipsum dolor sit amet, consectetur adipiscing elit.
+                        choose a delivery service
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div></div>
-                      <Button size="sm" variant="secondary">
-                        Archive Product
-                      </Button>
+                      <PopoverSelect
+                        form={form}
+                        name={"delivery"}
+                        error={deliveriesError}
+                        loading={deliveriesLoading}
+                        items={deliveries}
+                        label={"Choose Delivery Service (Optional)"}
+                        title={"Deliveries"}
+                        search={"Search delivery service..."}
+                      />
                     </CardContent>
                   </Card>
                 </div>
@@ -432,6 +529,7 @@ export default function SendSample() {
               >
                 Continue later
               </Button>
+              {}
               <Button className="flex-grow ml-4">Proceed to checkout</Button>
             </div>
           </div>
