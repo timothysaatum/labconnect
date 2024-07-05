@@ -8,6 +8,8 @@ from django.utils.encoding import smart_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_normal_email
+from profiles.serializers import ClientProfileSerializer
+from profiles.models import ClientProfile
 
 
 
@@ -208,7 +210,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-
+	profile = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	class Meta:
 
 		model = Client
@@ -219,7 +221,8 @@ class UserSerializer(serializers.ModelSerializer):
 					'first_name', 
 					'last_name', 
 					'phone_number',
-					'account_type', 
+					'account_type',
+					'profile',
 					'is_staff', 
 					'is_active', 
 					'is_admin', 
@@ -227,3 +230,8 @@ class UserSerializer(serializers.ModelSerializer):
 					'date_joined', 
 					'last_login',
 				]
+
+	def to_representation(self, instance):
+		data = super().to_representation(instance)
+		data['profile'] = ClientProfileSerializer(ClientProfile.objects.filter(client=instance.id), many=True).data
+		return data

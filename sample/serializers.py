@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from sample.models import Sample
 from labs.paginators import QueryPagination
-from labs.models import Test
+from labs.models import Test, SampleType
 
 
 
@@ -9,8 +9,11 @@ class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
-	sample_type = serializers.PrimaryKeyRelatedField(read_only=True)
+	sample_type = serializers.PrimaryKeyRelatedField(queryset=SampleType.objects.all())
 	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
+	sender_full_name = serializers.CharField(required=False)
+	sender_phone = serializers.CharField(required=False)
+	sender_email = serializers.CharField(required=False)
 
 	class Meta:
 
@@ -18,27 +21,23 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		fields = (
 			'id', 
-			'referring_facility',
-			'facility_type', 
 			'patient_name', 
 			'patient_age',
+			'patient_sex',
+			'referring_facility',
+			'facility_type', 
+			'to_laboratory', 
 			'sender_full_name',
 			'sender_phone',
 			'sender_email',
-			'sample_type',
-			'patient_sex',
-			'delivery', 
-			'is_paid',
-			'collected_sample',
-			'rejected_sample',
-			'rejection_reason',
-			'is_received_by_delivery', 
-			'is_delivered_to_lab', 
-			'is_accessed_by_lab',  
-			'to_laboratory', 
+			'sample_type',  
 			'tests', 
 			'clinical_history', 
-			'attachment', 
+			'attachment',
+			'sample_status',
+			'payment_mode',
+			'payment_status',
+			'delivery', 
 			'date_modified', 
 			'date_created'
 		)

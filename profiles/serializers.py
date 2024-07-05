@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import LabUserProfile
+from .models import ClientProfile
 
 
 
-class LabUserProfileSerializer(serializers.ModelSerializer):
+class ClientProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = LabUserProfile
+        model = ClientProfile
         fields = [
             'id',
             'client',
@@ -25,10 +25,10 @@ class LabUserProfileSerializer(serializers.ModelSerializer):
         return data
 
 
-class DeliveryUserProfileSerializers(LabUserProfileSerializer):
+# class DeliveryUserProfileSerializers(LabUserProfileSerializer):
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['client'] = instance.client.full_name
+#     def to_representation(self, instance):
+#         data = super().to_representation(instance)
+#         data['client'] = instance.client.full_name
         
-        return data
+#         return data

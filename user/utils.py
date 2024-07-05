@@ -17,7 +17,8 @@ def generateotp():
 	return otp
 
 
-async def send_code_to_user(email):
+#async def send_code_to_user(email):
+def send_code_to_user(email):
 
 	loop = asyncio.get_event_loop()
 	subject = 'Your one time verification code'
@@ -36,12 +37,15 @@ async def send_code_to_user(email):
 
 	try:
 
-		await loop.run_in_executor(None, message.send(fail_silently=False)) 
+		#await loop.run_in_executor(None, message.send(fail_silently=False))
+		message.send(fail_silently=False)
 
 	except Exception as e:
 
 		raise ValidationError(str(e))
 
+def run_async_function(email):
+    asyncio.run(send_code_to_user(email))
 
 def send_normal_email(data):
 

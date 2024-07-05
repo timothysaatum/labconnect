@@ -79,9 +79,7 @@ class SampleTypeSerializer(serializers.ModelSerializer):
 class TestSerializer(serializers.ModelSerializer):
 
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-	#branch = BranchSerializer(many=True, required=True)
-	#sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
-	sample_type = SampleTypeSerializer(many=True)
+	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
 
 	class Meta:
 
@@ -103,11 +101,9 @@ class TestSerializer(serializers.ModelSerializer):
 		pagination_class = QueryPagination
 
 	def to_representation(self, instance):
-
 		data = super().to_representation(instance)
-		#data['branch'] = [branch.name for branch in instance.branch.all()]
-		data['name'] = instance.__str__()
-
+		data['name'] = str(instance)
+		data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
 		return data
 
 

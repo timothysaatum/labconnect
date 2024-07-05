@@ -298,7 +298,7 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 class CreateTestView(PermissionMixin, generics.CreateAPIView):
 	"""
-	API endpoitn to allow the user to add a test to their Branch,
+	API endpoint to allow the user to add a test to their Branch,
 	It allows the user to add the test to multiple Branches at a go.
 	"""
 	serializer_class = TestSerializer
@@ -319,7 +319,6 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 		test = serializer.save()
 		branches = self.request.data.get('branch', [])
 		test.branch.add(*branches)
-
 
 
 class TestListView(generics.ListAPIView):
@@ -514,7 +513,13 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
-		sample = serializer.save(referring_facility=facility)
+		sample = serializer.save(
+			referring_facility=facility, 
+			sender_full_name=self.request.user.full_name,
+			sender_phone=facility.phone,
+			sender_email=facility.email,
+			facility_type='Laboratory'
+		)
 		tests = self.request.data.getlist('tests')
 
 		sample.tests.add(*tests)
@@ -578,7 +583,9 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	def get_queryset(self):
 
-		return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(collected_sample=True)
+		return Sample.objects.filter(
+			referring_facility=self.kwargs.get('pk')
+		).filter(sample_status='Received by laboratory')
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):
