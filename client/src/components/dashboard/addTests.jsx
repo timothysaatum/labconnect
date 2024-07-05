@@ -91,6 +91,10 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
     data: branches,
   } = useFetchUserBranches();
 
+  useEffect(() => {
+    console.log(form.formState.errors);
+  }, [form.formState.errors]);
+
   const onSubmit = async (data) => {
     console.log(data);
     const branchvalue = data?.branch

@@ -92,6 +92,7 @@ export default function Signup() {
         }
       );
     } catch (error) {
+      console.log(error)
       for (const field in error?.response?.data) {
         form.setError(field, {
           type: "manual",

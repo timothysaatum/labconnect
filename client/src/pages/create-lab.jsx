@@ -158,7 +158,7 @@ const CreateLab = ({ step, setStep }) => {
       id="create-lab"
     >
       <div className="max-w-6xl mx-auto">
-        <h3 className="text-lg lg:hidden md:text-2xl lg:text-4xl my-4 from-[#6366F1] to-[#D946EF] bg-gradient-to-l bg-clip-text text-transparent drop-shadow-2xl">
+        <h3 className="text-lg lg:hidden md:text-2xl lg:text-4xl my-4  drop-shadow-2xl">
           Create laboratory
         </h3>
         <Form {...form}>

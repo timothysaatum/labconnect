@@ -25,9 +25,7 @@ import { Button } from "../ui/button";
 import { AlertCircle, Loader2, Plus } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { useSelector } from "react-redux";
-import {
-  selectSampleTypes,
-} from "@/redux/samples/sampleTypeSlice";
+import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
 import { useAddSampleType } from "@/lib/formactions";
 
 export const SampleTypeForm = ({ form, setOpen }) => {
@@ -55,6 +53,9 @@ export const SampleTypeForm = ({ form, setOpen }) => {
         <FormBuilder name={"sample_name"} label={"Sample Type"}>
           <Input placeholder="Sample Type" />
         </FormBuilder>
+        <FormBuilder name={"collection_time"} label={"Collection Time"}>
+          <Input type="text" placeholder="Collection Time" />
+        </FormBuilder>
         <FormBuilder
           name={"collection_procedure"}
           label={"Collection Procedure"}
@@ -62,9 +63,6 @@ export const SampleTypeForm = ({ form, setOpen }) => {
           description={"Also include sample container to be used"}
         >
           <Textarea placeholder="Collection Procedure" />
-        </FormBuilder>
-        <FormBuilder name={"collection_time"} label={"Collection Time"}>
-          <Input type="text" placeholder="Collection Time" />
         </FormBuilder>
         <Button
           type="submit"
