@@ -20,7 +20,7 @@ def generateotp():
 #async def send_code_to_user(email):
 def send_code_to_user(email):
 
-	loop = asyncio.get_event_loop()
+	#loop = asyncio.get_event_loop()
 	subject = 'Your one time verification code'
 	otp_code = generateotp()
 

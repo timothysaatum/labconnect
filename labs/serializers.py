@@ -80,6 +80,7 @@ class TestSerializer(serializers.ModelSerializer):
 
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
 	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
+	discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
 
 	class Meta:
 
