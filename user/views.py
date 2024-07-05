@@ -138,8 +138,8 @@ class UpdateUserAccount(UpdateAPIView):
 	def get_queryset(self):
 		return Client.objects.filter(pk=self.kwargs.get('pk'))
 
-	def put(self, request, pk):
-		return super().put(request, pk)
+	def patch(self, request, pk):
+		return super().partial_update(request, pk)
 
 
 class DeleteUserAccount(UpdateAPIView):
@@ -396,7 +396,7 @@ class BranchManagerAcceptView(UpdateAPIView):
 				   	status=status.HTTP_404_NOT_FOUND
 				   )
 			
-	def put(self, request, *args, **kwargs):
+	def post(self, request, *args, **kwargs):
 		invitation = self.get_queryset()
 		
 		if invitation.used:

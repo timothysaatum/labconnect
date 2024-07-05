@@ -230,6 +230,7 @@ class UserSerializer(serializers.ModelSerializer):
 					'date_joined', 
 					'last_login',
 				]
+
 	def to_representation(self, instance):
 		data = super().to_representation(instance)
 		data['profile'] = ClientProfileSerializer(ClientProfile.objects.filter(client=instance.id), many=True).data
