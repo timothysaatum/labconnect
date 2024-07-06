@@ -93,10 +93,9 @@ export default function SendSample() {
   const form = useForm({
     // resolver: zodResolver(labRequestSchema),
     defaultValues: {
-      pa: "",
+      patient_name: "",
       patient_age: "",
       patient_sex: "",
-      sample_type: "",
       delivery: "",
       to_lab: "",
       from_lab: "",
@@ -197,7 +196,7 @@ export default function SendSample() {
 
   useEffect(() => {
     if (savedData && restore) {
-      form.setValue("pa", savedData.pa);
+      form.setValue("patient_name", savedData.patient_name);
       form.setValue("patient_age", savedData.patient_age);
       form.setValue("patient_sex", savedData.patient);
       form.setValue("sample_type", savedData.sample_type);
@@ -275,7 +274,7 @@ export default function SendSample() {
                       <div className="grid gap-6">
                         <div>
                           <FormBuilder
-                            name={"pa"}
+                            name={"patient_name"}
                             label={"Patient Name"}
                             className="grid gap-3"
                           >

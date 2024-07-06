@@ -66,7 +66,6 @@ export const labRequestSchema = z.object({
     invalid_type_error: "Enter a valid date format YYY-MM-DD",
   }),
   patient_sex: z.string().min(1, "Sex is required"),
-  sample_type: z.string().min(1, "Sample type is required"),
   from_lab: z.string().min(1, "laboratory is required"),
   to_lab: z.string().min(1, "laboratory is required"),
   tests: z.array(multiSelectSchema).min(1),

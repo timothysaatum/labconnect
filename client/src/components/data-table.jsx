@@ -169,7 +169,7 @@ export function DataTable({
             {table.getRowModel().rows.map((rowEl) => (
               <TableRow
                 key={rowEl.id}
-                onDoubleClick={() => {
+                onClick={() => {
                   if (rowEl.original.id === selected) {
                     setSelected &&
                       typeof setSelected === "function" &&
@@ -197,7 +197,6 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
-      {table.getFilteredSelectedRowModel().rows.length > 5 && (
         <div className="flex items-center mt-2">
           <div className="text-muted-foreground flex-1 text-xs hidden sm:block">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -278,7 +277,6 @@ export function DataTable({
             </div>
           </div>
         </div>
-      )}
     </>
   );
 }
