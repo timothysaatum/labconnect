@@ -17,9 +17,11 @@ from sample.serializers import SampleSerializer
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from sample.serializers import SampleSerializer
+from django.http import QueryDict
+from django.core.cache import cache
 
 
-
+query_dict = QueryDict('', mutable=True)
 
 
 class PermissionMixin(object):
@@ -56,6 +58,20 @@ class PermissionMixin(object):
 		)
 
 
+class CacheMixin:
+    cache_timeout = 300  # 5 minutes
+
+    def dispatch(self, request, *args, **kwargs):
+        key = self.get_cache_key(request, *args, **kwargs)
+        response = cache.get(key)
+        if response is None:
+            response = super().dispatch(request, *args, **kwargs)
+            cache.set(key, response, self.cache_timeout)
+        return response
+
+    def get_cache_key(self, request, *args, **kwargs):
+        return f'view_cache_{request.path}_{request.user.id}'
+
 
 class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
 	"""
@@ -84,13 +100,6 @@ class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
 
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
-		# try:
-		# 	data = serializer.save(created_by=self.request.user)
-		# 	return Response({'lab': data})
-		# except Exception as e:
-		# 	return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-		
-
 
 
 class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
@@ -158,7 +167,7 @@ class LaboratoryUserVIew(PermissionMixin, generics.ListAPIView):
 	serializer_class = LaboratorySerializer
 
 	def get_queryset(self):
-		return Laboratory.objects.filter(created_by=self.request.user)
+		return Laboratory.objects.filter(created_by=self.request.user).order_by('id')
 
 
 
@@ -211,7 +220,7 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 		return Branch.objects.filter(
 			Q(laboratory__created_by=self.request.user) |
 			Q(branch_manager=self.request.user)
-		)
+		).order_by('id')
 
 
 
@@ -317,7 +326,9 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		test = serializer.save()
-		branches = self.request.data.get('branch', [])
+		query_dict.update(self.request.data)
+		#branches = self.request.data.get('branch', [])
+		branches = query_dict.getlist('branch')
 		test.branch.add(*branches)
 
 
@@ -329,13 +340,14 @@ class TestListView(generics.ListAPIView):
 	It takes either the branch id or the Laboratory id
 	"""
 	serializer_class = TestSerializer
+	#cache_timeout = 600
 
 	def get_queryset(self):
 		
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
 			Q(branch__laboratory__id=self.kwargs.get('pk'))
-		)
+		).order_by('-date_added')
 
 
 
@@ -367,8 +379,9 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 		#Clears the current branct set for the tests
 		test.branch.clear()
 
-
-		branches = self.request.data.getlist('branch')
+		query_dict.update(self.request.data)
+		branches = query_dict.getlist('branch')
+		#branches = self.request.data.getlist('branch')
 		#Updates the test with the new branches if there is any.
 		test.branch.add(*branches)
 
@@ -427,7 +440,7 @@ class TestResultListView(BranchListView):
 		return TestResult.objects.filter(
 			Q(branch__branch_manager=self.request.user) | 
 			Q(branch__laboratory__created=self.request.user)
-		)
+		).order_by('-date_added')
 
 
 
@@ -520,7 +533,9 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 			sender_email=facility.email,
 			facility_type='Laboratory'
 		)
-		tests = self.request.data.getlist('tests')
+		query_dict.update(self.request.data)
+		#tests = self.request.data.getlist('tests')
+		tests = query_dict.getlist('tests')
 
 		sample.tests.add(*tests)
 
@@ -537,7 +552,9 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 	def perform_update(self, serializer):
 		sample = serializer.save()
 		sample.tests.clear()
-		tests = self.request.data.getlist('tests')
+		query_dict.update(self.request.data)
+		#tests = self.request.data.getlist('tests')
+		tests = query_dict.getlist('tests')
 		sample.tests.add(*tests)
 
 
@@ -554,7 +571,7 @@ class LaboratorySampleDeleteView(PermissionMixin, generics.DestroyAPIView):
 class AllLaboratories(generics.ListAPIView):
 
 	serializer_class = BranchSerializer
-	queryset = Branch.objects.all()
+	queryset = Branch.objects.all().order_by('id')
 
 
 
@@ -568,7 +585,7 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 			return Sample.objects.filter(
 				Q(to_laboratory=pk) |
 				Q(to_laboratory__laboratory=pk)
-			)
+			).order_by('-date_created')
 
 		except Sample.DoesNotExist:
 			return Response(
@@ -585,7 +602,7 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 		return Sample.objects.filter(
 			referring_facility=self.kwargs.get('pk')
-		).filter(sample_status='Received by laboratory')
+		).filter(sample_status='Received by laboratory').order_by('-date_created')
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):
@@ -647,4 +664,4 @@ class GetTestSampleType(generics.ListAPIView):
 		return SampleType.objects.filter(
 				Q(test=obj_id)|
 				Q(test__branch__laboratory=obj_id)
-			)
+			).order_by('id')
