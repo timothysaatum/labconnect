@@ -347,8 +347,7 @@ class TestListView(generics.ListAPIView):
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
 			Q(branch__laboratory__id=self.kwargs.get('pk'))
-		).order_by('-date_added')
-
+		).filter(is_deactivated=False).order_by('-date_added')
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -377,13 +376,13 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 		test = serializer.save()
 		#Clears the current branct set for the tests
-		test.branch.clear()
-
 		query_dict.update(self.request.data)
 		branches = query_dict.getlist('branch')
-		#branches = self.request.data.getlist('branch')
-		#Updates the test with the new branches if there is any.
-		test.branch.add(*branches)
+		if branches:
+			test.branch.clear()
+			#branches = self.request.data.getlist('branch')
+			#Updates the test with the new branches if there is any.
+			test.branch.add(*branches)
 
 
 
