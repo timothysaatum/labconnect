@@ -103,7 +103,7 @@ const Header = () => {
               <Button variant="outline">Sign in</Button>
             </Link>
             <Link to={"/sign-up"}>
-              <Button variant="gradient">Sign up</Button>
+              <Button>Sign up</Button>
             </Link>
           </div>
         )}

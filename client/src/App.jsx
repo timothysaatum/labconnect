@@ -15,7 +15,7 @@ import React from "react";
 import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import SettingProfile from "./components/dashboard/Profile";
-import Loading from "./components/loading";
+import Loading from "./components/loadingone";
 import Labgettingstarted from "./pages/labgettingstarted";
 import MyLab from "@/components/mylab";
 import SendSample from "./components/dashboard/sendSample";
@@ -82,10 +82,7 @@ export default function App() {
                 >
                   <Route index element={<DashboardOverview />} />
                   <Route path="overview" element={<DashboardOverview />} />
-                  <Route
-                    path="send-sample"
-                    element={<SendSample />}
-                  />
+                  <Route path="send-sample" element={<SendSample />} />
                   <Route
                     path="settings"
                     element={

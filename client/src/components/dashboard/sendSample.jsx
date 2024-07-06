@@ -93,7 +93,7 @@ export default function SendSample() {
   const form = useForm({
     // resolver: zodResolver(labRequestSchema),
     defaultValues: {
-      name_of_patient: "",
+      pa: "",
       patient_age: "",
       patient_sex: "",
       sample_type: "",
@@ -171,18 +171,6 @@ export default function SendSample() {
   //tests card ref
   const TestsCardRef = useRef(null);
 
-  useEffect(() => {
-    if (TestsCardRef.current) {
-      // Scroll into view
-      TestsCardRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-      // Optional: Focus if the element can be focused
-      TestsCardRef.current.focus();
-    }
-  }, [tests]);
-
   //saving form to redux
   const handleSave = () => {
     try {
@@ -209,7 +197,7 @@ export default function SendSample() {
 
   useEffect(() => {
     if (savedData && restore) {
-      form.setValue("name_of_patient", savedData.name_of_patient);
+      form.setValue("pa", savedData.pa);
       form.setValue("patient_age", savedData.patient_age);
       form.setValue("patient_sex", savedData.patient);
       form.setValue("sample_type", savedData.sample_type);
@@ -287,7 +275,7 @@ export default function SendSample() {
                       <div className="grid gap-6">
                         <div>
                           <FormBuilder
-                            name={"name_of_patient"}
+                            name={"pa"}
                             label={"Patient Name"}
                             className="grid gap-3"
                           >

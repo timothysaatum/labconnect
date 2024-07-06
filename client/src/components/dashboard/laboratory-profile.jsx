@@ -9,7 +9,6 @@ import { useFetchUserLab } from "@/api/queries";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { BackgroundGradient } from "../ui/background-gradient";
 import LabLogo from "/images/defaultlabLogo.jpg";
 import {
   FormField,

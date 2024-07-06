@@ -94,8 +94,8 @@ export function DataTable({
   }, [rowSelection, title]);
   const possiblePageSizes = [5, 10, 15, 20, 25];
   useEffect(() => {
-    table.setPageSize(rowCount)
-    table.setPageIndex(0)
+    table.setPageSize(rowCount);
+    table.setPageIndex(0);
   }, [rowCount]);
   return (
     <>
@@ -197,6 +197,7 @@ export function DataTable({
           </TableBody>
         </Table>
       </div>
+      {table.getFilteredSelectedRowModel().rows.length > 5 && (
         <div className="flex items-center mt-2">
           <div className="text-muted-foreground flex-1 text-xs hidden sm:block">
             {table.getFilteredSelectedRowModel().rows.length} of{" "}
@@ -205,7 +206,10 @@ export function DataTable({
 
           <div className=" flex justify-between gap-2 sm:gap-8 items-center">
             <div className="flex items-center justify-between gap-2">
-              <span className="font-medium sm:text-sm text-[10px] whitespace-nowrap"> Rows per page</span>{" "}
+              <span className="font-medium sm:text-sm text-[10px] whitespace-nowrap">
+                {" "}
+                Rows per page
+              </span>{" "}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -274,6 +278,7 @@ export function DataTable({
             </div>
           </div>
         </div>
+      )}
     </>
   );
 }

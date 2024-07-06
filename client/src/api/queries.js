@@ -39,7 +39,7 @@ export const useFetchHealthWorkerRequests = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["Requests"],
-    queryFn: async () => await axiosPrivate.get("/hospital/sample/list/"),
+    queryFn: async () => await axiosPrivate.get("/hospital/health-worker/sample/list/"),
     staleTime: 1000 * 60 * 5,
   });
 };
