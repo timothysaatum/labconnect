@@ -13,6 +13,7 @@ Django==5.0.3
 django-cors-headers==4.3.1
 django-filter==24.2
 django-jazzmin==3.0.0
+django-redis==5.4.0
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
 idna==3.7
