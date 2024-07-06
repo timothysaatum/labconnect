@@ -42,7 +42,8 @@ class TestAdmin(admin.ModelAdmin):
 		'laboratory',
 		'price', 
 		'turn_around_time', 
-		'patient_preparation', 
+		'patient_preparation',
+		'is_deactivated',
 		'date_added', 
 		'date_modified'
 	)
