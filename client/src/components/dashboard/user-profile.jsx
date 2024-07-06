@@ -72,7 +72,7 @@ const UserProfile = () => {
       form.setValue("email", userdata?.email);
       form.setValue("phone_number", userdata?.phone_number);
       form.setValue("gender", userdata?.gender);
-      form.setValue("id_number", userdata?.id_number);
+      form.setValue("id_number", userdata?.profile?.id_number);
       form.setValue("digital_address", userdata?.digital_address);
     }
   }, [user]);

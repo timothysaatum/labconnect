@@ -41,7 +41,7 @@ export function OTPInput() {
     formState: { isSubmitting, isSubmitSuccessful },
     reset,
   } = form;
- 
+
   useEffect(() => {
     reset();
   }, [isSubmitSuccessful]);
@@ -89,6 +89,7 @@ export function OTPInput() {
                   disabled={isSubmitting}
                   containerClassName=" flex justify-between drop-shadow-lg"
                   autoFocus
+                  onComplete={form.handleSubmit(onSubmit)}
                 >
                   <InputOTPSlot
                     index={0}

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser, selectCurrenttoken } from "@/redux/auth/authSlice";
 import { toast } from "sonner";
 import { useFetchUserLab } from "@/api/queries";
-import Loading from "./loading";
+import Loading from "./loadingone";
 
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
@@ -11,12 +11,9 @@ export default function RequireAuth() {
 
   if (!token) {
     toast.error("Session expired, Please login again");
+    return <Navigate to="/sign-in" state={{ from: location }} replace />;
   }
-  return token ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/sign-in" state={{ from: location }} replace />
-  );
+  return <Outlet />;
 }
 
 export const LabRoutes = () => {
@@ -32,14 +29,16 @@ export const LabRoutes = () => {
 
 export const HasLaboratory = () => {
   const user = useSelector(selectCurrentUser);
+
+  if (user.account_type === "Hospital") {
+    return <Outlet />;
+  }
   const { isError, data: userlab, isPending } = useFetchUserLab();
   const location = useLocation();
-  if (user?.account_type !== "Laboratory") return;
   if (isPending) return;
   if (isError) {
-    toast.error("Error loading laboratory");
+    return toast.error("Error loading laboratory");
   }
-
   return userlab?.data.length > 0 ? (
     <Outlet />
   ) : (
