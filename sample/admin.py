@@ -16,7 +16,8 @@ class SampleAdmin(admin.ModelAdmin):
 		'rejection_reason',
 		'mark_sent',
 		'payment_mode',
-		'payment_status'
+		'payment_status',
+		'priority'
 	)
 	list_editable = (
 		'sample_status',

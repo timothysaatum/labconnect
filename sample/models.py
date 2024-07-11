@@ -26,6 +26,10 @@ PAYMENT_STATUS = [
 	('Paid', 'Paid'),
 	('Pending', 'Pending')
 ]
+PRIORITIES = [
+	('Express', 'Express'),
+	('Normal', 'Normal')
+]
 class Sample(models.Model):
 
 	'''
@@ -72,6 +76,7 @@ class Sample(models.Model):
 	rejection_reason = models.TextField(blank=True, null=True)
 	payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE)
 	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
+	priority = models.CharField(max_length=50, choices=PRIORITIES)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 
