@@ -128,13 +128,24 @@ export const AddDiscountSchema = z
 export const AddTestSchema = z
   .object({
     branch: z.array(multiSelectSchema).min(1),
-    price: z.string().min(1, "price is required"),
     test_code: z.string().min(1, "Test Code is required"),
     name: z.string().min(1, "Test Name is required"),
     turn_around_time: z.string().min(1, "Turn around time is required"),
     unit: z.string().min(1, "unit for turn around time is required"),
     patient_preparation: z.string(),
-    discount_price: z.string(),
+    price: z
+      .string()
+      .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+        message: "must be a positive integer",
+      })
+      .transform(Number),
+    discount_price: z
+      .string()
+      .optional()
+      .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+        message: "must be a positive integer",
+      })
+      .transform((val) => (val === undefined ? 0 : Number(val))),
     sample_type: z
       .array(
         z.object({
@@ -144,9 +155,17 @@ export const AddTestSchema = z
       )
       .min(1),
   })
-  .refine((data) => data.discount_price < data.price, {
-    message: "Discount cannot be more than price",
-  });
+  .refine(
+    (data) => {
+      if (data.discount_price === undefined) return true;
+      return data.discount_price <= data.price;
+    },
+    {
+      message: "Discount cannot be greater price",
+      path: ["discount_price"],
+    }
+  );
+ 
 
 //addBranch schema
 export const AddBranchSchema = z.object({
@@ -178,6 +197,7 @@ export const CreateLabSchema = z.object({
   description: z.string().min(1, "Description is required"),
   logo: z.instanceof(FileList),
 });
+
 
 //sample type
 

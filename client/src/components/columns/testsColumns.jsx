@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { BadgeCent, MoreHorizontal } from "lucide-react";
+import { BadgeCent, Edit3, MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { usedeleteTestMutation } from "@/api/mutations";
@@ -31,6 +31,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ApplyDisCount } from "../dashboard/adddiscount";
+import UpdateTest from "../dashboard/updateTest";
 
 export function DeleteDialog({ testId, mutate }) {
   return (
@@ -110,10 +111,22 @@ export const testscolumnDef = [
     id: "actions",
     cell: ({ row }) => {
       const test = row.original;
-      
+
       const { mutate, error } = usedeleteTestMutation(test.id);
       return (
-        <div className=" flex items-center space-x-6">
+        <div className="flex items-center space-x-6 ">
+          <TooltipProvider>
+            <Tooltip>
+              <UpdateTest test={test}>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost">
+                    <Edit3 className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+              </UpdateTest>
+              <TooltipContent side="right">Edit test</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
               <ApplyDisCount test={test}>
@@ -128,15 +141,14 @@ export const testscolumnDef = [
           </TooltipProvider>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="w-8 h-8 p-0">
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Update Test</DropdownMenuItem>
               <DropdownMenuItem>Deactivate test</DropdownMenuItem>
               <DropdownMenuItem>Remove discount</DropdownMenuItem>
               <DropdownMenuSeparator />
