@@ -10,7 +10,7 @@ class SampleAdmin(admin.ModelAdmin):
 		'sender_phone', 
 		'referring_facility',
 		'facility_type',
-		'attachment', 
+		'attachment',
 		'to_laboratory', 
 		'sample_status',
 		'rejection_reason',
