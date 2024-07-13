@@ -327,8 +327,8 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 
 		test = serializer.save()
 		query_dict.update(self.request.data)
-		branches = self.request.data.get('branch', [])
-		# branches = query_dict.getlist('branch')
+		#branches = self.request.data.get('branch', [])
+		branches = query_dict.getlist('branch')
 		test.branch.add(*branches)
 
 
@@ -377,7 +377,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 		test = serializer.save()
 		#Clears the current branct set for the tests
 		query_dict.update(self.request.data)
-		branches = query_dict.getlist('branch')
+		branches = query_dict.get('branch')
 		if branches != []:
 			test.branch.clear()
 			#branches = self.request.data.getlist('branch')
