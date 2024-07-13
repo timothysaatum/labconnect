@@ -32,8 +32,8 @@ import { changeTab, selectCurrentTab } from "@/redux/mylabtab/mylabtabSlice";
 
 function EmptyLab({ title, user }) {
   return (
-    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-      <div className="flex flex-col items-center  text-center py-16 ">
+    <div className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm">
+      <div className="flex flex-col items-center py-16 text-center ">
         {title === "Tests" ? (
           <>
             <h3 className="text-xl font-semibold ">This Branch has no Tests</h3>
@@ -65,8 +65,8 @@ function EmptyLab({ title, user }) {
 }
 function LoadingLab() {
   return (
-    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-      <div className="flex flex-col items-center  text-center py-16 ">
+    <div className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm">
+      <div className="flex flex-col items-center py-16 text-center ">
         <p className="text-sm text-muted-foreground">loading...</p>
       </div>
     </div>
@@ -75,8 +75,8 @@ function LoadingLab() {
 function ErrorLab({ refetch, error }) {
   console.log(error);
   return (
-    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-      <div className="flex flex-col items-center  text-center py-16 ">
+    <div className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm">
+      <div className="flex flex-col items-center py-16 text-center ">
         <h3 className="text-xl font-semibold ">
           {error.name === "CanceledError"
             ? "We're having trouble connecting"
@@ -93,9 +93,9 @@ function ErrorLab({ refetch, error }) {
             refetch();
           }}
         >
-          Try Again <RotateCw className="h-4 w-4 ml-2 text-muted-foreground" />
+          Try Again <RotateCw className="w-4 h-4 ml-2 text-muted-foreground" />
         </Button>
-        <p className="text-muted-foreground text-xs mt-2">
+        <p className="mt-2 text-xs text-muted-foreground">
           If error persists{" "}
           <Link className="hover:underline underline-offset-2 text-des">
             Contact us
@@ -165,6 +165,9 @@ export default function MyLab() {
             turn_around_time: test.turn_around_time,
             date_added: test.date_added,
             discount_price: test.discount_price,
+            patient_preparation: test.patient_preparation,
+            sample_type: test.sample_type,
+            branch: test.branch,
           };
         })
       );
@@ -230,7 +233,7 @@ export default function MyLab() {
     },
   ];
   return (
-    <main className="sm:pl-20 sm:pr-6 max-sm:px-2 grid grid-cols-12 gap-x-4 max-sm:mt-2">
+    <main className="grid grid-cols-12 sm:pl-20 sm:pr-6 max-sm:px-2 gap-x-4 max-sm:mt-2">
       <div
         className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
       >
@@ -263,7 +266,7 @@ export default function MyLab() {
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="outline"
-                              className="flex justify-between items-center text-sm px-2 gap-3"
+                              className="flex items-center justify-between gap-3 px-2 text-sm"
                             >
                               {action}
 
@@ -289,7 +292,7 @@ export default function MyLab() {
                               <Button
                                 disabled={branchesLoading || branchesError}
                                 variant="outline"
-                                className="flex justify-between items-center text-sm px-2 gap-3 max-sm:w-full"
+                                className="flex items-center justify-between gap-3 px-2 text-sm max-sm:w-full"
                               >
                                 {branchesError
                                   ? "Error loading branches"
@@ -341,7 +344,7 @@ export default function MyLab() {
         </section>
       </div>
       {selected && (
-        <div className="hidden lg:block col-span-4">
+        <div className="hidden col-span-4 lg:block">
           <TestDetails
             selected={selected}
             setSelectedTests={setSelectedTests}
