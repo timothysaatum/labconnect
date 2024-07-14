@@ -66,10 +66,13 @@ export const labRequestSchema = z.object({
     invalid_type_error: "Enter a valid date format YYY-MM-DD",
   }),
   patient_sex: z.string().min(1, "Sex is required"),
-  sample_type: z.string().min(1, "Sample type is required"),
   from_lab: z.string().min(1, "laboratory is required"),
-  to_lab: z.string().min(1, "laboratory is required"),
+  to_laboratory: z.string().min(1, "laboratory is required"),
   tests: z.array(multiSelectSchema).min(1),
+  priority: z.string().min(1, "Choose test priority"),
+  payment_mode: z.string().min(1, "Choose a payment mode"),
+  sample_status: z.string().min(1, ""),
+  payment_status: z.string(),
   brief_description: z.string(),
   // attachment: z.instanceof(FileList),
 });
@@ -165,7 +168,6 @@ export const AddTestSchema = z
       path: ["discount_price"],
     }
   );
- 
 
 //addBranch schema
 export const AddBranchSchema = z.object({
@@ -197,7 +199,6 @@ export const CreateLabSchema = z.object({
   description: z.string().min(1, "Description is required"),
   logo: z.instanceof(FileList),
 });
-
 
 //sample type
 

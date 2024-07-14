@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 
 export function ApplyDisCount({ children, test }) {
   const [percent, setPercent] = useState(0);
+  const [open, setOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(AddDiscountSchema),
@@ -49,9 +50,9 @@ export function ApplyDisCount({ children, test }) {
   }, [discount]);
 
   // update discount
-  const onaddDiscount = useAddDiscount(form, test);
+  const onaddDiscount = useAddDiscount(form, test,setOpen);
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">

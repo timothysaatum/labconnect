@@ -95,6 +95,7 @@ class TestSerializer(serializers.ModelSerializer):
 			'patient_preparation',
 			'sample_type',
 			'branch',
+			'is_deactivated',
 			'date_modified',
 			'date_added'
 		)
