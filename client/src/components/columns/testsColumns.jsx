@@ -17,7 +17,10 @@ import {
 import { BadgeCent, Edit3, MoreHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { usedeleteTestMutation } from "@/api/mutations";
+import {
+  useDeactivateTestMutation,
+  usedeleteTestMutation,
+} from "@/api/mutations";
 
 import {
   AlertDialog,
@@ -113,6 +116,7 @@ export const testscolumnDef = [
       const test = row.original;
 
       const { mutate, error } = usedeleteTestMutation(test.id);
+      const { mutate: Deactivate } = useDeactivateTestMutation(test.id);
       return (
         <div className="flex items-center space-x-6 ">
           <TooltipProvider>
@@ -149,7 +153,9 @@ export const testscolumnDef = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Deactivate test</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => Deactivate()}>
+                Deactivate test
+              </DropdownMenuItem>
               <DropdownMenuItem>Remove discount</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DeleteDialog testId={test.id} mutate={mutate} />

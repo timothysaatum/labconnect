@@ -282,7 +282,6 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 		return self.partial_update(request, pk, format=None)
 
 
-
 class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 	"""
 	API endpoint for a user to delete the Branch they have created.
@@ -542,8 +541,9 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		)
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
+		# print(self.request.data)
 		tests = query_dict.getlist('tests')
-
+		print(tests)
 		sample.tests.add(*tests)
 
 
