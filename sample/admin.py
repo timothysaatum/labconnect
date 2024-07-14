@@ -10,13 +10,14 @@ class SampleAdmin(admin.ModelAdmin):
 		'sender_phone', 
 		'referring_facility',
 		'facility_type',
-		'attachment', 
+		'attachment',
 		'to_laboratory', 
 		'sample_status',
 		'rejection_reason',
 		'mark_sent',
 		'payment_mode',
-		'payment_status'
+		'payment_status',
+		'priority'
 	)
 	list_editable = (
 		'sample_status',

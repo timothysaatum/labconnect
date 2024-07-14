@@ -171,7 +171,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
   return (
     <Form {...form}>
       <form
-        className=" test flex flex-col gap-4 overflow-hidden hover:overflow-auto transition-all over p-4"
+        className="flex flex-col gap-4 p-4 overflow-hidden transition-all test hover:overflow-auto over"
         noValidate
         onSubmit={form.handleSubmit(onSubmit)}
       >
@@ -213,7 +213,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
             name="sample_type"
             control={form.control}
             render={({ field }) => (
-              <FormItem className="-mb-2 flex-1">
+              <FormItem className="flex-1 -mb-2">
                 <FormLabel>Accepted Sample Types</FormLabel>
                 <FormControl>
                   <div className="relative">
@@ -239,7 +239,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
           />
           <AddSampleType>
             <Button variant="outline" size="icon" className="mt-2">
-              <Plus className="h-4 w-4" />
+              <Plus className="w-4 h-4" />
             </Button>
           </AddSampleType>
         </div>
@@ -302,11 +302,11 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
           {form.formState.isSubmitting ? (
             <span className="flex items-center">
               Test is being added{" "}
-              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              <Loader2 className="w-4 h-4 ml-2 animate-spin" />
             </span>
           ) : (
             <span className="flex items-center">
-              Add Test <Plus className="ml-2 h-4 w-4" />
+              Add Test <Plus className="w-4 h-4 ml-2" />
             </span>
           )}
         </Button>
@@ -342,13 +342,13 @@ const AddTest = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline">
-            <Plus className="mr-2 h-5 w-5" />
+            <Plus className="w-5 h-5 mr-2" />
             Add new Test
           </Button>
         </DialogTrigger>
         <DialogContent className="px-2 max-w-[36rem]">
           <div className="h-full max-h-[80dvh] overflow-auto">
-            <DialogHeader className="z-50 bg-background flex-row justify-between items-start sticky top-0 px-4 left-0">
+            <DialogHeader className="sticky top-0 left-0 z-50 flex-row items-start justify-between px-4 bg-background">
               <div>
                 <DialogTitle>Add new test</DialogTitle>
                 <DialogDescription>
@@ -374,20 +374,20 @@ const AddTest = () => {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button size="icon" variant="outline">
-          <Plus className="h-4 w-4" />
+          <Plus className="w-4 h-4" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="px-2">
         <div className="max-h-[90vh] overflow-auto ">
-          <DrawerHeader className="z-50 sticky top-0 bg-background">
-            <div className="flex justify-between gap-2 flex-col">
+          <DrawerHeader className="sticky top-0 z-50 bg-background">
+            <div className="flex flex-col justify-between gap-2">
               <div>
                 <DrawerTitle>Add new test</DrawerTitle>
                 <DrawerDescription>
                   Keep open after adding test
                 </DrawerDescription>
               </div>
-              <div className="flex items-center space-x-2 mb-2">
+              <div className="flex items-center mb-2 space-x-2">
                 <Checkbox
                   checked={keepOpen}
                   onCheckedChange={setKeepOpen}

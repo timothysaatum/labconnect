@@ -19,6 +19,9 @@ from django.shortcuts import get_object_or_404
 from sample.serializers import SampleSerializer
 from django.http import QueryDict
 from django.core.cache import cache
+from rest_framework.exceptions import ValidationError
+from .filters import TestFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 query_dict = QueryDict('', mutable=True)
@@ -340,6 +343,8 @@ class TestListView(generics.ListAPIView):
 	It takes either the branch id or the Laboratory id
 	"""
 	serializer_class = TestSerializer
+	filter_backends = [DjangoFilterBackend]
+	filterset_class = TestFilter
 	#cache_timeout = 600
 
 	def get_queryset(self):
@@ -356,13 +361,13 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 	It accepts the test id
 	"""
 	serializer_class = TestSerializer
-	
+
 	def get_queryset(self):
 
 		return Test.objects.filter(pk=self.kwargs.get('pk'))
 
 	def patch(self, request, pk):
-		
+
 		if not self.has_laboratory_permission(self.request.user):
 
 			return Response(
@@ -374,16 +379,19 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 	def perform_update(self, serializer):
 
-		test = serializer.save()
-		#Clears the current branct set for the tests
+		#Clears the current branch set for the tests
 		query_dict.update(self.request.data)
-		branches = query_dict.getlist('branch')
-		if branches:
-			test.branch.clear()
-			#branches = self.request.data.getlist('branch')
-			#Updates the test with the new branches if there is any.
-			test.branch.add(*branches)
+		branches = query_dict.get('branch')
+		#Updates the test with the new branches if there is any.
 
+		if not branches:
+			raise ValidationError(
+				{'error': 'Test must have at least one(1) branch'}
+			)
+
+		test = serializer.save()
+		test.branch.clear()
+		test.branch.add(*branches)
 
 
 class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
@@ -664,3 +672,4 @@ class GetTestSampleType(generics.ListAPIView):
 				Q(test=obj_id)|
 				Q(test__branch__laboratory=obj_id)
 			).order_by('id')
+	

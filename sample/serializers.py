@@ -37,7 +37,8 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sample_status',
 			'payment_mode',
 			'payment_status',
-			'delivery', 
+			'delivery',
+			'priority',
 			'date_modified', 
 			'date_created'
 		)
