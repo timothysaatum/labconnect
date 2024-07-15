@@ -3,20 +3,46 @@ from sample.models import Sample
 from labs.paginators import QueryPagination
 from labs.models import Test, SampleType
 from labs.serializers import TestSerializer
-import json
+import uuid
 
+
+class MixedTypeFieldValidator(serializers.Field):
+	def to_internal_value(self, data):
+		try:
+			if isinstance(data, int):
+				return data
+			elif isinstance(data, str):
+				try:
+					return uuid.UUID(data)
+				except ValueError:
+					return data
+			else:
+				self.fail('Invalid')
+		except (TypeError, ValueError):
+			self.fail('Invalid Type')
+		# return super().to_internal_value(data)
+	
+	def to_representation(self, value):
+		return str(value)
+
+
+class TestObjectsSerializer(serializers.Serializer):
+	test = serializers.UUIDField(
+		# child=MixedTypeFieldValidator()
+	)
+	sample_type = serializers.IntegerField()
 
 
 class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
-	sample_type = serializers.PrimaryKeyRelatedField(
-		queryset=SampleType.objects.all(), 
-		required=False
-	)
-	#tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
-	tests = serializers.ListField()
+	# sample_type = serializers.PrimaryKeyRelatedField(
+	# 	queryset=SampleType.objects.all(), 
+	# 	required=False
+	# )
+	# tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
+	tests = serializers.ListField(child=serializers.DictField())
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
@@ -37,7 +63,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_full_name',
 			'sender_phone',
 			'sender_email',
-			'sample_type',  
+			# 'sample_type',  
 			'tests', 
 			'clinical_history', 
 			'attachment',
@@ -66,17 +92,17 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		return data
 	
-	def to_internal_value(self, data):
-		if isinstance(data.get('tests'), str):
-			try:
-				data['tests'] = json.loads(data['tests'])
-			except Exception as e:
-				print(e)
-		return super().to_internal_value(data)
+	# def to_internal_value(self, data):
+	# 	if isinstance(data.get('tests'), str):
+	# 		try:
+	# 			data['tests'] = json.loads(data['tests'])
+	# 		except Exception as e:
+	# 			print(e)
+	# 	return super().to_internal_value(data)
 
-	def create(self, validated_data):
-		# print(validated_data)
-		# test_data = validated_data.pop('tests')
-		# sample_id = test_data.pop('sample_type')
-		# print(sample_id)
-		return 'test'
+	# def create(self, validated_data):
+	# 	print(validated_data)
+	# 	test_data = validated_data.pop('tests')
+	# 	sample_id = test_data.pop('sample_type')
+	# 	# print(sample_id)
+	# 	return 'test'

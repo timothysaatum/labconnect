@@ -22,6 +22,7 @@ from django.core.cache import cache
 from rest_framework.exceptions import ValidationError
 from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
+import json
 
 
 query_dict = QueryDict('', mutable=True)
@@ -532,6 +533,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
+		print(json.dumps(self.request.data, indent=4))
 		sample = serializer.save(
 			referring_facility=facility, 
 			sender_full_name=self.request.user.full_name,
@@ -541,11 +543,10 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		)
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
-		# print(self.request.data)
+		# print(query_dict)
 		tests = query_dict.getlist('tests')
 		print(tests)
 		sample.tests.add(*tests)
-
 
 
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):

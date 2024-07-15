@@ -405,6 +405,7 @@ class BranchManagerAcceptView(UpdateAPIView):
 		pwd = generate_password()
 		print(pwd)
 		print(request.data)
+
 		data = {
 			'email':invitation.receiver_email,
 			'first_name':request.data['first_name'],
@@ -413,8 +414,10 @@ class BranchManagerAcceptView(UpdateAPIView):
 			'account_type':'Laboratory',
 			'password':pwd,
 			'password_confirmation':pwd
-		}			
-		user = create_branch_manager_user(invitation, data)
+		}
+
+		#user = create_branch_manager_user(invitation, data)
+		create_branch_manager_user(invitation, data)
 		return Response(
 			{'message': f'Invitation accepted, you are now a branch manager at {invitation.branch}'}, 
       		status=status.HTTP_200_OK
