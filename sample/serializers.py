@@ -37,10 +37,10 @@ class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
-	# sample_type = serializers.PrimaryKeyRelatedField(
-	# 	queryset=SampleType.objects.all(), 
-	# 	required=False
-	# )
+	sample_type = serializers.PrimaryKeyRelatedField(
+		required=False,
+		queryset=SampleType.objects.all()
+	)
 	# tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
 	tests = serializers.ListField(child=serializers.DictField())
 	sender_full_name = serializers.CharField(required=False)
@@ -63,7 +63,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_full_name',
 			'sender_phone',
 			'sender_email',
-			# 'sample_type',  
+			'sample_type',  
 			'tests', 
 			'clinical_history', 
 			'attachment',

@@ -545,7 +545,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		#tests = self.request.data.getlist('tests')
 		# print(query_dict)
 		tests = query_dict.getlist('tests')
-		print(tests)
+		# print(tests)
 		sample.tests.add(*tests)
 
 
