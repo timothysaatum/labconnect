@@ -41,8 +41,8 @@ class SampleSerializer(serializers.ModelSerializer):
 		required=False,
 		queryset=SampleType.objects.all()
 	)
-	# tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
-	tests = serializers.ListField(child=serializers.DictField())
+	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
+	# tests = serializers.ListField(child=serializers.DictField())
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
@@ -92,17 +92,3 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		return data
 	
-	# def to_internal_value(self, data):
-	# 	if isinstance(data.get('tests'), str):
-	# 		try:
-	# 			data['tests'] = json.loads(data['tests'])
-	# 		except Exception as e:
-	# 			print(e)
-	# 	return super().to_internal_value(data)
-
-	# def create(self, validated_data):
-	# 	print(validated_data)
-	# 	test_data = validated_data.pop('tests')
-	# 	sample_id = test_data.pop('sample_type')
-	# 	# print(sample_id)
-	# 	return 'test'
