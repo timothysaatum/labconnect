@@ -55,9 +55,10 @@ const branchManagerInviteAccept = () => {
         return null;
     }
   };
+  console.log(token);
   const onSubmit = async (data) => {
     try {
-      const response = await axios.put(
+      const response = await axios.post(
         `/user/branch-manager-accept-invite/${uidb64}/${token}/`,
         data,
         {
@@ -135,7 +136,11 @@ const branchManagerInviteAccept = () => {
                     </Button>
                   )}
                   {step < 1 ? (
-                    <Button onClick={handleNextStep} type="button" className="w-36">
+                    <Button
+                      onClick={handleNextStep}
+                      type="button"
+                      className="w-36"
+                    >
                       Proceed
                     </Button>
                   ) : (

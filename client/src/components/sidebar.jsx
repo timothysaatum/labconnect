@@ -7,11 +7,13 @@ import ThemeToggler from "./ThemeToggler";
 import { useSelector } from "react-redux";
 import { selectCurrenttoken } from "@/redux/auth/authSlice";
 import { useState } from "react";
+import useLogout from "@/hooks/uselogout";
 
 export function Sidebar() {
   const mainSideLinks = useGetMainSideLinks();
   const token = useSelector(selectCurrenttoken);
   const [open, setOpen] = useState(false);
+  const logOut = useLogout();
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -58,6 +60,7 @@ export function Sidebar() {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2 text-muted-foreground"
+                  onClick={() => logOut()}
                 >
                   <LogOutIcon className="h-5 w-5" />
                   Logout
