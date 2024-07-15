@@ -20,9 +20,7 @@ import Labgettingstarted from "./pages/labgettingstarted";
 import MyLab from "@/components/mylab";
 import SendSample from "./components/dashboard/sendSample";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
-const BranchManagerProfileComplete = React.lazy(() =>
-  import("@/components/dashboard/branch-manager-complete-profile")
-);
+
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const BranchManagerInviteAccept = React.lazy(() =>
   import("@/pages/branchManagerInviteAccept")

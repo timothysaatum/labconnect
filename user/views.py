@@ -362,6 +362,9 @@ def create_branch_manager_user(invitation, user_data):
 	branch = Branch.objects.get(id=invitation.branch_id)
 	try:
 		client = Client.objects.get(email=invitation.receiver_email)
+		if not client.is_branch_manager:
+			client.is_branch_manager = True
+			client.save()
 		branch.branch_manager = client
 	except Client.DoesNotExist:
 		serializer = UserCreationSerializer(data=user_data)
@@ -369,6 +372,7 @@ def create_branch_manager_user(invitation, user_data):
 		client = serializer.save()
 		client.account_type = 'Laboratory'
 		client.is_staff = True
+		client.is_branch_manager = True
 		branch.branch_manager = client
 		client.save()
 
@@ -379,7 +383,7 @@ def create_branch_manager_user(invitation, user_data):
 	return client
 
 
-class BranchManagerAcceptView(UpdateAPIView):
+class BranchManagerAcceptView(CreateAPIView):
 	
 	def get_queryset(self):
 		"""

@@ -343,7 +343,7 @@ const UpdateTest = ({ children, test }) => {
   }, [userbranches, test.branch]);
 
   const form = useForm({
-    // resolver: zodResolver(AddTestSchema),
+    resolver: zodResolver(AddTestSchema),
     defaultValues: {
       test_code: test.test_code,
       name: test.test_name,

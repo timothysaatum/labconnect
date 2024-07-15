@@ -23,9 +23,7 @@ export default function RequestDialog({ ...rest }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="inline-flex dark:shadow-md dark:ring-2 animate-shimmer items-center justify-center rounded-md  bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-6 font-medium text-white  transition-colors focus:outline-none">
-          Send a sample
-        </button>
+        <Button className="h-full hover:animate-pulse shadow-xl" size="lg">Send a sample</Button>
       </SheetTrigger>
       <SheetContent
         side="bottom"
