@@ -37,10 +37,10 @@ class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
-	sample_type = serializers.PrimaryKeyRelatedField(
-		required=False,
-		queryset=SampleType.objects.all()
-	)
+	# sample_type = serializers.PrimaryKeyRelatedField(
+	# 	required=False,
+	# 	queryset=SampleType.objects.all()
+	# )
 	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
 	# tests = serializers.ListField(child=serializers.DictField())
 	sender_full_name = serializers.CharField(required=False)
@@ -63,7 +63,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_full_name',
 			'sender_phone',
 			'sender_email',
-			'sample_type',  
+			# 'sample_type',  
 			'tests', 
 			'clinical_history', 
 			'attachment',
@@ -81,10 +81,10 @@ class SampleSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		data['tests'] = [test.name for test in instance.tests.all()]
-		data['referring_facility'] = instance.referring_facility.name
-		data['sample_type'] = instance.sample_type.sample_name
-		data['to_laboratory'] = instance.to_laboratory.name
+		# data['tests'] = [test.name for test in instance.tests.all()]
+		# data['referring_facility'] = instance.referring_facility.name
+		# data['sample_type'] = instance.sample_type.sample_name
+		# data['to_laboratory'] = instance.to_laboratory.name
 
 		if data['delivery']:
 

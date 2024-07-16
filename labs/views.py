@@ -8,14 +8,14 @@ from .serializers import (
 	TestSerializer, 
 	TestResultSerializer, 
 	BranchSerializer,
-	SampleTypeSerializer
+	SampleTypeSerializer,
+	BranchTestSerializer
 )
-from .models import Test, Branch, Laboratory, SampleType
+from .models import Test, Branch, Laboratory, SampleType, BranchTest
 from .results import TestResult
 from sample.models import Sample
 from sample.serializers import SampleSerializer
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from sample.serializers import SampleSerializer
 from django.http import QueryDict
 from django.core.cache import cache
@@ -346,6 +346,10 @@ class TestListView(generics.ListAPIView):
 	filter_backends = [DjangoFilterBackend]
 	filterset_class = TestFilter
 	#cache_timeout = 600
+	def get_serializer_context(self):
+		context = super().get_serializer_context()
+		context.update({'pk': self.kwargs.get('pk')})
+		return context
 
 	def get_queryset(self):
 		
@@ -383,15 +387,15 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 		query_dict.update(self.request.data)
 		branches = query_dict.get('branch')
 		#Updates the test with the new branches if there is any.
-
-		if not branches:
+		if not branches and len(query_dict) < 2:
 			raise ValidationError(
 				{'error': 'Test must have at least one(1) branch'}
 			)
 
 		test = serializer.save()
-		test.branch.clear()
-		test.branch.add(*branches)
+		if branches:
+			test.branch.clear()
+			test.branch.add(*branches)
 
 
 class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
@@ -674,3 +678,25 @@ class GetTestSampleType(generics.ListAPIView):
 				Q(test__branch__laboratory=obj_id)
 			).order_by('id')
 	
+
+class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
+
+	serializer_class = BranchTestSerializer
+
+	def get_object(self):
+		queryset = BranchTest.objects.all()
+		test_id = self.kwargs.get('test_id')
+		branch_id = self.kwargs.get('branch_id')
+		obj = generics.get_object_or_404(queryset, test_id=test_id, branch_id=branch_id)
+
+		return obj
+
+	def patch(self, request, *args, **kwargs):
+
+		partial = kwargs.pop('partial', False)
+		instance = self.get_object()
+		serializer = self.get_serializer(instance, data=request.data, partial=partial)
+		serializer.is_valid(raise_exception=True)
+		self.perform_update(serializer)
+
+		return Response(serializer.data, status=status.HTTP_200_OK)

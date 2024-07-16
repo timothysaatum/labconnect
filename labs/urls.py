@@ -27,7 +27,8 @@ from .views import (
     SampleTypeView,
     SampleTypeUpdateView,
     SampleTypeDeleteView,
-    GetTestSampleType
+    GetTestSampleType,
+    UpdateTestForSpecificBranch
 )
 
 
@@ -49,7 +50,7 @@ urlpatterns = [
 	path('branch/update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
 	path('branch/delete/<uuid:pk>/', BranchDeleteView.as_view(), name='branch-delete'),
 
-	#creating, reading, updating and deleting
+	#creating, reading, updating and deleting Test
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
 	path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
@@ -76,6 +77,6 @@ urlpatterns = [
 	#url endpoints for creating, updating and deletion of laboratory samples
 	path('sample/add/', LaboratorySampleSerializerView.as_view(), name='add-sample'),
     path('sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
-    path('sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample')
-
+    path('sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample'),
+    path('update/test-for-branch/<uuid:branch_id>/<uuid:test_id>/', UpdateTestForSpecificBranch.as_view(), name='specific-update')
 ]

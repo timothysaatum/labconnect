@@ -4,7 +4,8 @@ from .models import (
 		Laboratory, 
 		Branch, 
 		BranchManagerInvitation,
-		SampleType
+		SampleType,
+		BranchTest
 	)
 from .results import TestResult
 import csv
@@ -52,6 +53,15 @@ class TestAdmin(admin.ModelAdmin):
 	list_per_page = 10
 	actions = [download_csv]
 
+
+class BranchTestAdmin(admin.ModelAdmin):
+	list_display = (
+		'price', 
+		'turn_around_time', 
+		'discount_price',
+		'discount_percent',
+		'is_deactivated',
+	)
 
 class SampleTypeAdmin(admin.ModelAdmin):
 	list_display = (
@@ -133,3 +143,4 @@ admin.site.register(Branch, BranchAdmin)
 admin.site.register(BranchManagerInvitation, BranchManagerInvitationAdmin)
 admin.site.register(TestResult, TestResultAdmin)
 admin.site.register(Laboratory, LaboratoryAdmin)
+admin.site.register(BranchTest, BranchTestAdmin)
