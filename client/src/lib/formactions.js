@@ -1,9 +1,11 @@
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
+import { selectTestMethod } from "@/redux/lab/updatetestmethodSlice";
 import { setSampleTypes } from "@/redux/samples/sampleTypeSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useCallback } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
 //sending sample from laboratory to another laboratory
@@ -12,7 +14,6 @@ export const useSendSample = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const onSendSample = async (data) => {
-    console.log(data);
     const newData = {
       ...data,
       patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
@@ -85,7 +86,6 @@ export const useBranchAdd = (
         ) {
           const errorValues = [Object.values(error?.response?.data || {})];
           if (errorValues.length > 0) {
-            console.log(errorValues[0]);
             setServerErrors(errorValues[0]);
           }
         } else if (error?.response?.status === 400) {
@@ -110,7 +110,6 @@ export const useAddDiscount = (form, test, setOpen) => {
   const onAddDiscount = useCallback(
     async (data) => {
       try {
-        console.log(data);
         await axiosPrivate.patch(`laboratory/test/update/${test?.id}/`, data);
         toast.success("Discount added successfully");
         setOpen(false);
@@ -148,6 +147,7 @@ export const useAddManager = (form) => {
   return onAddManager;
 };
 
+//adding a new sample type
 export const useAddSampleType = (
   form,
   setOpen,
@@ -185,7 +185,6 @@ export const useAddSampleType = (
         ) {
           const errorValues = [Object.values(error?.response?.data || {})];
           if (errorValues.length > 0) {
-            console.log(errorValues[0]);
             setServerErrors(errorValues[0]);
           }
         } else if (error?.response?.status === 400) {
@@ -203,4 +202,138 @@ export const useAddSampleType = (
   );
 
   return onAddSampleType;
+};
+
+//adding a new test
+
+export const useAddTest = (keepOpen, setOpen, form) => {
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+  const onAddTest = useCallback(
+    async (data) => {
+      const branchvalue = data?.branch
+        ? data.branch.map((branch) => branch.value)
+        : [];
+      const SampleTypevalue = data?.sample_type
+        ? data.sample_type.map((sample_type) => sample_type.value)
+        : [];
+
+      const turnAroundTimeWithUnit = data?.turn_around_time + " " + data?.unit;
+
+      const finalData = {
+        ...data,
+        turn_around_time: turnAroundTimeWithUnit,
+        branch: branchvalue,
+        sample_type: SampleTypevalue,
+      };
+
+      // Remove the unit field from the finalData object
+      delete finalData.unit;
+      try {
+        await axiosPrivate.post("/laboratory/test/add/", finalData);
+        queryClient.invalidateQueries(["tests", data?.branch]);
+        toast.success(
+          `New test- ${data?.name} added ${
+            data.branch.length < 2
+              ? `${data.branch[0].label}`
+              : `to ${data.branch.length} branches`
+          } successfully`,
+          {
+            position: "top-center",
+          }
+        );
+        if (!keepOpen) setOpen(false);
+        // form.reset();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [form]
+  );
+
+  return onAddTest;
+};
+
+//updating a test for all branches
+export const useUpdateTest = (setOpen, form, id) => {
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+  const activeBranch = useSelector(selectActiveBranch);
+  const testMethod = useSelector(selectTestMethod);
+  const onUpdateTestForAll = useCallback(
+    async (data) => {
+      const branchvalue = data?.branch
+        ? data.branch.map((branch) => branch.value)
+        : [];
+      const SampleTypevalue = data?.sample_type
+        ? data.sample_type.map((sample_type) => sample_type.value)
+        : [];
+
+      const turnAroundTimeWithUnit = data?.turn_around_time + " " + data?.unit;
+
+      const finalData = {
+        ...data,
+        turn_around_time: turnAroundTimeWithUnit,
+        branch: branchvalue,
+        sample_type: SampleTypevalue,
+      };
+
+      // Remove the unit field from the finalData object
+      delete finalData.unit;
+      try {
+        await axiosPrivate.patch(`/laboratory/test/update/${id}/`, finalData);
+        queryClient.invalidateQueries(["tests"]);
+        toast.success(`${data?.name} updated for all branches`, {
+          position: "top-center",
+        });
+        setOpen(false);
+        form.reset();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [form]
+  );
+  const onUpdateTestForActiveBranch = useCallback(
+    async (data) => {
+      const branchvalue = data?.branch
+        ? data.branch.map((branch) => branch.value)
+        : [];
+      const SampleTypevalue = data?.sample_type
+        ? data.sample_type.map((sample_type) => sample_type.value)
+        : [];
+
+      const turnAroundTimeWithUnit = data?.turn_around_time + " " + data?.unit;
+
+      const finalData = {
+        ...data,
+        turn_around_time: turnAroundTimeWithUnit,
+        branch: branchvalue,
+        sample_type: SampleTypevalue,
+      };
+
+      // Remove the unit field from the finalData object
+      delete finalData.unit;
+      try {
+        await axiosPrivate.patch(
+          `/laboratory/update/test-for-branch/${activeBranch}/${id}/`,
+          finalData
+        );
+        queryClient.invalidateQueries(["tests", activeBranch]);
+        toast.success(`${data?.name} updated for ${activeBranch}`, {
+          position: "top-center",
+        });
+        setOpen(false);
+        form.reset();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [form]
+  );
+  if (testMethod === "all") {
+    return onUpdateTestForAll;
+  } else {
+    return onUpdateTestForActiveBranch;
+  }
 };

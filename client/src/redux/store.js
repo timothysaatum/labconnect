@@ -13,6 +13,8 @@ import sampletabReducer from "./mylabtab/sampletab";
 import TestsDialogReducer from "./DialogStates/TestOpenSlice";
 import rowCountReducer from "./dataTable/rowcount";
 import sampleDataReducer from "./formData/sendsampleSave";
+import activeBranchReducer from "./branches/activeBranchSlice";
+import updatetestmethodReducer from "./lab/updatetestmethodSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -26,6 +28,9 @@ const rootReducer = combineReducers({
   testsDialog: TestsDialogReducer,
   rowCount: rowCountReducer,
   sampleData: sampleDataReducer,
+  sampleData: sampleDataReducer,
+  activeBranch: activeBranchReducer,
+  updatetestmethod: updatetestmethodReducer,
 });
 const persistConfig = {
   key: "root",
@@ -40,6 +45,7 @@ const persistConfig = {
     "mylabtab",
     "sampleType",
     "testsDialog",
+    "updatetestmethod",
     // "sampletab
   ], // name of the slice to be excluded from the persistor
 };

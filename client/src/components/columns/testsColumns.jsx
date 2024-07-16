@@ -9,13 +9,19 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { BadgeCent, Edit3, MoreHorizontal } from "lucide-react";
-import { Button } from "../ui/button";
+} from "@/components/ui/dropdown-menu";
+import { BadgeCent, Edit3, MoreHorizontal, X } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import {
   useDeactivateTestMutation,
@@ -35,6 +41,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ApplyDisCount } from "../dashboard/adddiscount";
 import UpdateTest from "../dashboard/updateTest";
+import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useFetchUserBranches } from "@/api/queries";
+import { useState } from "react";
+import { changeTestMethod } from "@/redux/lab/updatetestmethodSlice";
 
 export function DeleteDialog({ testId, mutate }) {
   return (
@@ -59,6 +70,49 @@ export function DeleteDialog({ testId, mutate }) {
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+export function DeactivateDialog({ testId, mutate, branch }) {
+  const buttonClassName = buttonVariants({
+    variant: "outline",
+    size: "lg",
+  });
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <span className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
+          Deactivate test
+        </span>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex flex-row justify-between">
+            Deactivate test
+            <AlertDialogCancel>
+              <Button variant="ghost" size="icon">
+                <X className="w-4 h-4" />
+              </Button>
+            </AlertDialogCancel>
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            Do you want to deactivate this test for only the active branch-
+            {branch} or for all your branches
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction
+            onClick={() => mutate()}
+            className={`${buttonClassName} text-white`}
+          >
+            Only {branch}
+          </AlertDialogAction>
+          <AlertDialogAction onClick={() => mutate()}>
+            All branches
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -117,51 +171,65 @@ export const testscolumnDef = [
 
       const { mutate, error } = usedeleteTestMutation(test.id);
       const { mutate: Deactivate } = useDeactivateTestMutation(test.id);
+      const activeBranch = useSelector(selectActiveBranch);
+      const { data: userbranches } = useFetchUserBranches();
+      const dispatch = useDispatch();
+
+      const activeBranchName = userbranches?.data?.find(
+        (branch) => branch.id === activeBranch
+      )?.name;
       return (
-        <div className="flex items-center space-x-6 ">
-          <TooltipProvider>
-            <Tooltip>
-              <UpdateTest test={test}>
-                <TooltipTrigger asChild>
-                  <Button size="icon" variant="ghost">
-                    <Edit3 className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-              </UpdateTest>
-              <TooltipContent side="right">Edit test</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <ApplyDisCount test={test}>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <BadgeCent className="w-4 h-4" />
-                  </Button>
-                </TooltipTrigger>
-              </ApplyDisCount>
-              <TooltipContent side="right">Apply discount</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="w-8 h-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => Deactivate()}>
-                Deactivate test
-              </DropdownMenuItem>
-              <DropdownMenuItem>Remove discount</DropdownMenuItem>
-              <DropdownMenuSeparator />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <MoreHorizontal className="w-4 h-4 " />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 space-x-22">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>View Test</DropdownMenuItem>
+              {userbranches?.data && userbranches?.data?.length > 1 ? (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Update Test</DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <span
+                        onClick={() => dispatch(changeTestMethod("single"))}
+                      >
+                        <UpdateTest test={test} branch={activeBranchName} />
+                      </span>
+
+                      <span onClick={() => dispatch(changeTestMethod("all"))}>
+                        <UpdateTest test={test} branch="For all branches" />
+                      </span>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+              ) : (
+                <span onClick={() => dispatch(changeTestMethod("all"))}>
+                  <UpdateTest test={test} branch={activeBranchName} />
+                </span>
+              )}
+              <ApplyDisCount test={test} />
+              {userbranches?.data && userbranches?.data?.length > 1 ? (
+                <DeactivateDialog
+                  testId={test.id}
+                  mutate={Deactivate}
+                  branch={activeBranchName}
+                />
+              ) : (
+                <DropdownMenuItem></DropdownMenuItem>
+              )}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
               <DeleteDialog testId={test.id} mutate={mutate} />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },

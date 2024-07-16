@@ -61,21 +61,22 @@ import AddSampleType from "./addsampleType";
 import { useSelector } from "react-redux";
 import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
+import {
+  useUpdateTest,
+} from "@/lib/formactions";
+import { selectTestMethod } from "@/redux/lab/updatetestmethodSlice";
+import { sub } from "date-fns";
 
 const TestForm = ({ setOpen, keepOpen, form, test }) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
-
+  const onUpdateTest = useUpdateTest(setOpen, form, test?.id);
   const [sampleTypes, setSampleTypes] = useState(null);
   const [uniqueSampleTypesState, setUniqueSampleTypesState] = useState([]);
 
   const addedSampleType = useSelector(selectSampleTypes);
 
-  const {
-    data: lab,
-    isError: laberror,
-    isFetching: labfetching,
-  } = useFetchUserLab();
+  const { data: lab } = useFetchUserLab();
   const {
     data: sample_type,
     isError: sample_type_error,
@@ -118,7 +119,10 @@ const TestForm = ({ setOpen, keepOpen, form, test }) => {
     // Remove the unit field from the finalData object
     delete finalData.unit;
     try {
-      await axiosPrivate.patch(`/laboratory/test/update/${test.id}/`, finalData);
+      await axiosPrivate.patch(
+        `/laboratory/test/update/${test.id}/`,
+        finalData
+      );
       queryClient.invalidateQueries(["tests", data?.branch]);
       toast.success(
         `New test- ${data?.name} added ${
@@ -175,7 +179,7 @@ const TestForm = ({ setOpen, keepOpen, form, test }) => {
       <form
         className="flex flex-col gap-4 p-4 overflow-hidden transition-all test hover:overflow-auto over"
         noValidate
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onUpdateTest)}
       >
         <FormField
           name="branch"
@@ -316,7 +320,7 @@ const TestForm = ({ setOpen, keepOpen, form, test }) => {
     </Form>
   );
 };
-const UpdateTest = ({ children, test }) => {
+const UpdateTest = ({ branch, test }) => {
   const [open, setOpen] = useState(false);
   const [keepOpen, setKeepOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -363,7 +367,11 @@ const UpdateTest = ({ children, test }) => {
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogTrigger asChild>
+          <span className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
+            {branch}
+          </span>
+        </DialogTrigger>
         <DialogContent className="px-2 max-w-[36rem]">
           <div className="h-full max-h-[80dvh] overflow-auto">
             <DialogHeader className="sticky top-0 left-0 z-50 flex-row items-start justify-between px-4 bg-background">
@@ -386,8 +394,12 @@ const UpdateTest = ({ children, test }) => {
     );
   }
   return (
-    <Drawer open onOpenChange={setOpen}>
-      <DrawerTrigger asChild>{children}</DrawerTrigger>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <span className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
+          {branch}
+        </span>
+      </DrawerTrigger>
       <DrawerContent className="px-2">
         <div className="max-h-[90vh] overflow-auto ">
           <DrawerHeader className="sticky top-0 z-50 flex flex-col items-center justify-center gap-2 bg-background">
