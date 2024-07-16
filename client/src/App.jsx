@@ -2,6 +2,7 @@ import "react-day-picker/dist/style.css";
 import { Route, Routes } from "react-router-dom";
 import Signin from "./pages/Signin";
 import Home from "./pages/Home";
+import About from './pages/About';
 import Signup from "@/pages/Signup";
 import RequireAuth, {
   HasLaboratory,
@@ -39,7 +40,8 @@ export default function App() {
       <Routes>
         <Route element={<PersistLogin />}>
           <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home />} />            
+           <Route path='/about' element={<About/>}/>
             <Route path="*" element={<Notfound />} />
             <Route path="sign-in" element={<Signin />} />
             <Route path="sign-up" element={<Signup />} />
