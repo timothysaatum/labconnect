@@ -151,7 +151,7 @@ export default function Signup() {
                     </Button>
                   )}
                   {step < 2 ? (
-                    <Button onClick={handleNextStep} type="button">
+                    <Button onClick={handleNextStep} type="button" size="lg">
                       Proceed
                     </Button>
                   ) : (

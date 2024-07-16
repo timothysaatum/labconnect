@@ -1,9 +1,9 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { Button } from "./ui/button";
-import ThemeToggler from "./ThemeToggler";
-import { Sidebar } from "./sidebar";
-import { selectCurrentUser } from "@/redux/auth/authSlice";
-import { useSelector } from "react-redux";
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Button } from './ui/button';
+import ThemeToggler from './ThemeToggler';
+import { Sidebar } from './sidebar';
+import { selectCurrentUser } from '@/redux/auth/authSlice';
+import { useSelector } from 'react-redux';
 
 import {
   DropdownMenu,
@@ -12,12 +12,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import useLogout from "@/hooks/uselogout";
-import { Badge } from "./ui/badge";
-import { useFetchUserDetails, useFetchUserLab } from "@/api/queries";
-import { useMemo } from "react";
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import useLogout from '@/hooks/uselogout';
+import { Badge } from './ui/badge';
+import { useFetchUserDetails, useFetchUserLab } from '@/api/queries';
+import { useMemo } from 'react';
 
 const Header = () => {
   const location = useLocation();
@@ -27,12 +27,12 @@ const Header = () => {
   const { data: labData } = useFetchUserLab();
   const data = useMemo(() => labData, [labData]);
   const userdata = useMemo(() => userdetails, [userdetails]);
-  const user = userdata?.data?.data
+  const user = userdata?.data?.data;
   return (
     <nav
       aria-label="main navigation bar"
       className={`${
-        location.pathname.includes("/dashboard") ? "sm:ml-14" : ""
+        location.pathname.includes('/dashboard') ? 'sm:ml-14' : ''
       } flex justify-between px-4 md:px-8 items-center py-3 border-b-2 border-gray-200 dark:border-border shadow-sm shadow-background`}
     >
       <Link
@@ -68,7 +68,7 @@ const Header = () => {
                   <AvatarImage
                     src={
                       data?.data[0]?.logo ||
-                      "http://localhost:8000/media/labs/logo/Capture.PNG"
+                      'http://localhost:8000/media/labs/logo/Capture.PNG'
                     }
                   />
                   <AvatarFallback></AvatarFallback>
@@ -77,7 +77,7 @@ const Header = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel className="">
-                {user?.first_name}{" "}
+                {user?.first_name}{' '}
                 {user.is_admin && (
                   <Badge className="float-right clear-right" variant="outline">
                     Admin
@@ -101,10 +101,10 @@ const Header = () => {
           </DropdownMenu>
         ) : (
           <div className="md:flex gap-2 hidden">
-            <Link to={"/sign-in"}>
+            <Link to={'/sign-in'}>
               <Button variant="outline">Sign in</Button>
             </Link>
-            <Link to={"/sign-up"}>
+            <Link to={'/sign-up'}>
               <Button>Sign up</Button>
             </Link>
           </div>

@@ -42,9 +42,7 @@ import {
   useFetchUserBranches,
   useFetchUserLab,
 } from "@/api/queries";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,21 +52,17 @@ import AddSampleType from "./addsampleType";
 import { useSelector } from "react-redux";
 import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
+import { useAddTest } from "@/lib/formactions";
 
 const TestForm = ({ setOpen, keepOpen, form }) => {
-  const axiosPrivate = useAxiosPrivate();
-  const queryClient = useQueryClient();
+  const onAddTest = useAddTest(keepOpen, setOpen, form);
 
   const [sampleTypes, setSampleTypes] = useState(null);
   const [uniqueSampleTypesState, setUniqueSampleTypesState] = useState([]);
 
   const addedSampleType = useSelector(selectSampleTypes);
 
-  const {
-    data: lab,
-    isError: laberror,
-    isFetching: labfetching,
-  } = useFetchUserLab();
+  const { data: lab } = useFetchUserLab();
   const {
     data: sample_type,
     isError: sample_type_error,
@@ -91,51 +85,6 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
     data: branches,
   } = useFetchUserBranches();
 
-  useEffect(() => {
-    console.log(form.formState.errors);
-  }, [form.formState.errors]);
-
-  const onSubmit = async (data) => {
-    console.log(data);
-    const branchvalue = data?.branch
-      ? data.branch.map((branch) => branch.value)
-      : [];
-    const SampleTypevalue = data?.sample_type
-      ? data.sample_type.map((sample_type) => sample_type.value)
-      : [];
-
-    const turnAroundTimeWithUnit = data?.turn_around_time + " " + data?.unit;
-
-    const finalData = {
-      ...data,
-      turn_around_time: turnAroundTimeWithUnit,
-      branch: branchvalue,
-      sample_type: SampleTypevalue,
-    };
-
-    // Remove the unit field from the finalData object
-    delete finalData.unit;
-    console.log(finalData);
-    try {
-      await axiosPrivate.post("/laboratory/test/add/", finalData);
-      queryClient.invalidateQueries(["tests", data?.branch]);
-      toast.success(
-        `New test- ${data?.name} added ${
-          data.branch.length < 2
-            ? `${data.branch[0].label}`
-            : `to ${data.branch.length} branches`
-        } successfully`,
-        {
-          position: "top-center",
-        }
-      );
-      queryClient.invalidateQueries(["tests"]);
-      if (!keepOpen) setOpen(false);
-      // form.reset();
-    } catch (error) {
-      console.error(error);
-    }
-  };
   const [branchOptions, setBranchOptions] = useState(null);
   useEffect(() => {
     setBranchOptions(
@@ -144,7 +93,13 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
         value: item.id,
       }))
     );
+    form.setValue("branch", branchOptions);
   }, [branches]);
+
+  useEffect(() => {
+    form.setValue("branch", branchOptions?.slice(0, 5));
+  }, [branchOptions]);
+
   useEffect(() => {
     if (sample_type_fetching || sample_type_error) return;
     let combinedSampleTypes = [
@@ -167,13 +122,14 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
     }));
 
     setSampleTypes(transformedSampleTypes);
+    form.setValue("sample_type", transformedSampleTypes);
   }, [sample_type, addedSampleType]);
   return (
     <Form {...form}>
       <form
         className="flex flex-col gap-4 p-4 overflow-hidden transition-all test hover:overflow-auto over"
         noValidate
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onAddTest)}
       >
         <FormField
           name="branch"
@@ -255,7 +211,8 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
           </FormBuilder>
           <FormBuilder
             name={"discount_price"}
-            label={"Dicount (GHS) (optional) "}
+            label={"Discount (GHS) (optional) "}
+            className="whitespace-nowrap"
           >
             <Input type="number" placeholder="Price of test" />
           </FormBuilder>
@@ -318,6 +275,8 @@ const AddTest = () => {
   const [open, setOpen] = useState(false);
   const [keepOpen, setKeepOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const { data: userbranches, isError, isLoading } = useFetchUserBranches();
+  const [branches, setBranches] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(AddTestSchema),
@@ -328,11 +287,23 @@ const AddTest = () => {
       turn_around_time: "",
       patient_preparation: "",
       unit: "",
-      branch: "",
-      dicount_price: "",
+      branch: branches,
+      discount_price: "",
       sample_type: [],
     },
   });
+  useEffect(() => {
+    if (isLoading) return;
+    if (isError) return;
+    if (userbranches?.data) {
+      setBranches(
+        userbranches?.data?.map((branch) => ({
+          label: branch.name,
+          value: branch.id,
+        }))
+      );
+    }
+  }, [userbranches]);
 
   useEffect(() => {
     !open && form.reset();

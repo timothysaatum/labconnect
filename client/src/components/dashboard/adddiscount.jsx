@@ -53,7 +53,11 @@ export function ApplyDisCount({ children, test }) {
   const onaddDiscount = useAddDiscount(form, test,setOpen);
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverTrigger asChild>
+        <span className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
+          Apply discount
+        </span>
+      </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
@@ -80,13 +84,13 @@ export function ApplyDisCount({ children, test }) {
                 </span>
               </div>
               <FormBuilder
-                name={"discount_price"}
-                label={"Discount amount "}
+                name={'discount_price'}
+                label={'Discount amount '}
                 className="grid grid-cols-3 items-center gap-4"
                 message
-                messageClassName={"col-span-3"}
-                description={"enter 0 to remove discount"}
-                descriptionClassName={"col-span-3 text-xs"}
+                messageClassName={'col-span-3'}
+                description={'enter 0 to remove discount'}
+                descriptionClassName={'col-span-3 text-xs'}
               >
                 <Input
                   id="maxWidth"
@@ -98,20 +102,20 @@ export function ApplyDisCount({ children, test }) {
                 disabled={
                   form.formState.isSubmitting ||
                   !discount ||
-                  prevDiscount === form.watch("discount_price") ||
+                  prevDiscount === form.watch('discount_price') ||
                   parseFloat(discount) > parseFloat(test?.price)
                 }
               >
                 {form.formState.isSubmitting ? (
                   <span className="flex items-center">
-                    Applying discount{" "}
+                    Applying discount{' '}
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                   </span>
                 ) : discount &&
                   parseFloat(discount) < parseFloat(test?.price) ? (
                   `Apply ${percent} discount`
                 ) : (
-                  "Apply discount"
+                  'Apply discount'
                 )}
               </Button>
             </form>

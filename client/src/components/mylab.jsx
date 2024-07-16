@@ -4,37 +4,41 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Tabs } from "@radix-ui/react-tabs";
-import { TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { useFetchLabTests, useFetchUserBranches } from "@/api/queries";
-import { useEffect, useState } from "react";
-import { DataTable } from "./data-table";
-import { testscolumnDef } from "./columns/testsColumns";
-import { branchcolumnDef } from "./columns/branchcolumns";
+} from './ui/card';
+import { Tabs } from '@radix-ui/react-tabs';
+import { TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { useFetchLabTests, useFetchUserBranches } from '@/api/queries';
+import { useEffect, useState } from 'react';
+import { DataTable } from './data-table';
+import { testscolumnDef } from './columns/testsColumns';
+import { branchcolumnDef } from './columns/branchcolumns';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "./ui/dropdown-menu";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
-import { Button } from "./ui/button";
-import { ChevronDown, RefreshCcw, RotateCw } from "lucide-react";
-import TestDetails from "./dashboard/testsDetails";
-import AddTest from "./dashboard/addTests";
-import AddBranch from "./dashboard/addbranch";
-import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentUser } from "@/redux/auth/authSlice";
-import { Link } from "react-router-dom";
-import { selectSelectedRows } from "@/redux/dataTable/selectedrowsSlice";
-import { changeTab, selectCurrentTab } from "@/redux/mylabtab/mylabtabSlice";
+} from './ui/dropdown-menu';
+import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { Button } from './ui/button';
+import { ChevronDown, RefreshCcw, RotateCw } from 'lucide-react';
+import TestDetails from './dashboard/testsDetails';
+import AddTest from './dashboard/addTests';
+import AddBranch from './dashboard/addbranch';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectCurrentUser } from '@/redux/auth/authSlice';
+import { Link } from 'react-router-dom';
+import { selectSelectedRows } from '@/redux/dataTable/selectedrowsSlice';
+import { changeTab, selectCurrentTab } from '@/redux/mylabtab/mylabtabSlice';
+import {
+  changeBranch,
+  selectActiveBranch,
+} from '@/redux/branches/activeBranchSlice';
 
 function EmptyLab({ title, user }) {
   return (
     <div className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm">
       <div className="flex flex-col items-center py-16 text-center ">
-        {title === "Tests" ? (
+        {title === 'Tests' ? (
           <>
             <h3 className="text-xl font-semibold ">This Branch has no Tests</h3>
             <p className="text-sm text-muted-foreground">
@@ -77,10 +81,10 @@ function ErrorLab({ refetch, error }) {
   return (
     <div className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm">
       <div className="flex flex-col items-center py-16 text-center ">
-        <h3 className="text-xl font-semibold ">
-          {error.name === "CanceledError"
+        <h3 className="text-xl font-semibold  font-sans">
+          {error.name === 'CanceledError'
             ? "We're having trouble connecting"
-            : "unable to load tests"}
+            : 'oops something went wrong'}
         </h3>
         <p className="text-sm text-destructive">
           verify your internet connection and retry.
@@ -96,7 +100,7 @@ function ErrorLab({ refetch, error }) {
           Try Again <RotateCw className="w-4 h-4 ml-2 text-muted-foreground" />
         </Button>
         <p className="mt-2 text-xs text-muted-foreground">
-          If error persists{" "}
+          If error persists{' '}
           <Link className="hover:underline underline-offset-2 text-des">
             Contact us
           </Link>
@@ -114,7 +118,9 @@ export default function MyLab() {
   const [selected, setSelected] = useState();
   const user = useSelector(selectCurrentUser);
   const selectedRows = useSelector(selectSelectedRows);
-  const [action, setAction] = useState("Perform Action");
+  const [action, setAction] = useState('Perform Action');
+
+  const activeBranch = useSelector(selectActiveBranch);
 
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab); // get the current tab from the Redux state
@@ -142,16 +148,16 @@ export default function MyLab() {
     }
   }, [selectedTests]);
 
-  useEffect(() => {
-    setChecked(userbranches?.data[0]?.id);
-  }, [userbranches?.data]);
-
   const {
     error: testError,
     isPending: testsLoading,
     data: tests,
     refetch: refetchTests,
-  } = useFetchLabTests(checked);
+  } = useFetchLabTests(activeBranch);
+
+  useEffect(() => {
+    console.log(activeBranch);
+  }, [activeBranch]);
 
   useEffect(() => {
     if (tests?.data) {
@@ -208,34 +214,34 @@ export default function MyLab() {
 
   const tabContent = [
     {
-      title: "Tests",
+      title: 'Tests',
       description:
-        "All tests run in this laboratory. you can add new test,update existing tests and delete tests. you can also discounts to specific tests",
+        'All tests run in this laboratory. you can add new test,update existing tests and delete tests. you can also discounts to specific tests',
       data: labtests,
       columnDef: testscolumnDef,
       loading: testsLoading,
       error: testError,
       refetch: refetchTests,
-      filter: "test_name",
+      filter: 'test_name',
       setItems: setSelectedTests,
       selected: selectedTests,
     },
     {
-      title: "Branches",
+      title: 'Branches',
       description:
-        "All Branches can be managed here you can create,delete and update branches",
+        'All Branches can be managed here you can create,delete and update branches',
       data: branches,
       columnDef: branchcolumnDef,
       refetch: refreshBranches,
       loading: branchesLoading,
       error: branchesError,
-      filter: "branch_name",
+      filter: 'branch_name',
     },
   ];
   return (
     <main className="grid grid-cols-12 sm:pl-20 sm:pr-6 max-sm:px-2 gap-x-4 max-sm:mt-2">
       <div
-        className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
+        className={`${selected ? 'col-span-12 lg:col-span-8' : 'col-span-12'}`}
       >
         <section>
           <Tabs defaultValue={currentTab} onValueChange={handleTabChange}>
@@ -245,7 +251,7 @@ export default function MyLab() {
                 <TabsTrigger value="Branches">Branches</TabsTrigger>
               </TabsList>
               <div>
-                {currentTab === "Tests" ? (
+                {currentTab === 'Tests' ? (
                   <AddTest />
                 ) : user.is_admin ? (
                   <AddBranch />
@@ -261,7 +267,7 @@ export default function MyLab() {
                         <CardTitle>{tab.title}</CardTitle>
                         <CardDescription>{tab.description}</CardDescription>
                       </div>
-                      {selectedRows?.length > 0 && currentTab === "Branches" ? (
+                      {selectedRows?.length > 0 && currentTab === 'Branches' ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -283,9 +289,9 @@ export default function MyLab() {
                           </DropdownMenuContent>
                         </DropdownMenu>
                       ) : (
-                        ""
+                        ''
                       )}
-                      {currentTab === "Tests" ? (
+                      {currentTab === 'Tests' ? (
                         <div className="flex max-sm:justify-end">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -295,9 +301,9 @@ export default function MyLab() {
                                 className="flex items-center justify-between gap-3 px-2 text-sm max-sm:w-full"
                               >
                                 {branchesError
-                                  ? "Error loading branches"
+                                  ? 'Error loading branches'
                                   : userbranches?.data?.find(
-                                      (branch) => branch.id === checked
+                                      (branch) => branch.id === activeBranch
                                     )?.name}
 
                                 <ChevronDown className="w-4 h-4" />
@@ -307,8 +313,10 @@ export default function MyLab() {
                               {userbranches?.data?.map((branch) => (
                                 <DropdownMenuCheckboxItem
                                   key={branch.id}
-                                  checked={checked === branch.id}
-                                  onCheckedChange={() => setChecked(branch.id)}
+                                  checked={activeBranch === branch.id}
+                                  onCheckedChange={() =>
+                                    dispatch(changeBranch(branch.id))
+                                  }
                                 >
                                   {branch.name}
                                 </DropdownMenuCheckboxItem>
