@@ -38,3 +38,21 @@ export const usedeleteBranchMutation = (id) => {
     },
   });
 };
+
+export const useDeactivateTestMutation = (id) => {
+  const queryClient = useQueryClient();
+  const axiosPrivate = useAxiosPrivate();
+
+  return useMutation({
+    mutationFn: async () => {
+      await axiosPrivate.patch(`laboratory/branch/update/${id}/`);
+    },
+    onError: () => {
+      toast.info("unable to deactivate test");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["tests"]);
+      toast.message("Test deactivated");
+    },
+  });
+};

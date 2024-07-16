@@ -72,10 +72,11 @@ const UserProfile = () => {
       form.setValue("email", userdata?.email);
       form.setValue("phone_number", userdata?.phone_number);
       form.setValue("gender", userdata?.gender);
-      form.setValue("id_number", userdata?.profile?.id_number);
+      form.setValue("id_number", userdata?.profile[0]?.id_number);
       form.setValue("digital_address", userdata?.digital_address);
     }
   }, [user]);
+  console.log(userdata?.profile[0]?.id_number);
   return (
     <Form {...form}>
       <form

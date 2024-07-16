@@ -66,10 +66,13 @@ export const labRequestSchema = z.object({
     invalid_type_error: "Enter a valid date format YYY-MM-DD",
   }),
   patient_sex: z.string().min(1, "Sex is required"),
-  sample_type: z.string().min(1, "Sample type is required"),
   from_lab: z.string().min(1, "laboratory is required"),
-  to_lab: z.string().min(1, "laboratory is required"),
+  to_laboratory: z.string().min(1, "laboratory is required"),
   tests: z.array(multiSelectSchema).min(1),
+  priority: z.string().min(1, "Choose test priority"),
+  payment_mode: z.string().min(1, "Choose a payment mode"),
+  sample_status: z.string().min(1, ""),
+  payment_status: z.string(),
   brief_description: z.string(),
   // attachment: z.instanceof(FileList),
 });
@@ -128,13 +131,24 @@ export const AddDiscountSchema = z
 export const AddTestSchema = z
   .object({
     branch: z.array(multiSelectSchema).min(1),
-    price: z.string().min(1, "price is required"),
     test_code: z.string().min(1, "Test Code is required"),
     name: z.string().min(1, "Test Name is required"),
     turn_around_time: z.string().min(1, "Turn around time is required"),
     unit: z.string().min(1, "unit for turn around time is required"),
     patient_preparation: z.string(),
-    discount_price: z.string(),
+    price: z
+      .string()
+      .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+        message: "must be a positive integer",
+      })
+      .transform(Number),
+    discount_price: z
+      .string()
+      .optional()
+      .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+        message: "must be a positive integer",
+      })
+      .transform((val) => (val === undefined ? 0 : Number(val))),
     sample_type: z
       .array(
         z.object({
@@ -144,9 +158,16 @@ export const AddTestSchema = z
       )
       .min(1),
   })
-  .refine((data) => data.discount_price < data.price, {
-    message: "Discount cannot be more than price",
-  });
+  .refine(
+    (data) => {
+      if (data.discount_price === undefined) return true;
+      return data.discount_price <= data.price;
+    },
+    {
+      message: "Discount cannot be greater price",
+      path: ["discount_price"],
+    }
+  );
 
 //addBranch schema
 export const AddBranchSchema = z.object({

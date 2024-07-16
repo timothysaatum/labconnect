@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import AddManager from "../dashboard/addManager";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 export function DeleteDialog({ mutate }) {
   const [open, setOpen] = useState(false);
@@ -44,6 +46,10 @@ export function DeleteDialog({ mutate }) {
             branch and remove it's data from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
+        <div className="grid gap-2">
+          <Label htmlFor="password">enter your password to confirm</Label>
+          <Input id="password" />
+        </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
@@ -88,7 +94,7 @@ export const branchcolumnDef = [
       return (
         <Link
           to={`branches/${row.original.id}/`}
-          className="hover:underline transition-all"
+          className="transition-all hover:underline"
         >
           {getValue()}
         </Link>
@@ -116,9 +122,9 @@ export const branchcolumnDef = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" className="w-8 h-8 p-0">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

@@ -63,6 +63,7 @@ class LoginSerializer(serializers.ModelSerializer):
 	password = serializers.CharField(max_length=200, write_only=True)
 	full_name = serializers.CharField(max_length=255, read_only=True)
 	account_type = serializers.CharField(max_length=255, read_only=True)
+	is_branch_manager = serializers.BooleanField(read_only=True)
 	is_staff = serializers.CharField(max_length=255, read_only=True)
 	is_active = serializers.CharField(max_length=255, read_only=True)
 	is_admin = serializers.CharField(max_length=255, read_only=True)
@@ -76,7 +77,7 @@ class LoginSerializer(serializers.ModelSerializer):
 		fields = [
 
 			'user_id', 'email', 'password', 'full_name', 'account_type',
-			'is_staff', 'is_verified', 'is_active', 'is_admin',
+			'is_staff', 'is_verified', 'is_active', 'is_admin', 'is_branch_manager'
 		]
 
 	def validate(self, attrs):
@@ -106,7 +107,8 @@ class LoginSerializer(serializers.ModelSerializer):
 			'is_admin': user.is_admin,
 			'account_type': user.account_type,
 			'first_name': user.first_name,
-			'email':user.email
+			'email':user.email,
+			'is_branch_manager': user.is_branch_manager
 		}
 
 
@@ -225,7 +227,8 @@ class UserSerializer(serializers.ModelSerializer):
 					'profile',
 					'is_staff', 
 					'is_active', 
-					'is_admin', 
+					'is_admin',
+					'is_branch_manager', 
 					'is_verified', 
 					'date_joined', 
 					'last_login',

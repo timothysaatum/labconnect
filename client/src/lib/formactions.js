@@ -105,13 +105,15 @@ export const useBranchAdd = (
 };
 
 //adding discounts to tests
-export const useAddDiscount = (form, test) => {
+export const useAddDiscount = (form, test, setOpen) => {
   const axiosPrivate = useAxiosPrivate();
   const onAddDiscount = useCallback(
     async (data) => {
       try {
         console.log(data);
         await axiosPrivate.patch(`laboratory/test/update/${test?.id}/`, data);
+        toast.success("Discount added successfully");
+        setOpen(false);
       } catch (error) {
         console.log(error);
       }

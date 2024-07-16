@@ -4,7 +4,8 @@ from .models import (
 		Laboratory, 
 		Test, Branch,  
 		BranchManagerInvitation,
-		SampleType
+		SampleType,
+		BranchTest
 	)
 from .results import TestResult
 
@@ -57,7 +58,8 @@ class BranchSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		data['branch_manager'] = instance.branch_manager.full_name
+		if data['branch_manager']:
+			data['branch_manager'] = instance.branch_manager.full_name
 		data['laboratory'] = instance.laboratory.name
 
 		return data
@@ -81,6 +83,7 @@ class TestSerializer(serializers.ModelSerializer):
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
 	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
 	discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
+	branch_price = serializers.SerializerMethodField()
 
 	class Meta:
 
@@ -91,21 +94,50 @@ class TestSerializer(serializers.ModelSerializer):
 			'name',
 			'turn_around_time',
 			'price',
+			'branch_price',
 			'discount_price',
 			'patient_preparation',
 			'sample_type',
 			'branch',
+			'is_deactivated',
 			'date_modified',
 			'date_added'
 		)
 
-		pagination_class = QueryPagination
+		# pagination_class = QueryPagination
+	
+	def get_branch_price(self, obj):
+		branch_id = self.context.get('pk')
+		if branch_id:
+			try:
+				test_branch = BranchTest.objects.get(test=obj, branch_id=branch_id)
+				return test_branch.price
+			except BranchTest.DoesNotExist:
+				return None
+		return obj.price
 
 	def to_representation(self, instance):
 		data = super().to_representation(instance)
 		data['name'] = str(instance)
+		branch_price = self.get_branch_price(instance)
+		if branch_price:				
+			data['price'] = branch_price
+
 		data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
 		return data
+
+
+class BranchTestSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = BranchTest
+		fields = [
+			'price', 
+			'discount_price', 
+			'is_deactivated', 
+			'discount_percent',
+			'turn_around_time'
+		]
 
 
 class TestResultSerializer(serializers.ModelSerializer):

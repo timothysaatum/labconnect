@@ -8,17 +8,21 @@ from .serializers import (
 	TestSerializer, 
 	TestResultSerializer, 
 	BranchSerializer,
-	SampleTypeSerializer
+	SampleTypeSerializer,
+	BranchTestSerializer
 )
-from .models import Test, Branch, Laboratory, SampleType
+from .models import Test, Branch, Laboratory, SampleType, BranchTest
 from .results import TestResult
 from sample.models import Sample
 from sample.serializers import SampleSerializer
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
 from sample.serializers import SampleSerializer
 from django.http import QueryDict
 from django.core.cache import cache
+from rest_framework.exceptions import ValidationError
+from .filters import TestFilter
+from django_filters.rest_framework import DjangoFilterBackend
+import json
 
 
 query_dict = QueryDict('', mutable=True)
@@ -279,7 +283,6 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 		return self.partial_update(request, pk, format=None)
 
 
-
 class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 	"""
 	API endpoint for a user to delete the Branch they have created.
@@ -326,7 +329,7 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		test = serializer.save()
-		query_dict.update(self.request.data)
+		#query_dict.update(self.request.data)
 		branches = self.request.data.get('branch', [])
 		# branches = query_dict.getlist('branch')
 		test.branch.add(*branches)
@@ -340,7 +343,13 @@ class TestListView(generics.ListAPIView):
 	It takes either the branch id or the Laboratory id
 	"""
 	serializer_class = TestSerializer
+	filter_backends = [DjangoFilterBackend]
+	filterset_class = TestFilter
 	#cache_timeout = 600
+	def get_serializer_context(self):
+		context = super().get_serializer_context()
+		context.update({'pk': self.kwargs.get('pk')})
+		return context
 
 	def get_queryset(self):
 		
@@ -356,13 +365,13 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 	It accepts the test id
 	"""
 	serializer_class = TestSerializer
-	
+
 	def get_queryset(self):
 
 		return Test.objects.filter(pk=self.kwargs.get('pk'))
 
 	def patch(self, request, pk):
-		
+
 		if not self.has_laboratory_permission(self.request.user):
 
 			return Response(
@@ -374,16 +383,19 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 	def perform_update(self, serializer):
 
-		test = serializer.save()
-		#Clears the current branct set for the tests
+		#Clears the current branch set for the tests
 		query_dict.update(self.request.data)
-		branches = query_dict.getlist('branch')
-		if branches != []:
-			test.branch.clear()
-			#branches = self.request.data.getlist('branch')
-			#Updates the test with the new branches if there is any.
-			test.branch.add(*branches)
+		branches = query_dict.get('branch')
+		#Updates the test with the new branches if there is any.
+		if not branches and len(query_dict) < 2:
+			raise ValidationError(
+				{'error': 'Test must have at least one(1) branch'}
+			)
 
+		test = serializer.save()
+		if branches:
+			test.branch.clear()
+			test.branch.add(*branches)
 
 
 class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
@@ -525,6 +537,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
+		print(json.dumps(self.request.data, indent=4))
 		sample = serializer.save(
 			referring_facility=facility, 
 			sender_full_name=self.request.user.full_name,
@@ -534,10 +547,10 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		)
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
+		# print(query_dict)
 		tests = query_dict.getlist('tests')
-
+		# print(tests)
 		sample.tests.add(*tests)
-
 
 
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -664,3 +677,26 @@ class GetTestSampleType(generics.ListAPIView):
 				Q(test=obj_id)|
 				Q(test__branch__laboratory=obj_id)
 			).order_by('id')
+	
+
+class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
+
+	serializer_class = BranchTestSerializer
+
+	def get_object(self):
+		queryset = BranchTest.objects.all()
+		test_id = self.kwargs.get('test_id')
+		branch_id = self.kwargs.get('branch_id')
+		obj = generics.get_object_or_404(queryset, test_id=test_id, branch_id=branch_id)
+
+		return obj
+
+	def patch(self, request, *args, **kwargs):
+
+		partial = kwargs.pop('partial', False)
+		instance = self.get_object()
+		serializer = self.get_serializer(instance, data=request.data, partial=partial)
+		serializer.is_valid(raise_exception=True)
+		self.perform_update(serializer)
+
+		return Response(serializer.data, status=status.HTTP_200_OK)

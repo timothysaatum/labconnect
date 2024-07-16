@@ -93,14 +93,17 @@ export default function SendSample() {
   const form = useForm({
     // resolver: zodResolver(labRequestSchema),
     defaultValues: {
-      pa: "",
+      patient_name: "",
       patient_age: "",
       patient_sex: "",
-      sample_type: "",
       delivery: "",
-      to_lab: "",
+      to_laboratory: "",
       from_lab: "",
       brief_description: "",
+      priority: "",
+      sample_status: "Received by delivery",
+      payment_mode: "Manual",
+      payment_status: "Paid",
     },
   });
 
@@ -142,9 +145,9 @@ export default function SendSample() {
 
   // id of lab to fetch tests for
   useEffect(() => {
-    setId(form.watch("to_lab"));
+    setId(form.watch("to_laboratory"));
     form.setValue("tests", []);
-  }, [form.watch("to_lab")]);
+  }, [form.watch("to_laboratory")]);
 
   //intialize with a single field
   useEffect(() => {
@@ -197,12 +200,12 @@ export default function SendSample() {
 
   useEffect(() => {
     if (savedData && restore) {
-      form.setValue("pa", savedData.pa);
+      form.setValue("patient_name", savedData.patient_name);
       form.setValue("patient_age", savedData.patient_age);
       form.setValue("patient_sex", savedData.patient);
       form.setValue("sample_type", savedData.sample_type);
       form.setValue("delivery", savedData.delivery);
-      form.setValue("to_lab", savedData.to_lab);
+      form.setValue("to_laboratory", savedData.to_laboratory);
       form.setValue("from_lab", savedData.from_lab);
       form.setValue("brief_description", savedData.brief_description);
     }
@@ -227,6 +230,12 @@ export default function SendSample() {
   const handleRestore = () => {
     setRestore(true);
   };
+
+  //priority levels
+  const priority = [
+    { label: "Normal", value: "Normal" },
+    { label: "Express", value: "Express" },
+  ];
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -275,7 +284,7 @@ export default function SendSample() {
                       <div className="grid gap-6">
                         <div>
                           <FormBuilder
-                            name={"pa"}
+                            name={"patient_name"}
                             label={"Patient Name"}
                             className="grid gap-3"
                           >
@@ -337,7 +346,7 @@ export default function SendSample() {
                       />
                       <PopoverSelect
                         form={form}
-                        name={"to_lab"}
+                        name={"to_laboratory"}
                         error={labsError}
                         loading={labsLoading}
                         items={labs}
@@ -432,22 +441,13 @@ export default function SendSample() {
                     <CardContent>
                       <div className="grid gap-6">
                         <div className="grid gap-3">
-                          <Label htmlFor="status">Choose sample Priority</Label>
-                          <Select>
-                            <SelectTrigger
-                              id="status"
-                              aria-label="Select status"
-                            >
-                              <SelectValue placeholder="Choose priority" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="draft">Express</SelectItem>
-                              <SelectItem value="published">Normal</SelectItem>
-                              <SelectItem value="archived">
-                                Not urgent
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <SelectComponent
+                            name={"priority"}
+                            control={form.control}
+                            label={"sample priority"}
+                            items={priority}
+                            placeholder={"Sample priority"}
+                          />
                         </div>
                       </div>
                     </CardContent>

@@ -91,9 +91,9 @@ class Test(BaseModel):
 	'''
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	test_code = models.CharField(max_length=100)
+	test_code = models.CharField(max_length=100, null=True, blank=True)
 	name = models.CharField(max_length=200, db_index=True)
-	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True)
+	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True, through='BranchTest')
 	price = models.DecimalField(decimal_places=2, max_digits=10)
 	discount_price = models.DecimalField(decimal_places=2, max_digits=10)
 	discount_percent = models.CharField(max_length=10)
@@ -110,6 +110,22 @@ class Test(BaseModel):
 
 		return [branch for branch in self.branch.all()]
 
+
+class BranchTest(models.Model):
+	
+	test = models.ForeignKey(Test, on_delete=models.CASCADE)
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	is_deactivated = models.BooleanField(default=False)
+	price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
+	discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
+	discount_percent = models.CharField(max_length=10, blank=True, null=True)
+	turn_around_time = models.CharField(max_length=200, blank=True, null=True)
+
+	class Meta:
+		verbose_name_plural = 'Branch Tests'
+
+	def __str__(self) -> str:
+		return self.test.name
 
 
 class BranchManagerInvitation(BaseModel):
