@@ -697,8 +697,27 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 
 		partial = kwargs.pop('partial', False)
 		instance = self.get_object()
+		print(instance.id)
 		serializer = self.get_serializer(instance, data=request.data, partial=partial)
 		serializer.is_valid(raise_exception=True)
+		
+		if serializer.validated_data.get('deactivate_for_all'):
+			Test.objects.filter(id=instance.test.id).update(is_deactivated=True)
+		
+		if serializer.validated_data.get('reactivate_for_all'):
+			Test.objects.filter(id=instance.test.id).update(is_deactivated=False)
+		
+		branch_id = self.kwargs.get('branch_id')
+		if branch_id and serializer.validated_data.get('reactivate'):
+			try:
+				branch_test = BranchTest.objects.get(test=instance.test.id, branch_id=branch_id)
+				branch_test.is_deactivated = False
+				branch_test.save()
+			except BranchTest.DoesNotExist:
+				raise('No such Branch test')
+
 		self.perform_update(serializer)
 
+		if getattr(instance, '_prefetched_objects_cache', None):
+			instance._prefetched_objects_cache = {}
 		return Response(serializer.data, status=status.HTTP_200_OK)

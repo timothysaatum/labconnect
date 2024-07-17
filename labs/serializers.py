@@ -83,7 +83,9 @@ class TestSerializer(serializers.ModelSerializer):
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
 	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
 	discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
-
+	deactivate_for_all = serializers.BooleanField(write_only=True, required=False)
+	reactivate_for_all = serializers.BooleanField(write_only=True, required=False)
+	reactivate = serializers.BooleanField(write_only=True, required=False)
 
 	class Meta:
 
@@ -96,6 +98,9 @@ class TestSerializer(serializers.ModelSerializer):
 			'price',
 			'discount_price',
 			'patient_preparation',
+			'deactivate_for_all',
+			'reactivate_for_all',
+			'reactivate',
 			'sample_type',
 			'branch',
 			'is_deactivated',
