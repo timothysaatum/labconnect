@@ -14,9 +14,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BadgeCent, Check, Edit3, MoreHorizontal, X } from "lucide-react";
-import { Button, buttonVariants } from "../ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { Check, MoreHorizontal, X } from "lucide-react";
+import { buttonVariants } from "../ui/button";
 import {
   useDeactivateTestForBranchMutation,
   useDeactivateTestMutation,
@@ -208,6 +207,7 @@ export const testscolumnDef = [
       const activeBranchName = userbranches?.data?.find(
         (branch) => branch.id === activeBranch
       )?.name;
+
       return !test?.inactive ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -221,7 +221,7 @@ export const testscolumnDef = [
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>View Test</DropdownMenuItem>
-              {userbranches?.data && userbranches?.data?.length > 1 ? (
+              {test?.branch?.length > 1 ? (
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>Update Test</DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
@@ -240,11 +240,11 @@ export const testscolumnDef = [
                 </DropdownMenuSub>
               ) : (
                 <span onClick={() => dispatch(changeTestMethod("all"))}>
-                  <UpdateTest test={test} branch={activeBranchName} />
+                  <UpdateTest test={test} branch={`Update Test`} />
                 </span>
               )}
               <ApplyDisCount test={test} />
-              {userbranches?.data && userbranches?.data?.length > 1 ? (
+              {test?.branch?.length > 1 ? (
                 <DeactivateDialog
                   purpose={"Deactivate"}
                   mutate={mutateforall}
@@ -255,7 +255,9 @@ export const testscolumnDef = [
                   data={true}
                 />
               ) : (
-                <DropdownMenuItem>Deactivate test</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => mutateforbranch(true)}>
+                  Deactivate test
+                </DropdownMenuItem>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -276,15 +278,21 @@ export const testscolumnDef = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DeactivateDialog
-                purpose={"Activate"}
-                data={false}
-                branch={activeBranchName}
-                mutate={mutateforall}
-                mutateforbranch={mutateforbranch}
-                isPending={isPending}
-                pending={pending}
-              />
+              {test?.branch?.length > 1 ? (
+                <DeactivateDialog
+                  purpose={"Activate"}
+                  data={false}
+                  branch={activeBranchName}
+                  mutate={mutateforall}
+                  mutateforbranch={mutateforbranch}
+                  isPending={isPending}
+                  pending={pending}
+                />
+              ) : (
+                <DropdownMenuItem onClick={() => mutateforbranch(false)}>
+                  Activate test
+                </DropdownMenuItem>
+              )}
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

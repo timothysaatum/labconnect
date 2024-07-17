@@ -63,7 +63,6 @@ export const useDeactivateTestForBranchMutation = (id) => {
       );
     },
     onError: () => {
-      console.log(activation);
       if (activation === false) {
         toast.info("An error occured, Could not deactivate test for branch");
       } else {
@@ -71,36 +70,54 @@ export const useDeactivateTestForBranchMutation = (id) => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["tests"]);
+      queryClient.invalidateQueries(["tests", activeBranch]);
       if (activation === false) {
         toast.message("Test Deactivated", {
-          description:"test will be unavailable for selection in this branch",
+          description: "test will be unavailable for selection in this branch",
         });
       } else {
         toast.message("Test Activated", {
-          description:"test will be available for selection in this branch",
+          description: "test will be available for selection in this branch",
         });
       }
     },
   });
 };
 export const useDeactivateTestMutation = (id) => {
+  const [activation, setActivation] = useState(false);
   const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
 
   return useMutation({
     mutationFn: async (data) => {
+      if (data === true) {
+        setActivation(false);
+      } else {
+        setActivation(true);
+      }
       await axiosPrivate.patch(`laboratory/test/update/${id}/`, {
         is_deactivated: data,
       });
     },
     onError: () => {
-      toast.info("unable to deactivate test");
+      if (activation === false) {
+        toast.info("An error occured, Could not deactivate test");
+      } else {
+        toast.info("An error occured, Could not activate test");
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["tests"]);
-      if (data) {
-        toast.info("Test Deactivated");
+      if (activation === false) {
+        toast.message("Test Deactivated", {
+          description:
+            "test will be unavailable for selection for all user branches",
+        });
+      } else {
+        toast.message("Test Activated", {
+          description:
+            "test will be available for selection for all user branches",
+        });
       }
     },
   });
