@@ -358,7 +358,7 @@ class TestListView(generics.ListAPIView):
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
 			Q(branch__laboratory__id=self.kwargs.get('pk'))
-		).filter(is_deactivated=False).order_by('-date_added')
+		).order_by('-date_added')
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -389,7 +389,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 		query_dict.update(self.request.data)
 		branches = query_dict.get('branch')
 		#Updates the test with the new branches if there is any.
-		if not branches and len(query_dict) < 2:
+		if not branches and len(query_dict) < 1:
 			raise ValidationError(
 				{'error': 'Test must have at least one(1) branch'}
 			)
