@@ -172,7 +172,7 @@ export default function LaboratoryDashboardOverview() {
 
   const activeBranch = branches?.data?.find(
     (branch) => branch.id === activeBranchId
-  ).name;
+  )?.name;
 
   useEffect(() => {
     if (receivedRequests) {

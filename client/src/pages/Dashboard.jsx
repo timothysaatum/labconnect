@@ -36,9 +36,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import useLogout from "@/hooks/uselogout";
 import ThemeToggler from "@/components/ThemeToggler";
-import React from "react";
+import React, { useEffect } from "react";
 import { useFetchAllLabsBranches } from "@/api/queries";
-import { changeBranch, selectActiveBranch } from "@/redux/branches/activeBranchSlice";
+import {
+  changeBranch,
+  selectActiveBranch,
+} from "@/redux/branches/activeBranchSlice";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
@@ -54,9 +57,12 @@ export default function Dashboard() {
   const activeBranchId = useSelector(selectActiveBranch);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(changeBranch(userbranches?.data[0]?.id));
+  }, [userbranches?.data]);
   const activeBranch = userbranches?.data?.find(
     (branch) => branch.id === activeBranchId
-  ).name;
+  )?.name;
   return (
     <div className="flex flex-col min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -160,7 +166,6 @@ export default function Dashboard() {
                   </Link>
                 ))}
 
-                
                 <Link
                   to="settings"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
