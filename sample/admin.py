@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Sample
+from .models import Sample, Notification
 
 
 class SampleAdmin(admin.ModelAdmin):
@@ -26,5 +26,11 @@ class SampleAdmin(admin.ModelAdmin):
 		'mark_sent' 
 	)
 
+class NotificationAdmin(admin.ModelAdmin):
+	list_display = (
+		'user',
+		'sample'
+	)
 
 admin.site.register(Sample, SampleAdmin)
+admin.site.register(Notification, NotificationAdmin)

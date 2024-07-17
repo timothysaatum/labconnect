@@ -2,6 +2,10 @@ from django.db import models
 from labs.models import Branch, Test, SampleType
 from hospital.models import Facility
 from delivery.models import Delivery
+from django.contrib.auth import get_user_model
+
+
+client = get_user_model()
 
 
 
@@ -92,4 +96,13 @@ class Sample(models.Model):
 			return del_phone
 
 		return 'Not selected'
+
+
+class Notification(models.Model):
+
+	user = models.ForeignKey(client, on_delete=models.CASCADE)
+	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
+
+	def __str__(self) -> str:
+		return self.user.full_name
 	

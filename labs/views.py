@@ -358,7 +358,7 @@ class TestListView(generics.ListAPIView):
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
 			Q(branch__laboratory__id=self.kwargs.get('pk'))
-		).filter(is_deactivated=False).order_by('-date_added')
+		).order_by('-date_added')
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -389,7 +389,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 		query_dict.update(self.request.data)
 		branches = query_dict.get('branch')
 		#Updates the test with the new branches if there is any.
-		if not branches and len(query_dict) < 2:
+		if not branches and len(query_dict) < 1:
 			raise ValidationError(
 				{'error': 'Test must have at least one(1) branch'}
 			)
@@ -700,13 +700,13 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 		print(instance.id)
 		serializer = self.get_serializer(instance, data=request.data, partial=partial)
 		serializer.is_valid(raise_exception=True)
-		
-		if serializer.validated_data.get('deactivate_for_all'):
-			Test.objects.filter(id=instance.test.id).update(is_deactivated=True)
-		
-		if serializer.validated_data.get('reactivate_for_all'):
-			Test.objects.filter(id=instance.test.id).update(is_deactivated=False)
-		
+
+		# if serializer.validated_data.get('deactivate_for_all'):
+		# 	Test.objects.filter(id=instance.test.id).update(is_deactivated=True)
+
+		# if serializer.validated_data.get('reactivate_for_all'):
+		# 	Test.objects.filter(id=instance.test.id).update(is_deactivated=False)
+
 		branch_id = self.kwargs.get('branch_id')
 		if branch_id and serializer.validated_data.get('reactivate'):
 			try:
