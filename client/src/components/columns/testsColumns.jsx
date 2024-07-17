@@ -1,12 +1,6 @@
 import { createCell, createSortableHeader } from "@/util/tablefxns";
 import { Checkbox } from "../ui/checkbox";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -20,7 +14,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BadgeCent, Edit3, MoreHorizontal, X } from "lucide-react";
+import { BadgeCent, Check, Edit3, MoreHorizontal, X } from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -100,10 +94,8 @@ export function DeactivateDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-row justify-between">
             Deactivate test
-            <AlertDialogCancel className="">
-              <Button variant="ghost" size="icon" className="w-10 h-10">
-                <X className="w-4 h-4" />
-              </Button>
+            <AlertDialogCancel>
+                <X className="w-4 h-4"/>
             </AlertDialogCancel>
           </AlertDialogTitle>
           <AlertDialogDescription>
@@ -176,6 +168,26 @@ export const testscolumnDef = [
     cell: createCell("date_added"),
   },
   {
+    accessorKey: "inactive",
+    header: createSortableHeader("Active"),
+    cell: ({ row }) => {
+      const test = row.original;
+
+      if (test?.inactive)
+        return (
+          <div className="flex justify-center items-center">
+            <X className="w-4 h-4 text-muted-foreground" />
+          </div>
+        );
+
+      return (
+        <div className="flex justify-center items-center">
+          <Check className="w-4 h-4 " />
+        </div>
+      );
+    },
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
       const test = row.original;
@@ -193,14 +205,15 @@ export const testscolumnDef = [
       const activeBranchName = userbranches?.data?.find(
         (branch) => branch.id === activeBranch
       )?.name;
-      return (
+      return !test?.inactive ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <MoreHorizontal className="w-4 h-4 " />
-            </Button>
+            <MoreHorizontal className="w-4 h-4 " />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 space-x-22">
+          <DropdownMenuContent
+            className="w-56 space-x-22"
+            collisionPadding={24}
+          >
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -245,7 +258,22 @@ export const testscolumnDef = [
             <DropdownMenuGroup>
               <DeleteDialog testId={test.id} mutate={mutate} />
             </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <MoreHorizontal className="w-4 h-4 " />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-56 space-x-22"
+            collisionPadding={24}
+          >
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>Activate test</DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       );

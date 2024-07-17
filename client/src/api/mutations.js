@@ -70,7 +70,7 @@ export const useDeactivateTestMutation = (id) => {
 
   return useMutation({
     mutationFn: async () => {
-      await axiosPrivate.patch(`laboratory/branch/update/${id}/`, {
+      await axiosPrivate.patch(`laboratory/test/update/${id}/`, {
         is_deactivated: true,
       });
     },

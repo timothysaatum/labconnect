@@ -34,7 +34,7 @@ export const stackedCards = [
   {
     id: 3,
     name: "Proccessed",
-    designation: "merr",
+    designation: "mef",
     content: (
       <Card>
         <CardHeader className="flex flex-row items-center justify-between p-4">
@@ -42,6 +42,21 @@ export const stackedCards = [
             proccessed today:
           </CardTitle>
           <div className="text-sm font-bold">+573</div>
+        </CardHeader>
+      </Card>
+    ),
+  },
+  {
+    id: 4,
+    name: "rejected",
+    designation: "meow",
+    content: (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between p-4">
+          <CardTitle className="text-xs font-medium tracking-wide">
+            rejected today:
+          </CardTitle>
+          <div className="text-sm font-bold">3</div>
         </CardHeader>
       </Card>
     ),
