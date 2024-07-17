@@ -264,12 +264,13 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = BranchSerializer
 
 	def get_queryset(self):
+
 		return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
 	def patch(self, request, pk, format=None):
 
 		branch = self.get_queryset()
-		print(branch)
+
 		"""
 		Checks if the user the permisssion to edit the Branch
 		Raises an unauthorized error.
