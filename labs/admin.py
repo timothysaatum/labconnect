@@ -33,7 +33,9 @@ def download_csv(self, request, query):
 
 	return response
 
-
+class BranchTestInline(admin.TabularInline):
+	model = BranchTest
+	extra = 1
 
 class TestAdmin(admin.ModelAdmin):
 	list_display = (
@@ -48,6 +50,7 @@ class TestAdmin(admin.ModelAdmin):
 		'date_added', 
 		'date_modified'
 	)
+	inlines = (BranchTestInline,)
 	list_display_links = ('id',)
 	ordering = ('id',)
 	list_per_page = 10
