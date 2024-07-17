@@ -77,6 +77,8 @@ export function DeactivateDialog({
   isPending,
   pending,
   mutateforbranch,
+  data,
+  purpose,
 }) {
   const buttonClassName = buttonVariants({
     variant: "outline",
@@ -87,32 +89,33 @@ export function DeactivateDialog({
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <span className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent">
-          Deactivate test
+          {purpose} test
         </span>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-row justify-between">
-            Deactivate test
+            {purpose} test
             <AlertDialogCancel>
-                <X className="w-4 h-4"/>
+              <X className="w-4 h-4" />
             </AlertDialogCancel>
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Do you want to deactivate this test for only the active branch-
+            Do you want to {purpose.charAt(0).toLowerCase() + purpose.slice(1)}{" "}
+            this test for only the active branch-
             {branch} or for all your branches
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogAction
             disabled={pending || isPending}
-            onClick={() => mutateforbranch()}
+            onClick={() => mutateforbranch(data)}
             className={`${buttonClassName} text-black dark:text-white`}
           >
             Only {branch}
           </AlertDialogAction>
           <AlertDialogAction
-            onClick={() => mutate()}
+            onClick={() => mutate(data)}
             disabled={isPending || pending}
           >
             All branches
@@ -193,7 +196,7 @@ export const testscolumnDef = [
       const test = row.original;
 
       const { mutate } = usedeleteTestMutation(test?.id);
-      const { mutate: Deactivate, isPending } = useDeactivateTestMutation(
+      const { mutate: mutateforall, isPending } = useDeactivateTestMutation(
         test?.id
       );
       const { mutate: mutateforbranch, isPending: pending } =
@@ -243,12 +246,13 @@ export const testscolumnDef = [
               <ApplyDisCount test={test} />
               {userbranches?.data && userbranches?.data?.length > 1 ? (
                 <DeactivateDialog
-                  testId={test.id}
-                  mutate={Deactivate}
+                  purpose={"Deactivate"}
+                  mutate={mutateforall}
                   isPending={isPending}
                   branch={activeBranchName}
                   mutateforbranch={mutateforbranch}
                   pending={pending}
+                  data={true}
                 />
               ) : (
                 <DropdownMenuItem>Deactivate test</DropdownMenuItem>
@@ -272,7 +276,15 @@ export const testscolumnDef = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>Activate test</DropdownMenuItem>
+              <DeactivateDialog
+                purpose={"Activate"}
+                data={false}
+                branch={activeBranchName}
+                mutate={mutateforall}
+                mutateforbranch={mutateforbranch}
+                isPending={isPending}
+                pending={pending}
+              />
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
