@@ -81,52 +81,54 @@ const PopoverSelectwithhover = ({
                   )}
 
                   <CommandList className="pt-2">
-                    {items?.data?.map((item) => (
-                      <HoverCardDetails
-                        key={item.id}
-                        option={item.id}
-                        items={items?.data}
-                        title={title}
-                      >
-                        <CommandItem
-                          onSelect={() => {
-                            form.setValue(name, item.id);
-                            form.clearErrors(name);
-                          }}
-                          className="flex gap-5"
+                    {items?.data
+                      ?.filter((item) => item?.is_deactivated === false)
+                      .map((item) => (
+                        <HoverCardDetails
+                          key={item.id}
+                          option={item.id}
+                          items={items?.data}
+                          title={title}
                         >
-                          <div className="flex-grow flex">
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                item.id === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {title === "Laboratories"
-                              ? item.laboratory + " " + "|" + " " + item.name
-                              : title === "Branches"
-                              ? item.name
-                              : item.name}
-                          </div>
-                          {item?.discount_price && (
-                            <Badge
-                              // variant="secondary"
-                              className="whitespace-nowrap tabular-nums min-w-16"
-                            >
-                              {parseFloat(
-                                (
-                                  (item?.discount_price / item?.price) *
-                                  100
-                                ).toFixed(1)
-                              )}
-                              % off
-                            </Badge>
-                          )}
-                        </CommandItem>
-                      </HoverCardDetails>
-                    ))}
+                          <CommandItem
+                            onSelect={() => {
+                              form.setValue(name, item.id);
+                              form.clearErrors(name);
+                            }}
+                            className="flex gap-5"
+                          >
+                            <div className="flex-grow flex">
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  item.id === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {title === "Laboratories"
+                                ? item.laboratory + " " + "|" + " " + item.name
+                                : title === "Branches"
+                                ? item.name
+                                : item.name}
+                            </div>
+                            {item?.discount_price && (
+                              <Badge
+                                // variant="secondary"
+                                className="whitespace-nowrap tabular-nums min-w-16"
+                              >
+                                {parseFloat(
+                                  (
+                                    (item?.discount_price / item?.price) *
+                                    100
+                                  ).toFixed(1)
+                                )}
+                                % off
+                              </Badge>
+                            )}
+                          </CommandItem>
+                        </HoverCardDetails>
+                      ))}
                   </CommandList>
                 </CommandGroup>
               </Command>
