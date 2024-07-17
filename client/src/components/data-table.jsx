@@ -182,7 +182,7 @@ export function DataTable({
                 }}
                 className={`cursor-pointer ${
                   rowEl.original.id === selected ? "bg-accent" : ""
-                } transition-all`}
+                } transition-all ${rowEl?.original?.inactive && "opacity-50"}`}
               >
                 {rowEl.getVisibleCells().map((cellEl) => (
                   <TableCell key={cellEl.id}>

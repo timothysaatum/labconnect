@@ -57,6 +57,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useSendSample } from "@/lib/formactions";
+import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 
 //the prompt dialog
 export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
@@ -86,6 +87,7 @@ export default function SendSample() {
   const savedData = useSelector(selectSampleData);
   const [saving, setSaving] = useState(false);
   const [restore, setRestore] = useState(false);
+  const activeBranch = useSelector(selectActiveBranch);
 
   const onSendSample = useSendSample();
 
@@ -210,6 +212,13 @@ export default function SendSample() {
       form.setValue("brief_description", savedData.brief_description);
     }
   }, [savedData, restore]);
+
+  //selecting the active branch automatically
+  useEffect(() => {
+    if (!savedData && activeBranch) {
+      form.setValue("from_lab", activeBranch);
+    }
+  }, [activeBranch]);
 
   // checking to see if there is savedData to show the dialog
 
@@ -375,7 +384,7 @@ export default function SendSample() {
                           {fields.map((item, index) => (
                             <div
                               key={item.id}
-                              className="grid gap-2 md:gap-6 lg:grid-cols-[1fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0 max-lg:border max-lg:border-dotted rounded-md shadow-md max-lg: p-2"
+                              className="grid gap-2 md:gap-6 lg:grid-cols-[1fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
                             >
                               <div>
                                 <PopoverSelectwithhover
