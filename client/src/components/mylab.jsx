@@ -236,7 +236,7 @@ export default function MyLab() {
     },
   ];
   return (
-    <main className="grid grid-cols-12 sm:pl-20 sm:pr-6 max-sm:px-2 gap-x-4 max-sm:mt-2">
+    <main className="grid grid-cols-12 sm:pl-20 sm:pr-6 max-sm:px-2 gap-x-4 max-sm:mt-2 mt-5">
       <div
         className={`${selected ? "col-span-12 lg:col-span-8" : "col-span-12"}`}
       >
