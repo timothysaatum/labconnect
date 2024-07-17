@@ -24,6 +24,7 @@ import { BadgeCent, Edit3, MoreHorizontal, X } from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
 import {
+  useDeactivateTestForBranchMutation,
   useDeactivateTestMutation,
   usedeleteTestMutation,
 } from "@/api/mutations";
@@ -76,7 +77,13 @@ export function DeleteDialog({ testId, mutate }) {
     </AlertDialog>
   );
 }
-export function DeactivateDialog({ testId, mutate, branch }) {
+export function DeactivateDialog({
+  mutate,
+  branch,
+  isPending,
+  pending,
+  mutateforbranch,
+}) {
   const buttonClassName = buttonVariants({
     variant: "outline",
     size: "lg",
@@ -93,8 +100,8 @@ export function DeactivateDialog({ testId, mutate, branch }) {
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-row justify-between">
             Deactivate test
-            <AlertDialogCancel>
-              <Button variant="ghost" size="icon">
+            <AlertDialogCancel className="">
+              <Button variant="ghost" size="icon" className="w-10 h-10">
                 <X className="w-4 h-4" />
               </Button>
             </AlertDialogCancel>
@@ -106,12 +113,16 @@ export function DeactivateDialog({ testId, mutate, branch }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogAction
-            onClick={() => mutate()}
-            className={`${buttonClassName} text-white`}
+            disabled={pending || isPending}
+            onClick={() => mutateforbranch()}
+            className={`${buttonClassName} text-black dark:text-white`}
           >
             Only {branch}
           </AlertDialogAction>
-          <AlertDialogAction onClick={() => mutate()}>
+          <AlertDialogAction
+            onClick={() => mutate()}
+            disabled={isPending || pending}
+          >
             All branches
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -169,8 +180,12 @@ export const testscolumnDef = [
     cell: ({ row }) => {
       const test = row.original;
 
-      const { mutate, error } = usedeleteTestMutation(test.id);
-      const { mutate: Deactivate } = useDeactivateTestMutation(test.id);
+      const { mutate } = usedeleteTestMutation(test?.id);
+      const { mutate: Deactivate, isPending } = useDeactivateTestMutation(
+        test?.id
+      );
+      const { mutate: mutateforbranch, isPending: pending } =
+        useDeactivateTestForBranchMutation(test?.id);
       const activeBranch = useSelector(selectActiveBranch);
       const { data: userbranches } = useFetchUserBranches();
       const dispatch = useDispatch();
@@ -217,10 +232,13 @@ export const testscolumnDef = [
                 <DeactivateDialog
                   testId={test.id}
                   mutate={Deactivate}
+                  isPending={isPending}
                   branch={activeBranchName}
+                  mutateforbranch={mutateforbranch}
+                  pending={pending}
                 />
               ) : (
-                <DropdownMenuItem></DropdownMenuItem>
+                <DropdownMenuItem>Deactivate test</DropdownMenuItem>
               )}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

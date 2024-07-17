@@ -156,10 +156,6 @@ export default function MyLab() {
   } = useFetchLabTests(activeBranch);
 
   useEffect(() => {
-    console.log(activeBranch);
-  }, [activeBranch]);
-
-  useEffect(() => {
     if (tests?.data) {
       setLabTests(
         tests.data.map((test) => {

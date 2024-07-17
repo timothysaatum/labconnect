@@ -105,9 +105,9 @@ export default function LaboratoryDashboardOverview() {
   useEffect(() => {
     // This will change the pathname to /dashboard/overview when the component mounts
     if (currentTab === "Received") {
-      navigate("/dashboard/overview#Samples-received", { replace: true });
+      navigate("/dashboard/overview?tab=Samples-received", { replace: true });
     } else {
-      navigate("/dashboard/overview#Samples-sent", { replace: true });
+      navigate("/dashboard/overview?tab=Samples-sent", { replace: true });
     }
   }, [navigate]);
   const {
@@ -215,11 +215,6 @@ export default function LaboratoryDashboardOverview() {
         } flex flex-col gap-8`}
       >
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <RequestDialog className="w-full shadow-sm col-span-3 ">
-            <MovingButton>
-              Send a sample
-            </MovingButton>
-          </RequestDialog>
           {isDesktop && !selected ? (
             <>
               <Card>
@@ -246,6 +241,14 @@ export default function LaboratoryDashboardOverview() {
                   <div className="text-sm font-bold">+573</div>
                 </CardHeader>
               </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between p-4">
+                  <CardTitle className="text-xs font-medium tracking-wide">
+                    samples reected:
+                  </CardTitle>
+                  <div className="text-sm font-bold">+573</div>
+                </CardHeader>
+              </Card>
             </>
           ) : (
             <StackedCardsOverview selected={selected} />
@@ -254,10 +257,10 @@ export default function LaboratoryDashboardOverview() {
         <div className="">
           <Tabs defaultValue={currentTab} onValueChange={handleTabChange}>
             <TabsList className="max-w-full">
-              <Link to={"#Samples-received"}>
+              <Link to={"?tab=Samples-received"}>
                 <TabsTrigger value="Received">Received Samples</TabsTrigger>
               </Link>
-              <Link to={"#Samples-sent"}>
+              <Link to={"?tab=Samples-sent"}>
                 <TabsTrigger value="Sent Samples">Sent Samples</TabsTrigger>
               </Link>
             </TabsList>
