@@ -269,6 +269,7 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 	def patch(self, request, pk, format=None):
 
 		branch = self.get_queryset()
+		print(branch)
 		"""
 		Checks if the user the permisssion to edit the Branch
 		Raises an unauthorized error.
