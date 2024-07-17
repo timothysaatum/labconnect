@@ -1,5 +1,7 @@
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
 export const usedeleteTestMutation = (id) => {
@@ -39,13 +41,38 @@ export const usedeleteBranchMutation = (id) => {
   });
 };
 
+export const useDeactivateTestForBranchMutation = (id) => {
+  const queryClient = useQueryClient();
+  const axiosPrivate = useAxiosPrivate();
+  const activeBranch = useSelector(selectActiveBranch);
+
+  return useMutation({
+    mutationFn: async () => {
+      await axiosPrivate.patch(
+        `laboratory/update/test-for-branch/${activeBranch}/${id}/`,
+        {
+          is_deactivated: true,
+        }
+      );
+    },
+    onError: () => {
+      toast.info("unable to deactivate test");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["tests", activeBranch]);
+      toast.message("Test deactivated");
+    },
+  });
+};
 export const useDeactivateTestMutation = (id) => {
   const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
 
   return useMutation({
     mutationFn: async () => {
-      await axiosPrivate.patch(`laboratory/branch/update/${id}/`);
+      await axiosPrivate.patch(`laboratory/branch/update/${id}/`, {
+        is_deactivated: true,
+      });
     },
     onError: () => {
       toast.info("unable to deactivate test");

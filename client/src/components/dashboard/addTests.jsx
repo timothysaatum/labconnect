@@ -199,11 +199,11 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
             </Button>
           </AddSampleType>
         </div>
+        <FormBuilder name={"name"} label={"Test Name"}>
+          <Input placeholder="Name of test" autoFocus />
+        </FormBuilder>
         <FormBuilder name={"test_code"} label={"Test Code"}>
           <Input placeholder="Test code" />
-        </FormBuilder>
-        <FormBuilder name={"name"} label={"Test Name"}>
-          <Input placeholder="Name of test" />
         </FormBuilder>
         <div className="grid grid-cols-[2fr_1fr] gap-2">
           <FormBuilder name={"price"} label={"Price (GHS)"}>
