@@ -104,6 +104,8 @@ class Notification(models.Model):
 	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
 	status = models.CharField(max_length=100)
 	is_read = models.BooleanField(default=False)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
 		return self.user.full_name
