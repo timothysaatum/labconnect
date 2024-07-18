@@ -103,6 +103,36 @@ export const useBranchAdd = (
   );
   return onBranchAdd;
 };
+//updating a branch
+export const useBranchUpdate = (form, setOpen, id) => {
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+  const onBranchUpdate = useCallback(
+    async (data) => {
+      try {
+        await axiosPrivate.patch(`/laboratory/branch/update/${id}/`, data);
+        queryClient.invalidateQueries(["userbranches"]);
+        toast.success("Branch updated successfully");
+        form.reset();
+        setOpen(false);
+      } catch (error) {
+        for (const field in error?.response?.data) {
+          form.setError(field, {
+            type: "manual",
+            message: error.response.data[field][0],
+          });
+        }
+        console.log(error);
+        toast.error("unable to add branch. try again later", {
+          position: "top-center",
+          duration: 5000,
+        });
+      }
+    },
+    [form]
+  );
+  return onBranchUpdate;
+};
 
 //adding discounts to tests
 export const useAddDiscount = (form, test, setOpen) => {
@@ -124,7 +154,7 @@ export const useAddDiscount = (form, test, setOpen) => {
 };
 
 // sending manager invite
-export const useAddManager = (form) => {
+export const useAddManager = (form, setOpen) => {
   const axiosPrivate = useAxiosPrivate();
   const onAddManager = useCallback(
     async (data) => {
@@ -134,6 +164,7 @@ export const useAddManager = (form) => {
         toast.success("Invite Sent", {
           position: "top-center",
         });
+        setOpen(false);
       } catch (error) {
         console.log(error);
         toast.error("Error Sending Invite try again", {

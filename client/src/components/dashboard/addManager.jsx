@@ -19,21 +19,21 @@ import { Form } from "../ui/form";
 import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
-import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ManagerInviteSchema } from "@/lib/schema";
-import { toast } from "sonner";
 import { useAddManager } from "@/lib/formactions";
 
-const ManagerForm = ({ form }) => {
-  const axiosPrivate = useAxiosPrivate();
-  const onAddManager = useAddManager(form);
+const ManagerForm = ({ form, setOpen }) => {
+  const onAddManager = useAddManager(form, setOpen);
   return (
     <Form {...form}>
       <form
         noValidate
-        onSubmit={form.handleSubmit(onAddManager)}
+        onSubmit={(e) => {
+          e.stopPropagation();
+          return form.handleSubmit(onAddManager)(e);
+        }}
         className="flex flex-col gap-4 p-4"
       >
         <FormBuilder

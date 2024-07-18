@@ -20,7 +20,7 @@ import {
 } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
-import { ChevronDown, RefreshCcw, RotateCw } from "lucide-react";
+import { ChevronDown, RotateCw } from "lucide-react";
 import TestDetails from "./dashboard/testsDetails";
 import AddTest from "./dashboard/addTests";
 import AddBranch from "./dashboard/addbranch";
@@ -170,7 +170,7 @@ export default function MyLab() {
             patient_preparation: test?.patient_preparation,
             sample_type: test?.sample_type,
             branch: test?.branch,
-            inactive:test?.is_deactivated
+            inactive: test?.is_deactivated,
           };
         })
       );
@@ -187,6 +187,7 @@ export default function MyLab() {
             branch_manager: branch.branch_manager,
             branch_phone: branch.phone,
             branch_email: branch.email,
+            branch_manager: branch.branch_manager,
           };
         })
       );
