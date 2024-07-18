@@ -35,7 +35,9 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 
 class BranchSerializer(serializers.ModelSerializer):
+
 	laboratory = serializers.PrimaryKeyRelatedField(read_only=True)
+	manager_id = serializers.CharField(read_only=True)
 
 	class Meta:
 
@@ -44,6 +46,7 @@ class BranchSerializer(serializers.ModelSerializer):
 		fields = (
 			'id',
 			'branch_manager',
+			'manager_id',
 			'laboratory', 
 			'name',
 			'phone',
@@ -60,6 +63,7 @@ class BranchSerializer(serializers.ModelSerializer):
 		data = super().to_representation(instance)
 		if data['branch_manager']:
 			data['branch_manager'] = instance.branch_manager.full_name
+			data['manager_id'] = instance.branch_manager.id
 		data['laboratory'] = instance.laboratory.name
 
 		return data

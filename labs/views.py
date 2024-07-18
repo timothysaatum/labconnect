@@ -13,7 +13,7 @@ from .serializers import (
 )
 from .models import Test, Branch, Laboratory, SampleType, BranchTest
 from .results import TestResult
-from sample.models import Sample
+from sample.models import Sample, Notification
 from sample.serializers import SampleSerializer
 from django.db.models import Q
 from sample.serializers import SampleSerializer
@@ -554,6 +554,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		tests = query_dict.getlist('tests')
 		# print(tests)
 		sample.tests.add(*tests)
+		Notification.objects.create(user=self.request.user, sample=sample, status=sample.sample_status)
 
 
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -701,22 +702,8 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 		serializer = self.get_serializer(instance, data=request.data, partial=partial)
 		serializer.is_valid(raise_exception=True)
 
-		# branch_id = self.kwargs.get('branch_id')
-		
-		# if serializer.validated_data.get('is_deactivated'):
-		# 	try:
-		# 		branch_test = BranchTest.objects.get(test=instance.test.id, branch_id=branch_id)
-		# 		branch_test.test_status = 'active'
-		# 		branch_test.save()
-		# 		branch_test.refresh_from_db()
-		# 		print(branch_test.test_status)
-		# 	except BranchTest.DoesNotExist:
-		# 		raise('No such Branch test')
-
 		self.perform_update(serializer)
 
-		# if getattr(instance, '_prefetched_objects_cache', None):
-		# 	instance._prefetched_objects_cache = {}
 		return Response(serializer.data, status=status.HTTP_200_OK)
 	
 

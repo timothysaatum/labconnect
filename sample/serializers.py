@@ -1,10 +1,8 @@
 from rest_framework import serializers
-from sample.models import Sample
+from sample.models import Sample, Notification
 from labs.paginators import QueryPagination
 from labs.models import Test, SampleType
-from labs.serializers import TestSerializer
-import uuid
-
+from user.models import Client
 
 
 class SampleSerializer(serializers.ModelSerializer):
@@ -66,4 +64,25 @@ class SampleSerializer(serializers.ModelSerializer):
 			data['delivery'] = instance.delivery.name
 
 		return data
-	
+
+
+class NotificatinSerializer(serializers.ModelSerializer):
+
+	user = serializers.StringRelatedField(source='__str__')
+	sample = serializers.PrimaryKeyRelatedField(queryset=Sample.objects.all())
+	status = serializers.CharField(required=False)
+	is_read = serializers.BooleanField(default=False)
+
+	class Meta:
+
+		model = Notification
+
+		fields = (
+			'id', 
+			'user', 
+			'sample',
+			'status',
+			'is_read',
+			'date_created',
+			'date_modified'
+		)
