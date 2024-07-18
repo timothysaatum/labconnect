@@ -178,7 +178,7 @@ export const AddBranchSchema = z.object({
   town: z.string().min(1, "Location is required"),
   postal_address: z.string().min(1, "Postal address is required"),
   region: z.string().min(1, "Region is required"),
-  branch_manager: z.string(),
+  branch_manager: z.string().optional(),
 });
 export const ManagerInviteSchema = z.object({
   receiver_email: z

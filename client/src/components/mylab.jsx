@@ -170,7 +170,8 @@ export default function MyLab() {
             patient_preparation: test?.patient_preparation,
             sample_type: test?.sample_type,
             branch: test?.branch,
-            inactive: test?.is_deactivated,
+            test_status: test?.test_status,
+            
           };
         })
       );

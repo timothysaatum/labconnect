@@ -273,7 +273,7 @@ export const useAddTest = (keepOpen, setOpen, form) => {
             position: "top-center",
           }
         );
-        if (!keepOpen) setOpen(false);
+        // if (!keepOpen) setOpen(false);
         // form.reset();
       } catch (error) {
         console.error(error);
