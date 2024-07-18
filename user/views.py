@@ -35,6 +35,7 @@ from labs.models import (
 from labs.serializers import BranchManagerInvitationSerializer
 import random
 import string
+from django.db.models import Subquery
 
 
 
@@ -442,4 +443,6 @@ class FetchLabManagers(ListAPIView):
 	serializer_class = UserSerializer
 
 	def get_queryset(self):
-		return Client.objects.filter(branch__laboratory_id=self.kwargs.get('pk')).distinct('id')
+		managers = Branch.objects.filter(laboratory_id=self.kwargs.get('pk')).values('branch_manager').distinct()
+		branch_managers = Client.objects.filter(id__in=Subquery(managers))
+		return branch_managers
