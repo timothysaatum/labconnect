@@ -369,78 +369,6 @@ export default function SendSample() {
                       can see the tests available
                     </CardFooter>
                   </Card>
-
-                  <div ref={TestsCardRef} className="py-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Choose Tests</CardTitle>
-                        <CardDescription>
-                          These tests are available in the laboratory you
-                          selected.
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div>
-                          {fields.map((item, index) => (
-                            <div
-                              key={item.id}
-                              className="grid gap-2 md:gap-6 lg:grid-cols-[1fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
-                            >
-                              <div>
-                                <PopoverSelectwithhover
-                                  form={form}
-                                  name={`tests.${index}.test`}
-                                  error={testsError}
-                                  loading={testsLoading}
-                                  items={tests}
-                                  label={"Choose a test to request"}
-                                  title={"tests"}
-                                  search={"Search tests..."}
-                                />
-                              </div>
-                              <div className="flex justify-between items-end gap-2">
-                                <div>
-                                  <SelectComponentWithHover
-                                    form={form}
-                                    name={`tests.${index}.sample_type`}
-                                    error={testsError}
-                                    loading={testsLoading}
-                                    index={index}
-                                    data={tests?.data}
-                                    id={form.watch(`tests.${index}.test`)}
-                                    label={"what sample are you sending"}
-                                    title={"sample types"}
-                                    search={"Search sample type..."}
-                                  />
-                                </div>
-                                <div>
-                                  <Button
-                                    variant="secondary"
-                                    size="icon"
-                                    type="button"
-                                    onClick={() => handleRemove(index)}
-                                  >
-                                    <Minus />
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                      <CardFooter className="justify-center border-t p-0 py-2 text-xs tracking-tight text-center text-muted-foreground">
-                        <Button
-                          variant="ghost"
-                          onClick={() => append({ test: "", sample_type: "" })}
-                        >
-                          Add more tests <PlusCircle className="w-4 h-4 ml-1" />
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </div>
-                  <Button className="-mt-4 hidden md:block">
-                    Proceed to checkout
-                  </Button>
                 </div>
                 <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                   <Card>
@@ -507,6 +435,77 @@ export default function SendSample() {
                     </CardContent>
                   </Card>
                 </div>
+                <div ref={TestsCardRef} className="py-4 col-span-3">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Choose Tests</CardTitle>
+                      <CardDescription>
+                        These tests are available in the laboratory you
+                        selected.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div>
+                        {fields.map((item, index) => (
+                          <div
+                            key={item.id}
+                            className="grid gap-2 md:gap-6 lg:grid-cols-[1fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
+                          >
+                            <div>
+                              <PopoverSelectwithhover
+                                form={form}
+                                name={`tests.${index}.test`}
+                                error={testsError}
+                                loading={testsLoading}
+                                items={tests}
+                                label={"Choose a test to request"}
+                                title={"tests"}
+                                search={"Search tests..."}
+                              />
+                            </div>
+                            <div className="flex justify-between items-end gap-2">
+                              <div>
+                                <SelectComponentWithHover
+                                  form={form}
+                                  name={`tests.${index}.sample_type`}
+                                  error={testsError}
+                                  loading={testsLoading}
+                                  index={index}
+                                  data={tests?.data}
+                                  id={form.watch(`tests.${index}.test`)}
+                                  label={"what sample are you sending"}
+                                  title={"sample types"}
+                                  search={"Search sample type..."}
+                                />
+                              </div>
+                              <div>
+                                <Button
+                                  variant="secondary"
+                                  size="icon"
+                                  type="button"
+                                  onClick={() => handleRemove(index)}
+                                >
+                                  <Minus />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                    <CardFooter className="justify-center border-t p-0 py-2 text-xs tracking-tight text-center text-muted-foreground">
+                      <Button
+                        variant="ghost"
+                        onClick={() => append({ test: "", sample_type: "" })}
+                      >
+                        Add more tests <PlusCircle className="w-4 h-4 ml-1" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </div>
+                <Button className="-mt-4 hidden md:block w-full col-span-2 ">
+                  Proceed to checkout
+                </Button>
               </form>
             </Form>
             <div className="flex items-center justify-center gap-2 md:hidden">
