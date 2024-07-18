@@ -102,13 +102,15 @@ DATABASES = {
 }
 
 #Celery config
-CELERY_broker_url = 'redis://127.0.0.1:6379/0'
-RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+# CELERY_broker_url = 'redis://127.0.0.1::5672/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+RESULT_BACKEND = 'redis://127.0.0.1::6379/0'
 
 ACCEPT_CONTENT = ['json']
 TASK_SERIALIZER = 'json'
 result_serializer = 'json'
 timezone = 'utc'
+broker_connection_retry_on_startup = True
 CELERY_broker_connection_retry = True
 CONNECTION_broker_connection_max_retries = None
 CELERY_broker_connection_retry_INTERVAL = 1

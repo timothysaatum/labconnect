@@ -698,29 +698,25 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 
 		partial = kwargs.pop('partial', False)
 		instance = self.get_object()
-		print(instance.id)
 		serializer = self.get_serializer(instance, data=request.data, partial=partial)
 		serializer.is_valid(raise_exception=True)
 
-		# if serializer.validated_data.get('deactivate_for_all'):
-		# 	Test.objects.filter(id=instance.test.id).update(is_deactivated=True)
-
-		# if serializer.validated_data.get('reactivate_for_all'):
-		# 	Test.objects.filter(id=instance.test.id).update(is_deactivated=False)
-
-		branch_id = self.kwargs.get('branch_id')
-		if branch_id and serializer.validated_data.get('reactivate'):
-			try:
-				branch_test = BranchTest.objects.get(test=instance.test.id, branch_id=branch_id)
-				branch_test.is_deactivated = False
-				branch_test.save()
-			except BranchTest.DoesNotExist:
-				raise('No such Branch test')
+		# branch_id = self.kwargs.get('branch_id')
+		
+		# if serializer.validated_data.get('is_deactivated'):
+		# 	try:
+		# 		branch_test = BranchTest.objects.get(test=instance.test.id, branch_id=branch_id)
+		# 		branch_test.test_status = 'active'
+		# 		branch_test.save()
+		# 		branch_test.refresh_from_db()
+		# 		print(branch_test.test_status)
+		# 	except BranchTest.DoesNotExist:
+		# 		raise('No such Branch test')
 
 		self.perform_update(serializer)
 
-		if getattr(instance, '_prefetched_objects_cache', None):
-			instance._prefetched_objects_cache = {}
+		# if getattr(instance, '_prefetched_objects_cache', None):
+		# 	instance._prefetched_objects_cache = {}
 		return Response(serializer.data, status=status.HTTP_200_OK)
 	
 
@@ -728,9 +724,9 @@ class CopyTests(generics.CreateAPIView):
 	serializer_class = TestSerializer
 
 	def post(self, request, *args, **kwargs):
-		tests_ids = self.request.data.getlist('test_ids', [])
+		test_ids = self.request.data.getlist('test_ids', [])
 		target_branch_id = self.kwargs.get('branch_to_copy_id')
-
-		task = copy_test_to_branch.delay(tests_ids, target_branch_id)
+		
+		task = copy_test_to_branch.delay(test_ids, target_branch_id)
 
 		return Response({'task_id': task.id}, status=status.HTTP_202_ACCEPTED)

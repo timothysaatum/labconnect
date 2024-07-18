@@ -83,10 +83,7 @@ class TestSerializer(serializers.ModelSerializer):
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
 	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
 	discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
-	# deactivate_for_all = serializers.BooleanField(write_only=True, required=False)
-	# reactivate_for_all = serializers.BooleanField(write_only=True, required=False)
-	reactivate = serializers.BooleanField(write_only=True, required=False)
-
+	
 	class Meta:
 
 		model = Test
@@ -98,12 +95,9 @@ class TestSerializer(serializers.ModelSerializer):
 			'price',
 			'discount_price',
 			'patient_preparation',
-			# 'deactivate_for_all',
-			# 'reactivate_for_all',
-			'reactivate',
 			'sample_type',
 			'branch',
-			'is_deactivated',
+			'test_status',
 			'date_modified',
 			'date_added'
 		)
@@ -116,7 +110,7 @@ class TestSerializer(serializers.ModelSerializer):
 			'price': obj.price,
 			'discount_price': obj.discount_price,
 			'discount_percent': obj.discount_percent,
-			'is_deactivated': obj.is_deactivated,
+			'test_status': obj.test_status,
 			'turn_around_time': obj.turn_around_time,
 		}
 
@@ -127,7 +121,7 @@ class TestSerializer(serializers.ModelSerializer):
 				data['price'] = branch_test.price or obj.price
 				data['discount_price'] = branch_test.discount_price or obj.discount_price
 				data['discount_percent'] = branch_test.discount_percent or obj.discount_percent
-				data['is_deactivated'] = branch_test.is_deactivated or obj.is_deactivated
+				data['test_status'] = branch_test.test_status or obj.test_status
 				data['turn_around_time'] = branch_test.turn_around_time or obj.turn_around_time
 
 			except BranchTest.DoesNotExist:
@@ -151,7 +145,7 @@ class BranchTestSerializer(serializers.ModelSerializer):
 		fields = [
 			'price', 
 			'discount_price', 
-			'is_deactivated', 
+			'test_status', 
 			'discount_percent',
 			'turn_around_time'
 		]
