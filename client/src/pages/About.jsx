@@ -1,15 +1,14 @@
 import React from 'react';
 import AboutUs from '../components/aboutUs/aboutus';
+import Started from '../components/aboutUs/started';
 
 
 
-
-const About = () => {
-  return (
-    <div className='bg-[#F4F3F1]'>
-    <AboutUs />
+export default function About(){
+  return(
+    <div>
+      <AboutUs/>
+      <Started/>
     </div>
-  );
-};
-
-export default About;
+  )
+}

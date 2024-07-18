@@ -42,7 +42,6 @@ const persistConfig = {
     "selectedRows",
     "sessionExpired",
     "branchOpen",
-    "mylabtab",
     "sampleType",
     "testsDialog",
     "updatetestmethod",

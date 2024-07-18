@@ -65,7 +65,7 @@ const PopoverSelectwithhover = ({
               <Command loop>
                 <CommandInput placeholder={search} />
                 <CommandEmpty>
-                  {!form.watch("to_lab")
+                  {!form.watch("to_laboratory") && title === "tests"
                     ? "please choose the lab to receive the sample first"
                     : loading
                     ? "Loading..."
@@ -82,7 +82,7 @@ const PopoverSelectwithhover = ({
 
                   <CommandList className="pt-2">
                     {items?.data
-                      ?.filter((item) => item?.is_deactivated === false)
+                      ?.filter((item) => item?.test_status === "active")
                       .map((item) => (
                         <HoverCardDetails
                           key={item.id}
