@@ -89,7 +89,10 @@ class Test(BaseModel):
 	price(float): The price of the test.
 	dicount_price (float, optional): The discounted price of the test.
 	'''
-
+	STATUS_CHOICES = [
+		('active', 'active'),
+		('inactive', 'inactive')
+	]
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	test_code = models.CharField(max_length=100, null=True, blank=True)
 	name = models.CharField(max_length=200, db_index=True)
@@ -100,7 +103,7 @@ class Test(BaseModel):
 	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField(blank=True, null=True)
 	sample_type = models.ManyToManyField(SampleType)
-	is_deactivated = models.BooleanField(default=False)
+	test_status = models.CharField(max_length=10 ,choices=STATUS_CHOICES, default='active')
 
 	def __str__(self) -> str:
 
@@ -112,10 +115,13 @@ class Test(BaseModel):
 
 
 class BranchTest(models.Model):
-	
+	STATUS_CHOICES = [
+		('active', 'active'),
+		('inactive', 'inactive')
+	]
 	test = models.ForeignKey(Test, on_delete=models.CASCADE)
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-	is_deactivated = models.BooleanField(default=False)
+	test_status = models.CharField(max_length=10 ,choices=STATUS_CHOICES, default='active')
 	price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
 	discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
 	discount_percent = models.CharField(max_length=10, blank=True, null=True)

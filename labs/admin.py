@@ -46,7 +46,7 @@ class TestAdmin(admin.ModelAdmin):
 		'price', 
 		'turn_around_time', 
 		'patient_preparation',
-		'is_deactivated',
+		'test_status',
 		'date_added', 
 		'date_modified'
 	)
@@ -59,11 +59,13 @@ class TestAdmin(admin.ModelAdmin):
 
 class BranchTestAdmin(admin.ModelAdmin):
 	list_display = (
+		'branch',
+		'test',
 		'price', 
 		'turn_around_time', 
 		'discount_price',
 		'discount_percent',
-		'is_deactivated',
+		'test_status',
 	)
 
 class SampleTypeAdmin(admin.ModelAdmin):
