@@ -46,11 +46,11 @@ export const useDeactivateTestForBranchMutation = (id) => {
   const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
   const activeBranch = useSelector(selectActiveBranch);
-  const [activation, setActivation] = useState(false);
+  const [activation, setActivation] = useState();
 
   return useMutation({
     mutationFn: async (data) => {
-      if (data === true) {
+      if (data === "inactive") {
         setActivation(false);
       } else {
         setActivation(true);
@@ -58,7 +58,7 @@ export const useDeactivateTestForBranchMutation = (id) => {
       await axiosPrivate.patch(
         `laboratory/update/test-for-branch/${activeBranch}/${id}/`,
         {
-          is_deactivated: data,
+          test_status: data,
         }
       );
     },
@@ -90,13 +90,13 @@ export const useDeactivateTestMutation = (id) => {
 
   return useMutation({
     mutationFn: async (data) => {
-      if (data === true) {
+      if (data === "inactive") {
         setActivation(false);
       } else {
         setActivation(true);
       }
       await axiosPrivate.patch(`laboratory/test/update/${id}/`, {
-        is_deactivated: data,
+        test_status: data,
       });
     },
     onError: () => {
