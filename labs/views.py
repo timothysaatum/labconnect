@@ -23,6 +23,7 @@ from rest_framework.exceptions import ValidationError
 from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
 import json
+from .tasks import copy_test_to_branch
 
 
 query_dict = QueryDict('', mutable=True)
@@ -721,3 +722,15 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 		if getattr(instance, '_prefetched_objects_cache', None):
 			instance._prefetched_objects_cache = {}
 		return Response(serializer.data, status=status.HTTP_200_OK)
+	
+
+class CopyTests(generics.CreateAPIView):
+	serializer_class = TestSerializer
+
+	def post(self, request, *args, **kwargs):
+		tests_ids = self.request.data.getlist('test_ids', [])
+		target_branch_id = self.kwargs.get('branch_to_copy_id')
+
+		task = copy_test_to_branch.delay(tests_ids, target_branch_id)
+
+		return Response({'task_id': task.id}, status=status.HTTP_202_ACCEPTED)

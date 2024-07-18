@@ -102,6 +102,8 @@ class Notification(models.Model):
 
 	user = models.ForeignKey(client, on_delete=models.CASCADE)
 	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
+	status = models.CharField(max_length=100)
+	is_read = models.BooleanField(default=False)
 
 	def __str__(self) -> str:
 		return self.user.full_name

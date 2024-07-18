@@ -102,18 +102,18 @@ DATABASES = {
 }
 
 #Celery config
-CELERY_broker_url = 'redis://127.0.0.1:6379/0'
-RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+RESULT_BACKEND = 'redis://localhost:6379/0'
 
 ACCEPT_CONTENT = ['json']
 TASK_SERIALIZER = 'json'
-result_serializer = 'json'
-timezone = 'utc'
-CELERY_broker_connection_retry = True
-CONNECTION_broker_connection_max_retries = None
-CELERY_broker_connection_retry_INTERVAL = 1
-CELERY_broker_connection_retry_MAX = 20
-CELERY_broker_connection_retry_INTERVAL_STEP = 1
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'utc'
+CELERY_BROKER_CONNECTION_RETRY = True
+CONNECTION_BROKER_CONNECTION_MAX_RETRIES = None
+CELERY_BROKER_CONNECTION_RETRY_INTERVAL = 1
+CELERY_BROKER_CONNECTION_RETRY_MAX = 20
+CELERY_BROKER_CONNECTION_RETRY_INTERVAL_STEP = 1
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
