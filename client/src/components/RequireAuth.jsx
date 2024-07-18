@@ -34,36 +34,17 @@ export const HasLaboratory = () => {
     return;
   }
   const { isError, data: userlab, isPending } = useFetchUserLab();
-  const { data, isError: usereeror, isLoading } = useFetchUserDetails();
   const location = useLocation();
-  if (isPending || isLoading) return;
-  if (isError || usereeror) {
+  if (isPending ) return;
+  if (isError) {
     return toast.error("An error has occured");
   }
-  if (!data?.data?.data?.is_admin) {
+  if (!user?.is_branch_manager) {
     return <Outlet />;
   }
-  return data?.data?.data?.is_admin && userlab?.data.length > 0 ? (
+  return user?.is_admin && userlab?.data.length > 0 ? (
     <Outlet />
   ) : (
     <Navigate to="/getting-started" state={{ from: location }} replace />
   );
 };
-// export const HasLaboratory = () => {
-//   const user = useSelector(selectCurrentUser);
-
-//   if (user.account_type === "Hospital") {
-//     return <Outlet />;
-//   }
-//   const { isError, data: userlab, isPending } = useFetchUserLab();
-//   const location = useLocation();
-//   if (isPending) return;
-//   if (isError) {
-//     return toast.error("Error loading laboratory");
-//   }
-//   return userlab?.data.length > 0 ? (
-//     <Outlet />
-//   ) : (
-//     <Navigate to="/getting-started" state={{ from: location }} replace />
-//   );
-// };

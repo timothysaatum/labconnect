@@ -51,21 +51,16 @@ export const BranchForm = ({ setOpen, form, className, id }) => {
   const { data: managers, isError } = useFetchLabManagers(userlab?.data[0]?.id);
   const user = useSelector(selectCurrentUser);
 
+  if (isError || labError) {
+    toast.error("An error occurred");
+  }
   const Labmanagers = managers?.data
-    ?.filter((item, index) => index === 0)
+    ?.filter((manager) => manager?.id !== user?.id)
     .map((manager) => ({
       label: `${manager?.first_name} ${manager?.last_name}`,
       value: manager?.id,
     }));
-
-  if (isError || labError) {
-    toast.error("An error occurred");
-  }
-  const gender = [
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-  ];
-  console.log(Labmanagers);
+  console.log(managers?.data);
   return (
     <Form {...form}>
       <form
@@ -177,7 +172,6 @@ const UpdateBranch = ({ branchId }) => {
       form.setValue("postal_address", branch.postal_address);
       form.setValue("town", branch.town);
       form.setValue("digital_address", branch.digital_address);
-      // form.setValue("branch_manager", branch.branch_manager);
     }
   }, [branch]);
   if (isDesktop) {
