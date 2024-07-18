@@ -416,8 +416,8 @@ class BranchManagerAcceptView(CreateAPIView):
 			'last_name':request.data['last_name'],
 			'phone_number':request.data['phone_number'],
 			'account_type':'Laboratory',
-			'password':pwd,
-			'password_confirmation':pwd
+			'password':request.data['password'],
+			'password_confirmation':request.data['confirm_password']
 		}
 
 		#user = create_branch_manager_user(invitation, data)
@@ -442,4 +442,4 @@ class FetchLabManagers(ListAPIView):
 	serializer_class = UserSerializer
 
 	def get_queryset(self):
-		return Client.objects.filter(branch__laboratory_id=self.kwargs.get('pk'))
+		return Client.objects.filter(branch__laboratory_id=self.kwargs.get('pk')).distinct('id')
