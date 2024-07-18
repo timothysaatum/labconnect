@@ -22,13 +22,15 @@ export default function SelectComponent({
   label,
   message = null,
   description = null,
+  empty,
+  ...rest
 }) {
   return (
     <FormField
       name={name}
       control={control}
       render={({ field }) => (
-        <FormItem>
+        <FormItem {...rest}>
           <FormLabel>{label}</FormLabel>
           <Select
             onValueChange={field.onChange}
@@ -41,11 +43,15 @@ export default function SelectComponent({
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {items.map((item) => (
-                <SelectItem value={item.value} key={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
+              {items?.length > 0 ? (
+                items?.map((item) => (
+                  <SelectItem value={item.value} key={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem className="whitespace-wrap">{empty || "no items to choose from"}</SelectItem>
+              )}
             </SelectContent>
           </Select>
           {message && <FormMessage />}

@@ -28,6 +28,7 @@ import { useState } from "react";
 import AddManager from "../dashboard/addManager";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import UpdateBranch from "../dashboard/updatebranch";
 
 export function DeleteDialog({ mutate }) {
   const [open, setOpen] = useState(false);
@@ -134,9 +135,7 @@ export const branchcolumnDef = [
                 Assign Manager
               </span>
             </AddManager>
-            <Link to="../settings?tab=branch-profile">
-              <DropdownMenuItem>Update Branch</DropdownMenuItem>
-            </Link>
+            <UpdateBranch branchId={branch?.id} />
             <DropdownMenuSeparator />
             <DeleteDialog mutate={mutate} branchId={branch.id} />
           </DropdownMenuContent>

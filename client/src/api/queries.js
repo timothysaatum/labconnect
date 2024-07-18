@@ -39,7 +39,8 @@ export const useFetchHealthWorkerRequests = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["Requests"],
-    queryFn: async () => await axiosPrivate.get("/hospital/health-worker/sample/list/"),
+    queryFn: async () =>
+      await axiosPrivate.get("/hospital/health-worker/sample/list/"),
     staleTime: 1000 * 60 * 5,
   });
 };
@@ -75,7 +76,7 @@ export const useFetchAllLabsBranches = () => {
     queryKey: ["All labs"],
     queryFn: async () => await axiosPrivate.get("/laboratory/branch/all/"),
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 60,
+    staleTime: 100000 * 60 * 60,
   });
 };
 export const useFetchLabTests = (id) => {
@@ -90,7 +91,7 @@ export const useFetchLabTests = (id) => {
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
     enabled: !!id,
-    staleTime: 1000 * 60 * 60,
+    staleTime: 10000 * 60 * 60,
   });
 };
 export const useFetchSampleTypes = (id) => {
@@ -101,7 +102,7 @@ export const useFetchSampleTypes = (id) => {
       await axiosPrivate.get(`/laboratory/get-test/sample-type/${id}/`),
     refetchOnWindowFocus: false,
     enabled: !!id,
-    staleTime: 1000 * 60 * 60,
+    staleTime: Infinity,
   });
 };
 
@@ -110,7 +111,17 @@ export const useFetchUserBranches = () => {
   return useQuery({
     queryKey: ["userbranches"],
     queryFn: async () => await axiosPrivate.get(`/laboratory/branch/list/`),
-    staleTime: 1000 * 60 * 60,
+    staleTime: Infinity,
+  });
+};
+export const useFetchLabManagers = (id) => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["labmanagers"],
+    queryFn: async () =>
+      await axiosPrivate.get(`/user/fetch-lab-managers/${id}/`),
+    staleTime: Infinity,
+    enabled: !!id,
   });
 };
 

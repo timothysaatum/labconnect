@@ -175,7 +175,7 @@ export const testscolumnDef = [
     cell: ({ row }) => {
       const test = row.original;
 
-      if (test?.inactive)
+      if (test?.test_status === "inactive")
         return (
           <div className="flex justify-center items-center">
             <X className="w-4 h-4 text-muted-foreground" />
@@ -208,7 +208,7 @@ export const testscolumnDef = [
         (branch) => branch.id === activeBranch
       )?.name;
 
-      return !test?.inactive ? (
+      return test?.test_status === "active" ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <MoreHorizontal className="w-4 h-4 " />
@@ -252,10 +252,10 @@ export const testscolumnDef = [
                   branch={activeBranchName}
                   mutateforbranch={mutateforbranch}
                   pending={pending}
-                  data={true}
+                  data={"inactive"}
                 />
               ) : (
-                <DropdownMenuItem onClick={() => mutateforbranch(true)}>
+                <DropdownMenuItem onClick={() => mutateforbranch("inactive")}>
                   Deactivate test
                 </DropdownMenuItem>
               )}
@@ -281,7 +281,7 @@ export const testscolumnDef = [
               {test?.branch?.length > 1 ? (
                 <DeactivateDialog
                   purpose={"Activate"}
-                  data={false}
+                  data={"active"}
                   branch={activeBranchName}
                   mutate={mutateforall}
                   mutateforbranch={mutateforbranch}
@@ -289,7 +289,7 @@ export const testscolumnDef = [
                   pending={pending}
                 />
               ) : (
-                <DropdownMenuItem onClick={() => mutateforbranch(false)}>
+                <DropdownMenuItem onClick={() => mutateforbranch("active")}>
                   Activate test
                 </DropdownMenuItem>
               )}

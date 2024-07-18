@@ -35,6 +35,7 @@ from labs.models import (
 from labs.serializers import BranchManagerInvitationSerializer
 import random
 import string
+from django.db.models import Subquery
 
 
 
@@ -416,8 +417,8 @@ class BranchManagerAcceptView(CreateAPIView):
 			'last_name':request.data['last_name'],
 			'phone_number':request.data['phone_number'],
 			'account_type':'Laboratory',
-			'password':pwd,
-			'password_confirmation':pwd
+			'password':request.data['password'],
+			'password_confirmation':request.data['confirm_password']
 		}
 
 		#user = create_branch_manager_user(invitation, data)
@@ -442,4 +443,6 @@ class FetchLabManagers(ListAPIView):
 	serializer_class = UserSerializer
 
 	def get_queryset(self):
-		return Client.objects.filter(branch__laboratory_id=self.kwargs.get('pk'))
+		managers = Branch.objects.filter(laboratory_id=self.kwargs.get('pk')).values('branch_manager').distinct()
+		branch_managers = Client.objects.filter(id__in=Subquery(managers))
+		return branch_managers

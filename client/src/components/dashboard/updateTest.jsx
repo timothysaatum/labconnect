@@ -1,11 +1,4 @@
-import {
-  ChevronsUpDown,
-  Edit,
-  Edit2,
-  Edit3,
-  Loader2,
-  Plus,
-} from "lucide-react";
+import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Drawer,
@@ -51,25 +44,16 @@ import {
 } from "@/api/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
+import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddTestSchema } from "@/lib/schema";
-import MultipleSelector from "@/components/ui/multi-select";
 import AddSampleType from "./addsampleType";
 import { useSelector } from "react-redux";
 import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
-import {
-  useUpdateTest,
-} from "@/lib/formactions";
-import { selectTestMethod } from "@/redux/lab/updatetestmethodSlice";
-import { sub } from "date-fns";
+import { useUpdateTest } from "@/lib/formactions";
 
-const TestForm = ({ setOpen, keepOpen, form, test }) => {
-  const axiosPrivate = useAxiosPrivate();
-  const queryClient = useQueryClient();
+const TestForm = ({ setOpen, form, test }) => {
   const onUpdateTest = useUpdateTest(setOpen, form, test?.id);
   const [sampleTypes, setSampleTypes] = useState(null);
   const [uniqueSampleTypesState, setUniqueSampleTypesState] = useState([]);
@@ -92,64 +76,7 @@ const TestForm = ({ setOpen, keepOpen, form, test }) => {
       });
     }
   }, [form.formState.errors]);
-  const {
-    isLoading,
-    isError,
-    isPaused,
-    data: branches,
-  } = useFetchUserBranches();
 
-  const onSubmit = async (data) => {
-    const branchvalue = data?.branch
-      ? data.branch.map((branch) => branch.value)
-      : [];
-    const SampleTypevalue = data?.sample_type
-      ? data.sample_type.map((sample_type) => sample_type.value)
-      : [];
-
-    const turnAroundTimeWithUnit = data?.turn_around_time + " " + data?.unit;
-
-    const finalData = {
-      ...data,
-      turn_around_time: turnAroundTimeWithUnit,
-      branch: branchvalue,
-      sample_type: SampleTypevalue,
-    };
-
-    // Remove the unit field from the finalData object
-    delete finalData.unit;
-    try {
-      await axiosPrivate.patch(
-        `/laboratory/test/update/${test.id}/`,
-        finalData
-      );
-      queryClient.invalidateQueries(["tests", data?.branch]);
-      toast.success(
-        `New test- ${data?.name} added ${
-          data.branch.length < 2
-            ? `${data.branch[0].label}`
-            : `to ${data.branch.length} branches`
-        } successfully`,
-        {
-          position: "top-center",
-        }
-      );
-      queryClient.invalidateQueries(["tests"]);
-      if (!keepOpen) setOpen(false);
-      form.reset();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const [branchOptions, setBranchOptions] = useState(null);
-  useEffect(() => {
-    setBranchOptions(
-      branches?.data?.map((item) => ({
-        label: item.name,
-        value: item.id,
-      }))
-    );
-  }, [branches]);
   useEffect(() => {
     if (sample_type_fetching || sample_type_error) return;
     let combinedSampleTypes = [
@@ -181,39 +108,6 @@ const TestForm = ({ setOpen, keepOpen, form, test }) => {
         noValidate
         onSubmit={form.handleSubmit(onUpdateTest)}
       >
-        <FormField
-          name="branch"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className="-mb-2">
-              <FormLabel>Which branches are you adding the test for</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <MultipleSelector
-                    options={branchOptions}
-                    placeholder="Select branches to add test to"
-                    hidePlaceholderWhenSelected
-                    emptyIndicator={
-                      <p className="text-center text-md text-muted-foreground">
-                        {isPaused
-                          ? "Check your internet Connection and try again"
-                          : isLoading
-                          ? "loading..."
-                          : isError
-                          ? "Error loading Branches"
-                          : branches?.data?.length < 1
-                          ? "Lab has no branches create a branch to before adding tests"
-                          : `No more branches available`}
-                      </p>
-                    }
-                    {...field}
-                  />
-                  <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
-                </div>
-              </FormControl>
-            </FormItem>
-          )}
-        />
         <div className="flex items-end gap-2">
           <FormField
             name="sample_type"
@@ -322,21 +216,9 @@ const TestForm = ({ setOpen, keepOpen, form, test }) => {
 };
 const UpdateTest = ({ branch, test }) => {
   const [open, setOpen] = useState(false);
-  const [keepOpen, setKeepOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const { data: userbranches, isPending } = useFetchUserBranches();
+  const { data: userbranches } = useFetchUserBranches();
 
-  const branches = useMemo(() => {
-    if (userbranches?.data) {
-      return test.branch.map((branch) => {
-        const findBranch = userbranches.data.find(
-          (userBranch) => branch === userBranch.id
-        );
-        return { label: findBranch.name, value: findBranch.id };
-      });
-    }
-    return [];
-  }, [userbranches, test.branch]);
   const sampleType = useMemo(() => {
     if (test.sample_type) {
       return test.sample_type.map((sampletype) => {
@@ -346,8 +228,16 @@ const UpdateTest = ({ branch, test }) => {
     return [];
   }, [userbranches, test.branch]);
 
+  const customResolver = (values) => {
+    const result = zodResolver(AddTestSchema)(values);
+    if (result?.errors && result?.errors?.branch) {
+      delete result?.errors?.branch;
+    }
+    return result;
+  };
+
   const form = useForm({
-    resolver: zodResolver(AddTestSchema),
+    resolver: zodResolver(customResolver),
     defaultValues: {
       test_code: test.test_code,
       name: test.test_name,
@@ -355,7 +245,6 @@ const UpdateTest = ({ branch, test }) => {
       turn_around_time: test.turn_around_time.split(" ")[0],
       patient_preparation: test.patient_preparation,
       unit: test.turn_around_time.split(" ")[1],
-      branch: branches,
       discount_price: test.discount_price,
       sample_type: sampleType,
     },
@@ -385,7 +274,6 @@ const UpdateTest = ({ branch, test }) => {
             <TestForm
               setOpen={setOpen}
               test={test}
-              keepOpen={keepOpen}
               form={form}
             />
           </div>
@@ -409,7 +297,6 @@ const UpdateTest = ({ branch, test }) => {
           <TestForm
             setOpen={setOpen}
             test={test}
-            keepOpen={keepOpen}
             form={form}
           />
         </div>

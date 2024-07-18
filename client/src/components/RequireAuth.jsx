@@ -40,7 +40,7 @@ export const HasLaboratory = () => {
   if (isError || usereeror) {
     return toast.error("An error has occured");
   }
-  if (data?.data?.data?.is_branch_manager) {
+  if (!data?.data?.data?.is_admin) {
     return <Outlet />;
   }
   return data?.data?.data?.is_admin && userlab?.data.length > 0 ? (
@@ -48,7 +48,6 @@ export const HasLaboratory = () => {
   ) : (
     <Navigate to="/getting-started" state={{ from: location }} replace />
   );
-
 };
 // export const HasLaboratory = () => {
 //   const user = useSelector(selectCurrentUser);
