@@ -22,7 +22,7 @@ export default function Started() {
         IMPORTANT <br/>
         REFERRAL SYSTEM
        </p>
-       <img src='/images/microscop.gif' alt='a rotating microscope' className="w-32 h-32 object-contain rounded-full mt-10"/>
+       <img src='/images/microscop.gif' alt='a gif of a microscope' className="w-32 h-32 object-contain rounded-full mt-10"/>
       </div>
     </div>
   );
