@@ -388,7 +388,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 		#Clears the current branch set for the tests
 		query_dict.update(self.request.data)
-		branches = query_dict.get('branch')
+		branches = query_dict.getlist('branch')
 		#Updates the test with the new branches if there is any.
 		if not branches and len(query_dict) < 1:
 			raise ValidationError(
@@ -396,6 +396,10 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 			)
 
 		test = serializer.save()
+		branch_test = BranchTest.objects.get(test=test.id)
+		branch_test.test_status = serializer.data['test_status']
+		branch_test.save()
+
 		if branches:
 			test.branch.clear()
 			test.branch.add(*branches)
