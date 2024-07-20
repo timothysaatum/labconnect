@@ -541,7 +541,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
-		print(json.dumps(self.request.data, indent=4))
+		print(self.request.data)
 		sample = serializer.save(
 			referring_facility=facility, 
 			sender_full_name=self.request.user.full_name,

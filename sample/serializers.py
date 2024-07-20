@@ -3,22 +3,38 @@ from sample.models import Sample, Notification
 from labs.paginators import QueryPagination
 from labs.models import Test, SampleType
 from user.models import Client
+import uuid
 
+class UUIDField(serializers.UUIDField):
+	def to_internal_value(self, data):
+		return super().to_internal_value(str(data))
+
+class TestDataSerializer(serializers.Serializer):
+	test = UUIDField()
+	sample_type = serializers.IntegerField()
 
 class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
-	sample_type = serializers.PrimaryKeyRelatedField(
-		required=False,
-		queryset=SampleType.objects.all()
-	)
-	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all())
-	test_data = serializers.ListField(child=serializers.DictField())
+	sample_type = serializers.PrimaryKeyRelatedField(read_only=True)
+	tests = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+	test_data = serializers.ListField(child=TestDataSerializer(), write_only=True)
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
 	facility_type = serializers.CharField(required=False)
+
+	def validate_test_data(self, value):
+		for item in value:
+			if not isinstance(item.get('test'), uuid.UUID):
+				try:
+					item['test'] = uuid.UUID(item['test'])
+				except ValueError:
+					raise serializers.ValidationError('invalid UUID for "test" field')
+			if not isinstance(item.get('sample_type'), int):
+				raise serializers.ValidationError('Invalid integer for "sample_type" field')
+		return value
 
 	class Meta:
 
