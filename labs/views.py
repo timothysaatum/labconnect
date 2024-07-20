@@ -396,9 +396,6 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 			)
 
 		test = serializer.save()
-		branch_test = BranchTest.objects.get(test=test.id)
-		branch_test.test_status = serializer.data['test_status']
-		branch_test.save()
 
 		if branches:
 			test.branch.clear()
