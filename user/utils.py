@@ -41,8 +41,8 @@ def send_code_to_user(email):
 		message.send(fail_silently=False)
 
 	except Exception as e:
-
-		raise ValidationError(str(e))
+		print(e)
+		# raise ValidationError(str(e))
 
 def run_async_function(email):
     asyncio.run(send_code_to_user(email))

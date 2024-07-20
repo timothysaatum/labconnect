@@ -119,7 +119,7 @@ class BranchTest(models.Model):
 		('active', 'active'),
 		('inactive', 'inactive')
 	]
-	test = models.ForeignKey(Test, on_delete=models.CASCADE)
+	test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='branch_test')
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	test_status = models.CharField(max_length=10 ,choices=STATUS_CHOICES, default='active')
 	price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)

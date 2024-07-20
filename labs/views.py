@@ -388,7 +388,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 		#Clears the current branch set for the tests
 		query_dict.update(self.request.data)
-		branches = query_dict.get('branch')
+		branches = query_dict.getlist('branch')
 		#Updates the test with the new branches if there is any.
 		if not branches and len(query_dict) < 1:
 			raise ValidationError(
@@ -396,6 +396,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 			)
 
 		test = serializer.save()
+
 		if branches:
 			test.branch.clear()
 			test.branch.add(*branches)
@@ -540,7 +541,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
-		print(json.dumps(self.request.data, indent=4))
+		print(self.request.data)
 		sample = serializer.save(
 			referring_facility=facility, 
 			sender_full_name=self.request.user.full_name,
