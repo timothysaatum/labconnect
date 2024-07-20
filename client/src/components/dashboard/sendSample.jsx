@@ -142,13 +142,13 @@ export default function SendSample() {
   //field array for tests
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "tests",
+    name: "test_data",
   });
 
   // id of lab to fetch tests for
   useEffect(() => {
     setId(form.watch("to_laboratory"));
-    form.setValue("tests", []);
+    form.setValue("test_data", []);
   }, [form.watch("to_laboratory")]);
 
   //intialize with a single field
@@ -271,7 +271,7 @@ export default function SendSample() {
                 </Button>
                 <Button size="sm" onClick={handleSave} type="button">
                   Save and continue later
-                  {saving && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
+                  {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                 </Button>
               </div>
             </div>
@@ -301,7 +301,7 @@ export default function SendSample() {
                           </FormBuilder>
                         </div>
 
-                        <div className="grid sm:grid-cols-[1fr_200px] gap-4">
+                        <div className="grid gap-4 sm:grid-cols-[1fr_200px]">
                           <div>
                             <SelectComponent
                               label={"Select patient gender"}
@@ -364,7 +364,7 @@ export default function SendSample() {
                         search={"Search laboratory..."}
                       />
                     </CardContent>
-                    <CardFooter className="justify-center border-t p-4 text-xs tracking-tight text-center text-muted-foreground">
+                    <CardFooter className="justify-center border-t p-4 text-center text-xs tracking-tight text-muted-foreground">
                       Select the laboratory you want to send sample to so you
                       can see the tests available
                     </CardFooter>
@@ -405,7 +405,7 @@ export default function SendSample() {
                       <button
                         onClick={() => filePickeRef.current.click()}
                         type="button"
-                        className="flex md:aspect-video w-full items-center justify-center rounded-md border border-dashed max-md:h-20"
+                        className="flex w-full items-center justify-center rounded-md border border-dashed max-md:h-20 md:aspect-video"
                       >
                         <Upload className="h-4 w-4 text-muted-foreground" />
                         <span className="sr-only">Upload</span>
@@ -435,7 +435,7 @@ export default function SendSample() {
                     </CardContent>
                   </Card>
                 </div>
-                <div ref={TestsCardRef} className="py-4 col-span-3">
+                <div ref={TestsCardRef} className="col-span-3 py-4">
                   <Card>
                     <CardHeader>
                       <CardTitle>Choose Tests</CardTitle>
@@ -449,12 +449,12 @@ export default function SendSample() {
                         {fields.map((item, index) => (
                           <div
                             key={item.id}
-                            className="grid gap-2 md:gap-6 lg:grid-cols-[1fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
+                            className="grid gap-2 max-md:mb-4 max-md:border-b max-md:pb-4 max-md:last:mb-0 max-md:last:border-b-0 max-md:last:pb-0 md:gap-6 lg:grid-cols-[1fr_1fr]"
                           >
                             <div>
                               <PopoverSelectwithhover
                                 form={form}
-                                name={`tests.${index}.test`}
+                                name={`test_data.${index}.test`}
                                 error={testsError}
                                 loading={testsLoading}
                                 items={tests}
@@ -463,16 +463,16 @@ export default function SendSample() {
                                 search={"Search tests..."}
                               />
                             </div>
-                            <div className="flex justify-between items-end gap-2">
+                            <div className="flex items-end justify-between gap-2">
                               <div>
                                 <SelectComponentWithHover
                                   form={form}
-                                  name={`tests.${index}.sample_type`}
+                                  name={`test_data.${index}.sample_type`}
                                   error={testsError}
                                   loading={testsLoading}
                                   index={index}
                                   data={tests?.data}
-                                  id={form.watch(`tests.${index}.test`)}
+                                  id={form.watch(`test_data.${index}.test`)}
                                   label={"what sample are you sending"}
                                   title={"sample types"}
                                   search={"Search sample type..."}
@@ -493,17 +493,17 @@ export default function SendSample() {
                         ))}
                       </div>
                     </CardContent>
-                    <CardFooter className="justify-center border-t p-0 py-2 text-xs tracking-tight text-center text-muted-foreground">
+                    <CardFooter className="justify-center border-t p-0 py-2 text-center text-xs tracking-tight text-muted-foreground">
                       <Button
                         variant="ghost"
                         onClick={() => append({ test: "", sample_type: "" })}
                       >
-                        Add more tests <PlusCircle className="w-4 h-4 ml-1" />
+                        Add more tests <PlusCircle className="ml-1 h-4 w-4" />
                       </Button>
                     </CardFooter>
                   </Card>
                 </div>
-                <Button className="-mt-4 hidden md:block w-full col-span-2 ">
+                <Button className="col-span-2 -mt-4 hidden w-full md:block">
                   Proceed to checkout
                 </Button>
               </form>
@@ -526,7 +526,7 @@ export default function SendSample() {
                 Continue later
               </Button>
               {}
-              <Button className="flex-grow ml-4">Proceed to checkout</Button>
+              <Button className="ml-4 flex-grow">Proceed to checkout</Button>
             </div>
           </div>
         </main>

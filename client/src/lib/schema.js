@@ -68,7 +68,7 @@ export const labRequestSchema = z.object({
   patient_sex: z.string().min(1, "Sex is required"),
   from_lab: z.string().min(1, "laboratory is required"),
   to_laboratory: z.string().min(1, "laboratory is required"),
-  tests: z.array(multiSelectSchema).min(1),
+  test_data: z.array(multiSelectSchema).min(1),
   priority: z.string().min(1, "Choose test priority"),
   payment_mode: z.string().min(1, "Choose a payment mode"),
   sample_status: z.string().min(1, ""),
@@ -125,7 +125,7 @@ export const AddDiscountSchema = z
     {
       message: "Discount cannot be greater price",
       path: ["discount_price"],
-    }
+    },
   );
 // addTest Schema
 export const AddTestSchema = z
@@ -154,7 +154,7 @@ export const AddTestSchema = z
         z.object({
           label: z.string(),
           value: z.number(),
-        })
+        }),
       )
       .min(1),
   })
@@ -166,7 +166,7 @@ export const AddTestSchema = z
     {
       message: "Discount cannot be greater price",
       path: ["discount_price"],
-    }
+    },
   );
 
 //addBranch schema
