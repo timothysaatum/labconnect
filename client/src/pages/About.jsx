@@ -1,6 +1,6 @@
 import React from 'react';
-import AboutUs from '../components/aboutUs/aboutus';
-import Started from '../components/aboutUs/started';
+import AboutUs from '@/components/aboutUs/aboutus';
+import Started from '@/components/aboutUs/started';
 
 //https://dribbble.com/shots/23238413-Kawruh-About-Us-Page
 

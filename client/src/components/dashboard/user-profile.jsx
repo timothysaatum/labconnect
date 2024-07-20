@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, FormField, FormItem, FormLabel } from "../ui/form";
+import { Form } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { PhoneInput } from "../ui/phone-input";
@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrenttoken, setCredentials } from "@/redux/auth/authSlice";
+import { selectCurrenttoken } from "@/redux/auth/authSlice";
 import useRefreshToken from "@/hooks/useRefreshToken";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -33,9 +33,15 @@ const UserProfile = () => {
       last_name: "",
       email: "",
       phone_number: "",
-      id_number: "",
-      gender: "",
-      digital_address: "",
+      profile: [
+        {
+          gender: "",
+          id_number: "",
+          digital_address: "",
+          emergency_contact: "",
+          bio: "",
+        },
+      ],
     },
   });
   const onSubmit = async (data) => {
@@ -76,7 +82,6 @@ const UserProfile = () => {
       form.setValue("digital_address", userdata?.digital_address);
     }
   }, [user]);
-  console.log(userdata?.profile[0]?.id_number);
   return (
     <Form {...form}>
       <form
@@ -100,19 +105,30 @@ const UserProfile = () => {
           <FormBuilder name={"phone_number"} label={"Phone number"} message>
             <PhoneInput defaultCountry="GH" />
           </FormBuilder>
+          <FormBuilder
+            name={`profile.${[0]}.emergency_contact`}
+            label={"Emergency contact"}
+            message
+          >
+            <PhoneInput defaultCountry="GH" />
+          </FormBuilder>
           <SelectComponent
             items={gender}
-            name={"gender"}
+            name={`profile.${[0]}.gender`}
             placeholder={"choose your gender"}
             control={form.control}
             label={"Gender"}
             message
           />
-          <FormBuilder name={"id_number"} label={"Id number"} message>
+          <FormBuilder
+            name={`profile.${[0]}.id_number`}
+            label={"Id number"}
+            message
+          >
             <Input type="text" placeholder="Id number" />
           </FormBuilder>
           <FormBuilder
-            name={"digital_address"}
+            name={`profile.${[0]}.digital_address`}
             label={"Digital aadress"}
             message
           >
