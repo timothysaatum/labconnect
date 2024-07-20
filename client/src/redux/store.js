@@ -15,6 +15,7 @@ import rowCountReducer from "./dataTable/rowcount";
 import sampleDataReducer from "./formData/sendsampleSave";
 import activeBranchReducer from "./branches/activeBranchSlice";
 import updatetestmethodReducer from "./lab/updatetestmethodSlice";
+import graphTypesReducer from "./analytics/graphTypesSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -31,6 +32,8 @@ const rootReducer = combineReducers({
   sampleData: sampleDataReducer,
   activeBranch: activeBranchReducer,
   updatetestmethod: updatetestmethodReducer,
+  graphTypes: graphTypesReducer,
+
 });
 const persistConfig = {
   key: "root",

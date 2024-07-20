@@ -80,7 +80,7 @@ export const BranchForm = ({ setOpen, form, className, id }) => {
               items={Labmanagers}
               placeholder={"Select Branch Manager"}
               className="flex-1"
-              description={"click is the + to send a new invite"}
+              description={"click on the + to send a new invite"}
               empty={"This laboratory has no other users."}
             />
             <AddManager branchId={id}>

@@ -30,6 +30,9 @@ export function ApplyDisCount({ children, test }) {
 
   const discount = form.watch("discount_price");
 
+  useEffect(() => {
+    console.log(form.formState.errors);
+  }, [form.formState.errors]);
   //intializing discount is there is one
 
   const prevDiscount = useMemo(() => {
@@ -50,7 +53,7 @@ export function ApplyDisCount({ children, test }) {
   }, [discount]);
 
   // update discount
-  const onaddDiscount = useAddDiscount(form, test,setOpen);
+  const onaddDiscount = useAddDiscount(form, test, setOpen);
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -84,13 +87,13 @@ export function ApplyDisCount({ children, test }) {
                 </span>
               </div>
               <FormBuilder
-                name={'discount_price'}
-                label={'Discount amount '}
+                name={"discount_price"}
+                label={"Discount amount "}
                 className="grid grid-cols-3 items-center gap-4"
                 message
-                messageClassName={'col-span-3'}
-                description={'enter 0 to remove discount'}
-                descriptionClassName={'col-span-3 text-xs'}
+                messageClassName={"col-span-3"}
+                description={"enter 0 to remove discount"}
+                descriptionClassName={"col-span-3 text-xs"}
               >
                 <Input
                   id="maxWidth"
@@ -102,20 +105,20 @@ export function ApplyDisCount({ children, test }) {
                 disabled={
                   form.formState.isSubmitting ||
                   !discount ||
-                  prevDiscount === form.watch('discount_price') ||
+                  prevDiscount === form.watch("discount_price") ||
                   parseFloat(discount) > parseFloat(test?.price)
                 }
               >
                 {form.formState.isSubmitting ? (
                   <span className="flex items-center">
-                    Applying discount{' '}
+                    Applying discount{" "}
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                   </span>
                 ) : discount &&
                   parseFloat(discount) < parseFloat(test?.price) ? (
                   `Apply ${percent} discount`
                 ) : (
-                  'Apply discount'
+                  "Apply discount"
                 )}
               </Button>
             </form>

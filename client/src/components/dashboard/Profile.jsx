@@ -36,14 +36,6 @@ const Sidebar = ({ tab }) => {
         >
           Laboratory profile
         </Link>
-        <Link
-          to="?tab=branch-profile"
-          className={`${
-            tab === "branch-profile" ? "bg-muted-foreground/5" : ""
-          } flex flex-col py-2 px-6 rounded-md hover:underline underline-offset-4`}
-        >
-          Branches
-        </Link>
       </nav>
     </aside>
   );

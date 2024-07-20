@@ -29,7 +29,7 @@ export const useGetSideLinks = (account_type) => {
     },
     {
       icon: <LineChart className="h-5 w-5" />,
-      link: "/analytics",
+      link: "analytics",
       name: "analytics",
     },
     {

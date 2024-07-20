@@ -104,7 +104,7 @@ export const ResetPassSchema = z
 export const AddDiscountSchema = z
   .object({
     price: z
-      .string()
+      .number()
       .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
         message: "must be a positive integer",
       })
