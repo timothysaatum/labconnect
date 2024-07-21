@@ -80,5 +80,5 @@ urlpatterns = [
     path('sample/update/<uuid:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
     path('sample/delete/<uuid:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample'),
     path('update/test-for-branch/<uuid:branch_id>/<uuid:test_id>/', UpdateTestForSpecificBranch.as_view(), name='specific-update'),
-    path('copy-tests-another-branch/<uuid:branch_to_copy_id>/', CopyTests.as_view(), name='copy-test')
+    path('copy-tests-to-another-branch/<uuid:branch_to_copy_to_id>/', CopyTests.as_view(), name='copy-test')
 ]
