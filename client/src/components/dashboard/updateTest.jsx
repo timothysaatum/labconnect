@@ -42,16 +42,14 @@ import {
   useFetchUserBranches,
   useFetchUserLab,
 } from "@/api/queries";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AddTestSchema } from "@/lib/schema";
 import AddSampleType from "./addsampleType";
 import { useSelector } from "react-redux";
 import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
 import { useUpdateTest } from "@/lib/formactions";
+import { UpdateTestSchema } from "@/lib/schema";
 
 const TestForm = ({ setOpen, form, test }) => {
   const onUpdateTest = useUpdateTest(setOpen, form, test?.id);
@@ -228,24 +226,16 @@ const UpdateTest = ({ branch, test }) => {
     return [];
   }, [userbranches, test.branch]);
 
-  const customResolver = (values) => {
-    const result = zodResolver(AddTestSchema)(values);
-    if (result?.errors && result?.errors?.branch) {
-      delete result?.errors?.branch;
-    }
-    return result;
-  };
-
   const form = useForm({
-    resolver: zodResolver(customResolver),
+    resolver: zodResolver(UpdateTestSchema),
     defaultValues: {
       test_code: test.test_code,
       name: test.test_name,
-      price: test.price,
+      price: `${test.price}`,
       turn_around_time: test.turn_around_time.split(" ")[0],
       patient_preparation: test.patient_preparation,
       unit: test.turn_around_time.split(" ")[1],
-      discount_price: test.discount_price,
+      discount_price: `${test.discount_price}`,
       sample_type: sampleType,
     },
   });
@@ -271,11 +261,7 @@ const UpdateTest = ({ branch, test }) => {
                 </DialogDescription>
               </div>
             </DialogHeader>
-            <TestForm
-              setOpen={setOpen}
-              test={test}
-              form={form}
-            />
+            <TestForm setOpen={setOpen} test={test} form={form} />
           </div>
         </DialogContent>
       </Dialog>
@@ -294,11 +280,7 @@ const UpdateTest = ({ branch, test }) => {
             <DrawerTitle>Update {test.test_name}</DrawerTitle>
             <DrawerDescription>Keep open after adding test</DrawerDescription>
           </DrawerHeader>
-          <TestForm
-            setOpen={setOpen}
-            test={test}
-            form={form}
-          />
+          <TestForm setOpen={setOpen} test={test} form={form} />
         </div>
       </DrawerContent>
     </Drawer>

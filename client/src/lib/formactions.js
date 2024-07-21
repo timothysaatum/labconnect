@@ -25,26 +25,20 @@ export const useSendSample = () => {
       newData.attachment = newData.attachment[0];
     }
     try {
-      const formData = new FormData();
+      // const formData = new FormData();
 
-      for (const key in newData) {
-        formData.append(key, newData[key]);
-      }
-      await axiosPrivate.post(
-        "laboratory/sample/add/",
-        formData,
-
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      // for (const key in newData) {
+      //   formData.append(key, newData[key]);
+      // }
+      console.log(newData);
+      await axiosPrivate.post("laboratory/sample/add/", newData);
       form.reset();
       queryClient.invalidateQueries(["Requests"]);
       toast.success("Sample Sent", {
         position: "top-center",
       });
     } catch (error) {
-      console.log(error.data);
+      console.log(error);
     }
   };
 
@@ -285,12 +279,14 @@ export const useAddTest = (keepOpen, setOpen, form) => {
   return onAddTest;
 };
 
-//updating a test for all branches
+//updating a test
 export const useUpdateTest = (setOpen, form, id) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
   const activeBranch = useSelector(selectActiveBranch);
   const testMethod = useSelector(selectTestMethod);
+
+  // updating for all branches
   const onUpdateTestForAll = useCallback(
     async (data) => {
       const branchvalue = data?.branch
@@ -325,8 +321,11 @@ export const useUpdateTest = (setOpen, form, id) => {
     },
     [form]
   );
+
+  //updating for active
   const onUpdateTestForActiveBranch = useCallback(
     async (data) => {
+      console.log(data);
       const branchvalue = data?.branch
         ? data.branch.map((branch) => branch.value)
         : [];

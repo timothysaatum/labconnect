@@ -21,13 +21,11 @@ import { useMemo } from "react";
 
 const Header = () => {
   const location = useLocation();
-  const { data: userdetails, isError } = useFetchUserDetails();
   const logout = useLogout();
 
   const { data: labData } = useFetchUserLab();
   const data = useMemo(() => labData, [labData]);
-  const userdata = useMemo(() => userdetails, [userdetails]);
-  const user = userdata?.data?.data;
+  const user = useSelector(selectCurrentUser);
   return (
     <nav
       aria-label="main navigation bar"

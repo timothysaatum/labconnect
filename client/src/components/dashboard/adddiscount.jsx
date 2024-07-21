@@ -10,13 +10,12 @@ import { useEffect, useMemo, useState } from "react";
 import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
 import { Form } from "../ui/form";
-import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useAddDiscount } from "@/lib/formactions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddDiscountSchema } from "@/lib/schema";
 import { Loader2 } from "lucide-react";
 
-export function ApplyDisCount({ children, test }) {
+export function ApplyDisCount({ test }) {
   const [percent, setPercent] = useState(0);
   const [open, setOpen] = useState(false);
 

@@ -244,21 +244,9 @@ export const testscolumnDef = [
                 </span>
               )}
               <ApplyDisCount test={test} />
-              {test?.branch?.length > 1 ? (
-                <DeactivateDialog
-                  purpose={"Deactivate"}
-                  mutate={mutateforall}
-                  isPending={isPending}
-                  branch={activeBranchName}
-                  mutateforbranch={mutateforbranch}
-                  pending={pending}
-                  data={"inactive"}
-                />
-              ) : (
-                <DropdownMenuItem onClick={() => mutateforbranch("inactive")}>
-                  Deactivate test
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem onClick={() => mutateforbranch("inactive")}>
+                Deactivate test
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -278,21 +266,9 @@ export const testscolumnDef = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {test?.branch?.length > 1 ? (
-                <DeactivateDialog
-                  purpose={"Activate"}
-                  data={"active"}
-                  branch={activeBranchName}
-                  mutate={mutateforall}
-                  mutateforbranch={mutateforbranch}
-                  isPending={isPending}
-                  pending={pending}
-                />
-              ) : (
-                <DropdownMenuItem onClick={() => mutateforbranch("active")}>
-                  Activate test
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuItem onClick={() => mutateforbranch("active")}>
+                Activate test
+              </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
