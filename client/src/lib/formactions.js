@@ -285,12 +285,14 @@ export const useAddTest = (keepOpen, setOpen, form) => {
   return onAddTest;
 };
 
-//updating a test for all branches
+//updating a test
 export const useUpdateTest = (setOpen, form, id) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
   const activeBranch = useSelector(selectActiveBranch);
   const testMethod = useSelector(selectTestMethod);
+
+  // updating for all branches
   const onUpdateTestForAll = useCallback(
     async (data) => {
       const branchvalue = data?.branch
@@ -325,8 +327,11 @@ export const useUpdateTest = (setOpen, form, id) => {
     },
     [form]
   );
+
+  //updating for active
   const onUpdateTestForActiveBranch = useCallback(
     async (data) => {
+      console.log(data);
       const branchvalue = data?.branch
         ? data.branch.map((branch) => branch.value)
         : [];
