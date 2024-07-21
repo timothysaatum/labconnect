@@ -29,7 +29,11 @@ class SampleAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
 	list_display = (
 		'user',
-		'sample'
+		'sample',
+		'status',
+		'is_read',
+		'date_created',
+		'date_modified'
 	)
 
 admin.site.register(Sample, SampleAdmin)
