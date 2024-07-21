@@ -49,7 +49,7 @@ import { useSelector } from "react-redux";
 import { selectSampleTypes } from "@/redux/samples/sampleTypeSlice";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
 import { useUpdateTest } from "@/lib/formactions";
-import { UpdateTestSchema } from "@/lib/schema";
+import { AddTestSchema, UpdateTestSchema } from "@/lib/schema";
 
 const TestForm = ({ setOpen, form, test }) => {
   const onUpdateTest = useUpdateTest(setOpen, form, test?.id);
@@ -215,7 +215,7 @@ const TestForm = ({ setOpen, form, test }) => {
 const UpdateTest = ({ branch, test }) => {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const { data: userbranches } = useFetchUserBranches();
+  const { data: userbranches, isPending } = useFetchUserBranches();
 
   const sampleType = useMemo(() => {
     if (test.sample_type) {
@@ -226,8 +226,21 @@ const UpdateTest = ({ branch, test }) => {
     return [];
   }, [userbranches, test.branch]);
 
+  const branches = useMemo(() => {
+    if (userbranches?.data) {
+      return test.branch.map((branch) => {
+        const findBranch = userbranches.data.find(
+          (userBranch) => branch === userBranch.id
+        );
+        return { label: findBranch.name, value: findBranch.id };
+      });
+    }
+    return [];
+  }, [userbranches, test.branch]);
+  console.log(branches);
+
   const form = useForm({
-    resolver: zodResolver(UpdateTestSchema),
+    resolver: zodResolver(AddTestSchema),
     defaultValues: {
       test_code: test.test_code,
       name: test.test_name,
@@ -237,6 +250,7 @@ const UpdateTest = ({ branch, test }) => {
       unit: test.turn_around_time.split(" ")[1],
       discount_price: `${test.discount_price}`,
       sample_type: sampleType,
+      branch: branches,
     },
   });
 
