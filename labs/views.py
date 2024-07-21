@@ -535,7 +535,17 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-
+		# test_data = [
+		# 		{'test': '3db54b83-2ad3-43e7-9f81-4bbddb7bd563', 'sample_type': 1}
+		# 	]
+		# copied_data = request.data.copy()
+		# copied_data['test_data'] = json.dumps(test_data)
+		# parse_data = json.loads(copied_data['test_data'])
+		# data = {
+		# 	'other': copied_data,
+		# 	# 'test_data': parse_data
+		# }
+		print(request.data)
 		return self.create(request)
 
 	def perform_create(self, serializer):
@@ -549,6 +559,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 			sender_email=facility.email,
 			facility_type='Laboratory'
 		)
+		print(self.request.data)
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
 		# print(query_dict)
