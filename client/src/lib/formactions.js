@@ -25,20 +25,26 @@ export const useSendSample = () => {
       newData.attachment = newData.attachment[0];
     }
     try {
-      // const formData = new FormData();
+      const formData = new FormData();
 
-      // for (const key in newData) {
-      //   formData.append(key, newData[key]);
-      // }
-      console.log(newData);
-      await axiosPrivate.post("laboratory/sample/add/", newData);
+      for (const key in newData) {
+        formData.append(key, newData[key]);
+      }
+      await axiosPrivate.post(
+        "laboratory/sample/add/",
+        formData,
+
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       form.reset();
       queryClient.invalidateQueries(["Requests"]);
       toast.success("Sample Sent", {
         position: "top-center",
       });
     } catch (error) {
-      console.log(error);
+      console.log(error.data);
     }
   };
 
