@@ -388,13 +388,13 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 		#Clears the current branch set for the tests
 		query_dict.update(self.request.data)
-		branches = query_dict.getlist('branch')
+		branches = query_dict.get('branch')
 		#Updates the test with the new branches if there is any.
 		if not branches and len(query_dict) < 1:
 			raise ValidationError(
 				{'error': 'Test must have at least one(1) branch'}
 			)
-
+		print(branches)
 		test = serializer.save()
 
 		if branches:
@@ -535,13 +535,13 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-
+		
 		return self.create(request)
 
 	def perform_create(self, serializer):
 
 		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
-		print(self.request.data)
+		# print(self.request.data)
 		sample = serializer.save(
 			referring_facility=facility, 
 			sender_full_name=self.request.user.full_name,
@@ -549,11 +549,12 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 			sender_email=facility.email,
 			facility_type='Laboratory'
 		)
+		# print(self.request.data)
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
 		# print(query_dict)
+		# print(sample)
 		tests = query_dict.getlist('tests')
-		# print(tests)
 		sample.tests.add(*tests)
 		Notification.objects.create(user=self.request.user, sample=sample, status=sample.sample_status)
 

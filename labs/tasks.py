@@ -1,7 +1,7 @@
 from celery import shared_task
 from .models import Test
 from .serializers import TestSerializer
-print('Hello there')
+# print('Hello there')
 @shared_task
 def copy_test_to_branch(test_ids, target_branch_id):
     if not test_ids:

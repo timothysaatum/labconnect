@@ -27,6 +27,7 @@ urlpatterns = [
     path('api/hospital/', include('hospital.urls')),
     path('api/user/', include('user.urls')),
     path('api/laboratory/', include('labs.urls')),
+    path('api/sample/', include('sample.urls')),
     path('api/transactions/', include('transactions.urls')),
     path('api/user/profile/', include('profiles.urls')),
     #path('__debug__/', include('debug_toolbar.urls'))

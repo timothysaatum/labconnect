@@ -109,4 +109,3 @@ class Notification(models.Model):
 
 	def __str__(self) -> str:
 		return self.user.full_name
-	
