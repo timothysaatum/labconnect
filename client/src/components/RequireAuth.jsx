@@ -39,9 +39,11 @@ export const HasLaboratory = () => {
   if (isError) {
     return toast.error("An error has occured");
   }
-  if (!user?.is_branch_manager) {
+  if (user?.is_branch_manager) {
     return <Outlet />;
   }
+  console.log(user?.is_admin);
+  console.log(userlab?.data.length > 0);
   return user?.is_admin && userlab?.data.length > 0 ? (
     <Outlet />
   ) : (

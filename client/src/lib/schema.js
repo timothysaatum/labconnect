@@ -74,7 +74,7 @@ export const labRequestSchema = z.object({
   sample_status: z.string().min(1, ""),
   payment_status: z.string(),
   brief_description: z.string(),
-  // attachment: z.instanceof(FileList),
+  attachment: z.instanceof(FileList).optional(),
 });
 
 //OTP SCHEMA

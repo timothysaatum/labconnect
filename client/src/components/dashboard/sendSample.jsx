@@ -1,11 +1,16 @@
-import { ChevronLeft, Minus, PlusCircle, Upload } from "lucide-react";
+import { ChevronLeft, Minus, Paperclip, Trash2 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
 
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -23,7 +28,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { useFieldArray, useForm } from "react-hook-form";
-import { Form } from "../ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
 import { FormBuilder } from "../formbuilder";
 import SelectComponent from "../selectcomponent";
 import CalenderDatePicker from "./datepicker";
@@ -88,12 +100,13 @@ export default function SendSample() {
   const [saving, setSaving] = useState(false);
   const [restore, setRestore] = useState(false);
   const activeBranch = useSelector(selectActiveBranch);
+  const [imageFile, setImagefile] = useState(null);
 
   const onSendSample = useSendSample();
 
   //form declaration
   const form = useForm({
-    // resolver: zodResolver(labRequestSchema),
+    resolver: zodResolver(labRequestSchema),
     defaultValues: {
       patient_name: "",
       patient_age: "",
@@ -109,6 +122,11 @@ export default function SendSample() {
     },
   });
 
+  useEffect(() => {
+    if (form.formState.errors.attachment) {
+      toast.error(form.formState.errors.attachment.message);
+    }
+  }, [form.formState.errors.attachment]);
   //genders declaration
   const gender = [
     { value: "Male", label: "Male" },
@@ -137,7 +155,22 @@ export default function SendSample() {
   } = useFetchAllLabsBranches();
 
   //filepicker ref
-  const filePickeRef = useRef();
+  const fileref = form.register("attachment");
+  const filePickRef = useRef(null);
+
+  //file change
+
+  const handleImageChange = (e) => {
+    const file = e.target.files;
+    if (file) {
+      setImagefile(file);
+    }
+    form.clearErrors("attachment");
+  };
+
+  useEffect(() => {
+    form.setValue("logo", imageFile);
+  }, [imageFile]);
 
   //field array for tests
   const { fields, append, remove } = useFieldArray({
@@ -247,14 +280,14 @@ export default function SendSample() {
   ];
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="">
       <RestoreDialog
         setOpen={setOpen}
         open={open}
         handleDiscard={handleDiscard}
         handleRestore={handleRestore}
       />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 ">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <div className="mx-auto grid max-w-5xl flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
@@ -318,18 +351,71 @@ export default function SendSample() {
                             />
                           </div>
                         </div>
-                        <div className="grid gap-3">
+                        <div className="flex gap-5 items-end">
                           <FormBuilder
                             control={form.control}
                             name="description"
                             label={"Relevant Clinical History (Optional)"}
+                            className="flex-1"
                           >
                             <Textarea
                               className="min-h-28 resize-none"
                               maxLength={200}
                             />
                           </FormBuilder>
+
+                          <FormField
+                            name="attachment"
+                            render={({}) => (
+                              <FormItem className="hidden">
+                                <FormLabel>Choose Logo (Optional)</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="file"
+                                    {...fileref}
+                                    accept=".pdf"
+                                    onChange={handleImageChange}
+                                    ref={filePickRef}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="secondary"
+                                  size="icon"
+                                  onClick={() => filePickRef.current.click()}
+                                  type="button"
+                                >
+                                  <Paperclip className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="right">
+                                Attach file
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </div>
+                        {imageFile && (
+                          <p className=" flex gap-2 shadow hover:shadow-none items-center rounded-md w-fit p-2 bg-secondary text-secondary-foreground text-xs">
+                            <Paperclip className="w-4 h-4" />{" "}
+                            {imageFile[0].name}
+                            <Trash2
+                              className="w-4 h-4 ml-4 cursor-pointer"
+                              onClick={() => {
+                                setImagefile(null);
+                                form.setValue("attachment", {
+                                  target: { files: null },
+                                });
+                              }}
+                            />
+                          </p>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -364,10 +450,6 @@ export default function SendSample() {
                         search={"Search laboratory..."}
                       />
                     </CardContent>
-                    <CardFooter className="justify-center border-t p-4 text-center text-xs tracking-tight text-muted-foreground">
-                      Select the laboratory you want to send sample to so you
-                      can see the tests available
-                    </CardFooter>
                   </Card>
                 </div>
                 <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
@@ -387,29 +469,6 @@ export default function SendSample() {
                           />
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                  <Card className="overflow-hidden">
-                    <CardHeader>
-                      <CardTitle className="whitespace-pre-line text-lg">
-                        Upload necessary documents{" "}
-                        <span className="text-sm">(Optional)</span>
-                      </CardTitle>
-                      <CardDescription>
-                        you can Upload document such as request cards or other
-                        informations that are necessary in the test
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="">
-                      <input type="file" hidden ref={filePickeRef} />
-                      <button
-                        onClick={() => filePickeRef.current.click()}
-                        type="button"
-                        className="flex w-full items-center justify-center rounded-md border border-dashed max-md:h-20 md:aspect-video"
-                      >
-                        <Upload className="h-4 w-4 text-muted-foreground" />
-                        <span className="sr-only">Upload</span>
-                      </button>
                     </CardContent>
                   </Card>
                   <Card>
@@ -435,7 +494,7 @@ export default function SendSample() {
                     </CardContent>
                   </Card>
                 </div>
-                <div ref={TestsCardRef} className="col-span-3 py-4">
+                <div ref={TestsCardRef} className="col-span-2 py-4">
                   <Card>
                     <CardHeader>
                       <CardTitle>Choose Tests</CardTitle>
@@ -445,7 +504,7 @@ export default function SendSample() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div>
+                      {/* <div>
                         {fields.map((item, index) => (
                           <div
                             key={item.id}
@@ -491,16 +550,8 @@ export default function SendSample() {
                             </div>
                           </div>
                         ))}
-                      </div>
+                      </div> */}
                     </CardContent>
-                    <CardFooter className="justify-center border-t p-0 py-2 text-center text-xs tracking-tight text-muted-foreground">
-                      <Button
-                        variant="ghost"
-                        onClick={() => append({ test: "", sample_type: "" })}
-                      >
-                        Add more tests <PlusCircle className="ml-1 h-4 w-4" />
-                      </Button>
-                    </CardFooter>
                   </Card>
                 </div>
                 <Button className="col-span-2 -mt-4 hidden w-full md:block">

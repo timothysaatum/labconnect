@@ -14,6 +14,7 @@ export const useSendSample = () => {
   const axiosPrivate = useAxiosPrivate();
 
   const onSendSample = async (data) => {
+    console.log(data);
     const newData = {
       ...data,
       patient_age: moment(data.patient_age).format("YYYY-MM-DD"),

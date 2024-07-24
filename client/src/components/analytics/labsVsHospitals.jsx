@@ -31,8 +31,8 @@ const LabsVHospitals = () => {
   const graphType = useSelector(selectUserGraph);
   const dispatch = useDispatch();
   return (
-    <div className="mx-auto">
-      <Card className="grid max-w-lg">
+    <div className="mx-auto grid md:grid-cols-2 gap-4">
+      <Card className="mx-auto max-w-xl ">
         <CardHeader>
           <CardTitle className="text-lg">
             Hospitals vs Laboratory users
@@ -135,7 +135,28 @@ const LabsVHospitals = () => {
           </p>
         </CardFooter>
       </Card>
-      ;
+      <div className="flex justify-end">
+        <blockquote className="h-fit rounded-md border-b-2 p-5 text-sm leading-6 tracking-wider">
+          <ul className="text-xs space-y-4">
+            <li className="flex gap-2">
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              Highest Performing month:June
+            </li>
+            <li className="flex gap-2">
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              Highest Performing month for Laboratories: May
+            </li>
+            <li className="flex gap-2">
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              Highest Performing month for Hospitals: June
+            </li>
+            <li className="flex gap-2">
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              Highest Performing month for Laboratories: June
+            </li>
+          </ul>
+        </blockquote>
+      </div>
     </div>
   );
 };

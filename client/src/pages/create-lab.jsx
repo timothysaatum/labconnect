@@ -79,14 +79,14 @@ const CreateLab = ({ step, setStep }) => {
   }, [userlab]);
 
   const filePickeRef = useRef();
-  const handleImageChange = (e) => {
-    const file = e.target.files;
-    if (file) {
-      setImagefile(file);
-      setImagefileUrl(URL.createObjectURL(file[0]));
-    }
-    form.clearErrors("logo");
-  };
+const handleImageChange = (e) => {
+  const file = e.target.files;
+  if (file) {
+    setImagefile(file);
+    setImagefileUrl(URL.createObjectURL(file[0]));
+  }
+  form.clearErrors("logo");
+};
   useEffect(() => {
     console.log(imagefile);
     form.setValue("logo", imagefile);
