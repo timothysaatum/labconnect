@@ -21,17 +21,18 @@ import Labgettingstarted from "./pages/labgettingstarted";
 import MyLab from "@/components/mylab";
 import SendSample from "./components/dashboard/sendSample";
 import Analytics from "./components/laboratoryanalytics";
+import SampleDetails from "./components/sampleDetails";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
-const BranchManagerInviteAccept = React.lazy(() =>
-  import("@/pages/branchManagerInviteAccept")
+const BranchManagerInviteAccept = React.lazy(
+  () => import("@/pages/branchManagerInviteAccept")
 );
-const BranchDetails = React.lazy(() =>
-  import("@/components/dashboard/branchDetails")
+const BranchDetails = React.lazy(
+  () => import("@/components/dashboard/branchDetails")
 );
-const DashboardSettings = React.lazy(() =>
-  import("@/components/dashboard/settings")
+const DashboardSettings = React.lazy(
+  () => import("@/components/dashboard/settings")
 );
 const Tracking = React.lazy(() => import("@/pages/tracking"));
 
@@ -83,6 +84,10 @@ export default function App() {
                 >
                   <Route index element={<DashboardOverview />} />
                   <Route path="overview" element={<DashboardOverview />} />
+                  <Route
+                    path="/dashboard/overview/samples/received/:branchId/:sampleId"
+                    element={<SampleDetails />}
+                  />
                   <Route path="send-sample" element={<SendSample />} />
                   <Route path="analytics" element={<Analytics />} />
                   <Route

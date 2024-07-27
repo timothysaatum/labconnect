@@ -33,7 +33,7 @@ nav ul li {
 
 nav ul a li {
   text-decoration: none;
-  font-size: 18px;
+  font-size: 16px;
   position: relative;
 }
 
@@ -82,14 +82,14 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-@layer utilities{
-  .animation-delay-2000{
+@layer utilities {
+  .animation-delay-2000 {
     animation-delay: 2s;
   }
 
-    .animation-delay-4000 {
-      animation-delay: 4s;
-    }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
 }
 
 @layer base {

@@ -1,4 +1,4 @@
-import { MoreHorizontal } from "lucide-react";
+import { Eye, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { createCell, createSortableHeader } from "../../util/tablefxns";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 
 export const useHospitalRequestColumns = () => {
   const RequestColumns = [
@@ -91,6 +94,7 @@ export const useHospitalRequestColumns = () => {
   return RequestColumns;
 };
 export const useRequestLabColumns = () => {
+  const activeBranch = useSelector(selectActiveBranch);
   const RequestColumns = [
     {
       id: "select",
@@ -144,6 +148,22 @@ export const useRequestLabColumns = () => {
       cell: createCell("date_added"),
     },
     {
+      id: "view",
+      cell: ({ row }) => {
+        const request = row.original;
+
+        return (
+          <Link
+            to={`/dashboard/overview/samples/received/${activeBranch}/${request?.id}`}
+          >
+            <Button variant="ghost">
+              <span className="text-xs underline underline-offset-2">View</span>
+            </Button>
+          </Link>
+        );
+      },
+    },
+    {
       id: "actions",
       cell: ({ row }) => {
         const request = row.original;
@@ -159,16 +179,24 @@ export const useRequestLabColumns = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(request.id)}
+                onClick={() => navigator.clipboard.writeText(request?.id)}
               >
                 Copy payment ID
               </DropdownMenuItem>
+              <Link to={`/dashboard/overview/samples/received/${request.id}`}>
+                <DropdownMenuItem>view sample</DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View Laboratory</DropdownMenuItem>
               <DropdownMenuItem>
-                <a></a>
-                Download Attachment
-                </DropdownMenuItem>
+                <a
+                  href={request?.attachment}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Attachment
+                </a>
+              </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Upload Results</DropdownMenuItem>

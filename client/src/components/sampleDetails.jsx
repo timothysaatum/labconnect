@@ -1,171 +1,239 @@
-import { ChevronLeft, ChevronRight, Copy, MoreVertical, X } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { useFetchLabRequestsReceived } from "@/api/queries";
+import React, { useId } from "react";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from "@/components/ui/pagination";
-import { Separator } from "@/components/ui/separator";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
-import moment from "moment";
-import { Label } from "../ui/label";
+} from "./ui/card";
+import { calcAge } from "@/util/ageCalculate";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "./ui/button";
 
-const formVariants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    opacity: 1,
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      ease: "easeOut",
-    },
-  },
-};
+const SampleDetails = () => {
+  const { branchId, sampleId } = useParams();
+  const { data, isPending, isError } = useFetchLabRequestsReceived(branchId);
 
-const SampleDetails = ({
-  selected,
-  setSelectedSamples,
-  updatedAt,
-  prevSample,
-  nextSample,
-}) => {
+  if (isPending) return <div>Loading...</div>;
+  if (isError) {
+    toast.error("An error occurred. Please try again");
+    return <div className="pl-14">Error...</div>;
+  }
+
+  // transforming sample.id to a string
+
+  let sample = data?.data?.find((sample) => {
+    return sample.id.toString() === sampleId;
+  });
+  let index = data?.data?.findIndex((sample) => {
+    return sample.id.toString() === sampleId;
+  });
+  if (!sample) {
+    toast.error("No sample found with the given id");
+    return <div className="pl-14">Sample not found</div>;
+  }
+  const NextLink = () => {
+    if (index + 1 < data?.data?.length) {
+      return `/dashboard/overview/samples/received/${branchId}/${data?.data[index + 1].id}`;
+    } else {
+      return `/dashboard/overview/samples/received/${branchId}/${data?.data[0].id}`;
+    }
+  };
+
+  const prevLink = () => {
+    if (index - 1 >= 0) {
+      return `/dashboard/overview/samples/received/${branchId}/${data?.data[index - 1].id}`;
+    } else {
+      return `/dashboard/overview/samples/received/${branchId}/${data?.data[data?.data.length - 1].id}`;
+    }
+  };
   return (
-    <motion.div
-      variants={formVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      className={cn("col-span-4")}
-    >
-      <Card className="overflow-hidden">
-        <CardHeader className="bg-muted/50">
-          <div className="flex flex-row items-start">
-            <div className="grid gap-0.5">
-              <CardTitle className="group flex items-center gap-2 text-lg">
-                <p className="text-sm">Sample ID: {selected?.id}</p>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                >
-                  <Copy className="h-3 w-3" />
-                  <span className="sr-only">Copy Sample ID</span>
-                </Button>
-              </CardTitle>
-              <CardDescription>
-                Date added: {moment(selected?.date_added).format("MMM Do YY")}
-              </CardDescription>
-            </div>
-            <div className="ml-auto flex items-center gap-1">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="outline" className="h-8 w-8">
-                    <MoreVertical className="h-3.5 w-3.5" />
-                    <span className="sr-only">More</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>Edit and Update</DropdownMenuItem>
-                  <DropdownMenuItem>Delete</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Button
-                className="h-8 w-8"
-                size="icons"
-                variant="outline"
-                onClick={() => setSelectedSamples(null)}
-              >
-                <X className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          </div>
+    <main className="pl-14 mx-4 py-10">
+      <Card className="max-w-5xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-xl">
+            {sample?.id} - {sample?.patient_name}
+          </CardTitle>
+          <CardDescription className="border-b-2 pb-4">
+            displaying details of the sample with id {sample?.id}
+          </CardDescription>
         </CardHeader>
-        <CardContent className="p-6 text-sm">
-          <div className="grid gap-6 ">
-            <div className="font-semibold">Sample Details</div>
-            <em>Patient</em>
-            <ul className="grid gap-3">
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Test name</span>
-                <span>{selected?.name}</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Accepted Samples</span>
-                <span></span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Price</span>
-                <span>GHS</span>
-              </li>
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Turn around time</span>
-                <span>
-                  {moment(selected?.turn_around_time, "HH:mm:ss").format(
-                    "h [hours] m [minutes]"
-                  )}
-                </span>
-              </li>
-            </ul>
-            <Separator className="my-2" />
-            <Label className="text-muted-foreground">Patient preparation</Label>
-            <p>{selected.patient_preparation}</p>
+        <CardContent>
+          <div className="grid grid-cols-[300px_1fr] gap-4 divide-x-2">
+            <div className="col-span-1 space-y-6 px-4 bg-muted/10 py-8 rounded-lg">
+              <div className="border-[1px] p-4 rounded-3xl space-y-2">
+                <CardTitle className="text-md underline underline-offset-2">
+                  Patient Details
+                </CardTitle>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Name
+                  </span>{" "}
+                  :{" "}
+                  <span className=" ml-5 capitalize text-[12px]">
+                    {sample?.patient_name}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Age
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {calcAge(sample?.patient_age)}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Gender
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {sample?.patient_sex}
+                  </span>
+                </div>
+                {sample?.attachment && (
+                  <div className="text-end">
+                    <a
+                      href={sample?.attachment}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline text-blue-700 text-xs"
+                    >
+                      View attachment
+                    </a>
+                  </div>
+                )}
+              </div>
+              <div className="border-[1px] p-4 rounded-3xl space-y-2">
+                <CardTitle className="text-md underline underline-offset-2">
+                  Referor Details
+                </CardTitle>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    facilty
+                  </span>{" "}
+                  :{" "}
+                  <span className=" ml-5 capitalize text-[12px]">
+                    {sample?.referring_facility}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Facility Type
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {sample?.facility_type}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Name of referor
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {sample?.sender_full_name}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    referor email
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {sample?.sender_email}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    referor Contact
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {sample?.sender_phone}
+                  </span>
+                </div>
+              </div>
+              <div className="border-[1px] p-4 rounded-3xl space-y-2">
+                <CardTitle className="text-md underline underline-offset-2">
+                  Payment Details
+                </CardTitle>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Payment Status
+                  </span>{" "}
+                  :{" "}
+                  <span
+                    className={`ml-5 capitalize text-[12px] ${sample?.payment_status === "Paid" ? "text-green-400" : ""}`}
+                  >
+                    {sample?.payment_status}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Payment Method
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {sample?.payment_mode}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="px-4 flex flex-col gap-4">
+              {sample?.clinical_history && (
+                <div className="border-b-[1px] rounded-b-sm p-4 ">
+                  <CardTitle className="text-lg underline underline-offset-2 pb-4">
+                    {" "}
+                    Clinical History
+                  </CardTitle>
+                  <div>
+                    <p className="first-letter:uppercase text-[15px]">
+                      {sample?.clinical_history}
+                    </p>
+                  </div>
+                </div>
+              )}
+              <div className="border-[1px] p-4 flex-1 rounded-md ">
+                <CardTitle className="text-lg underline underline-offset-2 py-4">
+                  Tests Requested
+                </CardTitle>
+                <div>
+                  <ul className="flex flex-col gap-3">
+                    {sample?.tests?.map((test) => (
+                      <li className="text-[14px] capitalize" key={test}>
+                        <ChevronRight className="inline w-4 h-34 mr-2 text-muted" />
+                        {test}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-          <div className="text-xs text-muted-foreground">
-            Updated{" "}
-            <time dateTime={moment(updatedAt).format("YYYY MM DD HH:mm:ss")}>
-              {moment(updatedAt).format("MMM Do YYYY HH:mm:ss")}
-            </time>
-          </div>
-          <Pagination className="ml-auto mr-0 w-auto">
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-6 w-6"
-                  onClick={prevTest}
-                >
-                  <ChevronLeft className="h-3.5 w-3.5" />
-                  <span className="sr-only">Previous Order</span>
-                </Button>
-              </PaginationItem>
-              <PaginationItem>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-6 w-6"
-                  onClick={nextTest}
-                >
-                  <ChevronRight className="h-3.5 w-3.5" />
-                  <span className="sr-only">Next Order</span>
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </CardFooter>
       </Card>
-    </motion.div>
+      <div className="max-w-5xl mx-auto">
+        <div className="flex justify-end">
+          <div className="my-4 flex gap-4">
+            <Link to={prevLink()}>
+              <Button className="" variant="outline" size="icon">
+                <ChevronLeft />
+              </Button>
+            </Link>
+            <Link to={NextLink()}>
+              <Button variant="outline" size="icon">
+                <ChevronRight />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 };
 

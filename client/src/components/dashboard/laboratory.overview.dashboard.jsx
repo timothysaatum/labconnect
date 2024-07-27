@@ -30,7 +30,6 @@ import StackedCardsOverview from "../overviewcards";
 import SampleDetails from "@/components/dashboard/sampleDetails";
 import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
-import { MovingButton } from "../ui/movingborder";
 import {
   changeBranch,
   selectActiveBranch,
@@ -94,7 +93,6 @@ function ErrorLab({ refetch }) {
 export default function LaboratoryDashboardOverview() {
   const [requestsReceived, setTableRequestsReceived] = useState([]);
   const [requestsSent, setTableRequestsSent] = useState([]);
-  // const [checked, setChecked] = useState();
   const requestColumns = useRequestLabColumns();
   const [selectedSamples, setSelectedSamples] = useState();
   const [selected, setSelected] = useState();
@@ -114,7 +112,7 @@ export default function LaboratoryDashboardOverview() {
     } else {
       navigate("/dashboard/overview?tab=Samples-sent", { replace: true });
     }
-  }, [navigate]);
+  }, []);
   const {
     isError,
     data: receivedRequests,
@@ -187,6 +185,7 @@ export default function LaboratoryDashboardOverview() {
             Patient_age: calcAge(request.patient_age),
             Sent_by: request.send_by,
             date: request.date_created,
+            attachment: request.attachment,
           };
         })
       );
