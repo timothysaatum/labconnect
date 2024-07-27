@@ -39,7 +39,7 @@ export const CardStack = ({ items, offset, scaleFactor, selected }) => {
   };
   return (
     <div
-      className={`relative full min-h-8 my-4 w-full ${selected ? "col-span-3" : ""}`}
+      className={`relative full min-h-8 my-4 w-full ${selected ? "col-span-4" : ""}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => {
         setHovered(false);

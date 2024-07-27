@@ -106,7 +106,7 @@ export default function SendSample() {
 
   //form declaration
   const form = useForm({
-    resolver: zodResolver(labRequestSchema),
+    // resolver: zodResolver(labRequestSchema),
     defaultValues: {
       patient_name: "",
       patient_age: "",
@@ -169,7 +169,7 @@ export default function SendSample() {
   };
 
   useEffect(() => {
-    form.setValue("logo", imageFile);
+    form.setValue("attachment", imageFile);
   }, [imageFile]);
 
   //field array for tests
@@ -387,7 +387,7 @@ export default function SendSample() {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button
-                                  variant="secondary"
+                                  variant="outline"
                                   size="icon"
                                   onClick={() => filePickRef.current.click()}
                                   type="button"
@@ -504,7 +504,7 @@ export default function SendSample() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {/* <div>
+                      <div>
                         {fields.map((item, index) => (
                           <div
                             key={item.id}
@@ -513,7 +513,7 @@ export default function SendSample() {
                             <div>
                               <PopoverSelectwithhover
                                 form={form}
-                                name={`test_data.${index}.test`}
+                                name={`test_data.${index}`}
                                 error={testsError}
                                 loading={testsLoading}
                                 items={tests}
@@ -526,12 +526,12 @@ export default function SendSample() {
                               <div>
                                 <SelectComponentWithHover
                                   form={form}
-                                  name={`test_data.${index}.sample_type`}
+                                  name={`sample_type.${index}`}
                                   error={testsError}
                                   loading={testsLoading}
                                   index={index}
                                   data={tests?.data}
-                                  id={form.watch(`test_data.${index}.test`)}
+                                  id={form.watch(`test_data.${index}`)}
                                   label={"what sample are you sending"}
                                   title={"sample types"}
                                   search={"Search sample type..."}
@@ -550,7 +550,7 @@ export default function SendSample() {
                             </div>
                           </div>
                         ))}
-                      </div> */}
+                      </div>
                     </CardContent>
                   </Card>
                 </div>

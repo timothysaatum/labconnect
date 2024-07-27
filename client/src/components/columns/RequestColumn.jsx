@@ -165,7 +165,10 @@ export const useRequestLabColumns = () => {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View Laboratory</DropdownMenuItem>
-              <DropdownMenuItem>Download Attachment</DropdownMenuItem>
+              <DropdownMenuItem>
+                <a></a>
+                Download Attachment
+                </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Upload Results</DropdownMenuItem>

@@ -1,9 +1,8 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { selectCurrentUser, selectCurrenttoken } from "@/redux/auth/authSlice";
 import { toast } from "sonner";
-import { useFetchUserDetails, useFetchUserLab } from "@/api/queries";
-import Loading from "./loadingone";
+import {useFetchUserLab } from "@/api/queries";
 
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
@@ -35,15 +34,14 @@ export const HasLaboratory = () => {
   }
   const { isError, data: userlab, isPending } = useFetchUserLab();
   const location = useLocation();
-  if (isPending ) return;
+  if (isPending) return;
   if (isError) {
     return toast.error("An error has occured");
   }
   if (user?.is_branch_manager) {
     return <Outlet />;
   }
-  console.log(user?.is_admin);
-  console.log(userlab?.data.length > 0);
+
   return user?.is_admin && userlab?.data.length > 0 ? (
     <Outlet />
   ) : (
