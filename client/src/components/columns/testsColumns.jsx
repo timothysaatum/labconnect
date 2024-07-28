@@ -158,7 +158,7 @@ export const testscolumnDef = [
   },
   {
     accessorKey: "price",
-    header: createSortableHeader("Price (GHS)"),
+    header: createSortableHeader(`Price (GH${`\u20B5`})`),
   },
   {
     accessorKey: "turn_around_time",

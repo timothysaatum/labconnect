@@ -148,12 +148,12 @@ const TestForm = ({ setOpen, form, test }) => {
           <Input placeholder="Name of test" />
         </FormBuilder>
         <div className="grid grid-cols-[2fr_1fr] gap-2">
-          <FormBuilder name={"price"} label={"Price (GHS)"}>
+          <FormBuilder name={"price"} label={`Price (GH${`\u20B5`})`}>
             <Input type="number" placeholder="Price of test" />
           </FormBuilder>
           <FormBuilder
             name={"discount_price"}
-            label={"Dicount (GHS) (optional) "}
+            label={`Discount (GH${`\u20B5`}) (optional) `}
           >
             <Input type="number" placeholder="Price of test" />
           </FormBuilder>

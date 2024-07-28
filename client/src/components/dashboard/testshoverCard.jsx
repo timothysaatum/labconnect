@@ -5,7 +5,7 @@ const TestsHoverCard = ({ hoveredcard }) => {
     <div className="flex flex-col gap-2 whitespace-normal max-w-md">
       <h6 className="text-sm uppercase">{hoveredcard?.name}</h6>
       <p className="text-xs uppercase">
-        <span className="capitalize mr-2">Price (GHS):</span>
+        <span className="capitalize mr-2">Price GH{`\u20B5`}:</span>
         {hoveredcard?.price}
       </p>
       <p className="text-xs uppercase">

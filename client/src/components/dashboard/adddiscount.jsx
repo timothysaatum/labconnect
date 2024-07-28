@@ -80,7 +80,7 @@ export function ApplyDisCount({ test }) {
               onSubmit={form.handleSubmit(onaddDiscount)}
             >
               <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="width">Original (GHS)</Label>
+                <Label htmlFor="width">Original (GH{`\u20B5`})</Label>
                 <span id="original" className="text-xs">
                   {test?.price}
                 </span>

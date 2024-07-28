@@ -1,4 +1,4 @@
-import { ChevronLeft, Minus, Paperclip, Trash2 } from "lucide-react";
+import { ChevronLeft, Minus, Paperclip, PlusCircle, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -11,6 +11,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -508,12 +509,12 @@ export default function SendSample() {
                         {fields.map((item, index) => (
                           <div
                             key={item.id}
-                            className="grid gap-2 max-md:mb-4 max-md:border-b max-md:pb-4 max-md:last:mb-0 max-md:last:border-b-0 max-md:last:pb-0 md:gap-6 lg:grid-cols-[1fr_1fr]"
+                            className="grid gap-2 md:gap-6 lg:grid-cols-[1fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
                           >
                             <div>
                               <PopoverSelectwithhover
                                 form={form}
-                                name={`test_data.${index}`}
+                                name={`test_data.${index}.test`}
                                 error={testsError}
                                 loading={testsLoading}
                                 items={tests}
@@ -522,16 +523,16 @@ export default function SendSample() {
                                 search={"Search tests..."}
                               />
                             </div>
-                            <div className="flex items-end justify-between gap-2">
+                            <div className="flex justify-between items-end gap-2">
                               <div>
                                 <SelectComponentWithHover
                                   form={form}
-                                  name={`sample_type.${index}`}
+                                  name={`test_data.${index}.sample_type`}
                                   error={testsError}
                                   loading={testsLoading}
                                   index={index}
                                   data={tests?.data}
-                                  id={form.watch(`test_data.${index}`)}
+                                  id={form.watch(`test_data.${index}.test`)}
                                   label={"what sample are you sending"}
                                   title={"sample types"}
                                   search={"Search sample type..."}
@@ -551,6 +552,14 @@ export default function SendSample() {
                           </div>
                         ))}
                       </div>
+                      <CardFooter className="justify-center border-t p-0 py-2 text-xs tracking-tight text-center text-muted-foreground">
+                        <Button
+                          variant="ghost"
+                          onClick={() => append({ test: "", sample_type: "" })}
+                        >
+                          Add more tests <PlusCircle className="w-4 h-4 ml-1" />
+                        </Button>
+                      </CardFooter>
                     </CardContent>
                   </Card>
                 </div>

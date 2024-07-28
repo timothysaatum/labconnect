@@ -223,12 +223,12 @@ const CreateTest = ({ from }) => {
                             {branchespaused
                               ? "Check your internet Connection and try again"
                               : branchesloading
-                              ? "loading..."
-                              : brancheserror
-                              ? "Error loading Branches"
-                              : branches?.data?.length < 1
-                              ? "Lab has no branches create a branch to before adding tests"
-                              : `No more branches available`}
+                                ? "loading..."
+                                : brancheserror
+                                  ? "Error loading Branches"
+                                  : branches?.data?.length < 1
+                                    ? "Lab has no branches create a branch to before adding tests"
+                                    : `No more branches available`}
                           </p>
                         }
                         {...field}
@@ -279,7 +279,7 @@ const CreateTest = ({ from }) => {
             <FormBuilder name={"name"} label={"Test Name"}>
               <Input placeholder="Test name" />
             </FormBuilder>
-            <FormBuilder name={"price"} label={"Price (GHS)"}>
+            <FormBuilder name={"price"} label={`Price (GH${`\u20B5`})`}>
               <Input type="number" placeholder="price of Tests" />
             </FormBuilder>
             <div className="grid grid-cols-6 gap-2">

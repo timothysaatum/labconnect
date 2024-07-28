@@ -113,7 +113,10 @@ const TestDetails = ({
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Price</span>
-                <span>GHS{selected?.price}</span>
+                <span>
+                  GH{`\u20B5`}
+                  {selected?.price}
+                </span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Turn around time</span>

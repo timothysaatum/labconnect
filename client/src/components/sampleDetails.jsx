@@ -10,8 +10,18 @@ import {
   CardTitle,
 } from "./ui/card";
 import { calcAge } from "@/util/ageCalculate";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreVertical } from "lucide-react";
 import { Button } from "./ui/button";
+import moment from "moment";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import RejectSample from "./dashboard/rejectSample";
 
 const SampleDetails = () => {
   const { branchId, sampleId } = useParams();
@@ -53,17 +63,71 @@ const SampleDetails = () => {
   return (
     <main className="pl-14 mx-4 py-10">
       <Card className="max-w-5xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-xl">
-            {sample?.id} - {sample?.patient_name}
-          </CardTitle>
-          <CardDescription className="border-b-2 pb-4">
-            displaying details of the sample with id {sample?.id}
-          </CardDescription>
+        <CardHeader className="flex justify-between flex-row border-b-2 pb-4">
+          <div className="flex flex-col gap-2">
+            <CardTitle className="text-xl">
+              {sample?.id} - {sample?.patient_name}
+            </CardTitle>
+            <CardDescription className="">
+              displaying details of the sample with id {sample?.id}
+            </CardDescription>
+          </div>
+          <div className="flex gap-2 flex-col items-end">
+            <div>
+              <div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="outline" className="h-8 w-8">
+                      <MoreVertical className="h-3.5 w-3.5" />
+                      <span className="sr-only">More</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={() => navigator.clipboard.writeText(sample?.id)}
+                    >
+                      Copy payment ID
+                    </DropdownMenuItem>
+                    <Link
+                      to={`/dashboard/overview/samples/received/${sample?.id}`}
+                    ></Link>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>View Laboratory</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <a
+                        href={sample?.attachment}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Attachment
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>Upload Results</DropdownMenuItem>
+                    <RejectSample />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-muted-foreground text-xs">
+                priority level:
+              </span>
+              <div className="flex  items-center gap-2">
+                <span className="ml-2 capitalize text-[14px]">
+                  {sample?.priority}
+                </span>
+                <div
+                  className={`w-3 h-3 rounded-full ${sample?.priority === "Normal" ? "bg-yellow-600" : "bg-red-600 animate-pulse"}`}
+                />
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-[300px_1fr] gap-4 divide-x-2">
-            <div className="col-span-1 space-y-6 px-4 bg-muted/10 py-8 rounded-lg">
+            <div className="col-span-1 space-y-6 px-4 bg-muted/10 py-8 rounded-lg my-4">
               <div className="border-[1px] p-4 rounded-3xl space-y-2">
                 <CardTitle className="text-md underline underline-offset-2">
                   Patient Details
@@ -180,6 +244,38 @@ const SampleDetails = () => {
                   :{" "}
                   <span className="ml-5 capitalize text-[12px]">
                     {sample?.payment_mode}
+                  </span>
+                </div>
+                <div className="">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Amount Paid
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {" "}
+                    GH{`\u20B5`} 34.00
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-end">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Sample Status:
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {" "}
+                    {sample?.sample_status}
+                  </span>
+                </div>
+                <div className="text-end">
+                  <span className="text-xs capitalize text-muted-foreground">
+                    Request Date
+                  </span>{" "}
+                  :{" "}
+                  <span className="ml-5 capitalize text-[12px]">
+                    {" "}
+                    {moment(sample?.date_created).format("DD/MM/YYYY hh:mm A")}
                   </span>
                 </div>
               </div>

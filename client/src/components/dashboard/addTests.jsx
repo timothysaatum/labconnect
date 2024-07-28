@@ -148,12 +148,12 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
                         {isPaused
                           ? "Check your internet Connection and try again"
                           : isLoading
-                          ? "loading..."
-                          : isError
-                          ? "Error loading Branches"
-                          : branches?.data?.length < 1
-                          ? "Lab has no branches create a branch to before adding tests"
-                          : `No more branches available`}
+                            ? "loading..."
+                            : isError
+                              ? "Error loading Branches"
+                              : branches?.data?.length < 1
+                                ? "Lab has no branches create a branch to before adding tests"
+                                : `No more branches available`}
                       </p>
                     }
                     {...field}
@@ -206,12 +206,12 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
           <Input placeholder="Test code" />
         </FormBuilder>
         <div className="grid grid-cols-[2fr_1fr] gap-2">
-          <FormBuilder name={"price"} label={"Price (GHS)"}>
+          <FormBuilder name={"price"} label={`Price (GH${`\u20B5`})`}>
             <Input type="number" placeholder="Price of test" />
           </FormBuilder>
           <FormBuilder
             name={"discount_price"}
-            label={"Discount (GHS) (optional) "}
+            label={`Discount (GH${`\u20B5`}) (optional) `}
             className="whitespace-nowrap"
           >
             <Input type="number" placeholder="Price of test" />
@@ -304,7 +304,6 @@ const AddTest = () => {
       );
     }
   }, [userbranches]);
-
 
   useEffect(() => {
     !open && form.reset();

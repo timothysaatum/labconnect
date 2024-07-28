@@ -41,6 +41,26 @@ export const usedeleteBranchMutation = (id) => {
     },
   });
 };
+export const useRejectSampleMutation = (id) => {
+  const queryClient = useQueryClient();
+  const activeBranch = useSelector(selectActiveBranch);
+
+  const axiosPrivate = useAxiosPrivate();
+  return useMutation({
+    mutationFn: async (reason) => {
+      await axiosPrivate.patch(`laboratory/branch/delete/${id}/`, {
+        rejection_reason: reason,
+      });
+    },
+    onError: () => {
+      toast.error("An error occured, Could not reject sample");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["RequestsReceived", activeBranch]);
+      toast.info("Sample Rejected");
+    },
+  });
+};
 
 export const useDeactivateTestForBranchMutation = (id) => {
   const queryClient = useQueryClient();
