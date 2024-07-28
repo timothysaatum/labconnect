@@ -58,8 +58,8 @@ export default function Dashboard() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(changeBranch(userbranches?.data[0]?.id));
-  }, [userbranches?.data]);
+    if (!activeBranchId) dispatch(changeBranch(userbranches?.data[0]?.id));
+  }, [userbranches?.data, activeBranchId]);
   const activeBranch = userbranches?.data?.find(
     (branch) => branch.id === activeBranchId
   )?.name;

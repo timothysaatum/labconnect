@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import RejectSample from "./dashboard/rejectSample";
+import { Separator } from "./ui/separator";
 
 const SampleDetails = () => {
   const { branchId, sampleId } = useParams();
@@ -61,7 +62,7 @@ const SampleDetails = () => {
     }
   };
   return (
-    <main className="pl-14 mx-4 py-10">
+    <main className="sm:pl-14 mx-4 py-10">
       <Card className="max-w-5xl mx-auto">
         <CardHeader className="flex justify-between flex-row border-b-2 pb-4">
           <div className="flex flex-col gap-2">
@@ -126,41 +127,43 @@ const SampleDetails = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-[300px_1fr] gap-4 divide-x-2">
-            <div className="col-span-1 space-y-6 px-4 bg-muted/10 py-8 rounded-lg my-4">
-              <div className="border-[1px] p-4 rounded-3xl space-y-2">
-                <CardTitle className="text-md underline underline-offset-2">
+          <div className="grid md:grid-cols-[300px_1fr] gap-4 md:divide-x-2">
+            <div className="col-span-1 space-y-6 md:px-4 px-2 md:bg-muted/10 md:py-8 py-4 rounded-lg my-2">
+              <div className="border-[1px] p-4 rounded-3xl max-md:bg-muted/10">
+                <CardTitle className="text-sm tracking-wider underline underline-offset-2 max-md:text-center">
                   Patient Details
                 </CardTitle>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Name
-                  </span>{" "}
-                  :{" "}
-                  <span className=" ml-5 capitalize text-[12px]">
-                    {sample?.patient_name}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Age
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {calcAge(sample?.patient_age)}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Gender
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {sample?.patient_sex}
-                  </span>
+                <div className="space-y-2 max-md:flex items-center justify-evenly max-md:py-2 ">
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Name
+                    </span>{" "}
+                    :{" "}
+                    <span className=" md:ml-5 capitalize text-[12px]">
+                      {sample?.patient_name}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Age
+                    </span>{" "}
+                    :{" "}
+                    <span className="md:ml-5 capitalize text-[12px]">
+                      {calcAge(sample?.patient_age)}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Gender
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      {sample?.patient_sex}
+                    </span>
+                  </div>
                 </div>
                 {sample?.attachment && (
-                  <div className="text-end">
+                  <div className="text-center md:text-end">
                     <a
                       href={sample?.attachment}
                       target="_blank"
@@ -172,89 +175,92 @@ const SampleDetails = () => {
                   </div>
                 )}
               </div>
-              <div className="border-[1px] p-4 rounded-3xl space-y-2">
-                <CardTitle className="text-md underline underline-offset-2">
+              <div className="border-[1px] p-4 rounded-3xl max-md:bg-muted/10">
+                <CardTitle className="text-sm tracking-wider underline underline-offset-2 max-md:text-center">
                   Referor Details
                 </CardTitle>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    facilty
-                  </span>{" "}
-                  :{" "}
-                  <span className=" ml-5 capitalize text-[12px]">
-                    {sample?.referring_facility}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Facility Type
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {sample?.facility_type}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Name of referor
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {sample?.sender_full_name}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    referor email
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {sample?.sender_email}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    referor Contact
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {sample?.sender_phone}
-                  </span>
+                <div className="space-y-2 max-md:flex items-center justify-evenly max-md:py-2 flex-wrap gap-2">
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      facilty
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      {sample?.referring_facility}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Facility Type
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      {sample?.facility_type}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Name of referor
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      {sample?.sender_full_name}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Referor's Email
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      {sample?.sender_email}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Referor's Contact
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      {sample?.sender_phone}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="border-[1px] p-4 rounded-3xl space-y-2">
-                <CardTitle className="text-md underline underline-offset-2">
+              <div className="border-[1px] p-4 rounded-3xl max-md:bg-muted/10">
+                <CardTitle className="text-sm tracking-wider underline underline-offset-2 max-md:text-center">
                   Payment Details
                 </CardTitle>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Payment Status
-                  </span>{" "}
-                  :{" "}
-                  <span
-                    className={`ml-5 capitalize text-[12px] ${sample?.payment_status === "Paid" ? "text-green-400" : ""}`}
-                  >
-                    {sample?.payment_status}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Payment Method
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {sample?.payment_mode}
-                  </span>
-                </div>
-                <div className="">
-                  <span className="text-xs capitalize text-muted-foreground">
-                    Amount Paid
-                  </span>{" "}
-                  :{" "}
-                  <span className="ml-5 capitalize text-[12px]">
-                    {" "}
-                    GH{`\u20B5`} 34.00
-                  </span>
+                <div className="space-y-2 max-md:flex items-center justify-evenly max-md:py-2 flex-wrap gap-2">
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Payment Status
+                    </span>{" "}
+                    :{" "}
+                    <span
+                      className={`capitalize text-[12px] ${sample?.payment_status === "Paid" ? "text-green-400" : ""}`}
+                    >
+                      {sample?.payment_status}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Payment Method
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      {sample?.payment_mode}
+                    </span>
+                  </div>
+                  <div className="">
+                    <span className="text-xs capitalize text-muted-foreground">
+                      Amount Paid
+                    </span>{" "}
+                    :{" "}
+                    <span className="capitalize text-[12px]">
+                      GH{`\u20B5`} 34.00
+                    </span>
+                  </div>
                 </div>
               </div>
               <div className="space-y-2">
@@ -282,7 +288,7 @@ const SampleDetails = () => {
             </div>
             <div className="px-4 flex flex-col gap-4">
               {sample?.clinical_history && (
-                <div className="border-b-[1px] rounded-b-sm p-4 ">
+                <div className="border-b-[1px] p-4 ">
                   <CardTitle className="text-lg underline underline-offset-2 pb-4">
                     {" "}
                     Clinical History
