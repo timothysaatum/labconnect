@@ -17,11 +17,12 @@ class SampleSerializer(serializers.ModelSerializer):
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
 	sample_type = serializers.PrimaryKeyRelatedField(read_only=True)
-	tests = serializers.PrimaryKeyRelatedField(queryset=Test.objects.all(), many=True)
-	test_data = serializers.DictField(
-		child=serializers.DictField(),
-		read_only=True
-	 )
+	# tests = serializers.PrimaryKeyRelatedField(queryset=Test.objects.all(), many=True)
+	tests = TestDataSerializer(many=True)
+	# test_data = serializers.DictField(
+	# 	child=serializers.DictField(),
+	# 	read_only=True
+	#  )
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
@@ -42,7 +43,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_full_name',
 			'sender_phone',
 			'sender_email',
-			'test_data',
+			# 'test_data',
 			'sample_type',
 			'tests',
 			'clinical_history',
@@ -71,6 +72,10 @@ class SampleSerializer(serializers.ModelSerializer):
 			data['delivery'] = instance.delivery.name
 
 		return data
+	
+	def create(self, validated_data):
+		tests = validated_data.pop('tests')
+		print(tests)
 
 
 class NotificatinSerializer(serializers.ModelSerializer):
