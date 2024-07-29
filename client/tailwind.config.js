@@ -25,6 +25,12 @@ module.exports = {
       },
     },
     extend: {
+      gridAutoFlow: {
+        dense: "dense",
+      },
+      gridTemplateColumns: {
+        "auto-fill": "repeat(auto-fill, minmax(150px, 1fr))",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -61,7 +67,7 @@ module.exports = {
         },
       },
 
-           borderRadius: {
+      borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -76,7 +82,7 @@ module.exports = {
       },
 
       keyframes: {
-         blob: {
+        blob: {
           "0%": {
             transform: "translate(0px, 0px) scale(1)",
           },
@@ -161,7 +167,7 @@ module.exports = {
       },
       animation: {
         shimmer: "shimmer 2s linear infinite",
-        blob:'blob 7s infinite',
+        blob: "blob 7s infinite",
         aurora: "aurora 60s linear infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         spotlight: "spotlight 2s ease .75s 1 forwards",

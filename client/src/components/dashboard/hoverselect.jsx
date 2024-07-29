@@ -55,7 +55,7 @@ const SelectComponentWithHover = ({
                 <Button
                   variant="outline"
                   role="combobox"
-                  disabled={!form.watch(`test_data.${index}`)}
+                  disabled={!form.watch(`tests.${index}`)}
                   className={cn(
                     "justify-between w-full",
 
