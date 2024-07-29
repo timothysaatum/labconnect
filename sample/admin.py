@@ -29,8 +29,7 @@ class SampleAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
 	list_display = (
 		'user',
-		'sample',
-		'status',
+		'message',
 		'is_read',
 		'date_created',
 		'date_modified'

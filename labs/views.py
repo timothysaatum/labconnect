@@ -539,7 +539,8 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		return self.create(request)
 
 	def perform_create(self, serializer):
-
+		serializer.is_valid(raise_exception=True)
+		print(serializer.validated_data)
 		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
 		# print(self.request.data)
 		sample = serializer.save(
@@ -553,10 +554,10 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
 		# print(query_dict)
-		# print(sample)
+		# print(sample.data)
 		tests = query_dict.getlist('tests')
 		sample.tests.add(*tests)
-		Notification.objects.create(user=self.request.user, sample=sample, status=sample.sample_status)
+		# Notification.objects.create(user=self.request.user, sample=sample, status=sample.sample_status)
 
 
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
