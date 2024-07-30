@@ -74,7 +74,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		data = super().to_representation(instance)
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = instance.referring_facility.name
-		# data['sample_type'] = instance.sample_type.sample_name
+		data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]
 		data['to_laboratory'] = instance.to_laboratory.name
 
 		if data['delivery']:
@@ -97,7 +97,7 @@ class SampleSerializer(serializers.ModelSerializer):
 					test_ids.append(val)
 				elif key.startswith('sample'):
 					sample_ids.append(val)
-					
+
 			sample = Sample.objects.create(**validated_data)
 			sample.tests.add(*test_ids)
 			samples.sample_types.add(*sample_ids)
