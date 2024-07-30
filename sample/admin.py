@@ -6,7 +6,7 @@ class SampleAdmin(admin.ModelAdmin):
 	list_display = (
 		'patient_name',
 		'patient_age',
-		'sample_type', 
+		# 'sample_type', 
 		'sender_phone', 
 		'referring_facility',
 		'facility_type',
@@ -29,8 +29,7 @@ class SampleAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
 	list_display = (
 		'user',
-		'sample',
-		'status',
+		'message',
 		'is_read',
 		'date_created',
 		'date_modified'

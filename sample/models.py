@@ -66,7 +66,7 @@ class Sample(models.Model):
 
 	to_laboratory = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	tests = models.ManyToManyField(Test, related_name='tests')
-	sample_type = models.ForeignKey(SampleType, on_delete=models.CASCADE, default=1)
+	sample_types = models.ManyToManyField(SampleType, related_name='sample_type')
 	clinical_history = models.TextField(null=True, blank=True)
 
 	attachment = models.FileField(
@@ -77,6 +77,7 @@ class Sample(models.Model):
 
 	mark_sent = models.BooleanField(default=False)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
+	is_rejected = models.BooleanField(default=False)
 	rejection_reason = models.TextField(blank=True, null=True)
 	payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE)
 	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
@@ -101,8 +102,7 @@ class Sample(models.Model):
 class Notification(models.Model):
 
 	user = models.ForeignKey(client, on_delete=models.CASCADE)
-	sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
-	status = models.CharField(max_length=100)
+	message = models.CharField(max_length=150)
 	is_read = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
