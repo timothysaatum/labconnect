@@ -41,7 +41,7 @@ const SelectComponentWithHover = ({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="">
+        <FormItem className="w-full">
           <FormLabel
             className={`${
               !form.watch(`tests.${index}`) ? "text-muted-foreground" : ""

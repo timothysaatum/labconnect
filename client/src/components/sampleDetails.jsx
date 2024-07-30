@@ -127,9 +127,9 @@ const SampleDetails = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-[300px_1fr] gap-4 md:divide-x-2">
-            <div className="col-span-1 space-y-6 md:px-4 px-2 md:bg-muted/10 md:py-8 py-4 rounded-lg my-2">
-              <div className="border-[1px] p-4 rounded-3xl max-md:bg-muted/10">
+          <div className="grid md:grid-cols-[300px_1fr] gap-4">
+            <div className="col-span-1 space-y-6 md:px-4 px-2 md:py-8 py-4 rounded-lg my-2 tracking-wider">
+              <div className="border-[1px] p-4 rounded-3xl bg-muted/10">
                 <CardTitle className="text-sm tracking-wider underline underline-offset-2 max-md:text-center">
                   Patient Details
                 </CardTitle>
@@ -175,7 +175,7 @@ const SampleDetails = () => {
                   </div>
                 )}
               </div>
-              <div className="border-[1px] p-4 rounded-3xl max-md:bg-muted/10">
+              <div className="border-[1px] p-4 rounded-3xl bg-muted/10">
                 <CardTitle className="text-sm tracking-wider underline underline-offset-2 max-md:text-center">
                   Referor Details
                 </CardTitle>
@@ -227,7 +227,7 @@ const SampleDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="border-[1px] p-4 rounded-3xl max-md:bg-muted/10">
+              <div className="border-[1px] p-4 rounded-3xl bg-muted/10">
                 <CardTitle className="text-sm tracking-wider underline underline-offset-2 max-md:text-center">
                   Payment Details
                 </CardTitle>
@@ -288,7 +288,7 @@ const SampleDetails = () => {
             </div>
             <div className="px-4 flex flex-col gap-4">
               {sample?.clinical_history && (
-                <div className="border-b-[1px] p-4 ">
+                <div className=" p-4 ">
                   <CardTitle className="text-lg underline underline-offset-2 pb-4">
                     {" "}
                     Clinical History

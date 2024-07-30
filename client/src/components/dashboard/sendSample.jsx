@@ -1,4 +1,10 @@
-import { ChevronLeft, Minus, Paperclip, PlusCircle, Trash2 } from "lucide-react";
+import {
+  ChevronLeft,
+  Minus,
+  Paperclip,
+  PlusCircle,
+  Trash2,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -71,6 +77,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useSendSample } from "@/lib/formactions";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
+import { Switch } from "../ui/switch";
 
 //the prompt dialog
 export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
@@ -102,6 +109,7 @@ export default function SendSample() {
   const [restore, setRestore] = useState(false);
   const activeBranch = useSelector(selectActiveBranch);
   const [imageFile, setImagefile] = useState(null);
+  const [selectedTests, setSelectedTests] = useState(null);
 
   const onSendSample = useSendSample();
 
@@ -204,7 +212,7 @@ export default function SendSample() {
   const {
     data: tests,
     isError: testsError,
-    isPending: testsLoading,
+    isFetching: testsLoading,
   } = useFetchLabTests(id);
 
   //tests card ref
@@ -280,15 +288,25 @@ export default function SendSample() {
     { label: "Express", value: "Express" },
   ];
 
+  //selected tests
+  const formTests = form.watch("tests") ? form.watch("tests") : [];
+  useEffect(() => {
+    let me = tests?.data?.find((test) => {
+      return test?.id === formTests?.test;
+    });
+    console.log(me);
+  }, [form, tests?.data]);
+
+  console.log(selectedTests);
   return (
-    <div className="">
+    <div className="sm:pl-14 mx-4 py-5 md:py-0">
       <RestoreDialog
         setOpen={setOpen}
         open={open}
         handleDiscard={handleDiscard}
         handleRestore={handleRestore}
       />
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 ">
+      {/* <div className="flex sm:gap-4 sm:py-4 sm:pl-14 ">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <div className="mx-auto grid max-w-5xl flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
@@ -590,7 +608,280 @@ export default function SendSample() {
             </div>
           </div>
         </main>
-      </div>
+      </div> */}
+      <main className="max-w-5xl mx-auto">
+        <div>
+          <div className="flex items-center gap-4">
+            <Button variant="outline" size="icon" className="h-7 w-7">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Back</span>
+            </Button>
+            <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+              Send Sample
+            </h1>
+            <div className="hidden items-center gap-2 md:ml-auto md:flex">
+              <Button variant="secondary" size="sm" onClick={handleReset}>
+                Discard
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleSave}
+                type="button"
+                variant="outline"
+              >
+                Save and continue later
+                {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              </Button>
+            </div>
+          </div>
+          <section>
+            <Form {...form}>
+              <form
+                className="grid md:grid-cols-[1fr_300px] gap-8 sm:py-5"
+                noValidate
+                onSubmit={form.handleSubmit(onSendSample)}
+              >
+                <div className="grid ">
+                  <div>
+                    <PopoverSelect
+                      className="flex whitespace-nowrap gap-8 items-center mb-4"
+                      form={form}
+                      name={"to_laboratory"}
+                      error={labsError}
+                      loading={labsLoading}
+                      items={labs}
+                      label={"Sending sample to:"}
+                      title={"Laboratories"}
+                      search={"Search laboratory..."}
+                    />
+                  </div>
+                  <Card className="max-sm:border-none">
+                    <CardHeader className="max-sm:px-2">
+                      <CardTitle className="text-lg">Patient Details</CardTitle>
+                      <CardDescription>
+                        please enter the correct patient details here
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="max-sm:px-2">
+                      <div className="grid gap-4">
+                        <div>
+                          <FormBuilder
+                            name={"patient_name"}
+                            label={"Patient Name"}
+                            className="grid gap-3"
+                          >
+                            <Input placeholder="patient name" />
+                          </FormBuilder>
+                        </div>
+
+                        <div className="grid gap-4 sm:grid-cols-[1fr_200px]">
+                          <div>
+                            <SelectComponent
+                              label={"Select patient gender"}
+                              name={"patient_sex"}
+                              placeholder={"Select Patient's gender"}
+                              control={form.control}
+                              items={gender}
+                            />
+                          </div>
+                          <div>
+                            <CalenderDatePicker
+                              name={"patient_age"}
+                              control={form.control}
+                            />
+                          </div>
+                        </div>
+                        <div className="flex gap-5 items-end">
+                          <FormBuilder
+                            control={form.control}
+                            name="description"
+                            label={"Relevant Clinical History (Optional)"}
+                            className="flex-1"
+                          >
+                            <Textarea
+                              className="min-h-28 resize-none"
+                              maxLength={200}
+                            />
+                          </FormBuilder>
+
+                          <FormField
+                            name="attachment"
+                            render={({}) => (
+                              <FormItem className="hidden">
+                                <FormLabel>Choose Logo (Optional)</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="file"
+                                    {...fileref}
+                                    accept=".pdf"
+                                    onChange={handleImageChange}
+                                    ref={filePickRef}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => filePickRef.current.click()}
+                                  type="button"
+                                >
+                                  <Paperclip className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="right">
+                                Attach file
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        {imageFile && (
+                          <p className=" flex gap-2 shadow hover:shadow-none items-center rounded-md w-fit p-2 bg-secondary text-secondary-foreground text-xs">
+                            <Paperclip className="w-4 h-4" />{" "}
+                            {imageFile[0].name}
+                            <Trash2
+                              className="w-4 h-4 ml-4 cursor-pointer"
+                              onClick={() => {
+                                setImagefile(null);
+                                form.setValue("attachment", {
+                                  target: { files: null },
+                                });
+                              }}
+                            />
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Choose Tests</CardTitle>
+                      <CardDescription>
+                        These tests are available in the laboratory you
+                        selected.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div>
+                        {fields.map(
+                          (item, index) =>
+                            index === 0 && (
+                              <div
+                                key={item.id}
+                                className="grid gap-2 md:gap-6 lg:grid-cols-[2fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
+                              >
+                                <div>
+                                  <PopoverSelectwithhover
+                                    form={form}
+                                    name={`tests.${index}.test`}
+                                    error={testsError}
+                                    loading={testsLoading}
+                                    items={tests}
+                                    label={"Choose a test to request"}
+                                    title={"tests"}
+                                    search={"Search tests..."}
+                                  />
+                                </div>
+                                <div>
+                                  <SelectComponentWithHover
+                                    form={form}
+                                    name={`tests.${index}.sample_type`}
+                                    error={testsError}
+                                    loading={testsLoading}
+                                    index={index}
+                                    data={tests?.data}
+                                    id={form.watch(`tests.${index}.test`)}
+                                    label={"Sample Type"}
+                                    title={"sample types"}
+                                    search={"Search sample type..."}
+                                  />
+                                </div>
+                              </div>
+                            )
+                        )}
+                      </div>
+                      <div className="flex justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="px-4 mt-2"
+                          type="button"
+                          onClick={() =>
+                            append({ test: null, sample_type: null })
+                          }
+                        >
+                          Add Test
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="flex flex-col gap-4 rounded-md">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Sample Priority</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid gap-6">
+                        <div className="grid gap-3">
+                          <SelectComponent
+                            name={"priority"}
+                            control={form.control}
+                            label={"sample priority"}
+                            items={priority}
+                            placeholder={"Sample priority"}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-md">
+                        Delivery (Optional)
+                      </CardTitle>
+                      <CardDescription>
+                        choose a delivery service
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <PopoverSelect
+                        form={form}
+                        name={"delivery"}
+                        error={deliveriesError}
+                        loading={deliveriesLoading}
+                        items={deliveries}
+                        label={"Delivery Service (Optional)"}
+                        title={"Deliveries"}
+                        search={"Search delivery service..."}
+                      />
+                    </CardContent>
+                  </Card>
+                  <div className="bg-muted/50 rounded-md p-4 flex-1">
+                    <CardTitle className="text-lg">Tests Requested</CardTitle>
+                    {selectedTests?.map((test) => (
+                      <div>
+                        {test.test} {test.sample_type}
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <Switch id="share_result" />
+                    <Label htmlFor="share_result">Share results</Label>
+                  </div>
+                </div>
+                <Button className="max-w-fit">Proceed to summary</Button>
+              </form>
+            </Form>
+          </section>
+        </div>
+      </main>
     </div>
   );
 }
