@@ -72,6 +72,9 @@ export function Sidebar() {
             </div>
           ) : (
             <div className="flex flex-col gap-2">
+              <div className="mb-2 flex justify-end ">
+                <ThemeToggler />
+              </div>
               <Link
                 className="w-full"
                 to={"/sign-in"}

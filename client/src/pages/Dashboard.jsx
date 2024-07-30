@@ -177,21 +177,42 @@ export default function Dashboard() {
             </SheetContent>
           </Sheet>
           <div className="flex gap-2 items-center">
-            <div className="relative sm:hidden ">
-              <NotiicationsPopover>
-                <Button variant="outline" size="icon">
-                  <Bell className="w-4 h-4 text-muted-foreground" />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  disabled={branchesLoading || branchesError}
+                  variant="ghost"
+                  className="flex items-center gap-2 px-2 text-s"
+                >
+                  {branchesError ? "Error loading branches" : activeBranch}
+                  <ChevronDown className="w-4 h-4" />
                 </Button>
-              </NotiicationsPopover>
-              <span className=" absolute w-5 h-5 opacity-55 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-0 right-0 z-40 dark:text-black text-white">
-                2
-              </span>
-            </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {userbranches?.data?.map((branch) => (
+                  <DropdownMenuCheckboxItem
+                    key={branch.id}
+                    checked={activeBranchId === branch.id}
+                    onCheckedChange={() => dispatch(changeBranch(branch.id))}
+                  >
+                    {branch.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <NotiicationsPopover >
+              <Button variant="outline" size="icon" className="relative">
+                <Bell className="w-4 h-4 text-muted-foreground" />
+                <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
+                  2
+                </span>
+              </Button>
+            </NotiicationsPopover>
             <ThemeToggler />
           </div>
         </header>
-        <header className="flex justify-between items-center pl-14 mx-4 py-2">
-          <Breadcrumb>
+        <header className="flex justify-between items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
+          <Breadcrumb className="">
             <BreadcrumbList>
               {pathnames.map((name, index) => {
                 const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;

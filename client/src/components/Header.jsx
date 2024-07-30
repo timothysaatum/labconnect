@@ -39,7 +39,7 @@ const Header = () => {
       >
         <h3>LabConnect</h3>
       </Link>
-      <ul className="hidden gap-5 lg:gap-10 md:flex">
+      <ul className="hidden gap-5 lg:gap-10 md:flex mx-4 whitespace-nowrap">
         <NavLink to="/">
           <li>Home</li>
         </NavLink>

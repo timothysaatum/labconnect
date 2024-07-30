@@ -157,7 +157,7 @@ export const useRequestLabColumns = () => {
             to={`/dashboard/overview/samples/received/${activeBranch}/${request?.id}`}
           >
             <Button variant="ghost">
-              <span className="text-xs underline underline-offset-2">View</span>
+              <span className="text-xs underline underline-offset-2 text-blue-900">View</span>
             </Button>
           </Link>
         );

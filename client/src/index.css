@@ -25,11 +25,6 @@ html {
 }
 
 /* main navbar */
-nav ul li {
-  display: inline-block;
-  list-style: none;
-  white-space: nowrap;
-}
 
 nav ul a li {
   text-decoration: none;

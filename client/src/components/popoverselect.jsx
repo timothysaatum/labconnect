@@ -27,6 +27,7 @@ const PopoverSelect = ({
   title,
   search,
   info,
+  ...rest
 }) => {
   const [open, setOpen] = useState(false);
   return (
@@ -34,7 +35,7 @@ const PopoverSelect = ({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="">
+        <FormItem {...rest}>
           <FormLabel>{label}</FormLabel>
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -57,10 +58,12 @@ const PopoverSelect = ({
                         items?.data?.find((option) => option.id === field.value)
                           ?.name
                       : title === "Branches"
-                      ? items?.data?.find((option) => option.id === field.value)
-                          ?.name
-                      : items?.data?.find((option) => option.id === field.value)
-                          ?.name
+                        ? items?.data?.find(
+                            (option) => option.id === field.value
+                          )?.name
+                        : items?.data?.find(
+                            (option) => option.id === field.value
+                          )?.name
                     : label}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -73,8 +76,8 @@ const PopoverSelect = ({
                   {loading
                     ? "Loading..."
                     : error
-                    ? `Error loading ${title}`
-                    : `No ${title} found`}
+                      ? `Error loading ${title}`
+                      : `No ${title} found`}
                 </CommandEmpty>
                 <CommandGroup>
                   <CommandList>
@@ -98,8 +101,8 @@ const PopoverSelect = ({
                         {title === "Laboratories"
                           ? item.laboratory + " " + "|" + " " + item.name
                           : title === "Branches"
-                          ? item.name
-                          : item.name}
+                            ? item.name
+                            : item.name}
                       </CommandItem>
                     ))}
                   </CommandList>
