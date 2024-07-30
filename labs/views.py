@@ -524,12 +524,14 @@ class TestResultDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 
+	queryset = Sample.objects.all()
 	serializer_class = SampleSerializer
 	parser_classes = (MultiPartParser, FormParser)
 
 	def post(self, request):
 
 		if not self.has_laboratory_permission(self.request.user):
+
 
 			return Response(
 				{'error': 'Invalid credentials'}, 
@@ -538,26 +540,23 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		
 		return self.create(request)
 
-	def perform_create(self, serializer):
-		serializer.is_valid(raise_exception=True)
-		print(serializer.validated_data)
-		facility = Branch.objects.filter(branch_manager=self.request.user)[0]
-		# print(self.request.data)
-		sample = serializer.save(
-			referring_facility=facility, 
-			sender_full_name=self.request.user.full_name,
-			sender_phone=facility.phone,
-			sender_email=facility.email,
-			facility_type='Laboratory'
-		)
-		# print(self.request.data)
-		query_dict.update(self.request.data)
-		#tests = self.request.data.getlist('tests')
-		# print(query_dict)
-		# print(sample.data)
-		tests = query_dict.getlist('tests')
-		sample.tests.add(*tests)
-		# Notification.objects.create(user=self.request.user, sample=sample, status=sample.sample_status)
+	# def perform_create(self, serializer):
+		
+	# 	facility = Branch.objects.filter(branch_manager=self.request.user)[0]
+	# 	sample = serializer.save(
+	# 		referring_facility=facility, 
+	# 		sender_full_name=self.request.user.full_name,
+	# 		sender_phone=facility.phone,
+	# 		sender_email=facility.email,
+	# 		facility_type='Laboratory'
+	# 	)
+	
+	# 	query_dict.update(self.request.data)
+	# 	#tests = self.request.data.getlist('tests')
+	
+	# 	tests = query_dict.getlist('test_data')
+	# 	sample.tests.add(*tests)
+	
 
 
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):

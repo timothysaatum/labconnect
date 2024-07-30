@@ -6,23 +6,27 @@ from labs.models import Test, SampleType
 
 
 
-
-
 class TestDataSerializer(serializers.Serializer):
 	test = serializers.UUIDField()
 	sample_type = serializers.IntegerField()
+
 
 class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
-	sample_type = serializers.PrimaryKeyRelatedField(read_only=True)
-	# tests = serializers.PrimaryKeyRelatedField(queryset=Test.objects.all(), many=True)
-	tests = TestDataSerializer(many=True)
-	# test_data = serializers.DictField(
-	# 	child=serializers.DictField(),
-	# 	read_only=True
-	#  )
+	sample_types = serializers.PrimaryKeyRelatedField(
+		queryset=SampleType.objects.all(), 
+		many=True
+	)
+	tests = serializers.PrimaryKeyRelatedField(
+		queryset=Test.objects.all(), 
+		many=True
+	)
+	test_data = serializers.DictField(
+		child=serializers.ListField(),
+		write_only=True
+	)
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
@@ -43,7 +47,8 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_full_name',
 			'sender_phone',
 			'sender_email',
-			# 'test_data',
+			'test_data',
+			'is_rejected',
 			'sample_type',
 			'tests',
 			'clinical_history',
@@ -57,25 +62,47 @@ class SampleSerializer(serializers.ModelSerializer):
 			'date_created'
 		)
 
+		extra_kwargs = {
+			'sample_type': {'read_only': True},
+			'tests': {'read_only': True}
+		}
+
 	# pagination_class = QueryPagination
 
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		# data['tests'] = [test.name for test in instance.tests.all()]
-		# data['referring_facility'] = instance.referring_facility.name
+		data['tests'] = [test.name for test in instance.tests.all()]
+		data['referring_facility'] = instance.referring_facility.name
 		# data['sample_type'] = instance.sample_type.sample_name
-		# data['to_laboratory'] = instance.to_laboratory.name
+		data['to_laboratory'] = instance.to_laboratory.name
 
 		if data['delivery']:
 
 			data['delivery'] = instance.delivery.name
 
 		return data
-	
+
 	def create(self, validated_data):
-		tests = validated_data.pop('tests')
-		print(tests)
+		test_data = validated_data.pop('test_data')
+		samples = []
+
+		for sample_data in test_data:
+			test_ids = []
+			sample_ids = []
+
+			for key, val in sample_data:
+
+				if key.startswith('test'):
+					test_ids.append(val)
+				elif key.startswith('sample'):
+					sample_ids.append(val)
+					
+			sample = Sample.objects.create(**validated_data)
+			sample.tests.add(*test_ids)
+			samples.sample_types.add(*sample_ids)
+
+		return samples
 
 
 class NotificatinSerializer(serializers.ModelSerializer):
