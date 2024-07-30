@@ -44,7 +44,7 @@ const SelectComponentWithHover = ({
         <FormItem className="w-full">
           <FormLabel
             className={`${
-              !form.watch(`tests.${index}`) ? "text-muted-foreground" : ""
+              !form.watch(`test_data.${index}`) ? "text-muted-foreground" : ""
             }`}
           >
             {label}
@@ -55,7 +55,7 @@ const SelectComponentWithHover = ({
                 <Button
                   variant="outline"
                   role="combobox"
-                  disabled={!form.watch(`tests.${index}`)}
+                  disabled={!form.watch(`test_data.${index}`)}
                   className={cn(
                     "justify-between w-full",
 

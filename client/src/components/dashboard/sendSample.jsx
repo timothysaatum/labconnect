@@ -184,13 +184,13 @@ export default function SendSample() {
   //field array for tests
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "tests",
+    name: "test_data",
   });
 
   // id of lab to fetch tests for
   useEffect(() => {
     setId(form.watch("to_laboratory"));
-    form.setValue("tests", []);
+    form.setValue("test_data", []);
   }, [form.watch("to_laboratory")]);
 
   //intialize with a single field
@@ -289,7 +289,7 @@ export default function SendSample() {
   ];
 
   //selected tests
-  const formTests = form.watch("tests") ? form.watch("tests") : [];
+  const formTests = form.watch("test_data") ? form.watch("test_data") : [];
   useEffect(() => {
     let me = tests?.data?.find((test) => {
       return test?.id === formTests?.test;
@@ -769,42 +769,39 @@ export default function SendSample() {
                     </CardHeader>
                     <CardContent>
                       <div>
-                        {fields.map(
-                          (item, index) =>
-                            index === 0 && (
-                              <div
-                                key={item.id}
-                                className="grid gap-2 md:gap-6 lg:grid-cols-[2fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
-                              >
-                                <div>
-                                  <PopoverSelectwithhover
-                                    form={form}
-                                    name={`tests.${index}.test`}
-                                    error={testsError}
-                                    loading={testsLoading}
-                                    items={tests}
-                                    label={"Choose a test to request"}
-                                    title={"tests"}
-                                    search={"Search tests..."}
-                                  />
-                                </div>
-                                <div>
-                                  <SelectComponentWithHover
-                                    form={form}
-                                    name={`tests.${index}.sample_type`}
-                                    error={testsError}
-                                    loading={testsLoading}
-                                    index={index}
-                                    data={tests?.data}
-                                    id={form.watch(`tests.${index}.test`)}
-                                    label={"Sample Type"}
-                                    title={"sample types"}
-                                    search={"Search sample type..."}
-                                  />
-                                </div>
-                              </div>
-                            )
-                        )}
+                        {fields.map((item, index) => (
+                          <div
+                            key={item.id}
+                            className="grid gap-2 md:gap-6 lg:grid-cols-[2fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
+                          >
+                            <div>
+                              <PopoverSelectwithhover
+                                form={form}
+                                name={`test_data.${index}.test`}
+                                error={testsError}
+                                loading={testsLoading}
+                                items={tests}
+                                label={"Choose a test to request"}
+                                title={"tests"}
+                                search={"Search tests..."}
+                              />
+                            </div>
+                            <div>
+                              <SelectComponentWithHover
+                                form={form}
+                                name={`test_data.${index}.sample_type`}
+                                error={testsError}
+                                loading={testsLoading}
+                                index={index}
+                                data={tests?.data}
+                                id={form.watch(`test_data.${index}.test`)}
+                                label={"Sample Type"}
+                                title={"sample types"}
+                                search={"Search sample type..."}
+                              />
+                            </div>
+                          </div>
+                        ))}
                       </div>
                       <div className="flex justify-end">
                         <Button
