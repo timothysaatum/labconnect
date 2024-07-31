@@ -70,8 +70,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@swc/cli": "^0.3.12",
-    "@swc/core": "^1.5.28",
+    "@swc/cli": "^0.3.14",
+    "@swc/core": "^1.7.3",
     "@tanstack/eslint-plugin-query": "^5.28.11",
     "@types/node": "^20.12.5",
     "@types/react": "^18.2.66",

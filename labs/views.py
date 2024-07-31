@@ -11,8 +11,8 @@ from .serializers import (
 	SampleTypeSerializer,
 	BranchTestSerializer
 )
-from .models import Test, Branch, Laboratory, SampleType, BranchTest
-from .results import TestResult
+from .models import Test, Branch, Laboratory, SampleType, BranchTest, Result
+# from .results import TestResult
 from sample.models import Sample, Notification
 from sample.serializers import SampleSerializer
 from django.db.models import Q
@@ -452,7 +452,7 @@ class TestResultListView(BranchListView):
 	serializer_class = TestResultSerializer
 
 	def get_queryset(self):
-		return TestResult.objects.filter(
+		return Result.objects.filter(
 			Q(branch__branch_manager=self.request.user) | 
 			Q(branch__laboratory__created=self.request.user)
 		).order_by('-date_added')
@@ -467,9 +467,9 @@ class TestResultDetailView(generics.RetrieveAPIView):
 	def get_queryset(self, pk):
 
 		try:
-			return TestResult.objects.get(pk=pk)
+			return Result.objects.get(pk=pk)
 
-		except TestResult.DoesNotExist:
+		except Result.DoesNotExist:
 
 			return Response(
 				{'error': 'result not found'}, 
@@ -489,7 +489,7 @@ class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = TestResultSerializer
 
 	def get_queryset(self):
-		return TestResult.objects.all()
+		return Result.objects.all()
 
 	def patch(self, request, pk):
 
@@ -507,7 +507,7 @@ class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 class TestResultDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 	def get_queryset(self):
-		return TestResult.objects.all()
+		return Result.objects.all()
 
 	def delete(self, request, pk, format=None):
 

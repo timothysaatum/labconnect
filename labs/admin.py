@@ -5,9 +5,10 @@ from .models import (
 		Branch, 
 		BranchManagerInvitation,
 		SampleType,
-		BranchTest
+		BranchTest,
+		Result
 	)
-from .results import TestResult
+# from .results import TestResult
 import csv
 from django.http import HttpResponse
 
@@ -101,7 +102,7 @@ class LaboratoryAdmin(admin.ModelAdmin):
 
 
 
-class TestResultAdmin(admin.ModelAdmin):
+class ResultAdmin(admin.ModelAdmin):
 
 	list_display = (
 		'id', 
@@ -146,6 +147,6 @@ admin.site.register(SampleType, SampleTypeAdmin)
 admin.site.register(Test, TestAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(BranchManagerInvitation, BranchManagerInvitationAdmin)
-admin.site.register(TestResult, TestResultAdmin)
+admin.site.register(Result, ResultAdmin)
 admin.site.register(Laboratory, LaboratoryAdmin)
 admin.site.register(BranchTest, BranchTestAdmin)

@@ -3,7 +3,7 @@ from .models import BranchManagerInvitation, Laboratory
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from textwrap import dedent
-from .results import TestResult
+from .models import Result
 from sample.models import Notification
 
 
@@ -57,7 +57,7 @@ def mail_lab_user(sender, instance, created, **kwargs):
 		send_normal_email(data)
 
 
-receiver(post_save, sender=TestResult)
+receiver(post_save, sender=Result)
 def CreateNotificationForLab(sender, instance, created, **kwargs):
 
 	if created:

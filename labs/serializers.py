@@ -5,9 +5,10 @@ from .models import (
 		Test, Branch,  
 		BranchManagerInvitation,
 		SampleType,
-		BranchTest
+		BranchTest,
+		Result
 	)
-from .results import TestResult
+# from .results import TestResult
 
 
 
@@ -166,7 +167,7 @@ class TestResultSerializer(serializers.ModelSerializer):
 
 	class Meta:
 
-		model = TestResult
+		model = Result
 		fields = (
 			'id',
 			'send_by', 

@@ -49,7 +49,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_email',
 			'test_data',
 			'is_rejected',
-			'sample_type',
+			'sample_types',
 			'tests',
 			'clinical_history',
 			'attachment',
@@ -72,6 +72,7 @@ class SampleSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
+		print(data)
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = instance.referring_facility.name
 		data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]

@@ -54,27 +54,21 @@ class Sample(models.Model):
 	patient_name = models.CharField(max_length=200)
 	patient_age = models.DateField()
 	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
-
 	delivery = models.ForeignKey(
-
 			Delivery,
 			on_delete=models.CASCADE,
 			null=True,
 			blank=True
-
 		)
-
 	to_laboratory = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	tests = models.ManyToManyField(Test, related_name='tests')
 	sample_types = models.ManyToManyField(SampleType, related_name='sample_type')
 	clinical_history = models.TextField(null=True, blank=True)
-
 	attachment = models.FileField(
 		upload_to='sample/attachments',
 		blank=True, 
 		null=True
 	)
-
 	mark_sent = models.BooleanField(default=False)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
 	is_rejected = models.BooleanField(default=False)
@@ -86,7 +80,7 @@ class Sample(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
-		return str(self.sample_type)
+		return f'{self.referring_facility.name} | {self.patient_name}'
 
 	def delivery_phone(self) -> str:
 

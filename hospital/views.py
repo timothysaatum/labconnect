@@ -6,7 +6,7 @@ from rest_framework import filters
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Hospital
 from sample.models import Sample
-from labs.results import TestResult
+from labs.models import Result
 from labs.serializers import TestResultSerializer
 
 
@@ -160,4 +160,4 @@ class SampleResultList(generics.ListAPIView):
 	def get_queryset(self):
 
 		facility_id = Hospital.objects.get(created_by=self.request.user).id
-		return TestResult.objects.filter(sample__referring_facility_id=facility_id)
+		return Result.objects.filter(sample__referring_facility_id=facility_id)
