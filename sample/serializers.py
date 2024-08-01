@@ -2,6 +2,7 @@ from rest_framework import serializers
 from sample.models import Sample, Notification
 from labs.paginators import QueryPagination
 from labs.models import Test, SampleType
+from hospital.models import Facility
 import json
 
 
@@ -14,9 +15,12 @@ class TestDataSerializer(serializers.Serializer):
 class SampleSerializer(serializers.ModelSerializer):
 
 	attachment = serializers.FileField(required=False)
-	referring_facility = serializers.PrimaryKeyRelatedField(read_only=True)
+	referring_facility = serializers.PrimaryKeyRelatedField(
+		queryset=Facility.objects.all() ,
+		required=False
+	)
 	sample_types = serializers.PrimaryKeyRelatedField(
-		queryset=SampleType.objects.all(), 
+		queryset=SampleType.objects.all(),
 		many=True
 	)
 	tests = serializers.PrimaryKeyRelatedField(
@@ -106,17 +110,13 @@ class SampleSerializer(serializers.ModelSerializer):
     	
 		test_data_json = validated_data.pop('test_data', '[]')
 		test_data_list = json.loads(test_data_json)
-		
+		print(validated_data)
 		tests_data = validated_data.pop('tests', [])
 		sample_types_data = validated_data.pop('sample_types', [])
-    
-    	
 		sample = Sample.objects.create(**validated_data)
     
-		
 		test_ids = []
 		sample_type_ids = []
-
 		for item in test_data_list:
 			test_id = item.get('test')
 			sample_type_id = item.get('sample_type')
@@ -125,8 +125,8 @@ class SampleSerializer(serializers.ModelSerializer):
 				test_ids.append(test_id)
 			if sample_type_id:
 				sample_type_ids.append(sample_type_id)
-    
-		print(test_ids, sample_type_ids)
+
+		# print(test_ids, sample_type_ids)
 		if test_ids:
 			sample.tests.add(*test_ids)
 		if sample_type_ids:
@@ -136,7 +136,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			sample.tests.set(tests_data)
 		if sample_types_data:
 			sample.sample_types.set(sample_types_data)
-    
+
 		return sample
 
 

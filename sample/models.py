@@ -43,9 +43,7 @@ class Sample(models.Model):
 	referring_facility = models.ForeignKey(
 			Facility, on_delete=models.CASCADE, 
 			related_name='facilities', 
-			db_index=True,
-			null=True,
-			blank=True
+			db_index=True
 		)
 	facility_type = models.CharField(max_length=50, choices=REFERRING_FACILITY_TYPE)
 	sender_full_name = models.CharField(max_length=200, null=True, blank=True)
