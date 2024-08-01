@@ -111,8 +111,6 @@ export default function SendSample() {
   const [imageFile, setImagefile] = useState(null);
   const [selectedTests, setSelectedTests] = useState(null);
 
-  const onSendSample = useSendSample();
-
   //form declaration
   const form = useForm({
     // resolver: zodResolver(labRequestSchema),
@@ -130,6 +128,8 @@ export default function SendSample() {
       payment_status: "Paid",
     },
   });
+//send sample action
+  const onSendSample = useSendSample(form);
 
   useEffect(() => {
     if (form.formState.errors.attachment) {
@@ -289,15 +289,6 @@ export default function SendSample() {
   ];
 
   //selected tests
-  const formTests = form.watch("test_data") ? form.watch("test_data") : [];
-  useEffect(() => {
-    let me = tests?.data?.find((test) => {
-      return test?.id === formTests?.test;
-    });
-    console.log(me);
-  }, [form, tests?.data]);
-
-  console.log(selectedTests);
   return (
     <div className="sm:pl-14 mx-4 py-5 md:py-0">
       <RestoreDialog
@@ -612,10 +603,6 @@ export default function SendSample() {
       <main className="max-w-5xl mx-auto">
         <div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" className="h-7 w-7">
-              <ChevronLeft className="h-4 w-4" />
-              <span className="sr-only">Back</span>
-            </Button>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
               Send Sample
             </h1>

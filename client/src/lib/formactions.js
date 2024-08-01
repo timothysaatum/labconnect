@@ -9,23 +9,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
 //sending sample from laboratory to another laboratory
-export const useSendSample = () => {
+export const useSendSample = (form) => {
   const queryClient = useQueryClient;
   const axiosPrivate = useAxiosPrivate();
 
   const onSendSample = async (data) => {
     console.log(data);
-    const newData = {
-      ...data,
-      patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
-    };
-    if (
-      newData.attachment instanceof FileList &&
-      newData.attachment.length > 0
-    ) {
-      newData.attachment = newData.attachment[0];
-    }
     try {
+      const newData = {
+        ...data,
+        patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
+      };
+      if (
+        newData.attachment instanceof FileList &&
+        newData.attachment.length > 0
+      ) {
+        newData.attachment = newData.attachment[0];
+      } else {
+        delete newData.attachment;
+      }
       const formData = new FormData();
 
       for (const key in newData) {
@@ -45,7 +47,7 @@ export const useSendSample = () => {
         position: "top-center",
       });
     } catch (error) {
-      console.log(error.data);
+      console.log(error);
     }
   };
 

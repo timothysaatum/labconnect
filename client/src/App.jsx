@@ -22,6 +22,7 @@ import MyLab from "@/components/mylab";
 import SendSample from "./components/dashboard/sendSample";
 import Analytics from "./components/laboratoryanalytics";
 import SampleDetails from "./components/sampleDetails";
+import Welcome from "./pages/welcome";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -72,7 +73,7 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
-              <Route path="getting-started" element={<Labgettingstarted />} />
+              <Route path="getting-started" element={<Welcome />} />
               <Route element={<HasLaboratory />}>
                 <Route
                   path="dashboard"
