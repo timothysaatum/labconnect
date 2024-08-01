@@ -2,7 +2,7 @@ from rest_framework import serializers
 from sample.models import Sample, Notification
 from labs.paginators import QueryPagination
 from labs.models import Test, SampleType
-
+import json
 
 
 
@@ -23,10 +23,11 @@ class SampleSerializer(serializers.ModelSerializer):
 		queryset=Test.objects.all(), 
 		many=True
 	)
-	test_data = serializers.DictField(
-		child=serializers.ListField(),
-		write_only=True
-	)
+	# test_data = serializers.ListField(
+    #     child=TestDataSerializer(),
+    #     write_only=True
+    # )
+	test_data = serializers.CharField(write_only=True)
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
@@ -62,10 +63,10 @@ class SampleSerializer(serializers.ModelSerializer):
 			'date_created'
 		)
 
-		extra_kwargs = {
-			'sample_type': {'read_only': True},
-			'tests': {'read_only': True}
-		}
+		# extra_kwargs = {
+		# 	'sample_type': {'read_only': True},
+		# 	'tests': {'read_only': True}
+		# }
 
 	# pagination_class = QueryPagination
 
@@ -74,36 +75,70 @@ class SampleSerializer(serializers.ModelSerializer):
 		data = super().to_representation(instance)
 		print(data)
 		data['tests'] = [test.name for test in instance.tests.all()]
-		data['referring_facility'] = instance.referring_facility.name
+		data['referring_facility'] = instance.referring_facility.name if instance.referring_facility else None
 		data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]
-		data['to_laboratory'] = instance.to_laboratory.name
-
-		if data['delivery']:
-
-			data['delivery'] = instance.delivery.name
+		data['to_laboratory'] = instance.to_laboratory.name if instance.to_laboratory else None
+		data['delivery'] = instance.delivery.name if instance.delivery else None
 
 		return data
 
+	# def create(self, validated_data):
+		
+	# 	test_data_list = validated_data.pop('test_data', [])
+	# 	print(json.loads(test_data_list))
+	# 	samples = []
+	# 	# print(test_data_list)
+	# 	# for item in test_data_list:
+	# 	# 	test_id = item.get('test')
+	# 	# 	sample_type_id = item.get('sample_type')
+
+    #     #     # Assuming you want to create a Sample object for each test and sample_type pair
+	# 	# 	sample = Sample.objects.create(**validated_data)
+	# 	# 	if test_id:
+	# 	# 		sample.tests.add(test_id)
+	# 	# 	if sample_type_id:
+	# 	# 		sample.sample_types.add(sample_type_id)
+	# 		# samples.append(sample)
+
+	# 	return samples
+
 	def create(self, validated_data):
-		test_data = validated_data.pop('test_data')
-		samples = []
+    	
+		test_data_json = validated_data.pop('test_data', '[]')
+		test_data_list = json.loads(test_data_json)
+		
+		tests_data = validated_data.pop('tests', [])
+		sample_types_data = validated_data.pop('sample_types', [])
+    
+    	
+		sample = Sample.objects.create(**validated_data)
+    
+		
+		test_ids = []
+		sample_type_ids = []
 
-		for sample_data in test_data:
-			test_ids = []
-			sample_ids = []
-
-			for key, val in sample_data:
-
-				if key.startswith('test'):
-					test_ids.append(val)
-				elif key.startswith('sample'):
-					sample_ids.append(val)
-
-			sample = Sample.objects.create(**validated_data)
+		for item in test_data_list:
+			test_id = item.get('test')
+			sample_type_id = item.get('sample_type')
+        
+			if test_id:
+				test_ids.append(test_id)
+			if sample_type_id:
+				sample_type_ids.append(sample_type_id)
+    
+		print(test_ids, sample_type_ids)
+		if test_ids:
 			sample.tests.add(*test_ids)
-			samples.sample_types.add(*sample_ids)
+		if sample_type_ids:
+			sample.sample_types.add(*sample_type_ids)
 
-		return samples
+		if tests_data:
+			sample.tests.set(tests_data)
+		if sample_types_data:
+			sample.sample_types.set(sample_types_data)
+    
+		return sample
+
 
 
 class NotificatinSerializer(serializers.ModelSerializer):
