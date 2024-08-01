@@ -33,6 +33,7 @@ import {
   changeBranch,
   selectActiveBranch,
 } from "@/redux/branches/activeBranchSlice";
+import TableSkeleton from "./dashboard/tableskeleton";
 
 function EmptyLab({ title, user }) {
   return (
@@ -171,7 +172,6 @@ export default function MyLab() {
             sample_type: test?.sample_type,
             branch: test?.branch,
             test_status: test?.test_status,
-            
           };
         })
       );
@@ -327,7 +327,7 @@ export default function MyLab() {
                     </CardHeader>
                     <CardContent>
                       {tab.loading ? (
-                        <LoadingLab />
+                        <TableSkeleton />
                       ) : tab.error ? (
                         <ErrorLab refetch={tab.refetch} error={tab.error} />
                       ) : tab.data?.length < 1 ? (
