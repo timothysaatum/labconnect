@@ -538,7 +538,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		
-	# 	return self.create(request)
+		return self.create(request)
 
 	# def perform_create(self, serializer):
 		
