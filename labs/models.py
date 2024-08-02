@@ -167,6 +167,5 @@ class Result(models.Model):
 	date_added = models.DateField(auto_now_add=True)
 	date_modified = models.DateField(auto_now=True)
 
-
 	def __str__(self) -> str:
 		return str(self.branch)
