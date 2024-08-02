@@ -62,7 +62,7 @@ class Branch(Facility):
 
 	def __str__(self) -> str:
 
-		return self.name
+		return f'{self.laboratory.name} - {self.town}'
 
 
 class SampleType(models.Model):

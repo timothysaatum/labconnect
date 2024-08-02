@@ -78,7 +78,7 @@ class Sample(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
-		return f'{self.referring_facility.name} | {self.patient_name}'
+		return self.patient_name
 
 	def delivery_phone(self) -> str:
 
