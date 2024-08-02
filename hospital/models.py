@@ -39,8 +39,15 @@ class Facility(models.Model):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 
+	def get_facility_name(self):
+		if hasattr(self, 'hospital'):
+			return f'{self.hospital.name} - {self.town}'
+
+		elif hasattr(self, 'branch'):
+			return f'{self.branch.laboratory.name} - {self.town}'
+
 	def __str__(self):
-		return f'{self.region}-{self.town}'
+		return self.get_facility_name()
 
 
 

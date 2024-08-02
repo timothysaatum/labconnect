@@ -54,6 +54,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'payment_status',
 			'delivery',
 			'priority',
+			'is_marked_sent',
 			'date_modified',
 			'date_created'
 		)
@@ -62,16 +63,20 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		data = super().to_representation(instance)
 		data['tests'] = [test.name for test in instance.tests.all()]
-		data['referring_facility'] = instance.referring_facility.name if instance.referring_facility else None
+		data['referring_facility'] = (instance.referring_facility.hospital.name 
+								if instance.facility_type == 'Hospital' else None)
 		data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]
-		data['to_laboratory'] = instance.to_laboratory.name if instance.to_laboratory else None
+		data['to_laboratory'] = instance.to_laboratory.laboratory.name if instance.to_laboratory else None
 		data['delivery'] = instance.delivery.name if instance.delivery else None
 
 		return data
 
 
 	def create(self, validated_data):
-    	
+		user = self.context['request'].user
+		validated_data['sender_full_name'] = user.full_name
+		validated_data['sender_phone'] = user.phone_number
+		validated_data['sender_email'] = user.email
 		test_data_json = validated_data.pop('test_data', '[]')
 		test_data_list = json.loads(test_data_json)
 		tests_data = validated_data.pop('tests', [])

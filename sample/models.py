@@ -24,7 +24,8 @@ SAMPLE_STATUS = [
 ]
 PAYMENT_MODE = [
 	('Manual', 'Manual'),
-	('Online', 'Online')
+	('Online', 'Online'),
+	('Insurance', 'Insurance')
 ]
 PAYMENT_STATUS = [
 	('Paid', 'Paid'),
@@ -67,7 +68,7 @@ class Sample(models.Model):
 		blank=True, 
 		null=True
 	)
-	mark_sent = models.BooleanField(default=False)
+	is_marked_sent = models.BooleanField(default=False)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
 	is_rejected = models.BooleanField(default=False)
 	rejection_reason = models.TextField(blank=True, null=True)

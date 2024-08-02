@@ -14,7 +14,7 @@ class SampleAdmin(admin.ModelAdmin):
 		'to_laboratory', 
 		'sample_status',
 		'rejection_reason',
-		'mark_sent',
+		'is_marked_sent',
 		'payment_mode',
 		'payment_status',
 		'priority'
@@ -23,7 +23,7 @@ class SampleAdmin(admin.ModelAdmin):
 		'sample_status',
 		'payment_mode',
 		'payment_status',
-		'mark_sent' 
+		'is_marked_sent' 
 	)
 
 class NotificationAdmin(admin.ModelAdmin):
