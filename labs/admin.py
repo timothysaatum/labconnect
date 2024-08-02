@@ -127,8 +127,7 @@ class ResultAdmin(admin.ModelAdmin):
 
 class BranchAdmin(admin.ModelAdmin):
 	list_display = (
-		'id', 
-		'name', 
+		'id',  
 		'branch_manager', 
 		'town', 
 		'region', 

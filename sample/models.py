@@ -82,13 +82,7 @@ class Sample(models.Model):
 
 	def delivery_phone(self) -> str:
 
-		if self.delivery:
-
-			del_phone = Delivery.objects.get(id=self.delivery.id).phone
-
-			return del_phone
-
-		return 'Not selected'
+		return Delivery.objects.get(id=self.delivery.id).phone if self.delivery else None
 
 
 class Notification(models.Model):

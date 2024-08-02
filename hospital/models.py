@@ -30,7 +30,6 @@ REGIONS = [
 class Facility(models.Model):
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	name = models.CharField(max_length=200)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	postal_address = models.CharField(max_length=255)
 	phone = models.CharField(max_length=15)
@@ -57,6 +56,7 @@ class Hospital(Facility):
 	Model: Representing a hospital
 	'''
 	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
+	name = models.CharField(max_length=200)
 	hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
 	account_number = models.CharField(max_length=100)
 	website = models.URLField(blank=True, null=True)
