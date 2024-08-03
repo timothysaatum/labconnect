@@ -80,7 +80,8 @@ class Incentive(models.Model):
 
 PAYMENT_MODE = [
 	('Online', 'Online'),
-	('Bank', 'Bank')
+	('Bank', 'Bank'),
+	('Insurance','Insurance')
 ]
 
 

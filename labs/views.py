@@ -289,7 +289,7 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 	"""
 	API endpoint for a user to delete the Branch they have created.
-	This allows on the Lba CEO to delete the Branch.
+	This allows on the Lab CEO to delete the Branch.
 	"""
 
 	def get_queryset(self):
@@ -539,24 +539,11 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 			)
 		
 		return self.create(request)
+	
+	def perform_create(self, serializer):
+		user = self.request.user
+		serializer.save(sender_full_name=user.full_name)
 
-	# def perform_create(self, serializer):
-		
-	# 	facility = Branch.objects.filter(branch_manager=self.request.user)[0]
-	# 	sample = serializer.save(
-	# 		referring_facility=facility, 
-	# 		sender_full_name=self.request.user.full_name,
-	# 		sender_phone=facility.phone,
-	# 		sender_email=facility.email,
-	# 		facility_type='Laboratory'
-	# 	)
-	
-	# 	query_dict.update(self.request.data)
-	# 	#tests = self.request.data.getlist('tests')
-	
-	# 	tests = query_dict.getlist('test_data')
-	# 	sample.tests.add(*tests)
-	
 
 
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):

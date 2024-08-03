@@ -421,7 +421,6 @@ class BranchManagerAcceptView(CreateAPIView):
 			'password_confirmation':request.data['confirm_password']
 		}
 
-		#user = create_branch_manager_user(invitation, data)
 		create_branch_manager_user(invitation, data)
 		return Response(
 			{'message': f'Invitation accepted, you are now a branch manager at {invitation.branch}'}, 

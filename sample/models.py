@@ -24,7 +24,8 @@ SAMPLE_STATUS = [
 ]
 PAYMENT_MODE = [
 	('Manual', 'Manual'),
-	('Online', 'Online')
+	('Online', 'Online'),
+	('Insurance', 'Insurance')
 ]
 PAYMENT_STATUS = [
 	('Paid', 'Paid'),
@@ -43,9 +44,7 @@ class Sample(models.Model):
 	referring_facility = models.ForeignKey(
 			Facility, on_delete=models.CASCADE, 
 			related_name='facilities', 
-			db_index=True,
-			null=True,
-			blank=True
+			db_index=True
 		)
 	facility_type = models.CharField(max_length=50, choices=REFERRING_FACILITY_TYPE)
 	sender_full_name = models.CharField(max_length=200, null=True, blank=True)
@@ -69,7 +68,7 @@ class Sample(models.Model):
 		blank=True, 
 		null=True
 	)
-	mark_sent = models.BooleanField(default=False)
+	is_marked_sent = models.BooleanField(default=False)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
 	is_rejected = models.BooleanField(default=False)
 	rejection_reason = models.TextField(blank=True, null=True)
@@ -80,17 +79,11 @@ class Sample(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
-		return f'{self.referring_facility.name} | {self.patient_name}'
+		return self.patient_name
 
 	def delivery_phone(self) -> str:
 
-		if self.delivery:
-
-			del_phone = Delivery.objects.get(id=self.delivery.id).phone
-
-			return del_phone
-
-		return 'Not selected'
+		return Delivery.objects.get(id=self.delivery.id).phone if self.delivery else None
 
 
 class Notification(models.Model):

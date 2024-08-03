@@ -8,10 +8,8 @@ from .models import (
 		BranchTest,
 		Result
 	)
-# from .results import TestResult
 import csv
 from django.http import HttpResponse
-
 
 
 @admin.action
@@ -33,6 +31,7 @@ def download_csv(self, request, query):
 		writer.writerow(rowobj)
 
 	return response
+
 
 class BranchTestInline(admin.TabularInline):
 	model = BranchTest
@@ -79,18 +78,17 @@ class SampleTypeAdmin(admin.ModelAdmin):
 class LaboratoryAdmin(admin.ModelAdmin):
 
 	list_display = (
-		'id', 
-		'created_by', 
+		'id',
+		'created_by',
 		'name',
-		'branches', 
-		'main_phone', 
-		'main_email', 
-		'herfra_id', 
-		'website', 
-		'date_created', 
+		'branches',
+		'main_phone',
+		'main_email',
+		'herfra_id',
+		'website',
+		'date_created',
 		'date_modified'
 	)
-
 	list_display_links = (
 		'id',
 	)
@@ -98,27 +96,26 @@ class LaboratoryAdmin(admin.ModelAdmin):
 	list_per_page = 10
 
 	def branches(self, obj):
-		return ", ".join([branch.name for branch in obj.branches.all()])
-
+		return ", ".join([branch.town for branch in obj.branches.all()])
 
 
 class ResultAdmin(admin.ModelAdmin):
 
 	list_display = (
-		'id', 
-		'send_by', 
-		'branch', 
-		'test', 
-		'result', 
-		'comments', 
-		'is_verified', 
+		'id',
+		'send_by',
+		'branch',
+		'test',
+		'result',
+		'comments',
+		'is_verified',
 		'is_received',
-		'date_added', 
+		'date_added',
 		'date_modified'
 	)
 
 	list_editable = (
-		'is_verified', 
+		'is_verified',
 		'is_received'
 	)
 
@@ -127,16 +124,14 @@ class ResultAdmin(admin.ModelAdmin):
 
 class BranchAdmin(admin.ModelAdmin):
 	list_display = (
-		'id', 
-		'name', 
-		'branch_manager', 
-		'town', 
-		'region', 
+		'id',
+		'branch_manager',
+		'town',
+		'region',
 		'laboratory',
-		'date_created', 
+		'date_created',
 		'date_modified'
 	)
-
 
 
 class BranchManagerInvitationAdmin(admin.ModelAdmin):

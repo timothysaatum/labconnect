@@ -30,7 +30,7 @@ class FindUserIpAddress:
 			city_info = g.city(ip)
 
 		else:
-			city_info = 'Local Machine => 127.0.0.1'
+			city_info = 'Local Machine: 127.0.0.1'
 
 
 		with open('user_logs.txt', 'a+') as f:

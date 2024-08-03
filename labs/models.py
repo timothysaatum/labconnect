@@ -62,7 +62,7 @@ class Branch(Facility):
 
 	def __str__(self) -> str:
 
-		return self.name
+		return f'{self.laboratory.name} - {self.town}'
 
 
 class SampleType(models.Model):
@@ -166,7 +166,6 @@ class Result(models.Model):
 	is_received = models.BooleanField(default=False)
 	date_added = models.DateField(auto_now_add=True)
 	date_modified = models.DateField(auto_now=True)
-
 
 	def __str__(self) -> str:
 		return str(self.branch)

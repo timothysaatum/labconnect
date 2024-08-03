@@ -30,7 +30,6 @@ REGIONS = [
 class Facility(models.Model):
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	name = models.CharField(max_length=200)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	postal_address = models.CharField(max_length=255)
 	phone = models.CharField(max_length=15)
@@ -40,8 +39,15 @@ class Facility(models.Model):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 
+	def get_facility_name(self):
+		if hasattr(self, 'hospital'):
+			return f'{self.hospital.name} - {self.town}'
+
+		elif hasattr(self, 'branch'):
+			return f'{self.branch.laboratory.name} - {self.town}'
+
 	def __str__(self):
-		return self.name
+		return self.get_facility_name()
 
 
 
@@ -57,6 +63,7 @@ class Hospital(Facility):
 	Model: Representing a hospital
 	'''
 	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
+	name = models.CharField(max_length=200)
 	hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
 	account_number = models.CharField(max_length=100)
 	website = models.URLField(blank=True, null=True)

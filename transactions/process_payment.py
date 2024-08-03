@@ -14,7 +14,7 @@ class ProcessPayments:
             "Authorization": f"Bearer {AUTH_SECRET_KEY}",
             "Content-Type": "application/json",
         }
-	
+
 
 	def __init__(self, amount, email):
 		self.amount = amount

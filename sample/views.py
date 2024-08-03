@@ -11,10 +11,9 @@ class UpdateNotification(generics.UpdateAPIView):
     serializer_class = NotificatinSerializer
 
     def get_object(self):
+
         queryset = Notification.objects.all()
-        print(queryset)
         obj = generics.get_object_or_404(queryset, id=self.request.user.id)
-        print(obj)
         return obj
 
     def patch(self, request, *args, **kwargs):
@@ -25,7 +24,7 @@ class UpdateNotification(generics.UpdateAPIView):
         self.perform_update(serializer)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
 
 class GetNotifications(generics.ListAPIView):
     serializer_class = NotificatinSerializer
