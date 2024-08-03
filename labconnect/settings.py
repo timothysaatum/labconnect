@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    # 'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,7 +58,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     #'user.middleware.IpAdressMiddleWare.FindUserIpAddress',
     'corsheaders.middleware.CorsMiddleware',
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
     'user.middleware.validator.PermissionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -134,11 +133,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-JAZZMIN_SETTINGS = {
-    'site_title': 'LabConnect Administration',
-    'site_header': 'LabConnect Administration Panel',
-    'hide_docs': True
-}
+# JAZZMIN_SETTINGS = {
+#     'site_title': 'LabConnect Administration',
+#     'site_header': 'LabConnect Administration Panel',
+#     'hide_docs': True
+# }
 
 CORS_ALLOW_ALL_ORIGINS = True
 # White listing the localhost:3000 port

@@ -8,13 +8,10 @@ from .models import (
 		BranchTest,
 		Result
 	)
-# from .results import TestResult
-
 
 
 class LaboratorySerializer(serializers.ModelSerializer):
 	logo = serializers.ImageField(required=False)
-	
 
 	class Meta:
 
@@ -62,9 +59,11 @@ class BranchSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		if data['branch_manager']:
-			data['branch_manager'] = instance.branch_manager.full_name
-			data['manager_id'] = instance.branch_manager.id
+		# if data['branch_manager']:
+		# 	data['branch_manager'] = instance.branch_manager.full_name
+		# 	data['manager_id'] = instance.branch_manager.id
+		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else None
+		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else None
 		data['laboratory'] = instance.laboratory.name
 
 		return data
