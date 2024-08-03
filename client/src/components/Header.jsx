@@ -31,7 +31,7 @@ const Header = () => {
       aria-label="main navigation bar"
       className={`${
         location.pathname.includes("/dashboard") ? "sm:ml-14" : ""
-      } flex justify-between px-4 md:px-8 items-center py-3 border-b-2 border-gray-200 dark:border-border shadow-sm shadow-background`}
+      } ${location.pathname.includes("getting-started") && "hidden"} flex justify-between px-4 md:px-8 items-center py-3`}
     >
       <Link
         to="/"

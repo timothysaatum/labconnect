@@ -229,16 +229,28 @@ export const ManagerInviteSchema = z.object({
 });
 
 //create lab schema
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB in bytes
 export const CreateLabSchema = z.object({
   created_by: z.any(),
-  name: z.string().min(1, "Laboratory name is requires"),
+  name: z.string().min(1, "Laboratory name is required"),
   herfra_id: z.string().min(1, "Herfra Id is required"),
   postal_address: z.string().min(1, "Postal address is required"),
   main_email: z.string().email("Invalid email address"),
   main_phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
-  website: z.string(),
+  website: z.string().optional(),
   description: z.string().min(1, "Description is required"),
-  logo: z.instanceof(FileList),
+  logo: z
+    .instanceof(FileList)
+    .optional()
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return true; // No file is optional
+        return files[0].size <= MAX_FILE_SIZE;
+      },
+      {
+        message: "The file must be less than 4MB",
+      }
+    ),
 });
 
 //sample type

@@ -32,6 +32,7 @@ module.exports = {
         "auto-fill": "repeat(auto-fill, minmax(150px, 1fr))",
       },
       colors: {
+        chart1:"hsl(var(--chart-3))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

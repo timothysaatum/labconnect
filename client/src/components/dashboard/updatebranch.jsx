@@ -55,7 +55,7 @@ export const BranchForm = ({ setOpen, form, className, id }) => {
     toast.error("An error occurred");
   }
   const Labmanagers = managers?.data
-    ?.filter((manager) => manager?.id !== user?.id)
+    ?.filter((manager) => manager?.id !== user?.user_id)
     .map((manager) => ({
       label: `${manager?.first_name} ${manager?.last_name}`,
       value: manager?.id,

@@ -17,12 +17,14 @@ import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import SettingProfile from "./components/dashboard/Profile";
 import Loading from "./components/loadingone";
-import Labgettingstarted from "./pages/labgettingstarted";
 import MyLab from "@/components/mylab";
 import SendSample from "./components/dashboard/sendSample";
 import Analytics from "./components/laboratoryanalytics";
 import SampleDetails from "./components/sampleDetails";
-import Welcome from "./pages/welcome";
+import CreateLab from "./components/createLab/createLab";
+import Labgettingstarted, {
+  GettingStartedOverView,
+} from "./pages/labgettingstarted";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -73,7 +75,10 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
-              <Route path="getting-started" element={<Welcome />} />
+              <Route path="getting-started" element={<Labgettingstarted />}>
+                <Route index element={<GettingStartedOverView />} />
+                <Route path="create-Laboratory" element={<CreateLab />} />
+              </Route>
               <Route element={<HasLaboratory />}>
                 <Route
                   path="dashboard"

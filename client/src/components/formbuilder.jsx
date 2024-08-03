@@ -18,6 +18,7 @@ export const FormBuilder = ({
   control = undefined,
   messageClassName,
   descriptionClassName,
+  labelClassName,
   ...rest
 }) => {
   return (
@@ -26,7 +27,9 @@ export const FormBuilder = ({
       control={control}
       render={({ field }) => (
         <FormItem {...rest}>
-          <FormLabel>{label}</FormLabel>
+          <FormLabel htmlFor={name} className={cn("", labelClassName)}>
+            {label}
+          </FormLabel>
           <FormControl>{React.cloneElement(children, field)}</FormControl>
           {message && <FormMessage className={cn("", messageClassName)} />}
           {description && (

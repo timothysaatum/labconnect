@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Spotlight } from "@/components/ui/spotlight";
 import { TextGenerateEffect } from "@/components/ui/text-generate";
 import { GridBackground } from "@/components/ui/gridboxes";
-import CreateLab from "./create-lab";
+import CreateLab from "../components/createLab/createLabOne";
 import MagicButton from "@/components/ui/magicButton";
 import CreateBranch from "@/components/dashboard/createBranch";
 import { useTheme } from "@/components/themeProvider";
@@ -11,120 +11,86 @@ import CreateTest from "@/components/dashboard/CreateTest";
 import { Progress } from "@/components/ui/progress";
 import { useFetchUserBranches, useFetchUserLab } from "@/api/queries";
 import { DotBackground } from "@/components/ui/dotbackground";
+import BlurFade from "@/components/magicui/blur-fade";
+import logo from "/images/logo.png";
+import { Link, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
+import useLogout from "@/hooks/uselogout";
+import { Button } from "@/components/ui/button";
+import ThemeToggler from "@/components/ThemeToggler";
+import { LogOut } from "lucide-react";
 
-const Hero = ({ setStep }) => {
+const Labgettingstarted = () => {
+  return (
+    <div>
+      <Outlet />
+    </div>
+  );
+};
+
+export default Labgettingstarted;
+
+export const GettingStartedOverView = ({ setStep }) => {
   const { data, isError, isFetching, error } = useFetchUserLab();
   const { theme } = useTheme();
+  const user = useSelector(selectCurrentUser);
+  const logout = useLogout();
 
   const {
     data: branches,
     isFetching: branchesFetching,
     error: brancheserror,
   } = useFetchUserBranches();
-  useEffect(() => {
-    if (isError || brancheserror || branchesFetching || isFetching) return;
-    if (data && data?.data?.length > 0) {
-      setTimeout(() => {
-        if (branches && branches?.data?.length > 0) {
-          setStep(3);
-        } else {
-          setStep(2);
-        }
-      }, 2000);
-    }
-  }, [data, branches]);
 
   return (
     <GridBackground>
-      {theme === "dark" && (
-        <Spotlight
-          className="-top-40 -left-10 md:-top-20 md:-left-32 h-screen"
-          fill={"blue"}
-        />
-      )}
-      <Spotlight className="top-28 left-80  h-[80dvh] w-[50vw]" fill="blue" />
-      <div className="h-[95dvh] w-full flex md:items-center md:justify-center antialiased relative overflow-hidden">
-        <div className=" flex mt-20 flex-col justify-center items-center  mx-auto relative z-10  w-full">
-          <p className="uppercase tracking-widest text-xs text-center max-w-80">
-            Just one last step
-          </p>
-          <TextGenerateEffect
-            words="You are Almost done."
-            className=" text-2xl  md:text-4xl lg:text-6xl leading-7 tracking-widest text-slate-700 dark:text-neutral-50"
-          />
+      <Spotlight
+        className="-top-40 left-0 md:left-80 md:-top-30"
+        fill="white"
+      />
 
-          <p className="mt-4 font-normal  text-muted-foreground max-w-lg text-center mx-auto">
-            you are almost done. we will guide you here to add your laboratory
-            and at least one branch. you can add multiple branches later in your
-            dashboard
-          </p>
-          <div className="mt-10 w-full inline-flex items-center justify-center">
-            <MagicButton
-              title={"Get Started"}
-              otherClasses={"self-center"}
-              onClick={() => setStep(1)}
-              btnClasses={"w-full sm:w-56 max-w-56"}
-            />
-          </div>
+      <div className="h-screen w-full flex justify-center antialiased relative overflow-hidden bg-muted/10  dark:text-inherit text-muted-foreground ">
+        <div className="flex mt-20 flex-col items-center justify-center text-center  mx-auto relative z-10  w-full">
+          {/* <div className=" gap-4 top-4 right-4 flex flex-col p-4 self-end">
+          <ThemeToggler />
+          <Button onClick={logout} size="icon" variant="ghost">
+            <LogOut className="w-4 h-4" />
+          </Button>
+        </div> */}
+          <BlurFade inView delay={0.5}>
+            <div>
+              <img
+                src={logo}
+                alt="LabConnect's logo"
+                className="w-56 md:w-72"
+              />
+            </div>
+          </BlurFade>
+          <BlurFade delay={0.45 * 2} inView>
+            <h2 className="text-xl font-semibold tracking-wide sm:text-4xl xl:text-4xl/none leading-8 mb-4">
+              Innovative Access To Laboratories
+            </h2>
+          </BlurFade>
+          <BlurFade delay={0.4 * 3} inView>
+            <span className="text-xl text-pretty tracking-tighter sm:text-3xl xl:text-4xl/none ">
+              <span className="text-md sm:text-xl">With</span>
+              <strong className=" min-h-16 bg-gradient-to-r from-purple-500 via-purple-400 to-pink-500 px-4 py-[1px] ml-2 rounded-md text-white">
+                LabConnect
+              </strong>
+            </span>
+          </BlurFade>
+          <BlurFade inView delay={0.5 * 4}>
+            <div className="mt-14">
+              <Link to="create-Laboratory">
+                <Button variant="outline" size="lg" className="w-56">
+                  Let's Get Started
+                </Button>
+              </Link>
+            </div>
+          </BlurFade>
         </div>
       </div>
     </GridBackground>
   );
 };
-
-const StepToView = ({ step, setStep, from }) => {
-  switch (step) {
-    case 0:
-      return (
-        <div>
-          <Hero setStep={setStep} />
-        </div>
-      );
-    case 1:
-      return (
-        <div>
-          <DotBackground>
-            <TracingBeam>
-              <CreateLab step={step} setStep={setStep} />
-            </TracingBeam>
-          </DotBackground>
-        </div>
-      );
-    case 2:
-      return (
-        <div>
-          <DotBackground>
-            <TracingBeam>
-              <CreateBranch step={step} setStep={setStep} />
-            </TracingBeam>
-          </DotBackground>
-        </div>
-      );
-    case 3:
-      return (
-        <div>
-          <DotBackground>
-            <TracingBeam>
-              <CreateTest step={step} setStep={setStep} from={from} />
-            </TracingBeam>
-          </DotBackground>
-        </div>
-      );
-    default:
-      return null;
-  }
-};
-export default function GettingStartedLab() {
-  const [step, setStep] = useState(0);
-  const from = location.state?.from?.pathname || "/dashboard";
-
-  return (
-    <div className="relative overflow-x-clip">
-      <Progress
-        value={(step / 4) * 100}
-        className="absolute top-0 left-0 h-[2px]"
-      />
-      <StepToView step={step} setStep={setStep} from={from} />
-    </div>
-  );
-}

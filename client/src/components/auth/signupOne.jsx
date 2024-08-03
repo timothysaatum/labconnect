@@ -19,7 +19,7 @@ const AccountType = ({ form }) => {
       items={accounts}
       name="account_type"
       control={form.control}
-      description={"            Note that this field can not be changed later"}
+      description={" Note that this field can not be changed later"}
       message={true}
       label={"How do you intend to use our services"}
       placeholder={"Choose your account type"}

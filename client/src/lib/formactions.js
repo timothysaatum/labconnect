@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 //sending sample from laboratory to another laboratory
@@ -236,6 +237,65 @@ export const useAddSampleType = (
   );
 
   return onAddSampleType;
+};
+
+//create Lab
+export const useCreateLab = (form, setStep, fieldToStep) => {
+  const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
+  const onCreateLab = useCallback(
+    async (data) => {
+      try {
+        console.log(data);
+        if (data.logo instanceof FileList && data.logo.length > 0) {
+          data.logo = data.logo[0];
+        }
+        let newData = {
+          ...data,
+          website:
+            data?.website && !data.website.startsWith("http")
+              ? `http://${data.website}`
+              : data.website,
+        };
+        const formData = new FormData();
+
+        for (const key in newData) {
+          formData.append(key, newData[key]);
+        }
+        console.log(newData);
+        await axiosPrivate.post(
+          "laboratory/create/",
+          formData,
+
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        form.reset();
+        toast.success("Laboratory created successfully", {
+          description: "You can now add branches and tests",
+        });
+        navigate("/dashboard/my-laboratory");
+      } catch (error) {
+        console.log(error);
+        for (const field in error?.response?.data) {
+          form.setError(field, {
+            type: "manual",
+            message: error.response.data[field][0],
+          });
+          // Look up the step associated with the field and set the current step
+          const step = fieldToStep[field];
+          if (step !== undefined) {
+            setStep(step);
+            break; // Exit the loop after finding the first error
+          }
+        }
+      }
+    },
+    [form]
+  );
+
+  return onCreateLab;
 };
 
 //adding a new test
