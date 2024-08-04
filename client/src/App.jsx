@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Signup from "@/pages/Signup";
 import RequireAuth, {
+  BlockGettingStarted,
   HasLaboratory,
   LabRoutes,
 } from "./components/RequireAuth";
@@ -75,9 +76,11 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
-              <Route path="getting-started" element={<Labgettingstarted />}>
-                <Route index element={<GettingStartedOverView />} />
-                <Route path="create-Laboratory" element={<CreateLab />} />
+              <Route element={<BlockGettingStarted />}>
+                <Route path="getting-started" element={<Labgettingstarted />}>
+                  <Route index element={<GettingStartedOverView />} />
+                  <Route path="create-Laboratory" element={<CreateLab />} />
+                </Route>
               </Route>
               <Route element={<HasLaboratory />}>
                 <Route

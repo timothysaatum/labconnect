@@ -17,9 +17,11 @@ import {
   FormControl,
   FormMessage,
 } from "../ui/form";
+import { useQueryClient } from "@tanstack/react-query";
 
 const LaboratoryProfile = () => {
   const { data: userlab } = useFetchUserLab();
+  const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
   const [imagefile, setImagefile] = useState(null);
   const [imagefileUrl, setImagefileUrl] = useState(null);
@@ -76,19 +78,20 @@ const LaboratoryProfile = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
       toast.success("Profile updated successfully");
+      queryClient.invalidateQueries(["Laboratory"]);
     } catch (error) {
-      if (error?.response?.status === 401 || error?.response?.status === 403) {
-        const errorValues = [Object.values(error?.response?.data || {})];
-        if (errorValues.length > 0) {
-          toast.error(errorValues[0]);
+      console.log(error);
+      for (const field in error?.response?.data) {
+        if (field === "logo") {
+          toast.error(error.response.data[field][0]);
         }
-      } else if (error?.response?.status === 400) {
-        toast.error("All fields are required", {
-          position: "top-center",
+        form.setError(field, {
+          type: "manual",
+          message: error.response.data[field][0],
         });
-      } else {
-        toast.error("Something went went, try again, report if error persist");
+        // Look up the step associated with the field and set the current step
       }
     }
   };

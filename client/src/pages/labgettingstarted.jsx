@@ -20,6 +20,7 @@ import useLogout from "@/hooks/uselogout";
 import { Button } from "@/components/ui/button";
 import ThemeToggler from "@/components/ThemeToggler";
 import { LogOut } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Labgettingstarted = () => {
   return (
@@ -49,15 +50,26 @@ export const GettingStartedOverView = ({ setStep }) => {
         className="-top-40 left-0 md:left-80 md:-top-30"
         fill="white"
       />
+      <div className="fixed z-50 left-0 top-0 h-full flex justify-end gap-4 p-4 flex-col">
+        <ThemeToggler />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span
+                onClick={() => logout()}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+              >
+                <LogOut className="h-5 w-5" />
+                <span className="sr-only">logout</span>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="right">Log out</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
 
       <div className="h-screen w-full flex justify-center antialiased relative overflow-hidden bg-muted/10  dark:text-inherit text-muted-foreground ">
         <div className="flex mt-20 flex-col items-center justify-center text-center  mx-auto relative z-10  w-full">
-          {/* <div className=" gap-4 top-4 right-4 flex flex-col p-4 self-end">
-          <ThemeToggler />
-          <Button onClick={logout} size="icon" variant="ghost">
-            <LogOut className="w-4 h-4" />
-          </Button>
-        </div> */}
           <BlurFade inView delay={0.5}>
             <div>
               <img

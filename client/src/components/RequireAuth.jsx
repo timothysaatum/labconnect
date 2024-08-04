@@ -1,8 +1,8 @@
-import { useLocation, Navigate, Outlet } from "react-router-dom";
-import {  useSelector } from "react-redux";
+import { useLocation, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { selectCurrentUser, selectCurrenttoken } from "@/redux/auth/authSlice";
 import { toast } from "sonner";
-import {useFetchUserLab } from "@/api/queries";
+import { useFetchUserLab } from "@/api/queries";
 
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
@@ -28,6 +28,7 @@ export const LabRoutes = () => {
 
 export const HasLaboratory = () => {
   const user = useSelector(selectCurrentUser);
+  const token = useSelector(selectCurrenttoken);
 
   if (user.account_type === "Hospital") {
     return;
@@ -47,4 +48,26 @@ export const HasLaboratory = () => {
   ) : (
     <Navigate to="/getting-started" state={{ from: location }} replace />
   );
+};
+
+export const BlockGettingStarted = () => {
+  const { isError, data: userlab, isPending } = useFetchUserLab();
+  const location = useLocation();
+
+  if (isPending) return;
+  if (isError) {
+    toast.error("An error has occured. You need to sign in Again");
+    return <Navigate to="/sign-in" state={{ from: location }} replace />;
+  }
+
+  const labCreated = userlab?.data.length > 0;
+
+  if (labCreated) {
+    toast.info("Unauthorized", {
+      description: "You have already created a laboratory",
+    });
+    return <Navigate to="/dashboard" />;
+  }
+
+  return <Outlet />;
 };

@@ -92,7 +92,7 @@ export default function Signup() {
         }
       );
     } catch (error) {
-      console.log(error)
+      console.log(error);
       for (const field in error?.response?.data) {
         form.setError(field, {
           type: "manual",
@@ -121,11 +121,6 @@ export default function Signup() {
   };
   return (
     <DotBackground>
-      <Progress
-        max
-        value={(step / 3) * 100}
-        className="absolute top-0 left-0 h-[2px] transition-all"
-      />
       <Card className="mx-auto max-w-lg mt-10">
         <CardHeader>
           <CardTitle className="text-xl ">Create Account</CardTitle>

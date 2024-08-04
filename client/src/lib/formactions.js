@@ -241,6 +241,7 @@ export const useAddSampleType = (
 
 //create Lab
 export const useCreateLab = (form, setStep, fieldToStep) => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const onCreateLab = useCallback(
@@ -275,10 +276,14 @@ export const useCreateLab = (form, setStep, fieldToStep) => {
         toast.success("Laboratory created successfully", {
           description: "You can now add branches and tests",
         });
+        queryClient.invalidateQueries(["Laboratory"]);
         navigate("/dashboard/my-laboratory");
       } catch (error) {
         console.log(error);
         for (const field in error?.response?.data) {
+          if (field === "logo") {
+            toast.error(error.response.data[field][0]);
+          }
           form.setError(field, {
             type: "manual",
             message: error.response.data[field][0],
