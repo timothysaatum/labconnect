@@ -46,7 +46,6 @@ class BranchSerializer(serializers.ModelSerializer):
 			'branch_manager',
 			'manager_id',
 			'laboratory', 
-			'name',
 			'phone',
 			'email',
 			'postal_address',
