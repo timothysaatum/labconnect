@@ -75,7 +75,7 @@ const Header = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel className="">
-                {user?.first_name}{" "}
+                {user?.full_name}{" "}
                 {user.is_admin && (
                   <Badge className="float-right clear-right" variant="outline">
                     Admin

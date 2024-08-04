@@ -39,10 +39,20 @@ import { AddBranchSchema } from "@/lib/schema";
 import AddManager from "./addManager";
 import { regions } from "@/data/data";
 import { useBranchAdd } from "@/lib/formactions";
+import SelectComponent from "../selectcomponent";
+import { useFetchLabManagers, useFetchUserLab } from "@/api/queries";
 
 export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
   const [serverErrors, setServerErrors] = useState(null);
+  const { data: userlab, isError: labError } = useFetchUserLab();
+  const { data: managers, isError } = useFetchLabManagers(userlab?.data[0]?.id);
 
+  const Labmanagers = managers?.data
+    ?.filter((manager) => manager?.id !== user?.user_id)
+    .map((manager) => ({
+      label: `${manager?.first_name} ${manager?.last_name}`,
+      value: manager?.id,
+    }));
   //form submission
   const onBranchAdd = useBranchAdd(
     form,
@@ -51,7 +61,7 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
     serverErrors,
     setServerErrors
   );
-  
+
   return (
     <Form {...form}>
       <form
@@ -59,32 +69,24 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
         noValidate
         onSubmit={form.handleSubmit(onBranchAdd)}
       >
-        <FormBuilder name={"name"} label={"Branch name"} message={true}>
-          <Input type="text" placeholder="branch name" />
-        </FormBuilder>
-        <FormField
-          name="manager"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Assign Branch Manager</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Region" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {regions?.map((region) => (
-                    <SelectItem value={region.value} key={region.value}>
-                      {region?.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
-        />
+       
+        {/* <div className="flex items-center gap-2">
+          <SelectComponent
+            name={"branch_manager"}
+            control={form.control}
+            label={"Change Branch Manager (Optional)"}
+            items={Labmanagers}
+            placeholder={"Select Branch Manager"}
+            className="flex-1"
+            description={"click on the + to send a new invite"}
+            empty={"This laboratory has no other users."}
+          />
+          <AddManager branchId={id}>
+            <Button variant="ghost" size="icon">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </AddManager>
+        </div> */}
         <FormBuilder name={"email"} label={"Branch Email"}>
           <Input type="email" placeholder="branch email" />
         </FormBuilder>
@@ -147,7 +149,6 @@ const AddBranch = () => {
   const form = useForm({
     resolver: zodResolver(AddBranchSchema),
     defaultValues: {
-      name: "",
       email: "",
       phone: "",
       region: "",
