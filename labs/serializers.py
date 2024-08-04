@@ -36,6 +36,7 @@ class BranchSerializer(serializers.ModelSerializer):
 
 	laboratory = serializers.PrimaryKeyRelatedField(read_only=True)
 	manager_id = serializers.CharField(read_only=True)
+	name = serializers.CharField(read_only=True)
 
 	class Meta:
 
@@ -45,7 +46,8 @@ class BranchSerializer(serializers.ModelSerializer):
 			'id',
 			'branch_manager',
 			'manager_id',
-			'laboratory', 
+			'laboratory',
+			'name',
 			'phone',
 			'email',
 			'postal_address',
@@ -63,7 +65,7 @@ class BranchSerializer(serializers.ModelSerializer):
 		# 	data['manager_id'] = instance.branch_manager.id
 		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else None
 		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else None
-		data['laboratory'] = instance.laboratory.name
+		data['name'] = f'{instance.laboratory.name} - {instance.town}'
 
 		return data
 
