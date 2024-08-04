@@ -50,7 +50,6 @@ class Facility(models.Model):
 		return self.get_facility_name()
 
 
-
 HOSPITAL_TYPES = [
 
 	('Public', 'Public'),
