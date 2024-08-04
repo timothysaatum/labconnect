@@ -60,9 +60,6 @@ class BranchSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		# if data['branch_manager']:
-		# 	data['branch_manager'] = instance.branch_manager.full_name
-		# 	data['manager_id'] = instance.branch_manager.id
 		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else None
 		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else None
 		data['name'] = f'{instance.laboratory.name} - {instance.town}'
@@ -110,7 +107,7 @@ class TestSerializer(serializers.ModelSerializer):
 		# pagination_class = QueryPagination
 	def get_branch_specific_data(self, obj):
 		branch_id = self.context.get('pk')
-		
+
 		data = {
 			'price': obj.price,
 			'discount_price': obj.discount_price,
@@ -122,6 +119,7 @@ class TestSerializer(serializers.ModelSerializer):
 		if branch_id:
 
 			try:
+
 				branch_test = BranchTest.objects.get(test=obj, branch_id=branch_id)
 				data['price'] = branch_test.price or obj.price
 				data['discount_price'] = branch_test.discount_price or obj.discount_price
@@ -131,7 +129,7 @@ class TestSerializer(serializers.ModelSerializer):
 
 			except BranchTest.DoesNotExist:
 				raise('No such branch')
-			
+
 		return data
 
 	def to_representation(self, instance):
@@ -195,7 +193,6 @@ class TestResultSerializer(serializers.ModelSerializer):
 		data['laboratory'] = instance.laboratory.name
 
 		return data
-
 
 
 class BranchManagerInvitationSerializer(serializers.ModelSerializer):
