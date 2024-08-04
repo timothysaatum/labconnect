@@ -211,7 +211,6 @@ export const UpdateTestSchema = z
 
 //addBranch schema
 export const AddBranchSchema = z.object({
-  name: z.string().min(1, "Branch name is required"),
   email: z.string().min(1, "Email is required").email("Invalid email address"),
   phone: z.string().refine(isValidPhoneNumber, "Invalid phone number"),
   digital_address: z.string().min(1, "Digital address is required"),
