@@ -26,10 +26,10 @@ import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import axios from "./../api/axios";
 import { SigninSchema } from "@/lib/schema";
-import { logOut, setCredentials } from "@/redux/auth/authSlice";
+import { setCredentials } from "@/redux/auth/authSlice";
 import { toast } from "sonner";
 import { DotBackground } from "@/components/ui/dotbackground";
-import { Spotlight } from "@/components/ui/spotlight";
+import useLogout from "@/hooks/uselogout";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +38,7 @@ export default function Signin() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [pending,StartTransition] = useTransition()
+  const logOut = useLogout();
 
   const from = location.state?.from?.pathname || "/dashboard";
 
@@ -87,8 +87,10 @@ export default function Signin() {
   };
 
   useEffect(() => {
-    dispatch(logOut());
-  });
+    logOut().catch((error) => {
+      console.log(error);
+    });
+  }, []);
   return (
     <DotBackground>
       <div className="px-2">

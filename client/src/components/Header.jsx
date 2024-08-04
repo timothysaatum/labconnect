@@ -31,7 +31,7 @@ const Header = () => {
       aria-label="main navigation bar"
       className={`${
         location.pathname.includes("/dashboard") ? "sm:ml-14" : ""
-      } ${location.pathname.includes("getting-started") && "hidden"} flex justify-between px-4 md:px-8 items-center py-3`}
+      } ${location.pathname.includes("getting-started") && "hidden"} flex justify-between px-4 md:px-8 items-center py-3 border-b-[1px]`}
     >
       <Link
         to="/"
@@ -77,7 +77,7 @@ const Header = () => {
               <DropdownMenuLabel className="">
                 {user?.full_name}{" "}
                 {user.is_admin && (
-                  <Badge className="float-right clear-right" variant="outline">
+                  <Badge className="float-right clear-right ml-3" variant="outline">
                     Admin
                   </Badge>
                 )}

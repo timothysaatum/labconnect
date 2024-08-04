@@ -37,11 +37,12 @@ import { selectCurrentUser } from "@/redux/auth/authSlice";
 import useLogout from "@/hooks/uselogout";
 import ThemeToggler from "@/components/ThemeToggler";
 import React, { useEffect } from "react";
-import { useFetchAllLabsBranches } from "@/api/queries";
+import { useFetchUserBranches } from "@/api/queries";
 import {
   changeBranch,
   selectActiveBranch,
 } from "@/redux/branches/activeBranchSlice";
+import AddBranch from "@/components/dashboard/addbranch";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
@@ -53,7 +54,7 @@ export default function Dashboard() {
     data: userbranches,
     isPending: branchesLoading,
     isError: branchesError,
-  } = useFetchAllLabsBranches();
+  } = useFetchUserBranches();
   const activeBranchId = useSelector(selectActiveBranch);
   const dispatch = useDispatch();
 
@@ -63,6 +64,7 @@ export default function Dashboard() {
   const activeBranch = userbranches?.data?.find(
     (branch) => branch.id === activeBranchId
   )?.name;
+  console.log(userbranches?.data?.length === 0);
   return (
     <div className="flex flex-col min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -130,6 +132,11 @@ export default function Dashboard() {
           </TooltipProvider>
         </nav>
       </aside>
+      {userbranches?.data?.length === 0 && (
+        <div className="bg-yellow-600 sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
+          Your Laboratory has no branches. you need to add at least one branch
+        </div>
+      )}
       <div className="flex flex-col">
         <header className="sticky justify-between top-0 z-30 sm:hidden flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <Sheet>
@@ -177,30 +184,34 @@ export default function Dashboard() {
             </SheetContent>
           </Sheet>
           <div className="flex gap-2 items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  disabled={branchesLoading || branchesError}
-                  variant="ghost"
-                  className="flex items-center gap-2 px-2 text-s"
-                >
-                  {branchesError ? "Error loading branches" : activeBranch}
-                  <ChevronDown className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {userbranches?.data?.map((branch) => (
-                  <DropdownMenuCheckboxItem
-                    key={branch.id}
-                    checked={activeBranchId === branch.id}
-                    onCheckedChange={() => dispatch(changeBranch(branch.id))}
+            {userbranches?.data?.length === 0 ? (
+              <AddBranch />
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    disabled={branchesLoading || branchesError}
+                    variant="ghost"
+                    className="flex items-center gap-2 px-2 text-sm"
                   >
-                    {branch.name}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <NotiicationsPopover >
+                    {branchesError ? "Error loading branches" : activeBranch}
+                    <ChevronDown className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {userbranches?.data?.map((branch) => (
+                    <DropdownMenuCheckboxItem
+                      key={branch.id}
+                      checked={activeBranchId === branch.id}
+                      onCheckedChange={() => dispatch(changeBranch(branch.id))}
+                    >
+                      {branch.name}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            <NotiicationsPopover>
               <Button variant="outline" size="icon" className="relative">
                 <Bell className="w-4 h-4 text-muted-foreground" />
                 <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
@@ -236,33 +247,36 @@ export default function Dashboard() {
           </Breadcrumb>
           <div className="flex justify-around items-center gap-4">
             <div>
-              {/* <p className="font-semibold text-muted-foreground text-[14px]">
-                Active Branch: <span>{activeBranch}</span>
-              </p> */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    disabled={branchesLoading || branchesError}
-                    variant="ghost"
-                    className="flex items-center justify-between gap-2 px-2 text-sm max-sm:w-full"
-                  >
-                    <span className="text-muted-foreground">Active:</span>
-                    {branchesError ? "Error loading branches" : activeBranch}
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {userbranches?.data?.map((branch) => (
-                    <DropdownMenuCheckboxItem
-                      key={branch.id}
-                      checked={activeBranchId === branch.id}
-                      onCheckedChange={() => dispatch(changeBranch(branch.id))}
+              {userbranches?.data?.length === 0 ? (
+                <AddBranch />
+              ) : (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      disabled={branchesLoading || branchesError}
+                      variant="ghost"
+                      className="flex items-center justify-between gap-2 px-2 text-sm max-sm:w-full"
                     >
-                      {branch.name}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      <span className="text-muted-foreground">Active:</span>
+                      {branchesError ? "Error loading branches" : activeBranch}
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {userbranches?.data?.map((branch) => (
+                      <DropdownMenuCheckboxItem
+                        key={branch.id}
+                        checked={activeBranchId === branch.id}
+                        onCheckedChange={() =>
+                          dispatch(changeBranch(branch.id))
+                        }
+                      >
+                        {branch.name}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
             <NotiicationsPopover>
               <Button variant="outline" size="icon" className="relative">
