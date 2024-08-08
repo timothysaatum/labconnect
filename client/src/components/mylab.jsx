@@ -184,7 +184,7 @@ export default function MyLab() {
         userbranches?.data.map((branch) => {
           return {
             id: branch.id,
-            branch_name: branch.name,
+            branch_name: `${branch.town} Branch`,
             branch_manager: branch.branch_manager,
             branch_phone: branch.phone,
             branch_email: branch.email,
@@ -303,7 +303,7 @@ export default function MyLab() {
                                   ? "Error loading branches"
                                   : userbranches?.data?.find(
                                       (branch) => branch.id === activeBranch
-                                    )?.name}
+                                    )?.town + " Branch"}
 
                                 <ChevronDown className="w-4 h-4" />
                               </Button>
@@ -317,7 +317,7 @@ export default function MyLab() {
                                     dispatch(changeBranch(branch.id))
                                   }
                                 >
-                                  {branch.name}
+                                  {branch.town} Branch
                                 </DropdownMenuCheckboxItem>
                               ))}
                             </DropdownMenuContent>

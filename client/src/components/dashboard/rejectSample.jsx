@@ -19,26 +19,18 @@ import { FormBuilder } from "../formbuilder";
 import { Form } from "../ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import { useRejectSampleMutation } from "@/api/mutations";
+import { useRejectSample } from "@/lib/formactions";
+import { rejectSampleSchema } from "@/lib/schema";
 
-const reasonSchema = z
-  .string()
-  .min(1, "Reason is required")
-  .max(255, "Reason must be less than 255 characters");
-
-const RejectSample = () => {
-  const { mutate } = useRejectSampleMutation();
+const RejectSample = ({ id }) => {
   const form = useForm({
-    resolver: zodResolver(reasonSchema),
+    resolver: zodResolver(rejectSampleSchema),
     defaultValues: {
+      is_rejected: true,
       reason: "",
     },
   });
-
-  const handleMutate = async () => {
-    if (form.watch("reason") === "") return toast.error("Reason is required");
-    mutate(form.getValues("reason"));
-  };
+  const onRejectSample = useRejectSample(form, id);
 
   return (
     <div>
@@ -56,7 +48,10 @@ const RejectSample = () => {
               inform the the referor of the rejection.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <form className="grid gap-2">
+          <form
+            className="grid gap-2"
+            onSubmit={form.handleSubmit(onRejectSample)}
+          >
             <Form {...form}>
               <FormBuilder
                 control={form.control}
@@ -70,12 +65,12 @@ const RejectSample = () => {
             </Form>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleMutate}
+              <Button
+                type="submit"
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 Continue
-              </AlertDialogAction>
+              </Button>
             </AlertDialogFooter>
           </form>
         </AlertDialogContent>

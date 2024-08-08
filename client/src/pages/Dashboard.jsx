@@ -58,13 +58,15 @@ export default function Dashboard() {
   const activeBranchId = useSelector(selectActiveBranch);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!activeBranchId) dispatch(changeBranch(userbranches?.data[0]?.id));
-  }, [userbranches?.data, activeBranchId]);
-  const activeBranch = userbranches?.data?.find(
-    (branch) => branch.id === activeBranchId
-  )?.name;
-  console.log(userbranches?.data?.length === 0);
+useEffect(() => {
+  const branchIds = userbranches?.data?.map((branch) => branch.id) || [];
+  if (!activeBranchId || !branchIds.includes(activeBranchId)) {
+    dispatch(changeBranch(userbranches?.data[0]?.id));
+  }
+}, [userbranches, activeBranchId]);
+  const activeBranch = `${
+    userbranches?.data?.find((branch) => branch.id === activeBranchId)?.town
+  } Branch`;
   return (
     <div className="flex flex-col min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -185,7 +187,7 @@ export default function Dashboard() {
           </Sheet>
           <div className="flex gap-2 items-center">
             {userbranches?.data?.length === 0 ? (
-              <AddBranch />
+              user?.is_admin && <AddBranch />
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -205,7 +207,7 @@ export default function Dashboard() {
                       checked={activeBranchId === branch.id}
                       onCheckedChange={() => dispatch(changeBranch(branch.id))}
                     >
-                      {branch.name}
+                      {branch.town} Branch
                     </DropdownMenuCheckboxItem>
                   ))}
                 </DropdownMenuContent>
@@ -248,7 +250,7 @@ export default function Dashboard() {
           <div className="flex justify-around items-center gap-4">
             <div>
               {userbranches?.data?.length === 0 ? (
-                <AddBranch />
+                user?.is_admin && <AddBranch />
               ) : (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -271,7 +273,7 @@ export default function Dashboard() {
                           dispatch(changeBranch(branch.id))
                         }
                       >
-                        {branch.name}
+                        {branch.town} Branch
                       </DropdownMenuCheckboxItem>
                     ))}
                   </DropdownMenuContent>

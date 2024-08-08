@@ -51,11 +51,6 @@ const PopoverSelect = ({
                   {field.value
                     ? title === "Laboratories"
                       ? items?.data?.find((option) => option.id === field.value)
-                          ?.laboratory +
-                        " " +
-                        "|" +
-                        " " +
-                        items?.data?.find((option) => option.id === field.value)
                           ?.name
                       : title === "Branches"
                         ? items?.data?.find(
@@ -98,11 +93,8 @@ const PopoverSelect = ({
                               : "opacity-0"
                           )}
                         />
-                        {title === "Laboratories"
-                          ? item.laboratory + " " + "|" + " " + item.name
-                          : title === "Branches"
-                            ? item.name
-                            : item.name}
+
+                        {item.name}
                       </CommandItem>
                     ))}
                   </CommandList>

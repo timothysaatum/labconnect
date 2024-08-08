@@ -232,7 +232,7 @@ const UpdateTest = ({ branch, test }) => {
         const findBranch = userbranches.data.find(
           (userBranch) => branch === userBranch.id
         );
-        return { label: findBranch.name, value: findBranch.id };
+        return { label: findBranch.town + "Branch", value: findBranch.id };
       });
     }
     return [];

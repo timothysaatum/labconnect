@@ -106,7 +106,7 @@ const SampleDetails = () => {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>Upload Results</DropdownMenuItem>
-                    <RejectSample />
+                    <RejectSample id={sample?.id} />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>

@@ -43,7 +43,7 @@ export const HasLaboratory = () => {
     return <Outlet />;
   }
 
-  return user?.is_admin && userlab?.data.length > 0 ? (
+  return userlab?.data.length > 0 ? (
     <Outlet />
   ) : (
     <Navigate to="/getting-started" state={{ from: location }} replace />

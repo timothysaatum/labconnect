@@ -41,10 +41,13 @@ import { regions } from "@/data/data";
 import { useBranchAdd } from "@/lib/formactions";
 import SelectComponent from "../selectcomponent";
 import { useFetchLabManagers, useFetchUserLab } from "@/api/queries";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/redux/auth/authSlice";
 
 export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
   const [serverErrors, setServerErrors] = useState(null);
   const { data: userlab, isError: labError } = useFetchUserLab();
+  const user = useSelector(selectCurrentUser);
   const { data: managers, isError } = useFetchLabManagers(userlab?.data[0]?.id);
 
   const Labmanagers = managers?.data
@@ -69,7 +72,6 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
         noValidate
         onSubmit={form.handleSubmit(onBranchAdd)}
       >
-       
         {/* <div className="flex items-center gap-2">
           <SelectComponent
             name={"branch_manager"}

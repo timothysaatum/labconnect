@@ -68,9 +68,7 @@ export const BranchForm = ({ setOpen, form, className, id }) => {
         noValidate
         onSubmit={form.handleSubmit(onBranchAdd)}
       >
-        <FormBuilder name={"name"} label={"Branch name"} message={true}>
-          <Input type="text" placeholder="branch name" />
-        </FormBuilder>
+       
         {user?.is_admin && (
           <div className="flex items-center gap-2">
             <SelectComponent
@@ -150,9 +148,8 @@ const UpdateBranch = ({ branchId }) => {
   const branch = userbranches?.data?.find((branch) => branch.id === branchId);
 
   const form = useForm({
-    // resolver: zodResolver(AddBranchSchema),
+    resolver: zodResolver(AddBranchSchema),
     defaultValues: {
-      name: "",
       email: "",
       phone: "",
       region: "",
@@ -165,7 +162,6 @@ const UpdateBranch = ({ branchId }) => {
 
   useEffect(() => {
     if (branch) {
-      form.setValue("name", branch.name);
       form.setValue("email", branch.email);
       form.setValue("phone", branch.phone);
       form.setValue("region", branch.region);

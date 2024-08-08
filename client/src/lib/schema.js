@@ -60,7 +60,7 @@ export const hospitalRequestSchema = z.object({
 
 //send sample by laboratory schema
 export const labRequestSchema = z.object({
-  name_of_patient: z.string().min(1, "Patient name is required"),
+  patient_name: z.string().min(1, "Patient name is required"),
   patient_age: z.date({
     required_error: "Date of birth is required",
     invalid_type_error: "Enter a valid date format YYY-MM-DD",
@@ -68,13 +68,22 @@ export const labRequestSchema = z.object({
   patient_sex: z.string().min(1, "Sex is required"),
   from_lab: z.string().min(1, "laboratory is required"),
   to_laboratory: z.string().min(1, "laboratory is required"),
-  tests: z.array(multiSelectSchema).min(1),
+  test_data: z.array(multiSelectSchema).min(1, "Choose at least one test"),
   priority: z.string().min(1, "Choose test priority"),
   payment_mode: z.string().min(1, "Choose a payment mode"),
   sample_status: z.string().min(1, ""),
   payment_status: z.string(),
   brief_description: z.string(),
   attachment: z.instanceof(FileList).optional(),
+  shareWith: z.string().optional(),
+});
+
+export const rejectSampleSchema = z.object({
+  is_rejected: z.boolean(),
+  reason: z
+    .string()
+    .max(250, "Limit to 250 charaters")
+    .min(1, "Rejection Reason is required"),
 });
 
 //OTP SCHEMA
