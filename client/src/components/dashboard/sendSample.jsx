@@ -1,9 +1,12 @@
 import {
   ChevronLeft,
+  ChevronsUpDown,
+  Loader2,
   Minus,
   Paperclip,
   PlusCircle,
   Trash2,
+  X,
 } from "lucide-react";
 import {
   Tooltip,
@@ -24,17 +27,10 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
 
-import { useFieldArray, useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -46,7 +42,6 @@ import {
 import { FormBuilder } from "../formbuilder";
 import SelectComponent from "../selectcomponent";
 import CalenderDatePicker from "./datepicker";
-import PopoverSelectwithhover from "./popoverselectwithhover";
 import {
   useFetchAllDeliveries,
   useFetchAllLabsBranches,
@@ -62,7 +57,6 @@ import {
   setSampleData,
 } from "@/redux/formData/sendsampleSave";
 import { toast } from "sonner";
-import SelectComponentWithHover from "./hoverselect";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { labRequestSchema } from "@/lib/schema";
 import {
@@ -75,9 +69,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useSendSample } from "@/lib/formactions";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { Switch } from "../ui/switch";
+import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
+import { calculateTotalCost } from "@/util/totalCost";
 
 //the prompt dialog
 export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
@@ -86,9 +88,9 @@ export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
     <AlertDialog open={isOpen} onOpenChange={setOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>uncompleted request?</AlertDialogTitle>
+          <AlertDialogTitle>Uncompleted Request?</AlertDialogTitle>
           <AlertDialogDescription>
-            you have an uncompleted request.
+            You have an uncompleted request.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -110,24 +112,29 @@ export default function SendSample() {
   const activeBranch = useSelector(selectActiveBranch);
   const [imageFile, setImagefile] = useState(null);
   const [selectedTests, setSelectedTests] = useState(null);
+  const [testOptions, setTestOptions] = useState([]);
+  const [share, setShare] = useState(false);
 
   //form declaration
   const form = useForm({
-    // resolver: zodResolver(labRequestSchema),
+    resolver: zodResolver(labRequestSchema),
     defaultValues: {
       patient_name: "",
       patient_age: "",
       patient_sex: "",
       delivery: "",
       to_laboratory: "",
-      from_lab: "",
+      from_lab: activeBranch,
       brief_description: "",
       priority: "",
       sample_status: "Received by delivery",
       payment_mode: "Manual",
       payment_status: "Paid",
+      test_data: [],
+      shareWith: "",
     },
   });
+
   //send sample action
   const onSendSample = useSendSample(form);
 
@@ -181,33 +188,12 @@ export default function SendSample() {
     form.setValue("attachment", imageFile);
   }, [imageFile]);
 
-  //field array for tests
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "test_data",
-  });
-
   // id of lab to fetch tests for
   useEffect(() => {
     setId(form.watch("to_laboratory"));
     form.setValue("test_data", []);
   }, [form.watch("to_laboratory")]);
 
-  //intialize with a single field
-  useEffect(() => {
-    if (fields.length === 0) {
-      append({ test: "", sample_type: "" });
-    }
-  }, [append, fields.length]);
-
-  // removing test fields
-  const handleRemove = (index) => {
-    if (fields.length === 1) {
-      toast.message("you need to choose at least one test");
-      return;
-    }
-    remove(index);
-  };
   //fetching selected lab test
   const {
     data: tests,
@@ -247,11 +233,14 @@ export default function SendSample() {
       form.setValue("patient_name", savedData.patient_name);
       form.setValue("patient_age", savedData.patient_age);
       form.setValue("patient_sex", savedData.patient);
-      form.setValue("sample_type", savedData.sample_type);
       form.setValue("delivery", savedData.delivery);
       form.setValue("to_laboratory", savedData.to_laboratory);
-      form.setValue("from_lab", savedData.from_lab);
       form.setValue("brief_description", savedData.brief_description);
+      form.setValue("priority", savedData.priority);
+      form.setValue("sample_status", savedData.sample_status);
+      form.setValue("payment_mode", savedData.payment_mode);
+      form.setValue("payment_status", savedData.payment_status);
+      form.setValue("test_data", savedData.test_data);
     }
   }, [savedData, restore]);
 
@@ -288,7 +277,29 @@ export default function SendSample() {
     { label: "Express", value: "Express" },
   ];
 
+  // constructing tests in the multiselct format
+  useEffect(() => {
+    setTestOptions(
+      tests?.data?.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }))
+    );
+  }, [tests?.data]);
   //selected tests
+
+  useEffect(() => {
+    setSelectedTests(
+      form
+        .watch("test_data")
+        ?.map((field) => tests?.data?.find((test) => test.id === field.value))
+        .map((test) => ({
+          ...test,
+          amount_to_pay: test.price - test?.discount_price,
+        }))
+    );
+  }, [form.watch("test_data")]);
+  console.log(selectedTests);
   return (
     <div className="sm:pl-14 mx-4 py-5 md:py-0">
       <RestoreDialog
@@ -321,11 +332,11 @@ export default function SendSample() {
           <section>
             <Form {...form}>
               <form
-                className="grid md:grid-cols-[1fr_300px] gap-8 sm:py-5"
+                className="grid lg:grid-cols-[1fr_350px] gap-8 sm:py-5"
                 noValidate
                 onSubmit={form.handleSubmit(onSendSample)}
               >
-                <div className="grid ">
+                <div className="grid gap-4 self-start">
                   <div>
                     <PopoverSelect
                       className="flex whitespace-nowrap gap-8 items-center mb-4"
@@ -358,7 +369,7 @@ export default function SendSample() {
                           </FormBuilder>
                         </div>
 
-                        <div className="grid gap-4 sm:grid-cols-[1fr_200px]">
+                        <div className="grid gap-4 md:grid-cols-[1fr_200px]">
                           <div>
                             <SelectComponent
                               label={"Select patient gender"}
@@ -448,58 +459,45 @@ export default function SendSample() {
                       <CardTitle className="text-lg">Choose Tests</CardTitle>
                       <CardDescription>
                         These tests are available in the laboratory you
-                        selected.
+                        selected. <br />
+                        Hover over the tests for details and requirements
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div>
-                        {fields.map((item, index) => (
-                          <div
-                            key={item.id}
-                            className="grid gap-2 md:gap-6 lg:grid-cols-[2fr_1fr] max-md:border-b max-md:pb-4 max-md:mb-4 max-md:last:border-b-0 max-md:last:pb-0 max-md:last:mb-0"
-                          >
-                            <div>
-                              <PopoverSelectwithhover
-                                form={form}
-                                name={`test_data.${index}.test`}
-                                error={testsError}
-                                loading={testsLoading}
-                                items={tests}
-                                label={"Choose a test to request"}
-                                title={"tests"}
-                                search={"Search tests..."}
-                              />
-                            </div>
-                            <div>
-                              <SelectComponentWithHover
-                                form={form}
-                                name={`test_data.${index}.sample_type`}
-                                error={testsError}
-                                loading={testsLoading}
-                                index={index}
-                                data={tests?.data}
-                                id={form.watch(`test_data.${index}.test`)}
-                                label={"Sample Type"}
-                                title={"sample types"}
-                                search={"Search sample type..."}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="flex justify-end">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="px-4 mt-2"
-                          type="button"
-                          onClick={() =>
-                            append({ test: null, sample_type: null })
-                          }
-                        >
-                          Add Test
-                        </Button>
-                      </div>
+                      <FormField
+                        name="test_data"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-1 -mb-2">
+                            <FormLabel>Choose Tests</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <MultipleSelectorWithHover
+                                  options={testOptions}
+                                  title="tests"
+                                  detailedContent={tests?.data}
+                                  placeholder="choose tests"
+                                  hidePlaceholderWhenSelected
+                                  emptyIndicator={
+                                    !form.watch("to_laboratory")
+                                      ? "Select a laboratory to view tests"
+                                      : testsLoading
+                                        ? "loading tests..."
+                                        : testsError
+                                          ? "Error loading tests"
+                                          : tests?.data?.length
+                                            ? "This Laboratory has no tests available"
+                                            : "something went wrong"
+                                  }
+                                  {...field}
+                                />
+                                <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />{" "}
                     </CardContent>
                   </Card>
                 </div>
@@ -544,20 +542,146 @@ export default function SendSample() {
                       />
                     </CardContent>
                   </Card>
-                  <div className="bg-muted/50 rounded-md p-4 flex-1">
-                    <CardTitle className="text-lg">Tests Requested</CardTitle>
-                    {selectedTests?.map((test) => (
-                      <div>
-                        {test.test} {test.sample_type}
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <Switch id="share_result" />
+                  <div className="flex items-center gap-4">
+                    <Switch
+                      id="share_result"
+                      checked={share}
+                      onCheckedChange={() => setShare(!share)}
+                    />
                     <Label htmlFor="share_result">Share results</Label>
                   </div>
+                  {share && (
+                    <FormBuilder
+                      name={"shareWith"}
+                      label={"Share Results with this email"}
+                      description={
+                        "A copy of the results will be share with this email "
+                      }
+                    >
+                      <Input type="email" placeholder="share with this email" />
+                    </FormBuilder>
+                  )}
+                  {selectedTests?.length > 0 ? (
+                    <div className="border-dashed border-[1px] rounded-md p-4 flex-1">
+                      <CardTitle className="text-lg">Tests Requested</CardTitle>
+
+                      <div className="pb-4">
+                        {selectedTests
+                          ?.filter((item) => item !== undefined)
+                          .map((test, index) => (
+                            <Accordion
+                              type="single"
+                              collapsible
+                              className="w-full max-"
+                              key={index}
+                            >
+                              <AccordionItem value={"item" + index}>
+                                <AccordionTrigger className="">
+                                  <div className="flex justify-between w-full pr-3 ">
+                                    <span>{test.name}</span>
+                                    <div className="flex gap-3 items-center">
+                                      {test.discount_price && (
+                                        <span className=" line-through text-muted-foreground text-xs">
+                                          {test.price}
+                                        </span>
+                                      )}
+                                      <span>{test.amount_to_pay}</span>
+                                    </div>
+                                  </div>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="flex flex-col gap-2 whitespace-normal max-w-md">
+                                    <h6 className="text-sm uppercase">
+                                      {test?.name}
+                                    </h6>
+                                    <p className="text-xs uppercase">
+                                      <span className="capitalize mr-2">
+                                        Price:
+                                      </span>
+                                      GH{`\u20B5`}
+                                      {test?.price}
+                                    </p>
+                                    <p className="text-xs uppercase">
+                                      <span className="capitalize mr-2">
+                                        Discount:
+                                      </span>
+                                      GH{`\u20B5`}
+                                      {test?.discount_price || "0"}
+                                    </p>
+                                    <p className="text-xs uppercase">
+                                      <span className="capitalize mr-2">
+                                        Payable Amount:
+                                      </span>
+                                      GH{`\u20B5`}
+                                      {test?.price - test?.discount_price}
+                                    </p>
+                                    <p className="text-xs uppercase">
+                                      <span className="capitalize mr-2">
+                                        Turn around time :
+                                      </span>
+                                      {test?.turn_around_time}
+                                    </p>
+                                    <p className="text-xs uppercase border-b-[1px] pb-2">
+                                      <span className="capitalize mr-2">
+                                        Patient Preparation:
+                                      </span>
+                                      {test?.patient_preparation}
+                                    </p>
+                                    <h5 className="font-medium text-sm ">
+                                      Sample Requirements
+                                    </h5>
+                                    <div className="py-3">
+                                      {test?.sample_type?.map(
+                                        (sample, index) => (
+                                          <div
+                                            key={index}
+                                            className="space-y-2 border-b-[1px] pb-2"
+                                          >
+                                            <p className="text-xs uppercase">
+                                              <span className="capitalize mr-2">
+                                                Sample Type:
+                                              </span>
+                                              {sample.sample_name}
+                                            </p>
+                                            <p className="text-xs uppercase">
+                                              <span className="capitalize mr-2">
+                                                Collection time:
+                                              </span>
+                                              {sample.collection_time}
+                                            </p>
+                                            <p className="text-xs uppercase">
+                                              <span className="capitalize mr-2">
+                                                collection Procedure:
+                                              </span>
+                                              {sample.collection_procedure}
+                                            </p>
+                                          </div>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
+                          ))}
+                      </div>
+                      <div className="text-end">
+                        Total:{" "}
+                        <span>
+                          GH{`\u20B5`}
+                          {calculateTotalCost(selectedTests)}
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-                <Button className="max-w-fit">Proceed to summary</Button>
+
+                <Button className="w-96 mx-auto">
+                  Send Sample
+                  {form.formState.isSubmitting && (
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  )}
+                </Button>
               </form>
             </Form>
           </section>

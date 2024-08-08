@@ -168,9 +168,9 @@ export default function LaboratoryDashboardOverview() {
     isError: branchesError,
   } = useFetchUserBranches();
 
-  const activeBranch = branches?.data?.find(
-    (branch) => branch.id === activeBranchId
-  )?.name;
+  const activeBranch =
+    branches?.data?.find((branch) => branch.id === activeBranchId)?.town +
+    " Branch";
 
   useEffect(() => {
     if (receivedRequests) {
@@ -298,7 +298,7 @@ export default function LaboratoryDashboardOverview() {
                             dispatch(changeBranch(branch.id))
                           }
                         >
-                          {branch.name}
+                          {branch.town} Branch
                         </DropdownMenuCheckboxItem>
                       ))}
                     </DropdownMenuContent>
@@ -360,7 +360,7 @@ export default function LaboratoryDashboardOverview() {
                             dispatch(changeBranch(branch.id))
                           }
                         >
-                          {branch.name}
+                          {branch.town} Branch
                         </DropdownMenuCheckboxItem>
                       ))}
                     </DropdownMenuContent>

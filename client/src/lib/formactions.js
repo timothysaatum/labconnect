@@ -15,11 +15,11 @@ export const useSendSample = (form) => {
   const axiosPrivate = useAxiosPrivate();
 
   const onSendSample = async (data) => {
-    console.log(data);
     try {
       const newData = {
         ...data,
         patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
+        test_data: data.test_data.map((test) => test.value),
       };
       if (
         newData.attachment instanceof FileList &&
@@ -29,6 +29,7 @@ export const useSendSample = (form) => {
       } else {
         delete newData.attachment;
       }
+      console.log(newData);
       const formData = new FormData();
 
       for (const key in newData) {
@@ -440,4 +441,33 @@ export const useUpdateTest = (setOpen, form, id) => {
   } else {
     return onUpdateTestForActiveBranch;
   }
+};
+
+// reject sample
+export const useRejectSample = (form,  id) => {
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+  const onRejectSample = useCallback(
+    async (data) => {
+      try {
+        await axiosPrivate.patch(`/laboratory/sample/update/${id}/`, data);
+        queryClient.invalidateQueries(["userbranches"]);
+        toast.success("Sample Rejected");
+        form.reset();
+      } catch (error) {
+        for (const field in error?.response?.data) {
+          form.setError(field, {
+            type: "manual",
+            message: error.response.data[field][0],
+          });
+        }
+        console.log(error);
+        toast.error("an error occured", {
+          duration: 5000,
+        });
+      }
+    },
+    [form]
+  );
+  return onRejectSample;
 };

@@ -4,7 +4,7 @@ import SampleTypehoverCard from "./sampleTypehoverCard";
 import TestsHoverCard from "./dashboard/testshoverCard";
 
 const HoverCardDetails = ({ children, option, items, title }) => {
-  const hoveredcard = items.find((item) => item.id === option);
+  const hoveredcard = items?.find((item) => item.id === option)
 
   const CardType = () => {
     switch (title) {
@@ -19,7 +19,7 @@ const HoverCardDetails = ({ children, option, items, title }) => {
   return (
     <HoverCard>
       <HoverCardTrigger>{children}</HoverCardTrigger>
-      <HoverCardContent className="w-fit">{CardType()}</HoverCardContent>
+      <HoverCardContent className="min-w-[30rem]">{CardType()}</HoverCardContent>
     </HoverCard>
   );
 };

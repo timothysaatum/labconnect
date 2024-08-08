@@ -39,7 +39,7 @@ export default function SelectComponent({
           >
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder={placeholder} />
+                <SelectValue placeholder={placeholder} className="" />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
