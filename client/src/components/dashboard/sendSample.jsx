@@ -1,13 +1,4 @@
-import {
-  ChevronLeft,
-  ChevronsUpDown,
-  Loader2,
-  Minus,
-  Paperclip,
-  PlusCircle,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ChevronsUpDown, Loader2, Paperclip, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +11,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -124,13 +114,13 @@ export default function SendSample() {
       patient_sex: "",
       delivery: "",
       to_laboratory: "",
-      from_lab: activeBranch,
+      referring_facility: activeBranch,
       brief_description: "",
       priority: "",
       sample_status: "Received by delivery",
       payment_mode: "Manual",
       payment_status: "Paid",
-      test_data: [],
+      tests: [],
       shareWith: "",
     },
   });
@@ -191,7 +181,7 @@ export default function SendSample() {
   // id of lab to fetch tests for
   useEffect(() => {
     setId(form.watch("to_laboratory"));
-    form.setValue("test_data", []);
+    form.setValue("tests", []);
   }, [form.watch("to_laboratory")]);
 
   //fetching selected lab test
@@ -240,14 +230,14 @@ export default function SendSample() {
       form.setValue("sample_status", savedData.sample_status);
       form.setValue("payment_mode", savedData.payment_mode);
       form.setValue("payment_status", savedData.payment_status);
-      form.setValue("test_data", savedData.test_data);
+      form.setValue("tests", savedData.tests);
     }
   }, [savedData, restore]);
 
   //selecting the active branch automatically
   useEffect(() => {
     if (!savedData && activeBranch) {
-      form.setValue("from_lab", activeBranch);
+      form.setValue("referring_facility", activeBranch);
     }
   }, [activeBranch]);
 
@@ -291,14 +281,14 @@ export default function SendSample() {
   useEffect(() => {
     setSelectedTests(
       form
-        .watch("test_data")
+        .watch("tests")
         ?.map((field) => tests?.data?.find((test) => test.id === field.value))
         .map((test) => ({
           ...test,
           amount_to_pay: test.price - test?.discount_price,
         }))
     );
-  }, [form.watch("test_data")]);
+  }, [form.watch("tests")]);
   console.log(selectedTests);
   return (
     <div className="sm:pl-14 mx-4 py-5 md:py-0">
@@ -465,7 +455,7 @@ export default function SendSample() {
                     </CardHeader>
                     <CardContent>
                       <FormField
-                        name="test_data"
+                        name="tests"
                         control={form.control}
                         render={({ field }) => (
                           <FormItem className="flex-1 -mb-2">
@@ -542,25 +532,7 @@ export default function SendSample() {
                       />
                     </CardContent>
                   </Card>
-                  <div className="flex items-center gap-4">
-                    <Switch
-                      id="share_result"
-                      checked={share}
-                      onCheckedChange={() => setShare(!share)}
-                    />
-                    <Label htmlFor="share_result">Share results</Label>
-                  </div>
-                  {share && (
-                    <FormBuilder
-                      name={"shareWith"}
-                      label={"Share Results with this email"}
-                      description={
-                        "A copy of the results will be share with this email "
-                      }
-                    >
-                      <Input type="email" placeholder="share with this email" />
-                    </FormBuilder>
-                  )}
+
                   {selectedTests?.length > 0 ? (
                     <div className="border-dashed border-[1px] rounded-md p-4 flex-1">
                       <CardTitle className="text-lg">Tests Requested</CardTitle>
@@ -576,7 +548,7 @@ export default function SendSample() {
                               key={index}
                             >
                               <AccordionItem value={"item" + index}>
-                                <AccordionTrigger className="">
+                                <AccordionTrigger className="hover:no-underline">
                                   <div className="flex justify-between w-full pr-3 ">
                                     <span>{test.name}</span>
                                     <div className="flex gap-3 items-center">
@@ -674,6 +646,25 @@ export default function SendSample() {
                       </div>
                     </div>
                   ) : null}
+                  <div className="flex items-center gap-4">
+                    <Switch
+                      id="share_result"
+                      checked={share}
+                      onCheckedChange={() => setShare(!share)}
+                    />
+                    <Label htmlFor="share_result">Share results</Label>
+                  </div>
+                  {share && (
+                    <FormBuilder
+                      name={"shareWith"}
+                      label={"Share Results with this email"}
+                      description={
+                        "A copy of the results will be share with this email "
+                      }
+                    >
+                      <Input type="email" placeholder="share with this email" />
+                    </FormBuilder>
+                  )}
                 </div>
 
                 <Button className="w-96 mx-auto">

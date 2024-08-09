@@ -19,7 +19,7 @@ export const useSendSample = (form) => {
       const newData = {
         ...data,
         patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
-        test_data: data.test_data.map((test) => test.value),
+        tests: data.tests.map((test) => test.value),
       };
       if (
         newData.attachment instanceof FileList &&
