@@ -23,6 +23,7 @@ from rest_framework.exceptions import ValidationError
 from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
 import json
+from hospital.models import Facility
 from .tasks import copy_test_to_branch
 
 
@@ -532,17 +533,28 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 
 		if not self.has_laboratory_permission(self.request.user):
 
-
 			return Response(
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-		
+
 		return self.create(request)
 	
 	def perform_create(self, serializer):
 		user = self.request.user
-		serializer.save(sender_full_name=user.full_name)
+		referring_lab = Facility.objects.filter(branch__branch_manager=user).first()
+
+		query_dict.update(self.request.data)
+		sample = serializer.save(
+				sender_full_name=user.full_name,
+				sender_phone=user.phone_number,
+				sender_email=user.email,
+				referring_facility=referring_lab,
+				facility_type='Laboratory'
+			)
+		#tests = query_dict.getlist('tests')
+		tests = self.request.data.getlist('tests')
+		sample.tests.add(*tests)
 
 
 
