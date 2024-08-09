@@ -66,7 +66,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
             sample_type: "",
             delivery: "",
             to_lab: "",
-            from_lab: "",
+            referring_facility: "",
             brief_description: "",
           }
         : {
@@ -148,7 +148,7 @@ const RequestForm = React.forwardRef(({ setOpen }, ref) => {
       console.log(error.data);
     }
   };
-const [id, setId] = useState(null);
+  const [id, setId] = useState(null);
 
   const {
     data: tests,
@@ -270,7 +270,7 @@ const [id, setId] = useState(null);
               {user.account_type === "Laboratory" ? (
                 <PopoverSelect
                   form={form}
-                  name={"from_lab"}
+                  name={"referring_facility"}
                   error={branchesError}
                   loading={branchesLoading}
                   items={branches}
@@ -373,13 +373,13 @@ const [id, setId] = useState(null);
                         <Plus />
                       </Button>
                     )}
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => remove(index)}
-                      >
-                        <Minus />
-                      </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => remove(index)}
+                    >
+                      <Minus />
+                    </Button>
                   </div>
                 </li>
               ))}
