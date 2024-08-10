@@ -327,7 +327,7 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_400_BAD_REQUEST
 			)
-		
+		print(request.data)
 		return self.create(request)
 
 	def perform_create(self, serializer):
@@ -525,7 +525,7 @@ class TestResultDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 
-	queryset = Sample.objects.all()
+	# queryset = Sample.objects.all()
 	serializer_class = SampleSerializer
 	parser_classes = (MultiPartParser, FormParser)
 
@@ -537,23 +537,25 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-
+		serializer = self.get_serializer(data=request.data)
+		
+		print(serializer.is_valid(raise_exception=True))
+		print(serializer.initial_data)
 		return self.create(request)
-	
+
 	def perform_create(self, serializer):
 		user = self.request.user
-		referring_lab = Facility.objects.filter(branch__branch_manager=user).first()
-
 		query_dict.update(self.request.data)
+		tests = self.request.data.getlist('tests')
+		# print(serializer.is_valid())
 		sample = serializer.save(
 				sender_full_name=user.full_name,
 				sender_phone=user.phone_number,
 				sender_email=user.email,
-				referring_facility=referring_lab,
 				facility_type='Laboratory'
 			)
-		#tests = query_dict.getlist('tests')
-		tests = self.request.data.getlist('tests')
+		# tests = query_dict.getlist('tests', [])
+		# print(tests)
 		sample.tests.add(*tests)
 
 
