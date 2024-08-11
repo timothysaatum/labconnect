@@ -102,7 +102,7 @@ export default function SendSample() {
   const activeBranch = useSelector(selectActiveBranch);
   const [imageFile, setImagefile] = useState(null);
   const [selectedTests, setSelectedTests] = useState(null);
-  const [testOptions, setTestOptions] = useState([]);
+  const [testOptions, setTestOptions] = useState(null);
   const [share, setShare] = useState(false);
 
   //form declaration
@@ -289,7 +289,6 @@ export default function SendSample() {
         }))
     );
   }, [form.watch("tests")]);
-  console.log(selectedTests);
   return (
     <div className="sm:pl-14 mx-4 py-5 md:py-0">
       <RestoreDialog

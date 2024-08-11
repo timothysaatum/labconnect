@@ -11,16 +11,18 @@ import { toast } from "sonner";
 
 //sending sample from laboratory to another laboratory
 export const useSendSample = (form) => {
-  const queryClient = useQueryClient;
+  const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
 
   const onSendSample = async (data) => {
     try {
+      const testvalue = data?.tests ? data.tests.map((test) => test.value) : [];
       const newData = {
         ...data,
         patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
-        tests: data.tests.map((test) => test.value),
+        tests: testvalue,
       };
+
       if (
         newData.attachment instanceof FileList &&
         newData.attachment.length > 0
@@ -29,20 +31,24 @@ export const useSendSample = (form) => {
       } else {
         delete newData.attachment;
       }
-      console.log(newData);
+
       const formData = new FormData();
 
-      for (const key in newData) {
+      // Append other fields
+    for (const key in newData) {
+      if (key === "tests") {
+        // Stringify the array before appending
+        formData.append(key, JSON.stringify(newData.tests));
+      } else {
         formData.append(key, newData[key]);
       }
-      await axiosPrivate.post(
-        "laboratory/sample/add/",
-        formData,
+    }
+      console.log(formData);
 
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      await axiosPrivate.post("laboratory/sample/add/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       form.reset();
       queryClient.invalidateQueries(["Requests"]);
       toast.success("Sample Sent", {
@@ -444,7 +450,7 @@ export const useUpdateTest = (setOpen, form, id) => {
 };
 
 // reject sample
-export const useRejectSample = (form,  id) => {
+export const useRejectSample = (form, id) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
   const onRejectSample = useCallback(
