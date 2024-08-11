@@ -10,7 +10,7 @@ from hospital.models import Facility
 class SampleSerializer(serializers.ModelSerializer):
 
 	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all(), required=True)
-	attachment = serializers.FileField(required=False)
+	# attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(
 		queryset=Facility.objects.all(),
 		required=False
@@ -43,7 +43,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sample_types',
 			'tests',
 			'clinical_history',
-			'attachment',
+			# 'attachment',
 			'sample_status',
 			'payment_mode',
 			'payment_status',

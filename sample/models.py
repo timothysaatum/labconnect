@@ -63,11 +63,11 @@ class Sample(models.Model):
 	tests = models.ManyToManyField(Test, related_name='tests')
 	sample_types = models.ManyToManyField(SampleType, related_name='sample_type')
 	clinical_history = models.TextField(null=True, blank=True)
-	attachment = models.FileField(
-		upload_to='sample/attachments',
-		blank=True, 
-		null=True
-	)
+	# attachment = models.FileField(
+	# 	upload_to='sample/attachments',
+	# 	blank=True, 
+	# 	null=True
+	# )
 	is_marked_sent = models.BooleanField(default=False)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
 	is_rejected = models.BooleanField(default=False)
