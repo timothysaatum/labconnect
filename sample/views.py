@@ -2,8 +2,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
-from .serializers import NotificatinSerializer
-from sample.models import Notification
+from .serializers import NotificatinSerializer, CountObjectsSerializer
+from .models import Notification, Sample
 
 
 class UpdateNotification(generics.UpdateAPIView):
@@ -29,6 +29,27 @@ class UpdateNotification(generics.UpdateAPIView):
 class GetNotifications(generics.ListAPIView):
     serializer_class = NotificatinSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
+    
+
+class CountObjects(generics.GenericAPIView):
+    serializer_class = CountObjectsSerializer
+
+    def get(self, request):
+        samples_received = Sample.objects.filter(is_marked_sent=True).count()
+        samples_sent = Sample.objects.filter(is_marked_sent=True).count()
+        samples_rejected = Sample.objects.filter(is_rejected=True).count()
+        samples_processed = Sample.objects.filter(is_marked_sent=True).count()
+
+        data = {
+            samples_received:samples_received,
+            samples_sent:samples_sent,
+            samples_rejected:samples_rejected,
+            samples_processed:samples_processed
+        }
+
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        print(serializer.data)
