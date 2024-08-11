@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from sample.models import Sample, Notification
-from labs.paginators import QueryPagination
+# from labs.paginators import QueryPagination
 from labs.models import Test, SampleType
 from hospital.models import Facility
-import json
+# import json
 
 
 
@@ -58,7 +58,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		data = super().to_representation(instance)
 		data['tests'] = [test.name for test in instance.tests.all()]
-		data['referring_facility'] = (instance.referring_facility.hospital.name 
+		data['referring_facility'] = (instance.referring_facility.hospital.name
 								if instance.facility_type == 'Hospital' else None)
 		data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]
 		data['to_laboratory'] = instance.to_laboratory.laboratory.name if instance.to_laboratory else None
@@ -86,4 +86,21 @@ class NotificatinSerializer(serializers.ModelSerializer):
 			'is_read',
 			'date_created',
 			'date_modified'
+		)
+
+
+class CountObjectsSerializer(serializers.Serializer):
+
+	samples_received = serializers.IntegerField(read_only=True)
+	samples_sent = serializers.IntegerField(read_only=True)
+	samples_rejected = serializers.IntegerField(read_only=True)
+	samples_processed = serializers.IntegerField(read_only=True)
+
+	class Meta:
+
+		fields = (
+			'samples_received',
+			'samples_sent',
+			'samples_rejected',
+			'samples_processed'
 		)

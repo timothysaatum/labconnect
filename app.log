@@ -1,0 +1,3 @@
+DEBUG 2024-08-10 12:35:27,663 autoreload File C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py previous mtime: 1723292698.8138795, current mtime: 1723293325.431047
+DEBUG 2024-08-10 12:35:27,699 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py notified as changed. Signal results: [(<function template_changed at 0x000001C1610B9E40>, None), (<function translation_file_changed at 0x000001C162782CA0>, None)].
+INFO 2024-08-10 12:35:27,764 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.

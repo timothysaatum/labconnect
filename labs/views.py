@@ -22,11 +22,11 @@ from django.core.cache import cache
 from rest_framework.exceptions import ValidationError
 from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
-import json
-from hospital.models import Facility
+# import json
+# from hospital.models import Facility
 from .tasks import copy_test_to_branch
-
-
+import logging
+logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
 
 
@@ -45,9 +45,7 @@ class PermissionMixin(object):
 	"""
 	def has_laboratory_permission(self, user):
 
-		return user.account_type == 'Laboratory' and (
-				user.is_staff or user.is_admin
-			)
+		return user.account_type == 'Laboratory' and (user.is_admin or user.is_staff)
 
 
 	"""
@@ -206,6 +204,7 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 
 		lab = Laboratory.objects.get(created_by=self.request.user)
 		serializer.save(branch_manager=self.request.user, laboratory=lab)
+		
 
 
 

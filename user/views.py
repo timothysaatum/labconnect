@@ -17,7 +17,7 @@ from rest_framework import status
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from .models import OneTimePassword
-from .utils import send_normal_email
+# from .utils import send_normal_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -36,6 +36,9 @@ from labs.serializers import BranchManagerInvitationSerializer
 import random
 import string
 from django.db.models import Subquery
+import logging
+
+logger = logging.getLogger('labs')
 
 
 
@@ -127,7 +130,7 @@ class CreateUserView(CreateAPIView):
 	serializer_class = UserCreationSerializer
 
 	def post(self, request, format=None):
-		
+		logger.info(f'Account created for {request.data['last_name']}')
 		return self.create(request)
 
 
@@ -221,7 +224,7 @@ class LoginUserView(GenericAPIView):
 				return Response({'error': 'An error occured, try again.'}, status=status.HTTP_404_NOT_FOUND)
 
 			user_tokens = user.tokens()
-
+			logger.info(f'Logged in user.last_name user.last_name')
 			response = Response({'data': serializer.data, 'access_token':user_tokens.get('access')}, status=status.HTTP_200_OK)
 
 			response.set_cookie(
