@@ -3,13 +3,13 @@ from sample.models import Sample, Notification
 # from labs.paginators import QueryPagination
 from labs.models import Test, SampleType
 from hospital.models import Facility
-# import json
+import json
 
 
 
 class SampleSerializer(serializers.ModelSerializer):
 
-	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all(), required=True)
+	tests = serializers.CharField()#PrimaryKeyRelatedField(many=True, queryset=Test.objects.all(), required=True)
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(
 		queryset=Facility.objects.all(),
@@ -66,7 +66,11 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		return data
 
-
+	# def validate(self, attrs):
+	# 	print(attrs)
+	# 	attrs['tests'] = json.loads(attrs['tests'])
+	# 	print(attrs)
+	# 	return super().validate(attrs)
 
 class NotificatinSerializer(serializers.ModelSerializer):
 

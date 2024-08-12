@@ -22,7 +22,7 @@ from django.core.cache import cache
 from rest_framework.exceptions import ValidationError
 from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
-# import json
+import json
 # from hospital.models import Facility
 from .tasks import copy_test_to_branch
 import logging
@@ -536,27 +536,25 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-		serializer = self.get_serializer(data=request.data)
-		
-		print(serializer.is_valid(raise_exception=True))
-		print(serializer.initial_data)
+		tests = json.loads(request.data['tests'])
+		# print(tests)
+		request.data['tests'] = tests
 		return self.create(request)
 
 	def perform_create(self, serializer):
 		user = self.request.user
 		query_dict.update(self.request.data)
-		tests = self.request.data.getlist('tests')
-		# print(serializer.is_valid())
+		tests = query_dict.getlist('tests', [])
+		# test = json.loads(tests)
+		# print(test)
 		sample = serializer.save(
 				sender_full_name=user.full_name,
 				sender_phone=user.phone_number,
 				sender_email=user.email,
 				facility_type='Laboratory'
 			)
-		# tests = query_dict.getlist('tests', [])
-		# print(tests)
-		sample.tests.add(*tests)
 
+		sample.tests.add(*tests)
 
 
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
