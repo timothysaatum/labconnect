@@ -548,7 +548,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		user = self.request.user
-		query_dict.update(self.request.data)
+		
 		tests = self.request.data['tests']
 	
 		sample = serializer.save(
