@@ -15,15 +15,15 @@ class SampleSerializer(serializers.ModelSerializer):
 		queryset=Facility.objects.all(),
 		required=False
 	)
-	sample_types = serializers.PrimaryKeyRelatedField(
-		queryset=SampleType.objects.all(),
-		many=True
-	)
+	# sample_types = serializers.PrimaryKeyRelatedField(
+	# 	queryset=SampleType.objects.all(),
+	# 	many=True
+	# )
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
 	facility_type = serializers.CharField(required=False)
-
+#232108
 	class Meta:
 
 		model = Sample
@@ -40,7 +40,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_phone',
 			'sender_email',
 			'is_rejected',
-			'sample_types',
+			# 'sample_types',
 			'tests',
 			'clinical_history',
 			'attachment',
@@ -53,16 +53,17 @@ class SampleSerializer(serializers.ModelSerializer):
 			'date_modified',
 			'date_created'
 		)
-	
+
 	# def to_internal_value(self, data):
 	# 	print(isinstance(data.get('tests'), str))
-	# 	if isinstance(data.get('tests'), list):
+	# 	if isinstance(data.get('tests'), str):
+
 	# 		try:
-	# 			data['tests'] = json.loads(str(data['tests']))
-	# 			print(data)
+	# 			data['tests'] = json.loads(data.pop('tests'))
+
 	# 		except json.JSONDecodeError:
 	# 			raise serializers.ValidationError({'tests': 'Invalid format'})
-			
+
 	# 	return super().to_internal_value(data)
 
 	def to_representation(self, instance):
@@ -71,7 +72,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = (instance.referring_facility.hospital.name
 								if instance.facility_type == 'Hospital' else None)
-		data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]
+		# data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]
 		data['to_laboratory'] = instance.to_laboratory.laboratory.name if instance.to_laboratory else None
 		data['delivery'] = instance.delivery.name if instance.delivery else None
 

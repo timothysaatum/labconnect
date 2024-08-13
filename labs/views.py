@@ -521,7 +521,7 @@ class TestResultDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 
-	# queryset = Sample.objects.all()
+	queryset = Sample.objects.all()
 	serializer_class = SampleSerializer
 	parser_classes = (MultiPartParser, FormParser)
 
@@ -533,20 +533,24 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-		# tests = json.loads(request.data['tests'])
-		# print(tests)
-		# request.data['tests'] = tests
-		# print(request.data['tests'])
-		print(request.data['tests'])
+		data = request.data.dict() if isinstance(request.data, QueryDict) else request.data.copy()
+		if 'tests' in data:
+
+			tests = json.loads(data['tests'])
+			if isinstance(tests, list):
+				
+				data['tests'] = tests
+			
+		request._full_data = data
+		
 		return self.create(request)
 
 	def perform_create(self, serializer):
-		print(serializer)
+
 		user = self.request.user
 		query_dict.update(self.request.data)
-		tests = query_dict.getlist('tests', [])
-		# test = json.loads(tests)
-		print(query_dict)
+		tests = self.request.data['tests']
+	
 		sample = serializer.save(
 				sender_full_name=user.full_name,
 				sender_phone=user.phone_number,

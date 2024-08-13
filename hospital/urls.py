@@ -9,7 +9,8 @@ from .views import (
     SampleResultList,
     AddHospitalView,
     UpdateHospitalView,
-    DeleteHospitalView
+    DeleteHospitalView,
+    UserHospital
 )
 
 
@@ -19,6 +20,7 @@ urlpatterns = [
 	path('add/', AddHospitalView.as_view(), name='add-hospital'),
 	path('update/<int:pk>/', UpdateHospitalView.as_view(), name='add-hospital'),
 	path('delete/<int:pk>/', DeleteHospitalView.as_view(), name='delete-hospital'),
+    path('get-user-hospital/', UserHospital.as_view(), name='user-hospital'),
 	path('list/', HospitalSerializerView.as_view(), name='hospital-list'),
 	path('health-worker/add/sample/', SampleSerializerView.as_view(), name='add-sample'),
 	path('health-worker/sample/list/', SampleListView.as_view(), name='sample-list'),

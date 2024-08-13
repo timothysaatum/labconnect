@@ -61,7 +61,7 @@ class Sample(models.Model):
 		)
 	to_laboratory = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	tests = models.ManyToManyField(Test, related_name='tests')
-	sample_types = models.ManyToManyField(SampleType, related_name='sample_type')
+	# sample_types = models.ManyToManyField(SampleType, related_name='sample_type')
 	clinical_history = models.TextField(null=True, blank=True)
 	attachment = models.FileField(
 		upload_to='sample/attachments',
