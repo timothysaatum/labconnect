@@ -111,7 +111,6 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 	The API endpoint that allows the user to update their lab, 
 	Inherits the custom PermissionMixin class defined at the top of this model.
 	Checks if the user is associated with the lab.
-
 	"""
 	serializer_class = LaboratorySerializer
 
@@ -205,7 +204,6 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 		lab = Laboratory.objects.get(created_by=self.request.user)
 		serializer.save(branch_manager=self.request.user, laboratory=lab)
 		
-
 
 
 class BranchListView(PermissionMixin, generics.ListAPIView):
@@ -394,7 +392,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 			raise ValidationError(
 				{'error': 'Test must have at least one(1) branch'}
 			)
-		print(branches)
+		# print(branches)
 		test = serializer.save()
 
 		if branches:
@@ -521,7 +519,6 @@ class TestResultDeleteView(PermissionMixin, generics.DestroyAPIView):
 		return self.destroy(request, pk, format=None)
 
 
-
 class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 
 	# queryset = Sample.objects.all()
@@ -536,17 +533,20 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-		tests = json.loads(request.data['tests'])
+		# tests = json.loads(request.data['tests'])
 		# print(tests)
-		request.data['tests'] = tests
+		# request.data['tests'] = tests
+		# print(request.data['tests'])
+		print(request.data['tests'])
 		return self.create(request)
 
 	def perform_create(self, serializer):
+		print(serializer)
 		user = self.request.user
 		query_dict.update(self.request.data)
 		tests = query_dict.getlist('tests', [])
 		# test = json.loads(tests)
-		# print(test)
+		print(query_dict)
 		sample = serializer.save(
 				sender_full_name=user.full_name,
 				sender_phone=user.phone_number,

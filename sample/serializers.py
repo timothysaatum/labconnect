@@ -9,7 +9,7 @@ import json
 
 class SampleSerializer(serializers.ModelSerializer):
 
-	tests = serializers.CharField()#PrimaryKeyRelatedField(many=True, queryset=Test.objects.all(), required=True)
+	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all(), required=True)
 	attachment = serializers.FileField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(
 		queryset=Facility.objects.all(),
@@ -53,6 +53,17 @@ class SampleSerializer(serializers.ModelSerializer):
 			'date_modified',
 			'date_created'
 		)
+	
+	# def to_internal_value(self, data):
+	# 	print(isinstance(data.get('tests'), str))
+	# 	if isinstance(data.get('tests'), list):
+	# 		try:
+	# 			data['tests'] = json.loads(str(data['tests']))
+	# 			print(data)
+	# 		except json.JSONDecodeError:
+	# 			raise serializers.ValidationError({'tests': 'Invalid format'})
+			
+	# 	return super().to_internal_value(data)
 
 	def to_representation(self, instance):
 
@@ -66,11 +77,6 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		return data
 
-	# def validate(self, attrs):
-	# 	print(attrs)
-	# 	attrs['tests'] = json.loads(attrs['tests'])
-	# 	print(attrs)
-	# 	return super().validate(attrs)
 
 class NotificatinSerializer(serializers.ModelSerializer):
 
