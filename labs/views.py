@@ -12,8 +12,8 @@ from .serializers import (
 	BranchTestSerializer
 )
 from .models import Test, Branch, Laboratory, SampleType, BranchTest, Result
-# from .results import TestResult
-from sample.models import Sample, Notification
+
+from sample.models import Sample
 from sample.serializers import SampleSerializer
 from django.db.models import Q
 from sample.serializers import SampleSerializer
@@ -23,7 +23,7 @@ from rest_framework.exceptions import ValidationError
 from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
 import json
-# from hospital.models import Facility
+
 from .tasks import copy_test_to_branch
 import logging
 logger = logging.getLogger('labs')
@@ -324,7 +324,7 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_400_BAD_REQUEST
 			)
-		print(request.data)
+		
 		return self.create(request)
 
 	def perform_create(self, serializer):
@@ -533,6 +533,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
+		
 		data = request.data.dict() if isinstance(request.data, QueryDict) else request.data.copy()
 		if 'tests' in data:
 
