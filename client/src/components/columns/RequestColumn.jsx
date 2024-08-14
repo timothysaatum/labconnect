@@ -157,12 +157,9 @@ export const useRequestLabColumns = () => {
         return (
           <Link
             to={`/dashboard/overview/samples/received/${activeBranch}/${request?.id}`}
+            className="text-xs underline hover:no-underline"
           >
-            <Button variant="ghost">
-              <span className="text-xs underline underline-offset-2 text-blue-900">
-                View
-              </span>
-            </Button>
+            View
           </Link>
         );
       },

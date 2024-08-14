@@ -45,12 +45,8 @@ export const useSendSample = (form) => {
       }
       console.log(formData);
 
-      await fetch("laboratory/sample/add/", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `BearereyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzIzMzc2OTI4LCJpYXQiOjE3MjMzNzA5MjgsImp0aSI6IjE0MjQ3OTRmMjkwODRmYjI5NzFlZTlkY2U4ZDE0ZWM2IiwidXNlcl9pZCI6M30.nAIF9qcc5k2o_FIsMsJ1RldDYZymJdZJism-ojr8MAE`,
-        },
+      await axiosPrivate.post("laboratory/sample/add/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       form.reset();

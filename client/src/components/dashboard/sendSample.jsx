@@ -67,7 +67,7 @@ import {
 } from "@/components/ui/accordion";
 import { useSendSample } from "@/lib/formactions";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
-import { Switch } from "../ui/switch";
+import { motion } from "framer-motion";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
 import { calculateTotalCost } from "@/util/totalCost";
 
@@ -139,13 +139,6 @@ export default function SendSample() {
     { value: "Female", label: "Female" },
   ];
 
-  //fetching user branches
-  const {
-    data: branches,
-    isError: branchesError,
-    isLoading: branchesLoading,
-  } = useFetchUserBranches();
-
   // fetching deliveries
   const {
     data: deliveries,
@@ -190,9 +183,6 @@ export default function SendSample() {
     isError: testsError,
     isFetching: testsLoading,
   } = useFetchLabTests(id);
-
-  //tests card ref
-  const TestsCardRef = useRef(null);
 
   //saving form to redux
   const handleSave = () => {
@@ -289,30 +279,42 @@ export default function SendSample() {
         }))
     );
   }, [form.watch("tests")]);
+
+  //avoiding sending samples to self
+  
+  if (form.watch("referring_facility") === form.watch("to_laboratory")) {
+    toast.error("You can not send from a facility to Itself");
+    return form.resetField("to_laboratory");
+  }
   return (
-    <div className="sm:pl-14 mx-4 py-5 md:py-0">
+    <motion.div
+      className="sm:pl-14 my-10 md:py-0 "
+      initial={{ y: 6, opacity: 0, filter: "blur(6px)" }}
+      animate={{ y: -6, opacity: 1, filter: "blur(0px)" }}
+      transition={{
+        delay: 0.3,
+        duration: 0.4,
+        ease: "easeOut",
+      }}
+      exit={{ y: 6, opacity: 0, filter: "blur(6px)" }}
+    >
       <RestoreDialog
         setOpen={setOpen}
         open={open}
         handleDiscard={handleDiscard}
         handleRestore={handleRestore}
       />
-      <main className="max-w-5xl mx-auto">
+      <main className="max-w-6xl mx-auto px-5 lg:px-10">
         <div>
           <div className="flex items-center gap-4">
-            <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+            <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0 ">
               Send Sample
             </h1>
             <div className="hidden items-center gap-2 md:ml-auto md:flex">
               <Button variant="secondary" size="sm" onClick={handleReset}>
                 Discard
               </Button>
-              <Button
-                size="sm"
-                onClick={handleSave}
-                type="button"
-                variant="outline"
-              >
+              <Button size="sm" onClick={handleSave} type="button">
                 Save and continue later
                 {saving && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
               </Button>
@@ -321,25 +323,25 @@ export default function SendSample() {
           <section>
             <Form {...form}>
               <form
-                className="grid lg:grid-cols-[1fr_350px] gap-8 sm:py-5"
+                className="grid lg:grid-cols-[2fr_1.2fr] gap-x-10 sm:py-5"
                 noValidate
                 onSubmit={form.handleSubmit(onSendSample)}
               >
-                <div className="grid gap-4 self-start">
-                  <div>
-                    <PopoverSelect
-                      className="flex whitespace-nowrap gap-8 items-center mb-4"
-                      form={form}
-                      name={"to_laboratory"}
-                      error={labsError}
-                      loading={labsLoading}
-                      items={labs}
-                      label={"Sending sample to:"}
-                      title={"Laboratories"}
-                      search={"Search laboratory..."}
-                    />
-                  </div>
-                  <Card className="max-sm:border-none">
+                <div className="lg:col-span-2 w-full lg:w-[60%] mb-4">
+                  <PopoverSelect
+                    className="flex whitespace-nowrap gap-8 items-center mb-4"
+                    form={form}
+                    name={"to_laboratory"}
+                    error={labsError}
+                    loading={labsLoading}
+                    items={labs}
+                    label={"Sending sample to:"}
+                    title={"Laboratories"}
+                    search={"Search laboratory..."}
+                  />
+                </div>
+                <div className="flex flex-col gap-10 self-start">
+                  <Card className="max-sm:border-none ">
                     <CardHeader className="max-sm:px-2">
                       <CardTitle className="text-lg">Patient Details</CardTitle>
                       <CardDescription>
@@ -443,7 +445,7 @@ export default function SendSample() {
                       </div>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className="mb-4">
                     <CardHeader>
                       <CardTitle className="text-lg">Choose Tests</CardTitle>
                       <CardDescription>
@@ -531,7 +533,15 @@ export default function SendSample() {
                       />
                     </CardContent>
                   </Card>
-
+                  <FormBuilder
+                    name={"shareWith"}
+                    label={"Share Results with this email (Optional)"}
+                    description={
+                      "A copy of the results will be share with this email "
+                    }
+                  >
+                    <Input type="email" placeholder="share with this email" />
+                  </FormBuilder>
                   {selectedTests?.length > 0 ? (
                     <div className="border-dashed border-[1px] rounded-md p-4 flex-1">
                       <CardTitle className="text-lg">Tests Requested</CardTitle>
@@ -547,7 +557,7 @@ export default function SendSample() {
                               key={index}
                             >
                               <AccordionItem value={"item" + index}>
-                                <AccordionTrigger className="hover:no-underline">
+                                <AccordionTrigger className="hover:no-underline text-sm  text-start">
                                   <div className="flex justify-between w-full pr-3 ">
                                     <span>{test.name}</span>
                                     <div className="flex gap-3 items-center">
@@ -561,7 +571,7 @@ export default function SendSample() {
                                   </div>
                                 </AccordionTrigger>
                                 <AccordionContent>
-                                  <div className="flex flex-col gap-2 whitespace-normal max-w-md">
+                                  <div className="flex flex-col gap-2 max-w-md">
                                     <h6 className="text-sm uppercase">
                                       {test?.name}
                                     </h6>
@@ -636,6 +646,7 @@ export default function SendSample() {
                             </Accordion>
                           ))}
                       </div>
+
                       <div className="text-end">
                         Total:{" "}
                         <span>
@@ -645,28 +656,14 @@ export default function SendSample() {
                       </div>
                     </div>
                   ) : null}
-                  <div className="flex items-center gap-4">
-                    <Switch
-                      id="share_result"
-                      checked={share}
-                      onCheckedChange={() => setShare(!share)}
-                    />
-                    <Label htmlFor="share_result">Share results</Label>
-                  </div>
-                  {share && (
-                    <FormBuilder
-                      name={"shareWith"}
-                      label={"Share Results with this email"}
-                      description={
-                        "A copy of the results will be share with this email "
-                      }
-                    >
-                      <Input type="email" placeholder="share with this email" />
-                    </FormBuilder>
-                  )}
                 </div>
 
-                <Button className="w-96 mx-auto">
+                <Button
+                  className="w-96 mx-auto mt-4 font-semibold"
+                  size="lg"
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                >
                   Send Sample
                   {form.formState.isSubmitting && (
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />
@@ -677,6 +674,6 @@ export default function SendSample() {
           </section>
         </div>
       </main>
-    </div>
+    </motion.div>
   );
 }

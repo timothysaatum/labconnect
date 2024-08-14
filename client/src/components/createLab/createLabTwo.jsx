@@ -60,7 +60,6 @@ export default function CreateLab() {
     console.log(form.formState.errors);
   }, [form.formState.errors]);
 
-  const navigate = useNavigate();
 
   const handleNextStep = async () => {
     let fieldToValidate;

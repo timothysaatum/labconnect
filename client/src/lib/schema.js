@@ -74,8 +74,19 @@ export const labRequestSchema = z.object({
   sample_status: z.string().min(1, ""),
   payment_status: z.string(),
   brief_description: z.string(),
-  attachment: z.instanceof(FileList).optional(),
   shareWith: z.string().optional(),
+  attachment: z
+    .instanceof(FileList)
+    .optional()
+    .refine(
+      (files) => {
+        if (!files || files.length === 0) return true; // No file is optional
+        return files[0].size <= MAX_FILE_SIZE;
+      },
+      {
+        message: "The file must be less than 4MB",
+      }
+    ),
 });
 
 export const rejectSampleSchema = z.object({
