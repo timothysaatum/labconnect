@@ -58,12 +58,12 @@ export default function Dashboard() {
   const activeBranchId = useSelector(selectActiveBranch);
   const dispatch = useDispatch();
 
-useEffect(() => {
-  const branchIds = userbranches?.data?.map((branch) => branch.id) || [];
-  if (!activeBranchId || !branchIds.includes(activeBranchId)) {
-    dispatch(changeBranch(userbranches?.data[0]?.id));
-  }
-}, [userbranches, activeBranchId]);
+  useEffect(() => {
+    const branchIds = userbranches?.data?.map((branch) => branch.id) || [];
+    if (!activeBranchId || !branchIds.includes(activeBranchId)) {
+      dispatch(changeBranch(userbranches?.data[0]?.id));
+    }
+  }, [userbranches, activeBranchId]);
   const activeBranch = `${
     userbranches?.data?.find((branch) => branch.id === activeBranchId)?.town
   } Branch`;
@@ -134,11 +134,12 @@ useEffect(() => {
           </TooltipProvider>
         </nav>
       </aside>
-      {userbranches?.data?.length === 0 && (
-        <div className="bg-yellow-600 sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
-          Your Laboratory has no branches. you need to add at least one branch
-        </div>
-      )}
+      {user?.account_type === "Laboratory" &&
+        userbranches?.data?.length === 0 && (
+          <div className="bg-yellow-600 sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
+            Your Laboratory has no branches. you need to add at least one branch
+          </div>
+        )}
       <div className="flex flex-col">
         <header className="sticky justify-between top-0 z-30 sm:hidden flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           <Sheet>
@@ -224,72 +225,111 @@ useEffect(() => {
             <ThemeToggler />
           </div>
         </header>
-        <header className="flex justify-between items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
-          <Breadcrumb className="">
-            <BreadcrumbList>
-              {pathnames.map((name, index) => {
-                const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
-                const isLast = index === pathnames.length - 1;
-                return (
-                  <React.Fragment key={name}>
-                    {index !== 0 && <BreadcrumbSeparator />}
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        {isLast ? (
-                          <span className="cursor-default">{name}</span>
-                        ) : (
-                          <Link to={routeTo}>{name}</Link>
-                        )}
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                  </React.Fragment>
-                );
-              })}
-            </BreadcrumbList>
-          </Breadcrumb>
-          <div className="flex justify-around items-center gap-4">
-            <div>
-              {userbranches?.data?.length === 0 ? (
-                user?.is_admin && <AddBranch />
-              ) : (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      disabled={branchesLoading || branchesError}
-                      variant="ghost"
-                      className="flex items-center justify-between gap-2 px-2 text-sm max-sm:w-full"
-                    >
-                      <span className="text-muted-foreground">Active:</span>
-                      {branchesError ? "Error loading branches" : activeBranch}
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {userbranches?.data?.map((branch) => (
-                      <DropdownMenuCheckboxItem
-                        key={branch.id}
-                        checked={activeBranchId === branch.id}
-                        onCheckedChange={() =>
-                          dispatch(changeBranch(branch.id))
-                        }
+        {user?.account_type === "Laboratory" ? (
+          <header className="flex justify-between items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
+            <Breadcrumb className="">
+              <BreadcrumbList>
+                {pathnames.map((name, index) => {
+                  const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
+                  const isLast = index === pathnames.length - 1;
+                  return (
+                    <React.Fragment key={name}>
+                      {index !== 0 && <BreadcrumbSeparator />}
+                      <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                          {isLast ? (
+                            <span className="cursor-default">{name}</span>
+                          ) : (
+                            <Link to={routeTo}>{name}</Link>
+                          )}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </React.Fragment>
+                  );
+                })}
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex justify-around items-center gap-4">
+              <div>
+                {userbranches?.data?.length === 0 ? (
+                  user?.is_admin && <AddBranch />
+                ) : (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        disabled={branchesLoading || branchesError}
+                        variant="ghost"
+                        className="flex items-center justify-between gap-2 px-2 text-sm max-sm:w-full"
                       >
-                        {branch.town} Branch
-                      </DropdownMenuCheckboxItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+                        <span className="text-muted-foreground">Active:</span>
+                        {branchesError
+                          ? "Error loading branches"
+                          : activeBranch}
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {userbranches?.data?.map((branch) => (
+                        <DropdownMenuCheckboxItem
+                          key={branch.id}
+                          checked={activeBranchId === branch.id}
+                          onCheckedChange={() =>
+                            dispatch(changeBranch(branch.id))
+                          }
+                        >
+                          {branch.town} Branch
+                        </DropdownMenuCheckboxItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+              <NotiicationsPopover>
+                <Button variant="outline" size="icon" className="relative">
+                  <Bell className="w-4 h-4 text-muted-foreground" />
+                  <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
+                    2
+                  </span>
+                </Button>
+              </NotiicationsPopover>
             </div>
-            <NotiicationsPopover>
-              <Button variant="outline" size="icon" className="relative">
-                <Bell className="w-4 h-4 text-muted-foreground" />
-                <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
-                  2
-                </span>
-              </Button>
-            </NotiicationsPopover>
-          </div>
-        </header>
+          </header>
+        ) : (
+          <header className="flex justify-between items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
+            <Breadcrumb className="">
+              <BreadcrumbList>
+                {pathnames.map((name, index) => {
+                  const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
+                  const isLast = index === pathnames.length - 1;
+                  return (
+                    <React.Fragment key={name}>
+                      {index !== 0 && <BreadcrumbSeparator />}
+                      <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                          {isLast ? (
+                            <span className="cursor-default">{name}</span>
+                          ) : (
+                            <Link to={routeTo}>{name}</Link>
+                          )}
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </React.Fragment>
+                  );
+                })}
+              </BreadcrumbList>
+            </Breadcrumb>
+            <div className="flex justify-around items-center gap-4">
+              <NotiicationsPopover>
+                <Button variant="outline" size="icon" className="relative">
+                  <Bell className="w-4 h-4 text-muted-foreground" />
+                  <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
+                    2
+                  </span>
+                </Button>
+              </NotiicationsPopover>
+            </div>
+          </header>
+        )}
         <Outlet />
       </div>
     </div>

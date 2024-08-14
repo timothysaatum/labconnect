@@ -15,6 +15,8 @@ import { createCell, createSortableHeader } from "../../util/tablefxns";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
+import UploadResults from "../dashboard/resultupload";
+import RejectSample from "../dashboard/rejectSample";
 
 export const useHospitalRequestColumns = () => {
   const RequestColumns = [
@@ -157,7 +159,9 @@ export const useRequestLabColumns = () => {
             to={`/dashboard/overview/samples/received/${activeBranch}/${request?.id}`}
           >
             <Button variant="ghost">
-              <span className="text-xs underline underline-offset-2 text-blue-900">View</span>
+              <span className="text-xs underline underline-offset-2 text-blue-900">
+                View
+              </span>
             </Button>
           </Link>
         );
@@ -199,10 +203,8 @@ export const useRequestLabColumns = () => {
               </DropdownMenuItem>
               <DropdownMenuItem>View payment details</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Upload Results</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">
-                Reject Sample
-              </DropdownMenuItem>
+              <UploadResults />
+              <RejectSample id={request?.id} />
             </DropdownMenuContent>
           </DropdownMenu>
         );

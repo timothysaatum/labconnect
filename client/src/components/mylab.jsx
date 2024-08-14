@@ -290,40 +290,6 @@ export default function MyLab() {
                       ) : (
                         ""
                       )}
-                      {currentTab === "Tests" ? (
-                        <div className="flex max-sm:justify-end">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                disabled={branchesLoading || branchesError}
-                                variant="outline"
-                                className="flex items-center justify-between gap-3 px-2 text-sm max-sm:w-full"
-                              >
-                                {branchesError
-                                  ? "Error loading branches"
-                                  : userbranches?.data?.find(
-                                      (branch) => branch.id === activeBranch
-                                    )?.town + " Branch"}
-
-                                <ChevronDown className="w-4 h-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              {userbranches?.data?.map((branch) => (
-                                <DropdownMenuCheckboxItem
-                                  key={branch.id}
-                                  checked={activeBranch === branch.id}
-                                  onCheckedChange={() =>
-                                    dispatch(changeBranch(branch.id))
-                                  }
-                                >
-                                  {branch.town} Branch
-                                </DropdownMenuCheckboxItem>
-                              ))}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      ) : null}
                     </CardHeader>
                     <CardContent>
                       {tab.loading ? (

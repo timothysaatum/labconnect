@@ -35,15 +35,6 @@ export const useFetchLabRequestsSent = (id) => {
     enabled: !!id,
   });
 };
-export const useFetchHealthWorkerRequests = () => {
-  const axiosPrivate = useAxiosPrivate();
-  return useQuery({
-    queryKey: ["Requests"],
-    queryFn: async () =>
-      await axiosPrivate.get("/hospital/health-worker/sample/list/"),
-    staleTime: 1000 * 60 * 5,
-  });
-};
 
 //deliveries
 export const useFetchAllDeliveries = () => {
@@ -131,5 +122,15 @@ export const useFetchAllHospitals = () => {
     queryKey: ["All hospitals"],
     queryFn: async () => await axios.get("/hospital/list/"),
     staleTime: 1000 * 60 * 60,
+  });
+};
+
+export const useFetchHospitalRequests = () => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["Requests"],
+    queryFn: async () =>
+      await axiosPrivate.get("/hospital/health-worker/sample/list/"),
+    staleTime: 1000 * 60 * 5,
   });
 };

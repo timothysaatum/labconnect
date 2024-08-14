@@ -6,7 +6,7 @@ import About from "./pages/About";
 import Signup from "@/pages/Signup";
 import RequireAuth, {
   BlockGettingStarted,
-  HasLaboratory,
+  CanGetStarted,
   LabRoutes,
 } from "./components/RequireAuth";
 import PersistLogin from "./components/persistLogin";
@@ -82,7 +82,7 @@ export default function App() {
                   <Route path="create-Laboratory" element={<CreateLab />} />
                 </Route>
               </Route>
-              <Route element={<HasLaboratory />}>
+              <Route element={<CanGetStarted />}>
                 <Route
                   path="dashboard"
                   element={

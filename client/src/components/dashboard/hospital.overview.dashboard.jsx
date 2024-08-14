@@ -7,9 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import RequestDialog from "./requestdialog";
 import {
-  useFetchHealthWorkerRequests,
+  useFetchHospitalRequests,
   useFetchLabRequestsReceived,
   useFetchLabRequestsSent,
   useFetchUserBranches,
@@ -19,6 +18,7 @@ import { DataTable } from "../data-table";
 import { useRequestLabColumns } from "../columns/RequestColumn";
 import { calcAge } from "@/util/ageCalculate";
 import { Link, useNavigate } from "react-router-dom";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -30,7 +30,10 @@ import StackedCardsOverview from "../overviewcards";
 import SampleDetails from "@/components/dashboard/sampleDetails";
 import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
-import { MovingButton } from "../ui/movingborder";
+import {
+  changeBranch,
+  selectActiveBranch,
+} from "@/redux/branches/activeBranchSlice";
 
 function EmptyLab({ keywords }) {
   return (
@@ -88,83 +91,53 @@ function ErrorLab({ refetch }) {
 }
 
 export default function LaboratoryDashboardOverview() {
-  const [requestsReceived, setTableRequestsReceived] = useState([]);
-  const [requestsSent, setTableRequestsSent] = useState([]);
-  const [checked, setChecked] = useState();
+  const [samplesSent, setTableRequestsReceived] = useState([]);
   const requestColumns = useRequestLabColumns();
   const [selectedSamples, setSelectedSamples] = useState();
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
+  const activeBranchId = useSelector(selectActiveBranch);
 
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab);
-  const handleTabChange = (newTab) => {
-    dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
-  };
 
   useEffect(() => {
     // This will change the pathname to /dashboard/overview when the component mounts
-      navigate("/dashboard/overview#Samples-sent", { replace: true });
-  }, [navigate]);
+    if (currentTab === "Received") {
+      navigate("/dashboard/overview?tab=Samples-received", { replace: true });
+    } else {
+      navigate("/dashboard/overview?tab=Samples-sent", { replace: true });
+    }
+  }, []);
   const {
     isError,
-    data: data,
+    data: requests,
     isPending,
     isRefetching,
     refetch,
     isRefetchError,
     dataUpdatedAt,
-  } = useFetchHealthWorkerRequests(checked);
-
-
-  useEffect(() => {
-    if (selectedSamples) {
-      setSelected(
-        data?.data?.find((sample) => {
-          return sample.id === selectedSamples;
-        })
-      );
-    } else {
-      setSelected(null);
-    }
-  }, [selectedSamples]);
-
-  const index = data?.data?.findIndex(
-    (sample) => sample.id === selected?.id
-  );
-  const nextSample = () => {
-    if (index < tests?.data.length - 1) {
-      setSelectedSamples(data?.data[index + 1]?.id);
-    } else {
-      setSelectedSamples(data?.data[0]?.id);
-    }
-  };
-  const prevSample = () => {
-    if (index < data?.data.length - 1) {
-      setSelectedSamples(data?.data[index + 1]?.id);
-    } else {
-      setSelectedSamples(data?.data[0]?.id);
-    }
-  };
-
+  } = useFetchHospitalRequests();
 
   useEffect(() => {
-    if (data) {
+    if (requests) {
       setTableRequestsReceived(
-        data?.data.map((request) => {
+        receivedRequests.data.map((request) => {
           return {
             id: request.id,
+            referring_facility: request.referring_facility,
             Patient: request.patient_name,
             referring_facility_phone: request.sender_phone,
             referror_name: request.sender_full_name,
             Patient_age: calcAge(request.patient_age),
             Sent_by: request.send_by,
             date: request.date_created,
+            attachment: request.attachment,
           };
         })
       );
     }
-  }, [data]);
+  }, [requests?.data]);
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
   return (
@@ -175,9 +148,6 @@ export default function LaboratoryDashboardOverview() {
         } flex flex-col gap-8`}
       >
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          <RequestDialog className="w-full shadow-sm col-span-3 ">
-            <MovingButton>Send a sample</MovingButton>
-          </RequestDialog>
           {isDesktop && !selected ? (
             <>
               <Card>
@@ -204,6 +174,14 @@ export default function LaboratoryDashboardOverview() {
                   <div className="text-sm font-bold">+573</div>
                 </CardHeader>
               </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between p-4">
+                  <CardTitle className="text-xs font-medium tracking-wide">
+                    samples rejected:
+                  </CardTitle>
+                  <div className="text-sm font-bold">+573</div>
+                </CardHeader>
+              </Card>
             </>
           ) : (
             <StackedCardsOverview selected={selected} />
@@ -215,12 +193,11 @@ export default function LaboratoryDashboardOverview() {
               <div className="flex-1">
                 <CardTitle>Samples</CardTitle>
                 <CardDescription>
-                  {checked === "Sent Samples"
+                  {currentTab === "Sent Samples"
                     ? "Samples you have sent to other labs"
                     : "Samples you have received "}
                 </CardDescription>
               </div>
-             
             </CardHeader>
             <CardContent>
               {isPending ? (
@@ -231,11 +208,11 @@ export default function LaboratoryDashboardOverview() {
                   isRefetchError={isRefetchError}
                   isRefetching={isRefetching}
                 />
-              ) : data?.data.length < 1 ? (
+              ) : receivedRequests?.data.length < 1 ? (
                 <EmptyLab keywords={["Received", "to"]} />
               ) : (
                 <DataTable
-                  data={requestsReceived}
+                  data={samplesSent}
                   error={isError}
                   loading={isPending}
                   columnDef={requestColumns}

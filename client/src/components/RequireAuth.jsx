@@ -26,12 +26,11 @@ export const LabRoutes = () => {
   );
 };
 
-export const HasLaboratory = () => {
+export const CanGetStarted = () => {
   const user = useSelector(selectCurrentUser);
-  const token = useSelector(selectCurrenttoken);
 
   if (user.account_type === "Hospital") {
-    return;
+    return <Outlet />;
   }
   const { isError, data: userlab, isPending } = useFetchUserLab();
   const location = useLocation();

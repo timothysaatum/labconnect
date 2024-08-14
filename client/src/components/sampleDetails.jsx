@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import RejectSample from "./dashboard/rejectSample";
-import { Separator } from "./ui/separator";
+import UploadResults from "./dashboard/resultupload";
 
 const SampleDetails = () => {
   const { branchId, sampleId } = useParams();
@@ -105,7 +105,7 @@ const SampleDetails = () => {
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Upload Results</DropdownMenuItem>
+                    <UploadResults />
                     <RejectSample id={sample?.id} />
                   </DropdownMenuContent>
                 </DropdownMenu>
