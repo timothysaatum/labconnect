@@ -95,7 +95,7 @@ export const useHospitalRequestColumns = () => {
   ];
   return RequestColumns;
 };
-export const useRequestLabColumns = () => {
+export const useRequestLabColumns = (setSelected) => {
   const activeBranch = useSelector(selectActiveBranch);
   const RequestColumns = [
     {
@@ -155,12 +155,13 @@ export const useRequestLabColumns = () => {
         const request = row.original;
 
         return (
-          <Link
+          <span
             to={`/dashboard/overview/samples/received/${activeBranch}/${request?.id}`}
             className="text-xs underline hover:no-underline"
+            onClick={() => setSelected(request.id)}
           >
             View
-          </Link>
+          </span>
         );
       },
     },

@@ -36,7 +36,7 @@ import moment from "moment";
 
 const RequestDetails = ({
   selected,
-  setSelectedSamples,
+  setSelected,
   updatedAt,
   prevSample,
   nextSample,
@@ -90,7 +90,7 @@ const RequestDetails = ({
                   className="h-8 w-8"
                   size="icons"
                   variant="outline"
-                  onClick={() => setSelectedRequest(null)}
+                  onClick={() => setSelected()}
                 >
                   <X className="h-3.5 w-3.5" />
                 </Button>

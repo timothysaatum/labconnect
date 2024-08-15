@@ -70,6 +70,7 @@ import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { motion } from "framer-motion";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
 import { calculateTotalCost } from "@/util/totalCost";
+import FormWrapper from "../FormWrapper";
 
 //the prompt dialog
 export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
@@ -103,7 +104,6 @@ export default function SendSample() {
   const [imageFile, setImagefile] = useState(null);
   const [selectedTests, setSelectedTests] = useState(null);
   const [testOptions, setTestOptions] = useState(null);
-  const [share, setShare] = useState(false);
 
   //form declaration
   const form = useForm({
@@ -133,6 +133,7 @@ export default function SendSample() {
       toast.error(form.formState.errors.attachment.message);
     }
   }, [form.formState.errors.attachment]);
+
   //genders declaration
   const gender = [
     { value: "Male", label: "Male" },
@@ -281,9 +282,12 @@ export default function SendSample() {
   }, [form.watch("tests")]);
 
   //avoiding sending samples to self
-  
+
   if (form.watch("referring_facility") === form.watch("to_laboratory")) {
-    toast.error("You can not send from a facility to Itself");
+    toast.error("You can not send a sample from a facility to Itself", {
+      description:
+        "if you wish to send a sample to this branch then change your active branch",
+    });
     return form.resetField("to_laboratory");
   }
   return (
@@ -543,7 +547,17 @@ export default function SendSample() {
                     <Input type="email" placeholder="share with this email" />
                   </FormBuilder>
                   {selectedTests?.length > 0 ? (
-                    <div className="border-dashed border-[1px] rounded-md p-4 flex-1">
+                    <motion.div
+                      className="border-dashed border-[1px] rounded-md p-4 flex-1 mt-4"
+                      initial={{ y: 6, opacity: 0, filter: "blur(6px)" }}
+                      animate={{ y: -6, opacity: 1, filter: "blur(0px)" }}
+                      transition={{
+                        delay: 0.3,
+                        duration: 0.4,
+                        ease: "easeOut",
+                      }}
+                      exit={{ y: 6, opacity: 0, filter: "blur(6px)" }}
+                    >
                       <CardTitle className="text-lg">Tests Requested</CardTitle>
 
                       <div className="pb-4">
@@ -654,7 +668,7 @@ export default function SendSample() {
                           {calculateTotalCost(selectedTests)}
                         </span>
                       </div>
-                    </div>
+                    </motion.div>
                   ) : null}
                 </div>
 

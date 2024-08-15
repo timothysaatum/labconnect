@@ -77,12 +77,13 @@ export const labRequestSchema = z.object({
   shareWith: z.string().optional(),
   attachment: z
     .instanceof(FileList)
+    .nullable()
     .optional()
     .refine(
-      (files) => {
-        if (!files || files.length === 0) return true; // No file is optional
-        return files[0].size <= MAX_FILE_SIZE;
-      },
+      (files) =>
+        files === null ||
+        files.length === 0 ||
+        files[0].size <= 4 * 1024 * 1024,
       {
         message: "The file must be less than 4MB",
       }

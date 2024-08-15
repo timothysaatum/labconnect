@@ -93,8 +93,8 @@ function ErrorLab({ refetch }) {
 export default function LaboratoryDashboardOverview() {
   const [requestsReceived, setTableRequestsReceived] = useState([]);
   const [requestsSent, setTableRequestsSent] = useState([]);
-  const requestColumns = useRequestLabColumns();
   const [selectedSamples, setSelectedSamples] = useState();
+  const requestColumns = useRequestLabColumns(setSelectedSamples);
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
   const activeBranchId = useSelector(selectActiveBranch);
@@ -353,7 +353,7 @@ export default function LaboratoryDashboardOverview() {
         <div className="hidden lg:block col-span-4">
           <SampleDetails
             selected={selected}
-            setSelectedSamples={setSelectedSamples}
+            setSelected={setSelectedSamples}
             updatedAt={dataUpdatedAt}
             nextSample={nextSample}
             prevSample={prevSample}
