@@ -4,8 +4,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
+import { Calendar } from "../ui/calendar";
 
 const CalenderDatePicker = ({ name, control }) => {
   return (
@@ -36,13 +36,14 @@ const CalenderDatePicker = ({ name, control }) => {
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-full p-0" align="start">
-                <DayPicker
+                <Calendar
                   mode="single"
                   captionLayout="dropdown-buttons"
                   fromYear={1900}
                   toYear={new Date().getFullYear()}
                   selected={field.value}
                   onSelect={field.onChange}
+                  today={false}
                 />
               </PopoverContent>
             </Popover>
