@@ -15,25 +15,90 @@ const TableSkeleton = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>
-              <Skeleton className="h-4 w-full" />
-            </TableHead>
+            <TableCell>
+              <Skeleton className="h-3 w-3 rounded-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-80" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-44" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-20" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-2 w-6" />
+            </TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
           <TableRow>
             <TableCell>
-              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-3 w-3 rounded-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-80" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-44" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-20" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-2 w-6" />
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>
-              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-3 w-3 rounded-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-80" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-44" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-20" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-2 w-6" />
             </TableCell>
           </TableRow>
           <TableRow>
             <TableCell>
-              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-3 w-3 rounded-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-80" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-44" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-20" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-2 w-6" />
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <Skeleton className="h-3 w-3 rounded-full" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-80" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-44" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-3 w-20" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-2 w-6" />
             </TableCell>
           </TableRow>
         </TableBody>

@@ -93,8 +93,8 @@ function ErrorLab({ refetch }) {
 export default function LaboratoryDashboardOverview() {
   const [requestsReceived, setTableRequestsReceived] = useState([]);
   const [requestsSent, setTableRequestsSent] = useState([]);
-  const requestColumns = useRequestLabColumns();
   const [selectedSamples, setSelectedSamples] = useState();
+  const requestColumns = useRequestLabColumns(setSelectedSamples);
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
   const activeBranchId = useSelector(selectActiveBranch);
@@ -279,30 +279,7 @@ export default function LaboratoryDashboardOverview() {
                         : "Samples you have received "}
                     </CardDescription>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="flex gap-2">
-                        <span className="text-muted-foreground hidden sm:inline">
-                          Viewing:
-                        </span>{" "}
-                        {activeBranch}
-                        <ChevronDown className="w-4 h-4 ml-2" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {branches?.data?.map((branch) => (
-                        <DropdownMenuCheckboxItem
-                          key={branch.id}
-                          checked={activeBranchId === branch.id}
-                          onCheckedChange={() =>
-                            dispatch(changeBranch(branch.id))
-                          }
-                        >
-                          {branch.town} Branch
-                        </DropdownMenuCheckboxItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                 
                 </CardHeader>
                 <CardContent>
                   {isPending ? (
@@ -341,30 +318,7 @@ export default function LaboratoryDashboardOverview() {
                         : "Samples you have received "}
                     </CardDescription>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="flex gap-2 ">
-                        <span className="hidden sm:inline text-muted-foreground">
-                          Viewing:
-                        </span>{" "}
-                        {activeBranch}
-                        <ChevronDown className="w-4 h-4 ml-2" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {branches?.data?.map((branch) => (
-                        <DropdownMenuCheckboxItem
-                          key={branch.id}
-                          checked={activeBranchId === branch.id}
-                          onCheckedChange={() =>
-                            dispatch(changeBranch(branch.id))
-                          }
-                        >
-                          {branch.town} Branch
-                        </DropdownMenuCheckboxItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                 
                 </CardHeader>
                 <CardContent>
                   {sentfetching ? (
@@ -399,7 +353,7 @@ export default function LaboratoryDashboardOverview() {
         <div className="hidden lg:block col-span-4">
           <SampleDetails
             selected={selected}
-            setSelectedSamples={setSelectedSamples}
+            setSelected={setSelectedSamples}
             updatedAt={dataUpdatedAt}
             nextSample={nextSample}
             prevSample={prevSample}

@@ -178,6 +178,7 @@ export function DataTable({
                     setSelected &&
                       typeof setSelected === "function" &&
                       setSelected(rowEl.original.id);
+                    console.log(rowEl.original.id);
                   }
                 }}
                 className={`cursor-pointer ${

@@ -32,10 +32,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import FormWrapper from "../FormWrapper";
 import { calcAge } from "@/util/ageCalculate";
+import moment from "moment";
 
 const RequestDetails = ({
   selected,
-  setSelectedSamples,
+  setSelected,
   updatedAt,
   prevSample,
   nextSample,
@@ -59,7 +60,10 @@ const RequestDetails = ({
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
                 </CardTitle>
-                <CardDescription>Date:{selected.dated_created}</CardDescription>
+                <CardDescription>
+                  Date:{" "}
+                  {moment(selected?.date_created).format("DD / MM / YYYY")}
+                </CardDescription>
               </div>
               <div className="ml-auto flex items-center gap-1">
                 <Button size="sm" variant="outline" className="h-8 gap-1">
@@ -86,7 +90,7 @@ const RequestDetails = ({
                   className="h-8 w-8"
                   size="icons"
                   variant="outline"
-                  onClick={() => setSelectedRequest(null)}
+                  onClick={() => setSelected()}
                 >
                   <X className="h-3.5 w-3.5" />
                 </Button>
@@ -112,75 +116,50 @@ const RequestDetails = ({
               </ul>
 
               <Separator className="my-2" />
-              <div className="font-semibold">Tests Requested</div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground/90">Test</span>
-                <span className="text-muted-foreground/90">
-                  Sample received
+              <div className="grid gap-4">
+                <div className="grid gap-3">
+                  <div className="font-semibold">Tests Requested</div>
+                  <ul className="grid gap-2 not-italic text-end ">
+                    {selected?.tests?.map((test, index) => (
+                      <li key={index}>{test}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <Separator className="my-4" />
+            <div className="font-semibold">Referror</div>
+            <ul className="grid gap-3">
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">
+                  Referring Facility
                 </span>
-              </div>
-              <ul className="grid gap-3">
-                <li className="flex items-center justify-between">
-                  {selected.tests.map((test) => (
-                    <>
-                      <span>{test}</span>
-                      <span className="text-muted-foreground text-xs">
-                        {selected.sample_type}
-                      </span>
-                    </>
-                  ))}
-                </li>
-              </ul>
-            </div>
-            <Separator className="my-4" />
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-3">
-                <div className="font-semibold">Delivery Service</div>
-                <address className="grid gap-0.5 not-italic text-muted-foreground">
-                  <span>confi's delivery services</span>
-                  <span>1234 Main St.</span>
-                  <span>Anytown, CA 12345</span>
-                </address>
-              </div>
-              <div className="grid auto-rows-max gap-3">
-                <div className="font-semibold">Billing Information</div>
-                <div className="text-muted-foreground">
-                  Same as shipping address
-                </div>
-              </div>
-            </div>
+                <span>{selected.referring_facility}</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Sender's name</span>
+                <span>{selected.sender_full_name}</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Sender's email</span>
+                <span>{selected.sender_email}</span>
+              </li>
+              <li className="flex items-center justify-between">
+                <span className="text-muted-foreground">Sender's Contact</span>
+                <span>{selected.sender_phone}</span>
+              </li>
+            </ul>
             <Separator className="my-4" />
             <div className="grid gap-3">
-              <div className="font-semibold">Customer Information</div>
+              <div className="font-semibold">Payment details</div>
               <dl className="grid gap-3">
                 <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">Customer</dt>
-                  <dd>Liam Johnson</dd>
+                  <dt className="text-muted-foreground">Payment Mode</dt>
+                  <dd>{selected?.payment_mode}</dd>
                 </div>
                 <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">Email</dt>
-                  <dd>
-                    <a href="mailto:">liam@acme.com</a>
-                  </dd>
-                </div>
-                <div className="flex items-center justify-between">
-                  <dt className="text-muted-foreground">Phone</dt>
-                  <dd>
-                    <a href="tel:">+1 234 567 890</a>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-            <Separator className="my-4" />
-            <div className="grid gap-3">
-              <div className="font-semibold">Payment Information</div>
-              <dl className="grid gap-3">
-                <div className="flex items-center justify-between">
-                  <dt className="flex items-center gap-1 text-muted-foreground">
-                    <CreditCard className="h-4 w-4" />
-                    Visa
-                  </dt>
-                  <dd>**** **** **** 4532</dd>
+                  <dt className="text-muted-foreground">Payment Status</dt>
+                  <dd>{selected?.payment_status}</dd>
                 </div>
               </dl>
             </div>
