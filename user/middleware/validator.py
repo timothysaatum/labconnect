@@ -10,16 +10,13 @@ class PermissionMiddleware:
 
 	def __init__(self, get_response):
 		self.get_response = get_response
-		
 
 	def __call__(self, request):
 
-
 		response = self.get_response(request)
 		view = resolve(request.path_info).func
-
+		# print(view.view_class.permission_classes)
 		if hasattr(view, 'view_class'):
-
 
 			if IsAuthenticated in view.view_class.permission_classes:
 

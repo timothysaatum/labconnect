@@ -4,7 +4,7 @@ from .models import Hospital
 
 class HospitalAdmin(admin.ModelAdmin):
 	list_display = (
-		'created_by',
+		# 'created_by',
 		'name', 
 		'region', 
 		'postal_address', 
