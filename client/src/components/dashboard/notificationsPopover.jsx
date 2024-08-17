@@ -3,17 +3,86 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Check, CheckCheck, MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { useUpdateNotificationMutation } from "@/api/mutations";
 
-export default function NotiicationsPopover({ children }) {
+export default function NotiicationsPopover({
+  children,
+  notifs,
+  notifsError,
+  notifsLoading,
+}) {
+  const { mutate } = useUpdateNotificationMutation();
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-80 opacity-90 max-h-96 overflow-auto mr-4" side="bottom" >
-        <div className="grid gap-4">
+      <PopoverContent
+        className="w-96 max-h-96 overflow-auto pt-0"
+        side="bottom"
+      >
+        <div className="grid">
           <div className="space-y-2">
-            <h4 className="font-bold uppercase text-sm leading-none">Notifications</h4>
-                      <div className="max-h-96">
-                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas perferendis maxime quidem quasi error odit delectus obcaecati velit adipisci, modi alias soluta minus id molestias debitis consectetur accusantium sed consequatur. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Omnis voluptas vitae nam quia tempora. Hic id quisquam fugit, nam temporibus magnam cumque repellat iusto dicta aliquam porro at ex a assumenda? Officiis consequatur quo laboriosam tempore distinctio doloribus necessitatibus sint omnis, non, eaque cupiditate impedit quae! Quis aut iure ullam est laborum error vitae corrupti impedit sit, dolor perferendis qui consectetur illo reprehenderit repellat ad. Laborum earum, fuga odio hic libero quidem provident minus quisquam accusamus molestias reprehenderit minima deserunt! Recusandae cum labore inventore dicta quae soluta similique exercitationem, distinctio quo mollitia aliquam illo incidunt fuga a voluptatum? Quos veritatis, tempore libero repellat ex doloremque illum. Voluptas nemo eveniet eum qui, mollitia enim consequuntur placeat quia quasi maiores voluptatum itaque culpa officia ad? Architecto totam atque optio vero necessitatibus, corrupti repellendus tempore earum nihil delectus, eaque eum inventore? Officiis repellat, provident fugiat tempore, nesciunt veniam ipsam debitis voluptatum corporis praesentium inventore quo architecto. Omnis optio nam voluptatum nostrum! Vel beatae perferendis nobis explicabo modi reiciendis reprehenderit fuga eligendi dolorem voluptas. Magni reiciendis sapiente illum, quaerat rerum animi expedita aliquam qui dolor, quidem dolorem adipisci dignissimos voluptatibus rem eveniet debitis repellat veniam. Labore cumque veniam quis id quo eaque consequuntur tempore?
+            <div className="sticky top-0 left-0 z-30 bg-background/95  py-4 flex items-center">
+              <h4 className="font-semibold capitalize text-base tracking-wide leading-none flex-1">
+                Notifications
+              </h4>
+
+              <p className="font-medium text-sm hover:underline cursor-default">
+                Mark all as read
+              </p>
+            </div>
+            <div className="max-h-[28rem] text-sm  ">
+              <ul className="divide-y-[1px] flex flex-col gap-2">
+                {notifs?.data?.map((notif) => (
+                  <li key={notif?.id} className={`flex gap-2 py-2 items-end `}>
+                    <Avatar>
+                      <AvatarFallback>LC</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 gap-2">
+                      <p className="flex items-end">
+                        <span className="flex-1"> {notif?.message}</span>
+                        <div className="flex flex-col items-start justify-between gap-3">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                className="h-6 w-6 flex-1"
+                              >
+                                <MoreVertical className="h-3.5 w-3.5" />
+                                <span className="sr-only">More</span>
+                              </Button>{" "}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent collisionPadding={20}>
+                              <DropdownMenuItem
+                                onClick={() => mutate(notif?.id)}
+                              >
+                                Mark Read
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>Hide</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                          <div>
+                            {notif?.is_read ? (
+                              <CheckCheck className="w-3 inline text-muted-foreground " />
+                            ) : (
+                              <Check className="w-3 ml-auto inline text-muted-foreground" />
+                            )}
+                          </div>
+                        </div>
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

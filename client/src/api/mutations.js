@@ -114,11 +114,30 @@ export const useDeactivateTestMutation = (id) => {
             "test will be unavailable for selection for all user branches",
         });
       } else {
-        toast.message("Test Activated", {
+        toast.success("Test Activated", {
           description:
             "test will be available for selection for all user branches",
         });
       }
+    },
+  });
+};
+
+export const useUpdateNotificationMutation = () => {
+  const queryClient = useQueryClient();
+  const axiosPrivate = useAxiosPrivate();
+  return useMutation({
+    mutationFn: async (id) => {
+      console.log(id);
+      await axiosPrivate.patch(`sample/update-notification/${id}`, {
+        is_read: true,
+      });
+    },
+    onError: () => {
+      toast.error("Could not mark as read");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["Notifications"]);
     },
   });
 };

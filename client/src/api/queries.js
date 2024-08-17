@@ -6,6 +6,7 @@ import { selectCurrentUser } from "@/redux/auth/authSlice";
 import { newAbortSignal } from "./abortsignal";
 
 // users
+
 export const useFetchUserDetails = () => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
@@ -15,6 +16,17 @@ export const useFetchUserDetails = () => {
     staleTime: 1000 * 60 * 60,
   });
 };
+
+export const useFetchUserNotifications = () => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["Notifications"],
+    queryFn: async () => await axiosPrivate.get("/sample/notifications/"),
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60,
+  });
+};
+
 export const useFetchLabRequestsReceived = (id) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
