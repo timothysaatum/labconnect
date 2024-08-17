@@ -126,7 +126,7 @@ export const useRequestLabColumns = (setSelected) => {
     },
     {
       accessorKey: "Patient_age",
-      header: createSortableHeader("Patient's Age"),
+      header: "Patient's Age",
       cell: createCell("Patient_age"),
     },
     {
@@ -136,7 +136,7 @@ export const useRequestLabColumns = (setSelected) => {
     },
     {
       accessorKey: "referring_facility_phone",
-      header: createSortableHeader("Referror Contact"),
+      header: "Referror Contact",
       cell: createCell("referring_facility_phone"),
     },
     {
