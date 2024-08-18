@@ -84,7 +84,10 @@ PAYMENT_MODE = [
 	('Insurance','Insurance')
 ]
 
-
+PAYMENT_STATUS = [
+	('Paid', 'Paid'),
+	('Pending', 'Pending')
+]
 class Transaction(models.Model):
 
 	client = models.ForeignKey(user_account, on_delete=models.SET_NULL, blank=True ,null=True, db_index=True)
@@ -94,6 +97,8 @@ class Transaction(models.Model):
 	bank = models.CharField(max_length=200)
 	payment_mode = models.CharField(choices=PAYMENT_MODE, max_length=50)
 	service_paid = models.CharField(max_length=100)
+	payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE)
+	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
 	date_paid = models.DateTimeField(auto_now=True)
 
 

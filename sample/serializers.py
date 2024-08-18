@@ -47,8 +47,6 @@ class SampleSerializer(serializers.ModelSerializer):
 			'clinical_history',
 			'attachment',
 			'sample_status',
-			'payment_mode',
-			'payment_status',
 			'delivery',
 			'priority',
 			'is_marked_sent',
