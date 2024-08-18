@@ -3,6 +3,8 @@ from labs.models import Branch, Test, SampleType
 from hospital.models import Facility
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 client = get_user_model()
@@ -22,15 +24,7 @@ SAMPLE_STATUS = [
 	('Received by laboratory', 'Received by laboratory'),
 	('Rejected by laboratory', 'Rejected by laboratory')
 ]
-PAYMENT_MODE = [
-	('Manual', 'Manual'),
-	('Online', 'Online'),
-	('Insurance', 'Insurance')
-]
-PAYMENT_STATUS = [
-	('Paid', 'Paid'),
-	('Pending', 'Pending')
-]
+
 PRIORITIES = [
 	('Express', 'Express'),
 	('Normal', 'Normal')
@@ -40,14 +34,24 @@ class Sample(models.Model):
 	'''
 	Model representing a medical sample
 	'''
-
+	referror_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+	referror_object_id = models.PositiveSmallIntegerField(null=True, blank=True)
+	referror = GenericForeignKey('referror_content_type', 'referror_object_id')
 	referring_facility = models.ForeignKey(
-			Facility, on_delete=models.CASCADE, 
-			related_name='facilities', 
+			Facility,
+			on_delete=models.CASCADE, 
+			related_name='facilities',
 			db_index=True
 		)
-	facility_type = models.CharField(max_length=50, choices=REFERRING_FACILITY_TYPE)
-	sender_full_name = models.CharField(max_length=200, null=True, blank=True)
+	facility_type = models.CharField(
+			max_length=50, 
+			choices=REFERRING_FACILITY_TYPE
+		)
+	sender_full_name = models.CharField(
+		max_length=200, 
+		null=True, 
+		blank=True
+	)
 	sender_phone = models.CharField(max_length=20, null=True, blank=True)
 	sender_email = models.EmailField(null=True, blank=True)
 	patient_name = models.CharField(max_length=200)
@@ -65,15 +69,13 @@ class Sample(models.Model):
 	clinical_history = models.TextField(null=True, blank=True)
 	attachment = models.FileField(
 		upload_to='sample/attachments',
-		blank=True, 
+		blank=True,
 		null=True
 	)
 	is_marked_sent = models.BooleanField(default=False)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
 	is_rejected = models.BooleanField(default=False)
 	rejection_reason = models.TextField(blank=True, null=True)
-	payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE)
-	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
 	priority = models.CharField(max_length=50, choices=PRIORITIES)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)

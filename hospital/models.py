@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 #from labconnect.mixin import Facility
 import uuid
 
 
 
 
-user = get_user_model()
+# user = get_user_model()
 
 
 REGIONS = [
@@ -49,7 +49,7 @@ class Facility(models.Model):
 
 			return f'{self.branch.laboratory.name} - {self.town}'
 
-	def __str__(self):
+	def __str__(self)->str:
 
 		return self.get_facility_name()
 
@@ -65,13 +65,12 @@ class Hospital(Facility):
 	'''
 	Model: Representing a hospital
 	'''
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
+	# created_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name = models.CharField(max_length=200)
 	hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
 	account_number = models.CharField(max_length=100)
 	website = models.URLField(blank=True, null=True)
 	referral_percent_discount = models.CharField(max_length=5)
-	
 
 	def __str__(self) -> str:
 		return self.name

@@ -15,6 +15,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		queryset=Facility.objects.all(),
 		required=False
 	)
+	referror = serializers.SerializerMethodField(read_only=True)
 	# sample_types = serializers.PrimaryKeyRelatedField(
 	# 	queryset=SampleType.objects.all(),
 	# 	many=True
@@ -33,6 +34,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'patient_name',
 			'patient_age',
 			'patient_sex',
+			'referror',
 			'referring_facility',
 			'facility_type',
 			'to_laboratory',
@@ -45,8 +47,6 @@ class SampleSerializer(serializers.ModelSerializer):
 			'clinical_history',
 			'attachment',
 			'sample_status',
-			'payment_mode',
-			'payment_status',
 			'delivery',
 			'priority',
 			'is_marked_sent',
@@ -54,17 +54,8 @@ class SampleSerializer(serializers.ModelSerializer):
 			'date_created'
 		)
 
-	# def to_internal_value(self, data):
-	# 	print(isinstance(data.get('tests'), str))
-	# 	if isinstance(data.get('tests'), str):
-
-	# 		try:
-	# 			data['tests'] = json.loads(data.pop('tests'))
-
-	# 		except json.JSONDecodeError:
-	# 			raise serializers.ValidationError({'tests': 'Invalid format'})
-
-	# 	return super().to_internal_value(data)
+	def get_referror(self, obj):
+		return str(obj.referror)
 
 	def to_representation(self, instance):
 

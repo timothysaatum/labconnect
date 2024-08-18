@@ -68,7 +68,6 @@ class DeleteHospitalView(HospitalMixin, generics.DestroyAPIView):
 		return super().delete(request, pk, format=None)
 
 
-
 class HospitalSerializerView(generics.ListAPIView):
 	'''List view for Hospitals.'''
 
@@ -78,12 +77,14 @@ class HospitalSerializerView(generics.ListAPIView):
 	def get_queryset(self):
 		return Hospital.objects.all()
 
+
 class UserHospital(generics.ListAPIView):
 	permission_classes = [PermissionsMixin]
 	serializer_class = HospitalSerializer
 
 	def get_queryset(self):
 		return Hospital.objects.filter(created_by=self.request.user)
+
 
 class SampleSerializerView(HospitalMixin, generics.CreateAPIView):
 	'''Create for creating a sample.'''

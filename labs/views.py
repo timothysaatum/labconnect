@@ -565,6 +565,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 	'''Update details of a specific sample.'''
 	serializer_class = SampleSerializer
+	queryset = Sample.objects.all()
 
 	def patch(self, request, pk):
 
@@ -572,7 +573,7 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 	def perform_update(self, serializer):
 		sample = serializer.save()
-		sample.tests.clear()
+		# sample.tests.clear()
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
 		tests = query_dict.getlist('tests')

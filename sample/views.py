@@ -1,9 +1,68 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .serializers import NotificatinSerializer, CountObjectsSerializer
+from .serializers import NotificatinSerializer, CountObjectsSerializer, SampleSerializer
 from .models import Notification, Sample
+import json
+from django.http import QueryDict
+from user.models import Client
+from labs.models import Branch
+from django.contrib.contenttypes.models import ContentType
+# from labs.views import PermissionMixin
+
+
+
+class SendSampleView(generics.CreateAPIView):
+
+    permission_classes = [IsAuthenticated]
+    queryset = Sample.objects.all()
+    parser_classes = (MultiPartParser, FormParser)
+    serializer_class = SampleSerializer
+
+
+    def post(self, request):
+
+        data = request.data.dict() if isinstance(request.data, QueryDict) else request.data.copy()
+        if 'tests' in data:
+
+            tests = json.loads(data['tests'])
+            if isinstance(tests, list):
+
+                data['tests'] = tests
+
+        request._full_data = data
+
+        return self.create(request)
+
+    def perform_create(self, serializer):
+
+        user = self.request.user
+
+        tests = self.request.data['tests']
+
+        if user.account_type == 'Hospital':
+            referror_model = Client.objects.get(id=user.id)
+            # referror = 'Hospital'
+
+        elif user.account_type == 'Laboratory':
+            branch_id = self.request.data['to_laboratory']
+            referror_model = Branch.objects.get(id=branch_id)
+            # referror = 'Laboratory'
+        content_type = ContentType.objects.get_for_model(referror_model)
+
+        sample = serializer.save(
+                referror_content_type=content_type,
+                referror_object_id=referror_model.id,
+				sender_full_name=user.full_name,
+				sender_phone=user.phone_number,
+				sender_email=user.email,
+				facility_type=user.account_type
+			)
+
+        sample.tests.add(*tests)
+
 
 
 class UpdateNotification(generics.UpdateAPIView):
