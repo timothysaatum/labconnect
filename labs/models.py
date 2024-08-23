@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import MinLengthValidator, MaxLengthValidator, validate_email
+from django.core.validators import validate_email# MinLengthValidator, MaxLengthValidator, 
 import uuid
 from hospital.models import Facility
 
@@ -13,6 +13,7 @@ class BaseModel(models.Model):
 
 	class Meta:
 		abstract = True
+
 
 
 class Laboratory(BaseModel):
@@ -41,11 +42,6 @@ class Laboratory(BaseModel):
 
 	def __str__(self) -> str:
 		return self.name
-
-	#def save(self, *args, **kwargs):
-	#	if not self.pk and Laboratory.objects.filter(created_by=self.created_by).exists():
-	#		raise ValidationError('You can only have one laboratory.')
-	#	return super().save(*args, **kwargs)
 
 
 class Branch(Facility):
@@ -155,6 +151,7 @@ class Result(models.Model):
 	branch(str): The branch where this test result belongs to.
 	test(str): The test this results belong to.
 	'''
+
 	send_by = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='sender',  db_index=True)
 	hospital = models.ForeignKey('hospital.Hospital', on_delete=models.CASCADE, related_name='results', db_index=True)
 	sample = models.ForeignKey('sample.Sample', on_delete=models.CASCADE, db_index=True)

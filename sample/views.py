@@ -3,14 +3,13 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .serializers import NotificatinSerializer, CountObjectsSerializer, SampleSerializer
+from .serializers import NotificationSerializer, CountObjectsSerializer, SampleSerializer
 from .models import Notification, Sample
 import json
 from django.http import QueryDict
 from user.models import Client
 from labs.models import Branch
 from django.contrib.contenttypes.models import ContentType
-# from labs.views import PermissionMixin
 
 
 
@@ -67,7 +66,7 @@ class SendSampleView(generics.CreateAPIView):
 
 class UpdateNotification(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = NotificatinSerializer
+    serializer_class = NotificationSerializer
 
     def get_object(self):
 
@@ -86,11 +85,12 @@ class UpdateNotification(generics.UpdateAPIView):
 
 
 class GetNotifications(generics.ListAPIView):
-    serializer_class = NotificatinSerializer
+    serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user)
+        # print()
+        return Notification.objects.filter(branch=self.kwargs.get('branch_id'))
     
 
 class CountObjects(generics.GenericAPIView):

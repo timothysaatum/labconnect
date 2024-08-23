@@ -1,9 +1,7 @@
 from rest_framework import serializers
 from sample.models import Sample, Notification
-# from labs.paginators import QueryPagination
-from labs.models import Test, SampleType
+from labs.models import Test
 from hospital.models import Facility
-import json
 
 
 
@@ -15,16 +13,12 @@ class SampleSerializer(serializers.ModelSerializer):
 		queryset=Facility.objects.all(),
 		required=False
 	)
-	referror = serializers.SerializerMethodField(read_only=True)
-	# sample_types = serializers.PrimaryKeyRelatedField(
-	# 	queryset=SampleType.objects.all(),
-	# 	many=True
-	# )
+
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
 	facility_type = serializers.CharField(required=False)
-#232108
+
 	class Meta:
 
 		model = Sample
@@ -34,7 +28,6 @@ class SampleSerializer(serializers.ModelSerializer):
 			'patient_name',
 			'patient_age',
 			'patient_sex',
-			'referror',
 			'referring_facility',
 			'facility_type',
 			'to_laboratory',
@@ -42,7 +35,6 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_phone',
 			'sender_email',
 			'is_rejected',
-			# 'sample_types',
 			'tests',
 			'clinical_history',
 			'attachment',
@@ -54,25 +46,22 @@ class SampleSerializer(serializers.ModelSerializer):
 			'date_created'
 		)
 
-	def get_referror(self, obj):
-		return str(obj.referror)
-
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = (instance.referring_facility.hospital.name
 								if instance.facility_type == 'Hospital' else None)
-		# data['sample_types'] = [sample_type.sample_name for sample_type in instance.sample_types.all()]
+		
 		data['to_laboratory'] = instance.to_laboratory.laboratory.name if instance.to_laboratory else None
 		data['delivery'] = instance.delivery.name if instance.delivery else None
 
 		return data
 
 
-class NotificatinSerializer(serializers.ModelSerializer):
+class NotificationSerializer(serializers.ModelSerializer):
 
-	user = serializers.StringRelatedField(source='__str__')
+	branch = serializers.PrimaryKeyRelatedField(queryset=Test.objects.all(), required=True)
 	message = serializers.CharField()
 
 	is_read = serializers.BooleanField(default=False)
@@ -83,7 +72,7 @@ class NotificatinSerializer(serializers.ModelSerializer):
 
 		fields = (
 			'id', 
-			'user', 
+			'branch', 
 			'message',
 			'is_read',
 			'date_created',

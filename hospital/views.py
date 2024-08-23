@@ -20,7 +20,6 @@ class PermissionsMixin(permissions.BasePermission):
 		return request.user.is_authenticated and request.user.account_type == 'Hospital'
 
 
-
 class HospitalMixin(generics.GenericAPIView):
 	'''Mixins class for common logic in sample views'''
 
@@ -30,7 +29,6 @@ class HospitalMixin(generics.GenericAPIView):
 	def get_queryset(self):
 		facility_id = Hospital.objects.get(created_by=self.request.user)
 		return Sample.objects.filter(referring_facility_id=facility_id)
-
 
 
 class AddHospitalView(HospitalMixin, generics.CreateAPIView):

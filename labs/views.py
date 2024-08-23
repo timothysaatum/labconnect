@@ -445,7 +445,6 @@ class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
 		serializer.save(send_by=self.request.user)
 
 
-
 class TestResultListView(BranchListView):
 	serializer_class = TestResultSerializer
 

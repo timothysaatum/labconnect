@@ -70,10 +70,10 @@ class LoginSerializer(serializers.ModelSerializer):
 	is_verified = serializers.CharField(max_length=255, read_only=True)
 	user_id = serializers.IntegerField(read_only=True)
 
-
 	class Meta:
 
 		model = Client
+
 		fields = [
 
 			'user_id', 'email', 'password', 'full_name', 'account_type',
@@ -154,7 +154,7 @@ class PasswordResetViewSerializer(serializers.Serializer):
 			email_body = f'Hi {user.full_name}, use the link below to reset your password \n {abslink}'
 
 			data = {
-				'email_body': email_body, 
+				'email_body': email_body,
 				'email_subject': 'Reset your password',
 				'to_email': user.email
 			}

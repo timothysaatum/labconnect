@@ -1,10 +1,8 @@
 from django.db import models
-from labs.models import Branch, Test, SampleType
+from labs.models import Branch, Test
 from hospital.models import Facility
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 
 
 client = get_user_model()
@@ -34,9 +32,7 @@ class Sample(models.Model):
 	'''
 	Model representing a medical sample
 	'''
-	referror_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
-	referror_object_id = models.PositiveSmallIntegerField(null=True, blank=True)
-	referror = GenericForeignKey('referror_content_type', 'referror_object_id')
+
 	referring_facility = models.ForeignKey(
 			Facility,
 			on_delete=models.CASCADE, 
@@ -65,7 +61,6 @@ class Sample(models.Model):
 		)
 	to_laboratory = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	tests = models.ManyToManyField(Test, related_name='tests')
-	# sample_types = models.ManyToManyField(SampleType, related_name='sample_type')
 	clinical_history = models.TextField(null=True, blank=True)
 	attachment = models.FileField(
 		upload_to='sample/attachments',
@@ -90,7 +85,7 @@ class Sample(models.Model):
 
 class Notification(models.Model):
 
-	user = models.ForeignKey(client, on_delete=models.CASCADE)
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	message = models.CharField(max_length=150)
 	is_read = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
