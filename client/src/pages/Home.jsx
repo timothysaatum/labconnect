@@ -1,18 +1,42 @@
-import BlurFade from "@/components/magicui/blur-fade";
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
-export default function BlurFadeTextDemo() {
+export default function SampleDatePicker() {
+  const [date, setDate] = React.useState();
+
   return (
-    <section id="header">
-      <BlurFade delay={0.25} inView>
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-          Hello World 👋
-        </h2>
-      </BlurFade>
-      <BlurFade delay={0.25 * 2} inView>
-        <span className="text-xl text-pretty tracking-tighter sm:text-3xl xl:text-4xl/none">
-          Nice to meet you
-        </span>
-      </BlurFade>
-    </section>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-[240px] justify-start text-left font-normal",
+            !date && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-4 w-4" />
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className=" w-auto p-0">
+        <Calendar
+          mode="single"
+          captionLayout="dropdown-buttons"
+          selected={date}
+          onSelect={setDate}
+          fromYear={1960}
+          toYear={2030}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }

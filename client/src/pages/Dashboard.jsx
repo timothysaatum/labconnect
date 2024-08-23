@@ -37,7 +37,7 @@ import { selectCurrentUser } from "@/redux/auth/authSlice";
 import useLogout from "@/hooks/uselogout";
 import ThemeToggler from "@/components/ThemeToggler";
 import React, { useEffect } from "react";
-import { useFetchUserBranches } from "@/api/queries";
+import { useFetchUserBranches, useFetchUserNotifications } from "@/api/queries";
 import {
   changeBranch,
   selectActiveBranch,
@@ -67,6 +67,14 @@ export default function Dashboard() {
   const activeBranch = `${
     userbranches?.data?.find((branch) => branch.id === activeBranchId)?.town
   } Branch`;
+
+  const {
+    data: notifs,
+    error: notifserror,
+    isPending: notifsloading,
+  } = useFetchUserNotifications();
+
+  console.log(notifs?.data);
   return (
     <div className="flex flex-col min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -214,11 +222,15 @@ export default function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
-            <NotiicationsPopover>
+            <NotiicationsPopover
+              notifs={notifs}
+              notifsError={notifserror}
+              notifsLoading={notifsloading}
+            >
               <Button variant="outline" size="icon" className="relative">
                 <Bell className="w-4 h-4 text-muted-foreground" />
                 <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
-                  2
+                  {notifs?.data?.length || null}
                 </span>
               </Button>
             </NotiicationsPopover>
@@ -284,11 +296,15 @@ export default function Dashboard() {
                   </DropdownMenu>
                 )}
               </div>
-              <NotiicationsPopover>
+              <NotiicationsPopover
+                notifs={notifs}
+                notifsError={notifserror}
+                notifsLoading={notifsloading}
+              >
                 <Button variant="outline" size="icon" className="relative">
                   <Bell className="w-4 h-4 text-muted-foreground" />
                   <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
-                    2
+                    {notifs?.data?.length || null}
                   </span>
                 </Button>
               </NotiicationsPopover>
@@ -319,7 +335,11 @@ export default function Dashboard() {
               </BreadcrumbList>
             </Breadcrumb>
             <div className="flex justify-around items-center gap-4">
-              <NotiicationsPopover>
+              <NotiicationsPopover
+                notifs={notifs}
+                notifsError={notifserror}
+                notifsLoading={notifsloading}
+              >
                 <Button variant="outline" size="icon" className="relative">
                   <Bell className="w-4 h-4 text-muted-foreground" />
                   <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
