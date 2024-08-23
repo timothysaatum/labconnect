@@ -6,14 +6,14 @@ export const createSortableHeader =
   (columnName) =>
   ({ column }) => {
     return (
-      <Button
+      <span
         variant="ghost"
-        className="font-bold"
+        className="font-bold flex items-center cursor-pointer gap-1"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         {columnName}
         <ChevronsUpDown className="ml-1 h-3 w-3" />
-      </Button>
+      </span>
     );
   };
 

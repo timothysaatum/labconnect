@@ -17,16 +17,6 @@ export const useFetchUserDetails = () => {
   });
 };
 
-export const useFetchUserNotifications = () => {
-  const axiosPrivate = useAxiosPrivate();
-  return useQuery({
-    queryKey: ["Notifications"],
-    queryFn: async () => await axiosPrivate.get("/sample/notifications/"),
-    refetchOnWindowFocus: true,
-    staleTime: 1000 * 60,
-  });
-};
-
 export const useFetchLabRequestsReceived = (id) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
@@ -124,6 +114,16 @@ export const useFetchLabManagers = (id) => {
     queryFn: async () =>
       await axiosPrivate.get(`/user/fetch-lab-managers/${id}/`),
     staleTime: Infinity,
+    enabled: !!id,
+  });
+};
+export const useFetchBranchNotifications = (id) => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["Notifications"],
+    queryFn: async () => await axiosPrivate.get(`/sample/notifications/${id}/`),
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60,
     enabled: !!id,
   });
 };

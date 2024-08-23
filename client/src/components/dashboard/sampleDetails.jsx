@@ -4,6 +4,7 @@ import {
   Copy,
   CreditCard,
   MoreVertical,
+  Paperclip,
   Truck,
   X,
 } from "lucide-react";
@@ -49,7 +50,8 @@ const RequestDetails = ({
           <CardHeader className="bg-muted/50">
             <div className="flex flex-row items-start">
               <div className="grid gap-0.5">
-                <CardTitle className="group flex items-center gap-2 text-lg">
+                <CardTitle className="group flex items-center gap-2 text-lg whitespace-nowrap">
+                  
                   Sample Id: {selected.id}
                   <Button
                     size="icon"
@@ -60,18 +62,26 @@ const RequestDetails = ({
                     <span className="sr-only">Copy Order ID</span>
                   </Button>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="whitespace-nowrap">
                   Date:{" "}
                   {moment(selected?.date_created).format("DD / MM / YYYY")}
                 </CardDescription>
               </div>
               <div className="ml-auto flex items-center gap-1">
-                <Button size="sm" variant="outline" className="h-8 gap-1">
-                  <Truck className="h-3.5 w-3.5" />
-                  <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                    Track Sample
-                  </span>
-                </Button>
+                {selected?.attachment && (
+                  <Button size="sm" variant="outline" className="h-8 gap-1">
+                    <Paperclip className="h-3.5 w-3.5" />
+                    <a
+                      className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap"
+                      href={selected.attachment}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      View Attachment
+                    </a>
+                  </Button>
+                )}
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="icon" variant="outline" className="h-8 w-8">

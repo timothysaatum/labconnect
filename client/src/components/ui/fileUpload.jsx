@@ -28,42 +28,30 @@ const secondaryVariant = {
   },
 };
 
-export const FileUpload = ({
-  form,
-  name,
-}: {
-  onChange?: (files: File[]) => void;
-  form: any;
-  name: string;
-}) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleFileChange = (newFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-  };
-
+export const FileUpload = ({ form, name }) => {
+  //
   const fileref = form.register("result");
+  const fileInputRef = useRef(null);
+  const [file, setfile] = useState(null);
 
-  const handleClick = () => {
-    if (files.length === 3) {
-      toast.info("You can upload three files");
-      return;
+  const handleFileChange = (e) => {
+    const attachment = e.target.files;
+    if (attachment) {
+      setfile(attachment[0]);
     }
-    fileInputRef.current?.click();
+    form.clearErrors("result");
   };
-
   useEffect(() => {
-    if (files.length > 1) {
-      form.setValue("result", files);
-    }
-  }, [files]);
+    form.setValue("result", file);
+  }, [file]);
+
+
 
   return (
     <div className="w-full">
       <motion.div
-        onClick={handleClick}
         whileHover="animate"
+        onClick={() => fileInputRef.current.click()}
         className="p-10 group/file block rounded-lg cursor-pointer w-full relative overflow-hidden"
       >
         <FormField
@@ -76,9 +64,7 @@ export const FileUpload = ({
                   type="file"
                   {...fileref}
                   accept=".pdf"
-                  onChange={(e) =>
-                    handleFileChange(Array.from(e.target.files || []))
-                  }
+                  onChange={handleFileChange}
                   ref={fileInputRef}
                 />
               </FormControl>
@@ -94,11 +80,14 @@ export const FileUpload = ({
             Upload Results
           </p>
           <p className="relative z-20 font-sans font-normal text-sm mt-2">
-            click to upload results <span className="text-muted-foreground">(max files:3, only pdf)</span>
+            click to upload results{" "}
+            <span className="text-muted-foreground">
+              (max files:3, only pdf)
+            </span>
           </p>
           <div className="relative w-full mt-10 max-w-xl mx-auto h-[10rem] overflow-y-scroll px-3">
-            {files.length > 0 &&
-              files.map((file, idx) => (
+            {file?.length > 0 &&
+              file.map((file, idx) => (
                 <motion.div
                   key={"file" + idx}
                   layoutId={idx === 0 ? "file-upload" : "file-upload-" + idx}
@@ -147,7 +136,7 @@ export const FileUpload = ({
                   </div>
                 </motion.div>
               ))}
-            {!files.length && (
+            {!file?.length && (
               <motion.div
                 layoutId="file-upload"
                 variants={mainVariant}
@@ -165,7 +154,7 @@ export const FileUpload = ({
               </motion.div>
             )}
 
-            {!files.length && (
+            {!file?.length && (
               <motion.div
                 variants={secondaryVariant}
                 className="absolute opacity-0 border border-dashed border-sky-400 inset-0 z-30 bg-transparent flex items-center justify-center h-32 mt-4 w-full max-w-[8rem] mx-auto rounded-md"

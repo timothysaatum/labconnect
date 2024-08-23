@@ -477,3 +477,27 @@ export const useRejectSample = (form, id) => {
   );
   return onRejectSample;
 };
+
+export const useResultUpload = (form) => {
+  const axiosPrivate = useAxiosPrivate();
+  const onResultUpload = useCallback(
+    async (data) => {
+      console.log(data);
+      try {
+        const formData = new FormData();
+        for (const key in data) {
+          formData.append(key, data[key]);
+        }
+        await axiosPrivate.post(`/laboratory/test/result/add/`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Upload successful");
+        form.reset();
+      } catch (error) {
+        toast.error("Error uploading result. Try again");
+      }
+    },
+    [form]
+  );
+  return onResultUpload;
+};

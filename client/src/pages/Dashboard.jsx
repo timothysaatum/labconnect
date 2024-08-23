@@ -37,7 +37,7 @@ import { selectCurrentUser } from "@/redux/auth/authSlice";
 import useLogout from "@/hooks/uselogout";
 import ThemeToggler from "@/components/ThemeToggler";
 import React, { useEffect } from "react";
-import { useFetchUserBranches, useFetchUserNotifications } from "@/api/queries";
+import { useFetchUserBranches, useFetchBranchNotifications } from "@/api/queries";
 import {
   changeBranch,
   selectActiveBranch,
@@ -72,7 +72,7 @@ export default function Dashboard() {
     data: notifs,
     error: notifserror,
     isPending: notifsloading,
-  } = useFetchUserNotifications();
+  } = useFetchBranchNotifications(activeBranchId || undefined);
 
   console.log(notifs?.data);
   return (

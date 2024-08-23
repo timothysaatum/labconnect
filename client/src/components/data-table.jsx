@@ -136,14 +136,14 @@ export function DataTable({
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column.id.split("_").join(" ")}
                   </DropdownMenuCheckboxItem>
                 );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md md:border max-md:pt-4">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerEl) => (
@@ -152,7 +152,7 @@ export function DataTable({
                   <TableHead
                     key={columnEl.id}
                     colSpan={columnEl.colSpan}
-                    className="font-bold"
+                    className="font-semibold whitespace-nowrap max-md:px-2 max-sm:h-6"
                   >
                     {columnEl.isPlaceholder
                       ? null
@@ -188,7 +188,10 @@ export function DataTable({
                 }`}
               >
                 {rowEl.getVisibleCells().map((cellEl) => (
-                  <TableCell key={cellEl.id}>
+                  <TableCell
+                    key={cellEl.id}
+                    className="max-sm:p-2 whitespace-nowrap"
+                  >
                     {flexRender(
                       cellEl.column.columnDef.cell,
                       cellEl.getContext()

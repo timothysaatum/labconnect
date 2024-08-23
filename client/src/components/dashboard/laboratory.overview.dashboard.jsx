@@ -10,7 +10,6 @@ import {
 import RequestDialog from "./requestdialog";
 import {
   useFetchLabRequestsReceived,
-  useFetchLabRequestsSent,
   useFetchUserBranches,
 } from "@/api/queries";
 import { useEffect, useState } from "react";
@@ -34,6 +33,7 @@ import {
   changeBranch,
   selectActiveBranch,
 } from "@/redux/branches/activeBranchSlice";
+import { useFetchLabRequestsSent } from "../../api/queries";
 
 function EmptyLab({ keywords }) {
   return (
@@ -269,8 +269,8 @@ export default function LaboratoryDashboardOverview() {
               </Link>
             </TabsList>
             <TabsContent value="Received">
-              <Card>
-                <CardHeader className="flex flex-row">
+              <Card className="max-md:border-none">
+                <CardHeader className="flex flex-row max-md:px-2">
                   <div className="flex-1">
                     <CardTitle>Samples</CardTitle>
                     <CardDescription>
@@ -279,9 +279,8 @@ export default function LaboratoryDashboardOverview() {
                         : "Samples you have received "}
                     </CardDescription>
                   </div>
-                 
                 </CardHeader>
-                <CardContent>
+                <CardContent className="max-md:px-2">
                   {isPending ? (
                     <LoadingLab />
                   ) : isError ? (
@@ -318,7 +317,6 @@ export default function LaboratoryDashboardOverview() {
                         : "Samples you have received "}
                     </CardDescription>
                   </div>
-                 
                 </CardHeader>
                 <CardContent>
                   {sentfetching ? (
