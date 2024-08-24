@@ -623,7 +623,7 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 		return Sample.objects.filter(
 			referring_facility=self.kwargs.get('pk')
-		).filter(sample_status='Received by laboratory').order_by('-date_created')
+		).order_by('-date_created')
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):

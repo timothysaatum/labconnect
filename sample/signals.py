@@ -11,7 +11,7 @@ def create_notification_for_lab(sender, instance, created, **kwargs):
 
 		Notification.objects.create(
 			message=f'New sample from: {instance.referring_facility}',
-			user=instance.to_laboratory.branch_manager
+			branch=instance.to_laboratory
         )
 
 		if instance.delivery:
