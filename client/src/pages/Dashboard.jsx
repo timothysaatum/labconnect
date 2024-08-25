@@ -6,6 +6,7 @@ import {
   LogOut,
   Bell,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -36,8 +37,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
 import useLogout from "@/hooks/uselogout";
 import ThemeToggler from "@/components/ThemeToggler";
-import React, { useEffect } from "react";
-import { useFetchUserBranches, useFetchBranchNotifications } from "@/api/queries";
+import React, { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  useFetchUserBranches,
+  useFetchBranchNotifications,
+} from "@/api/queries";
 import {
   changeBranch,
   selectActiveBranch,
@@ -49,6 +54,10 @@ export default function Dashboard() {
   const sideLinks = useGetSideLinks(user?.account_type);
   const location = useLocation();
   const logout = useLogout();
+  const [activeBranch, setActiveBranch] = useState(
+    <Skeleton className="h-4 w-20" />
+  );
+
   const pathnames = location.pathname.split("/").filter((x) => x);
   const {
     data: userbranches,
@@ -58,15 +67,26 @@ export default function Dashboard() {
   const activeBranchId = useSelector(selectActiveBranch);
   const dispatch = useDispatch();
 
+  // const activeBranch = `${
+  //   userbranches?.data?.find((branch) => branch.id === activeBranchId)?.town
+  // } Branch`;
+
   useEffect(() => {
-    const branchIds = userbranches?.data?.map((branch) => branch.id) || [];
-    if (!activeBranchId || !branchIds.includes(activeBranchId)) {
-      dispatch(changeBranch(userbranches?.data[0]?.id));
+    if (userbranches?.data) {
+      if (activeBranchId) {
+        const active = userbranches?.data?.find(
+          (branch) => branch.id === activeBranchId
+        )?.town;
+        if (active) {
+          setActiveBranch(active + " Branch");
+        } else {
+          dispatch(changeBranch(userbranches?.data[0]?.id));
+        }
+      } else {
+        dispatch(changeBranch(userbranches?.data[0]?.id));
+      }
     }
-  }, [userbranches, activeBranchId]);
-  const activeBranch = `${
-    userbranches?.data?.find((branch) => branch.id === activeBranchId)?.town
-  } Branch`;
+  }, [activeBranchId, userbranches]);
 
   const {
     data: notifs,
