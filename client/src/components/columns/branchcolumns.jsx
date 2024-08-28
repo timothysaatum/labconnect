@@ -135,6 +135,7 @@ export const branchcolumnDef = [
                 Assign Manager
               </span>
             </AddManager>
+            <DropdownMenuItem>View branch analytics</DropdownMenuItem>
             <UpdateBranch branchId={branch?.id} />
             <DropdownMenuSeparator />
             <DeleteDialog mutate={mutate} branchId={branch.id} />

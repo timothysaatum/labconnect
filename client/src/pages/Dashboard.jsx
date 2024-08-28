@@ -6,7 +6,7 @@ import {
   LogOut,
   Bell,
   ChevronDown,
-  Loader2,
+  Search,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -28,6 +28,7 @@ import {
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
 import NotiicationsPopover from "@/components/dashboard/notificationsPopover";
 import { Button } from "@/components/ui/button";
 
@@ -94,7 +95,6 @@ export default function Dashboard() {
     isPending: notifsloading,
   } = useFetchBranchNotifications(activeBranchId || undefined);
 
-  console.log(notifs?.data);
   return (
     <div className="flex flex-col min-h-screen">
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -164,7 +164,7 @@ export default function Dashboard() {
       </aside>
       {user?.account_type === "Laboratory" &&
         userbranches?.data?.length === 0 && (
-          <div className="bg-yellow-600 sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
+          <div className="bg-primary text-background sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
             Your Laboratory has no branches. you need to add at least one branch
           </div>
         )}
@@ -282,6 +282,15 @@ export default function Dashboard() {
               </BreadcrumbList>
             </Breadcrumb>
             <div className="flex justify-around items-center gap-4">
+              <div className="relative ">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  id="search"
+                  placeholder={`Search Laboratories ...`}
+                  className="w-full h-10 rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10 max-w-[350px]"
+                />
+              </div>
               <div>
                 {userbranches?.data?.length === 0 ? (
                   user?.is_admin && <AddBranch />
@@ -324,7 +333,8 @@ export default function Dashboard() {
                 <Button variant="outline" size="icon" className="relative">
                   <Bell className="w-4 h-4 text-muted-foreground" />
                   <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
-                    {notifs?.data?.length || null}
+                    {notifs?.data?.filter((item) => item.is_read === false)
+                      .length || null}
                   </span>
                 </Button>
               </NotiicationsPopover>
@@ -363,7 +373,8 @@ export default function Dashboard() {
                 <Button variant="outline" size="icon" className="relative">
                   <Bell className="w-4 h-4 text-muted-foreground" />
                   <span className=" absolute w-5 h-5 opacity-90 -translate-y-[35%] grid place-items-center text-xs rounded-full bg-primary top-[1px] -right-2 dark:text-black text-white">
-                    2
+                    {notifs?.data?.filter((item) => item.is_read === false)
+                      .length || null}
                   </span>
                 </Button>
               </NotiicationsPopover>

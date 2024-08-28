@@ -42,7 +42,6 @@ const RequestDetails = ({
   prevSample,
   nextSample,
 }) => {
-  console.log(selected);
   return (
     <FormWrapper>
       <div>
@@ -51,7 +50,6 @@ const RequestDetails = ({
             <div className="flex flex-row items-start">
               <div className="grid gap-0.5">
                 <CardTitle className="group flex items-center gap-2 text-lg whitespace-nowrap">
-                  
                   Sample Id: {selected.id}
                   <Button
                     size="icon"
@@ -144,19 +142,19 @@ const RequestDetails = ({
                 <span className="text-muted-foreground">
                   Referring Facility
                 </span>
-                <span>{selected.referring_facility}</span>
+                <span className="text-end">{selected.referring_facility}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Sender's name</span>
-                <span>{selected.sender_full_name}</span>
+                <span className="text-end">{selected.sender_full_name}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Sender's email</span>
-                <span>{selected.sender_email}</span>
+                <span className="text-end">{selected.sender_email}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Sender's Contact</span>
-                <span>{selected.sender_phone}</span>
+                <span className="text-end">{selected.sender_phone}</span>
               </li>
             </ul>
             <Separator className="my-4" />

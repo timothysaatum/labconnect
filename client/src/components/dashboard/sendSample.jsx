@@ -575,11 +575,12 @@ export default function SendSample() {
                                   <div className="flex justify-between w-full pr-3 ">
                                     <span>{test.name}</span>
                                     <div className="flex gap-3 items-center">
-                                      {test.discount_price && (
-                                        <span className=" line-through text-muted-foreground text-xs">
+                                      {test.discount_price &&
+                                      test.discount_price * 1 > 0 ? (
+                                        <span className="line-through text-muted-foreground text-xs">
                                           {test.price}
                                         </span>
-                                      )}
+                                      ) : null}
                                       <span>{test.amount_to_pay}</span>
                                     </div>
                                   </div>

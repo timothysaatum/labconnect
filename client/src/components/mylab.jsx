@@ -10,7 +10,7 @@ import { TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { useFetchLabTests, useFetchUserBranches } from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
-import { testscolumnDef } from "./columns/testsColumns";
+import { useTestColumns } from "./columns/testsColumns";
 import { branchcolumnDef } from "./columns/branchcolumns";
 import {
   DropdownMenu,
@@ -34,6 +34,7 @@ import {
   selectActiveBranch,
 } from "@/redux/branches/activeBranchSlice";
 import TableSkeleton from "./dashboard/tableskeleton";
+import BranchDetails from "./dashboard/branchDetails";
 
 function EmptyLab({ title, user }) {
   return (
@@ -114,12 +115,14 @@ function ErrorLab({ refetch, error }) {
 export default function MyLab() {
   const [labtests, setLabTests] = useState([]);
   const [branches, setBranches] = useState([]);
-  const [checked, setChecked] = useState();
   const [selectedTests, setSelectedTests] = useState();
   const [selected, setSelected] = useState();
   const user = useSelector(selectCurrentUser);
   const selectedRows = useSelector(selectSelectedRows);
-  const [action, setAction] = useState("Perform Action");
+  const [BranchSelected, setBranchSelected] = useState();
+  const [selectedBranch, setSelectedBranch] = useState();
+
+  const testscolumnDef = useTestColumns(setSelectedTests);
 
   const activeBranch = useSelector(selectActiveBranch);
 
@@ -138,16 +141,30 @@ export default function MyLab() {
   } = useFetchUserBranches();
 
   useEffect(() => {
+    setSelectedTests();
+  }, [currentTab]);
+
+  useEffect(() => {
+    setSelectedBranch();
+  }, [currentTab]);
+
+  useEffect(() => {
     if (selectedTests) {
       setSelected(
         tests?.data?.find((test) => {
           return test.id === selectedTests;
         })
       );
+    } else if (selectedBranch) {
+      setSelected(
+        userbranches?.data?.find((branch) => {
+          return branch.id === selectedBranch;
+        })
+      );
     } else {
       setSelected(null);
     }
-  }, [selectedTests]);
+  }, [selectedTests, selectedBranch]);
 
   const {
     error: testError,
@@ -197,17 +214,37 @@ export default function MyLab() {
 
   const index = tests?.data?.findIndex((test) => test.id === selected?.id);
   const nextTest = () => {
-    if (index < tests?.data.length - 1) {
-      setSelectedTests(tests?.data[index + 1]?.id);
+    if (selectedTests) {
+      if (index < tests?.data.length - 1) {
+        setSelectedTests(tests?.data[index + 1]?.id);
+      } else {
+        setSelectedTests(tests?.data[0]?.id);
+      }
+    } else if (selectedBranch) {
+      if (index < userbranches?.data.length - 1) {
+        setSelectedTests(userbranches?.data[index + 1]?.id);
+      } else {
+        setSelectedTests(userbranches?.data[0]?.id);
+      }
     } else {
-      setSelectedTests(tests?.data[0]?.id);
+      return;
     }
   };
   const prevTest = () => {
-    if (index < tests?.data.length - 1) {
-      setSelectedTests(tests?.data[index + 1]?.id);
+    if (selectedTests) {
+      if (index === 0) {
+        return;
+      } else {
+        setSelectedTests(tests?.data[index - 1]?.id);
+      }
+    } else if (selectedBranch) {
+      if (index === 0) {
+        return;
+      } else {
+        setSelectedTests(userbranches?.data[index - 1]?.id);
+      }
     } else {
-      setSelectedTests(tests?.data[0]?.id);
+      return;
     }
   };
 
@@ -235,6 +272,8 @@ export default function MyLab() {
       loading: branchesLoading,
       error: branchesError,
       filter: "branch_name",
+      setItems: setSelectedBranch,
+      selected: selectedBranch,
     },
   ];
   return (
@@ -318,13 +357,22 @@ export default function MyLab() {
       </div>
       {selected && (
         <div className="hidden col-span-4 lg:block">
-          <TestDetails
-            selected={selected}
-            setSelectedTests={setSelectedTests}
-            updatedAt={dataUpdatedAt}
-            nextTest={nextTest}
-            prevTest={prevTest}
-          />
+          {selectedTests ? (
+            <TestDetails
+              selected={selected}
+              setSelectedTests={setSelected}
+              updatedAt={dataUpdatedAt}
+              nextTest={nextTest}
+              prevTest={prevTest}
+            />
+          ) : (
+            <BranchDetails
+              selected={selected}
+              setSelected={setSelected}
+              nextTest={nextTest}
+              prevTest={prevTest}
+            />
+          )}
         </div>
       )}
     </main>

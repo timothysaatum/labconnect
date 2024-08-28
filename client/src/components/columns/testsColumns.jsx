@@ -125,154 +125,172 @@ export function DeactivateDialog({
   );
 }
 
-export const testscolumnDef = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "test_code",
-    header: "Test Code",
-  },
-  {
-    accessorKey: "test_name",
-    header: createSortableHeader("Test Name"),
-  },
-  {
-    accessorKey: "price",
-    header: createSortableHeader(`Price (GH${`\u20B5`})`),
-  },
-  {
-    accessorKey: "turn_around_time",
-    header: "Turn around time",
-  },
-  {
-    accessorKey: "date_added",
-    header: createSortableHeader("Date added"),
-    cell: createCell("date_added"),
-  },
-  {
-    accessorKey: "inactive",
-    header: createSortableHeader("Active"),
-    cell: ({ row }) => {
-      const test = row.original;
+export const useTestColumns = (setSelected) => {
+  const testscolumnDef = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "test_code",
+      header: "Test Code",
+    },
+    {
+      accessorKey: "test_name",
+      header: createSortableHeader("Test Name"),
+    },
+    {
+      accessorKey: "price",
+      header: createSortableHeader(`Price (GH${`\u20B5`})`),
+    },
+    {
+      accessorKey: "turn_around_time",
+      header: "Turn around time",
+    },
+    {
+      accessorKey: "date_added",
+      header: createSortableHeader("Date added"),
+      cell: createCell("date_added"),
+    },
+    {
+      id: "details",
+      cell: ({ row }) => {
+        const test = row.original;
 
-      if (test?.test_status === "inactive")
+        return (
+          <span
+            className="text-xs underline hover:no-underline"
+            onClick={() => setSelected(test.id)}
+          >
+            Details
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "inactive",
+      header: createSortableHeader("Active"),
+      cell: ({ row }) => {
+        const test = row.original;
+
+        if (test?.test_status === "inactive")
+          return (
+            <div className="flex justify-center items-center">
+              <X className="w-4 h-4 text-muted-foreground" />
+            </div>
+          );
+
         return (
           <div className="flex justify-center items-center">
-            <X className="w-4 h-4 text-muted-foreground" />
+            <Check className="w-4 h-4 " />
           </div>
         );
-
-      return (
-        <div className="flex justify-center items-center">
-          <Check className="w-4 h-4 " />
-        </div>
-      );
+      },
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const test = row.original;
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const test = row.original;
 
-      const { mutate } = usedeleteTestMutation(test?.id);
-      const { mutate: mutateforall, isPending } = useDeactivateTestMutation(
-        test?.id
-      );
-      const { mutate: mutateforbranch, isPending: pending } =
-        useDeactivateTestForBranchMutation(test?.id);
-      const activeBranch = useSelector(selectActiveBranch);
-      const { data: userbranches } = useFetchUserBranches();
-      const dispatch = useDispatch();
+        const { mutate } = usedeleteTestMutation(test?.id);
+        const { mutate: mutateforall, isPending } = useDeactivateTestMutation(
+          test?.id
+        );
+        const { mutate: mutateforbranch, isPending: pending } =
+          useDeactivateTestForBranchMutation(test?.id);
+        const activeBranch = useSelector(selectActiveBranch);
+        const { data: userbranches } = useFetchUserBranches();
+        const dispatch = useDispatch();
 
-      const activeBranchName = userbranches?.data?.find(
-        (branch) => branch.id === activeBranch
-      )?.name;
+        const activeBranchName = userbranches?.data?.find(
+          (branch) => branch.id === activeBranch
+        )?.name;
 
-      return test?.test_status === "active" ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <MoreHorizontal className="w-4 h-4 " />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-56 space-x-22"
-            collisionPadding={24}
-          >
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>View Test</DropdownMenuItem>
-              {test?.branch?.length > 1 ? (
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Update Test</DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <span
-                        onClick={() => dispatch(changeTestMethod("single"))}
-                      >
-                        <UpdateTest test={test} branch={activeBranchName} />
-                      </span>
+        return test?.test_status === "active" ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <MoreHorizontal className="w-4 h-4 " />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-56 space-x-22"
+              collisionPadding={24}
+            >
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem>View Test</DropdownMenuItem>
+                {test?.branch?.length > 1 ? (
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Update Test</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <span
+                          onClick={() => dispatch(changeTestMethod("single"))}
+                        >
+                          <UpdateTest test={test} branch={activeBranchName} />
+                        </span>
 
-                      <span onClick={() => dispatch(changeTestMethod("all"))}>
-                        <UpdateTest test={test} branch="For all branches" />
-                      </span>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-              ) : (
-                <span onClick={() => dispatch(changeTestMethod("all"))}>
-                  <UpdateTest test={test} branch={`Update Test`} />
-                </span>
-              )}
-              <ApplyDisCount test={test} />
-              <DropdownMenuItem onClick={() => mutateforbranch("inactive")}>
-                Deactivate test
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DeleteDialog testId={test.id} mutate={mutate} />
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <MoreHorizontal className="w-4 h-4 " />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-56 space-x-22"
-            collisionPadding={24}
-          >
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => mutateforbranch("active")}>
-                Activate test
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+                        <span onClick={() => dispatch(changeTestMethod("all"))}>
+                          <UpdateTest test={test} branch="For all branches" />
+                        </span>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                ) : (
+                  <span onClick={() => dispatch(changeTestMethod("all"))}>
+                    <UpdateTest test={test} branch={`Update Test`} />
+                  </span>
+                )}
+                <ApplyDisCount test={test} />
+                <DropdownMenuItem onClick={() => mutateforbranch("inactive")}>
+                  Deactivate test
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DeleteDialog testId={test.id} mutate={mutate} />
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <MoreHorizontal className="w-4 h-4 " />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-56 space-x-22"
+              collisionPadding={24}
+            >
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={() => mutateforbranch("active")}>
+                  Activate test
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
     },
-  },
-];
+  ];
+  return testscolumnDef;
+};

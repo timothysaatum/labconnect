@@ -42,7 +42,10 @@ export default function NotiicationsPopover({
             <div className="max-h-[28rem] text-sm  ">
               <ul className="divide-y-[1px] flex flex-col gap-2">
                 {notifs?.data?.map((notif) => (
-                  <li key={notif?.id} className={`flex gap-2 py-2 items-end `}>
+                  <li
+                    key={notif?.id}
+                    className={`flex gap-2 pykw-2 items-end  ${notif?.is_read ? "" : "bg-accent/50 rounded-sm"} `}
+                  >
                     <Avatar>
                       <AvatarFallback>LC</AvatarFallback>
                     </Avatar>

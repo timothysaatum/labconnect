@@ -72,51 +72,38 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
         noValidate
         onSubmit={form.handleSubmit(onBranchAdd)}
       >
-        {/* <div className="flex items-center gap-2">
-          <SelectComponent
-            name={"branch_manager"}
-            control={form.control}
-            label={"Change Branch Manager (Optional)"}
-            items={Labmanagers}
-            placeholder={"Select Branch Manager"}
-            className="flex-1"
-            description={"click on the + to send a new invite"}
-            empty={"This laboratory has no other users."}
-          />
-          <AddManager branchId={id}>
-            <Button variant="ghost" size="icon">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </AddManager>
-        </div> */}
+        <SelectComponent
+          name={"branch_manager"}
+          control={form.control}
+          label={"Choose Branch manager (Optional)"}
+          items={Labmanagers}
+          placeholder={"Select Branch Manager"}
+          className="flex-1"
+          description={
+            "Choose from Current managers or Send an invite to new manager after adding branch"
+          }
+          empty={"This laboratory has no other users."}
+        />
+        <FormBuilder
+          name={"customname"}
+          label={"Custom branch name (Optional)"}
+          description={
+            "if you do not provide a branch name, a default name will be used (laboratory name + town)"
+          }
+        >
+          <Input type="text" placeholder="custom branch name" />
+        </FormBuilder>
         <FormBuilder name={"email"} label={"Branch Email"}>
           <Input type="email" placeholder="branch email" />
         </FormBuilder>
         <FormBuilder name={"phone"} label={"Branch Contact"}>
-          <PhoneInput defaultCountry="GH" />
+          <PhoneInput defaultCountry="GH" placeholder="Branch Contact" />
         </FormBuilder>
-        <FormField
-          name="region"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Region</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Region" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {regions?.map((region) => (
-                    <SelectItem value={region.value} key={region.value}>
-                      {region?.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FormItem>
-          )}
+        <SelectComponent
+          name={"region"}
+          label={"Region"}
+          items={regions}
+          placeholder={"Choose Branch Region"}
         />
         <FormBuilder name={"town"} label={"City/Town"}>
           <Input type="text" placeholder="branch location" />

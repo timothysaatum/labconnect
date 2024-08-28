@@ -21,25 +21,16 @@ import {
   PaginationItem,
 } from "@/components/ui/pagination";
 import { Separator } from "@/components/ui/separator";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import moment from "moment";
-import { Label } from "../ui/label";
+import FormWrapper from "../FormWrapper";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
-const formVariants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    opacity: 1,
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      ease: "easeOut",
-    },
-  },
-};
 
 const TestDetails = ({
   selected,
@@ -48,28 +39,15 @@ const TestDetails = ({
   nextTest,
   prevTest,
 }) => {
+
   return (
-    <motion.div
-      variants={formVariants}
-      initial="hidden"
-      animate="visible"
-      exit="exit"
-      className={cn("col-span-4")}
-    >
-      <Card className="overflow-hidden">
+    <FormWrapper className={cn("col-span-4")}>
+      <Card className="text-wrap overflow-hidden break-all">
         <CardHeader className="bg-muted/50">
           <div className="flex flex-row items-start">
             <div className="grid gap-0.5">
               <CardTitle className="group flex items-center gap-2 text-lg">
-                <p className="text-sm">Test code: {selected?.test_code}</p>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                >
-                  <Copy className="h-3 w-3" />
-                  <span className="sr-only">Copy Order ID</span>
-                </Button>
+                <p className="text-sm">Test name: {selected?.name}</p>
               </CardTitle>
               <CardDescription>
                 Date added: {moment(selected?.date_added).format("MMM Do YY")}
@@ -108,8 +86,8 @@ const TestDetails = ({
                 <span>{selected?.name}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Accepted Samples</span>
-                <span></span>
+                <span className="text-muted-foreground">Test Status</span>
+                <span className="capitalize">{selected?.test_status}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Price</span>
@@ -118,18 +96,60 @@ const TestDetails = ({
                   {selected?.price}
                 </span>
               </li>
+              {selected?.discount_price * 1 > 0 ? (
+                <li className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    Applied Discount
+                  </span>
+                  <span>
+                    GH{`\u20B5`}
+                    {selected?.discount_price}
+                  </span>
+                </li>
+              ) : null}
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Turn around time</span>
-                <span>
-                  {moment(selected?.turn_around_time, "HH:mm:ss").format(
-                    "h [hours] m [minutes]"
-                  )}
-                </span>
+                <span>{selected?.turn_around_time}</span>
               </li>
             </ul>
             <Separator className="my-2" />
-            <Label className="text-muted-foreground">Patient preparation</Label>
-            <p>{selected.patient_preparation}</p>
+            <div className="grid gap-3">
+              <div className="font-semibold">Patient Preparation</div>
+              <div className="">{selected?.patient_preparation}</div>
+            </div>
+          </div>
+          <Separator className="my-2" />
+          <div className="grid gap-3">
+            <div className="font-semibold">Sample Requirements</div>
+            <Accordion type="single" collapsible className="w-full max-">
+              {selected?.sample_type?.map((sample, index) => (
+                <AccordionItem value={"item" + index} key={index}>
+                  <AccordionTrigger className="hover:no-underline text-sm  text-start">
+                    {sample?.sample_name}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-2 border-b-[1px] pb-2">
+                      <p className="text-xs uppercase">
+                        <span className="capitalize mr-2">Sample Type:</span>
+                        {sample.sample_name}
+                      </p>
+                      <p className="text-xs uppercase">
+                        <span className="capitalize mr-2">
+                          Collection time:
+                        </span>
+                        {sample.collection_time}
+                      </p>
+                      <p className="text-xs uppercase">
+                        <span className="capitalize mr-2">
+                          collection Procedure:
+                        </span>
+                        {sample.collection_procedure}
+                      </p>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </CardContent>
         <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
@@ -167,7 +187,7 @@ const TestDetails = ({
           </Pagination>
         </CardFooter>
       </Card>
-    </motion.div>
+    </FormWrapper>
   );
 };
 

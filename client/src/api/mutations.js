@@ -127,9 +127,8 @@ export const useUpdateNotificationMutation = () => {
   const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
   return useMutation({
-    mutationFn: async (id) => {
-      console.log(id);
-      await axiosPrivate.patch(`sample/update-notification/${id}`, {
+    mutationFn: async () => {
+      await axiosPrivate.patch(`sample/update-notification/`, {
         is_read: true,
       });
     },

@@ -150,17 +150,16 @@ export const useRequestLabColumns = (setSelected) => {
       cell: createCell("date_added"),
     },
     {
-      id: "view",
+      id: "details",
       cell: ({ row }) => {
         const request = row.original;
 
         return (
           <span
-            to={`/dashboard/overview/samples/received/${activeBranch}/${request?.id}`}
             className="text-xs underline hover:no-underline"
             onClick={() => setSelected(request.id)}
           >
-            View
+            Details
           </span>
         );
       },

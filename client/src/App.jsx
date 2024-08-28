@@ -26,7 +26,6 @@ import CreateLab from "./components/createLab/createLab";
 import Labgettingstarted, {
   GettingStartedOverView,
 } from "./pages/labgettingstarted";
-import OverviewSkeleton from "./components/skeletons/overview";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));

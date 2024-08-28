@@ -30,7 +30,6 @@ import SampleDetails from "@/components/dashboard/sampleDetails";
 import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  changeBranch,
   selectActiveBranch,
 } from "@/redux/branches/activeBranchSlice";
 import { useFetchLabRequestsSent } from "../../api/queries";

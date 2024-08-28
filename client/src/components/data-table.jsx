@@ -119,7 +119,20 @@ export function DataTable({
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto text-xs">
               <SlidersHorizontal className="w-4 h-4 mr-2" />
-              View
+              Filter
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuCheckboxItem>Pending</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem>Processed</DropdownMenuCheckboxItem>
+            <DropdownMenuCheckboxItem>Rejected</DropdownMenuCheckboxItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto text-xs">
+              <SlidersHorizontal className="w-4 h-4 mr-2" />
+              Visibility
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -184,7 +197,7 @@ export function DataTable({
                 className={`cursor-pointer ${
                   rowEl.original.id === selected ? "bg-accent" : ""
                 } transition-all ${
-                  rowEl?.original?.inactive === "inactive" && "opacity-50"
+                  rowEl?.original?.test_status === "inactive" && "opacity-50"
                 }`}
               >
                 {rowEl.getVisibleCells().map((cellEl) => (
