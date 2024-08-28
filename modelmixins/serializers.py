@@ -15,6 +15,7 @@ class FacilitySerializer(serializers.ModelSerializer):
 			'name',
 			'phone',
 			'email',
+			'facility_type',
 			'postal_address',
 			'date_created'
 		)
