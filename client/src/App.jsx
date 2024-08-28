@@ -17,7 +17,7 @@ import React from "react";
 import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import SettingProfile from "./components/dashboard/Profile";
-import Loading from "./components/loadingone";
+import Loading from "./components/loading";
 import MyLab from "@/components/mylab";
 import SendSample from "./components/dashboard/sendSample";
 import Analytics from "./components/laboratoryanalytics";
@@ -26,6 +26,7 @@ import CreateLab from "./components/createLab/createLab";
 import Labgettingstarted, {
   GettingStartedOverView,
 } from "./pages/labgettingstarted";
+import OverviewSkeleton from "./components/skeletons/overview";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -86,7 +87,7 @@ export default function App() {
                 <Route
                   path="dashboard"
                   element={
-                    <React.Suspense fallback={null}>
+                    <React.Suspense fallback={<Loading />}>
                       <Dashboard />
                     </React.Suspense>
                   }
