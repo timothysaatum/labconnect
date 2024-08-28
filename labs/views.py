@@ -8,11 +8,11 @@ from .serializers import (
 	TestSerializer, 
 	TestResultSerializer, 
 	BranchSerializer,
-	SampleTypeSerializer,
 	BranchTestSerializer
 )
-from .models import Test, Branch, Laboratory, SampleType, BranchTest, Result
-
+from .models import Test, Branch, Laboratory, BranchTest, Result
+from modelmixins.models import SampleType
+from modelmixins.models import Facility
 from sample.models import Sample
 from sample.serializers import SampleSerializer
 from django.db.models import Q
@@ -23,11 +23,12 @@ from rest_framework.exceptions import ValidationError
 from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
 import json
-
+from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .tasks import copy_test_to_branch
 import logging
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
+
 
 
 class PermissionMixin(object):
@@ -202,8 +203,7 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 		"""
 
 		lab = Laboratory.objects.get(created_by=self.request.user)
-		serializer.save(branch_manager=self.request.user, laboratory=lab)
-		
+		serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
 
 
 class BranchListView(PermissionMixin, generics.ListAPIView):
@@ -224,34 +224,6 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 			Q(laboratory__created_by=self.request.user) |
 			Q(branch_manager=self.request.user)
 		).order_by('id')
-
-
-
-class BranchDetailView(generics.RetrieveAPIView):
-	"""
-	API endpoint that allows the user a detailed view
-	of their facility. 
-	This view is equally accessible to other users in the system and not just the facility owner.
-	"""
-	serializer_class = BranchSerializer
-
-	def get_queryset(self, pk):
-
-		return Branch.objects.get(pk=pk)
-
-	def get(self, request, pk, format=None):
-
-		try:
-			branch = self.get_queryset(pk=pk)
-			serialized_data = BranchSerializer(branch)
-			return Response(serialized_data.data)
-
-		except Branch.DoesNotExist:
-			return Response(
-				{'error': 'Not found'}, 
-				status=status.HTTP_404_NOT_FOUND
-			)
-
 
 
 class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -455,33 +427,6 @@ class TestResultListView(BranchListView):
 		).order_by('-date_added')
 
 
-
-class TestResultDetailView(generics.RetrieveAPIView):
-
-	permission_classes = [IsAuthenticated]
-	serializer_class = TestResultSerializer
-
-	def get_queryset(self, pk):
-
-		try:
-			return Result.objects.get(pk=pk)
-
-		except Result.DoesNotExist:
-
-			return Response(
-				{'error': 'result not found'}, 
-				status=status.HTTP_404_NOT_FOUND
-			)
-
-	def get(self, request, pk, format=None):
-		
-		test_result = self.get_queryset(pk)
-		serialized_data = TestResultSerializer(test_result)
-
-		return Response(serialized_data.data)
-
-
-
 class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = TestResultSerializer
 
@@ -591,9 +536,9 @@ class LaboratorySampleDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 class AllLaboratories(generics.ListAPIView):
 
-	serializer_class = BranchSerializer
-	queryset = Branch.objects.all().order_by('id')
-
+	serializer_class = FacilitySerializer
+	queryset = Facility.objects.filter(Q(hospitallab__isnull=False) | Q(branch__isnull=False)).select_related('branch', 'hospitallab').order_by('?')
+	# print(queryset)
 
 
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
@@ -604,13 +549,11 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 		pk = self.kwargs.get('pk')
 		try:
 			return Sample.objects.filter(
-				Q(to_laboratory=pk) |
-				Q(to_laboratory__laboratory=pk)
-			).order_by('-date_created')
+				Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).order_by('-date_created')
 
 		except Sample.DoesNotExist:
 			return Response(
-				{'error': 'No sample sent.'}, 
+				{'error': 'No sample sent.'},
 				status=status.HTTP_404_NOT_FOUND
 			)
 
@@ -686,7 +629,7 @@ class GetTestSampleType(generics.ListAPIView):
 				Q(test=obj_id)|
 				Q(test__branch__laboratory=obj_id)
 			).order_by('id')
-	
+
 
 class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 

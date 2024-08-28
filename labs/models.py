@@ -2,18 +2,10 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import validate_email# MinLengthValidator, MaxLengthValidator, 
 import uuid
-from hospital.models import Facility
+from modelmixins.models import Facility, BasicTest, BaseModel
+
 
 user = get_user_model()
-
-class BaseModel(models.Model):
-
-	date_added = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
-
-	class Meta:
-		abstract = True
-
 
 
 class Laboratory(BaseModel):
@@ -42,13 +34,34 @@ class Laboratory(BaseModel):
 
 	def __str__(self) -> str:
 		return self.name
+	
 
+REGIONS = [
+
+	('Northern', 'Northern'),
+	('Upper West', 'Upper West'),
+	('Upper East', 'Upper East'),
+	('Savannah', 'Savannah'),
+	('Bono', 'Bono'),
+	('Greater Accra', 'Greater Accra'),
+	('Western', 'Western'),
+	('Central', 'Central'),
+	('Volta', 'Volta'),
+	('North East', 'North East'),
+	('Bono East', 'Bono East'),
+	('Oti', 'Oti'),
+	('Ashanti', 'Ashanti'),
+
+]
 
 class Branch(Facility):
 	'''
 	A brach: is a local set up of a particular laboratory that carries out test within that enclave.
 	Branch_name: refers to the name of a branch.
 	'''
+	region = models.CharField(choices=REGIONS, max_length=100)
+	town = models.CharField(max_length=200)
+	digital_address = models.CharField(max_length=15)
 	branch_manager = models.ForeignKey(user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True)
 	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')	
 
@@ -61,21 +74,7 @@ class Branch(Facility):
 		return f'{self.laboratory.name} - {self.town}'
 
 
-class SampleType(models.Model):
-
-	'''
-	Sample:Is the various medical samples that can be used to perform a particular test. 
-	This is require to avoid sample mismatched when a test is being requested.
-	'''
-	sample_name = models.CharField(max_length=100)
-	collection_procedure = models.TextField()
-	collection_time = models.CharField(max_length=155)
-
-	def __str__(self):
-		return self.sample_name
-
-
-class Test(BaseModel):
+class Test(BasicTest):
 
 	'''
 	A test than can be conducted in a branch.
@@ -85,21 +84,8 @@ class Test(BaseModel):
 	price(float): The price of the test.
 	dicount_price (float, optional): The discounted price of the test.
 	'''
-	STATUS_CHOICES = [
-		('active', 'active'),
-		('inactive', 'inactive')
-	]
-	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	test_code = models.CharField(max_length=100, null=True, blank=True)
-	name = models.CharField(max_length=200, db_index=True)
 	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True, through='BranchTest')
-	price = models.DecimalField(decimal_places=2, max_digits=10)
-	discount_price = models.DecimalField(decimal_places=2, max_digits=10)
-	discount_percent = models.CharField(max_length=10)
-	turn_around_time = models.CharField(max_length=200)
-	patient_preparation = models.TextField(blank=True, null=True)
-	sample_type = models.ManyToManyField(SampleType)
-	test_status = models.CharField(max_length=10 ,choices=STATUS_CHOICES, default='active')
+
 
 	def __str__(self) -> str:
 
@@ -111,10 +97,12 @@ class Test(BaseModel):
 
 
 class BranchTest(models.Model):
+
 	STATUS_CHOICES = [
 		('active', 'active'),
 		('inactive', 'inactive')
 	]
+
 	test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='branch_test')
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	test_status = models.CharField(max_length=10 ,choices=STATUS_CHOICES, default='active')

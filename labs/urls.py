@@ -4,7 +4,6 @@ from .views import (
     LaboratoryUserVIew,
     CreateTestView, 
     CreateTestResultView,
-	BranchDetailView, 
     TestUpdateView, 
     BranchListView, 
     BranchUpdateView, 
@@ -13,7 +12,6 @@ from .views import (
     TestListView,
     TestDeleteView, 
     TestResultListView, 
-    TestResultDetailView, 
 	TestResultUpdateView,
     TestResultDeleteView, 
     LaboratorySampleList,
@@ -46,7 +44,6 @@ urlpatterns = [
 	path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
 	path('list/', BranchListView.as_view(), name='laboratory-list'),
 	path('branch/all/', AllLaboratories.as_view(), name='all-labs'),
-	path('branch/details/<uuid:pk>/', BranchDetailView.as_view(), name='branch-details'),
 	path('branch/update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
 	path('branch/delete/<uuid:pk>/', BranchDeleteView.as_view(), name='branch-delete'),
 	#creating, reading, updating and deleting Test
@@ -62,7 +59,6 @@ urlpatterns = [
 	#creating, reading, updating and deleting results routes
 	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
 	path('test/result/list/', TestResultListView.as_view(), name='results-list'),
-	path('test/result/details/<uuid:pk>/', TestResultDetailView.as_view(), name='results-details'),
 	path('test/result/update/<uuid:pk>/', TestResultUpdateView.as_view(), name='result-update'),
 	path('test/result/delete/<uuid:pk>/', TestResultDeleteView.as_view(), name='result-delete'),
 	#samples received by the laboratory routes

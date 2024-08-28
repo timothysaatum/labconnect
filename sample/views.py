@@ -68,10 +68,11 @@ class UpdateNotification(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer
 
-    def get_object(self):
+    def get_object(self, *args, **kwargs):
 
         queryset = Notification.objects.all()
-        obj = generics.get_object_or_404(queryset, id=self.request.user.id)
+        obj = generics.get_object_or_404(queryset, id=self.kwargs.get('noti_id'))
+
         return obj
 
     def patch(self, request, *args, **kwargs):
@@ -89,9 +90,9 @@ class GetNotifications(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # print()
-        return Notification.objects.filter(branch=self.kwargs.get('branch_id'))
-    
+
+        return Notification.objects.filter(branch=self.kwargs.get('branch_id'), is_read=False)
+
 
 class CountObjects(generics.GenericAPIView):
     serializer_class = CountObjectsSerializer

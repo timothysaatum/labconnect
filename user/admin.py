@@ -37,7 +37,7 @@ class ClientAdmin(UserAdmin):
             'classes': ('wide', 'extrapretty'),
             'fields': ('first_name', 'last_name', 'phone_number', 'email', 
                 'account_type','password1', 'password2', 'is_admin', 'is_active', 
-                'is_staff', 'user_hospital'
+                'is_staff'
                 ),
         }),
     )

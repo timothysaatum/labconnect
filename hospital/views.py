@@ -103,7 +103,6 @@ class SampleSerializerView(HospitalMixin, generics.CreateAPIView):
 		sample.tests.add(*tests)
 
 
-
 class SampleListView(HospitalMixin, generics.ListAPIView):
 	'''List view for samples created by the authenticated user.'''
 	filter_backends = [filters.SearchFilter]

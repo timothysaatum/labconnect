@@ -4,10 +4,11 @@ from .models import (
 		Laboratory, 
 		Test, Branch,  
 		BranchManagerInvitation,
-		SampleType,
 		BranchTest,
 		Result
 	)
+from modelmixins.models import SampleType
+from modelmixins.serializers import SampleTypeSerializer
 
 
 class LaboratorySerializer(serializers.ModelSerializer):
@@ -60,24 +61,11 @@ class BranchSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else None
-		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else None
+		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else instance.laboratory.created_by.full_name
+		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else instance.laboratory.created_by.id
 		data['name'] = f'{instance.laboratory.name} - {instance.town}'
 
 		return data
-
-
-class SampleTypeSerializer(serializers.ModelSerializer):
-
-	class Meta:
-		model = SampleType
-
-		fields = (
-			'id',
-			'sample_name',
-			'collection_procedure',
-			'collection_time'
-		)
 
 
 class TestSerializer(serializers.ModelSerializer):

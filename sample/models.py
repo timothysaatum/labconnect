@@ -1,6 +1,6 @@
 from django.db import models
 from labs.models import Branch, Test
-from hospital.models import Facility
+from modelmixins.models import Facility
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
 
@@ -27,6 +27,7 @@ PRIORITIES = [
 	('Express', 'Express'),
 	('Normal', 'Normal')
 ]
+
 class Sample(models.Model):
 
 	'''
@@ -40,7 +41,7 @@ class Sample(models.Model):
 			db_index=True
 		)
 	facility_type = models.CharField(
-			max_length=50, 
+			max_length=50,
 			choices=REFERRING_FACILITY_TYPE
 		)
 	sender_full_name = models.CharField(
@@ -59,7 +60,7 @@ class Sample(models.Model):
 			null=True,
 			blank=True
 		)
-	to_laboratory = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE)
 	tests = models.ManyToManyField(Test, related_name='tests')
 	clinical_history = models.TextField(null=True, blank=True)
 	attachment = models.FileField(
@@ -88,8 +89,9 @@ class Notification(models.Model):
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
 	message = models.CharField(max_length=150)
 	is_read = models.BooleanField(default=False)
+	is_hidden = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
-		return self.user.full_name
+		return f'{self.branch.town} - {self.branch.laboratory.name}'
