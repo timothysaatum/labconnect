@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from sample.models import Sample, Notification
 from labs.models import Test
-from hospital.models import Facility
+from modelmixins.models import Facility
+
 
 
 
@@ -13,7 +14,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		queryset=Facility.objects.all(),
 		required=False
 	)
-
+	to_laboratory = serializers.StringRelatedField(source='__str__')
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
@@ -51,9 +52,9 @@ class SampleSerializer(serializers.ModelSerializer):
 		data = super().to_representation(instance)
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = (instance.referring_facility.hospital.name
-								if instance.facility_type == 'Hospital' else f'{instance.referring_facility.branch.town} - {instance.referring_facility.branch.laboratory.name}')
+								if instance.facility_type == 'Hospital' else f'{instance.referring_facility.branch.laboratory.name}({instance.referring_facility.branch.town})')
 		
-		data['to_laboratory'] = instance.to_laboratory.laboratory.name if instance.to_laboratory else None
+		
 		data['delivery'] = instance.delivery.name if instance.delivery else None
 
 		return data
@@ -61,10 +62,10 @@ class SampleSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
 
-	branch = serializers.PrimaryKeyRelatedField(queryset=Test.objects.all(), required=True)
-	message = serializers.CharField()
-
+	branch = serializers.PrimaryKeyRelatedField(queryset=Test.objects.all(), required=False)
+	message = serializers.CharField(required=False)
 	is_read = serializers.BooleanField(default=False)
+	is_hidden = serializers.BooleanField(default=False)
 
 	class Meta:
 
@@ -75,6 +76,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 			'branch', 
 			'message',
 			'is_read',
+			'is_hidden',
 			'date_created',
 			'date_modified'
 		)

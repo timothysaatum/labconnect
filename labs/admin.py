@@ -4,7 +4,7 @@ from .models import (
 		Laboratory, 
 		Branch, 
 		BranchManagerInvitation,
-		SampleType,
+		# SampleType,
 		BranchTest,
 		Result
 	)
@@ -66,12 +66,6 @@ class BranchTestAdmin(admin.ModelAdmin):
 		'discount_price',
 		'discount_percent',
 		'test_status',
-	)
-
-class SampleTypeAdmin(admin.ModelAdmin):
-	list_display = (
-		'id', 
-		'sample_name', 
 	)
 
 
@@ -138,7 +132,7 @@ class BranchManagerInvitationAdmin(admin.ModelAdmin):
     list_display = ('invitation_code', 'sender', 'receiver_email', 'branch', 'used')
 
 
-admin.site.register(SampleType, SampleTypeAdmin)
+
 admin.site.register(Test, TestAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(BranchManagerInvitation, BranchManagerInvitationAdmin)

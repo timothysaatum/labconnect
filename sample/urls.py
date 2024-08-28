@@ -4,7 +4,7 @@ from .views import UpdateNotification, GetNotifications,CountObjects, SendSample
 app_name = 'sample'
 
 urlpatterns = [
-    path('update-notification/', UpdateNotification.as_view(), name='update-notification'),
+    path('update-notification/<int:noti_id>', UpdateNotification.as_view(), name='update-notification'),
     path('users/send-sample/', SendSampleView.as_view(), name='send-sample'),
     path('notifications/<uuid:branch_id>/', GetNotifications.as_view(), name='notifications'),
     path('sample-stream/count/', CountObjects.as_view(), name='counts')

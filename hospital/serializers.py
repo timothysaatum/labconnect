@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Hospital
+from .models import Hospital, HospitalLab
 from labs.paginators import QueryPagination
 
 
@@ -25,3 +25,18 @@ class HospitalSerializer(serializers.ModelSerializer):
 		)
 
 	pagination_class = QueryPagination
+
+
+class HospitalLabSerializers(serializers.ModelSerializer):
+
+	class Meta:
+
+		model = HospitalLab
+		
+	fields = (
+			'id', 
+			'name', 
+			'hospital_reference',
+			'date_modified',
+			'date_created'
+		)

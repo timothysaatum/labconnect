@@ -1,12 +1,11 @@
 from django.db import models
-# from django.contrib.auth import get_user_model
-#from labconnect.mixin import Facility
-import uuid
+from django.contrib.auth import get_user_model
+from modelmixins.models import BasicTest, Facility
 
 
 
 
-# user = get_user_model()
+user = get_user_model()
 
 
 REGIONS = [
@@ -27,32 +26,6 @@ REGIONS = [
 
 ]
 
-class Facility(models.Model):
-
-	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-	region = models.CharField(choices=REGIONS, max_length=100)
-	postal_address = models.CharField(max_length=255)
-	phone = models.CharField(max_length=15)
-	email = models.EmailField()
-	town = models.CharField(max_length=200)
-	digital_address = models.CharField(max_length=15)
-	date_created = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
-
-	def get_facility_name(self):
-
-		if hasattr(self, 'hospital'):
-
-			return f'{self.hospital.name} - {self.town}'
-
-		elif hasattr(self, 'branch'):
-
-			return f'{self.branch.laboratory.name} - {self.town}'
-
-	def __str__(self)->str:
-
-		return self.get_facility_name()
-
 
 HOSPITAL_TYPES = [
 
@@ -65,11 +38,14 @@ class Hospital(Facility):
 	'''
 	Model: Representing a hospital
 	'''
-	# created_by = models.ForeignKey(user, on_delete=models.CASCADE)
+	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name = models.CharField(max_length=200)
+	region = models.CharField(choices=REGIONS, max_length=100)
+	town = models.CharField(max_length=200)
 	hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
 	account_number = models.CharField(max_length=100)
 	website = models.URLField(blank=True, null=True)
+	digital_address = models.CharField(max_length=15)
 	referral_percent_discount = models.CharField(max_length=5)
 
 	def __str__(self) -> str:
@@ -77,3 +53,20 @@ class Hospital(Facility):
 
 	class Meta:
 		unique_together = ('account_number', )
+
+
+class HospitalLab(Facility):
+	"""
+	A model representing a hospital's laboratory.
+    Reuses the hospital's address and contact details by default.
+    """
+	name = models.CharField(max_length=155)
+	hospital_reference  = models.OneToOneField(Hospital, on_delete=models.CASCADE, related_name='hospital_lab', db_index=True)
+	
+	def __str__(self) -> str:
+		return str(self.hospital_reference.name)
+    
+
+
+class HospitalLabTest(BasicTest):
+	hospital_lab = models.ForeignKey(HospitalLab, on_delete=models.CASCADE, db_index=True)
