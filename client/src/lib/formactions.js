@@ -255,9 +255,6 @@ export const useCreateLab = (form, setStep, fieldToStep) => {
     async (data) => {
       try {
         console.log(data);
-        if (data.logo instanceof FileList && data.logo.length > 0) {
-          data.logo = data.logo[0];
-        }
         let newData = {
           ...data,
           website:
@@ -265,6 +262,15 @@ export const useCreateLab = (form, setStep, fieldToStep) => {
               ? `http://${data.website}`
               : data.website,
         };
+        if (
+          newData.logo instanceof FileList &&
+          newData.logo.length > 0
+        ) {
+          newData.logo = newData.logo[0];
+        } else {
+          delete newData.logo;
+        }
+
         const formData = new FormData();
 
         for (const key in newData) {
