@@ -70,8 +70,6 @@ class BasicTest(BaseModel):
 	test_code = models.CharField(max_length=100, null=True, blank=True)
 	name = models.CharField(max_length=200, db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
-	discount_price = models.DecimalField(decimal_places=2, max_digits=10)
-	discount_percent = models.CharField(max_length=10)
 	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField(blank=True, null=True)
 	sample_type = models.ManyToManyField(SampleType)

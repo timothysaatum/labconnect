@@ -1,10 +1,11 @@
-from .serializers import HospitalSerializer
+from .serializers import HospitalSerializer, HospitalLabSerializer, HospitalLabTestSerializer
 from sample.serializers import  SampleSerializer
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import filters
+from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Hospital
+from .models import Hospital, HospitalLab
 from sample.models import Sample
 from labs.models import Result
 from labs.serializers import TestResultSerializer
@@ -164,3 +165,61 @@ class SampleResultList(generics.ListAPIView):
 
 		facility_id = Hospital.objects.get(created_by=self.request.user).id
 		return Result.objects.filter(sample__referring_facility_id=facility_id)
+	
+
+class CreateHospitalLab(generics.CreateAPIView):
+
+	serializer_class = HospitalLabSerializer
+	permission_classes = [permissions.IsAuthenticated]
+
+	def post(self, request):
+
+		return self.create(request)
+	
+	def preform_create(self, serializer):
+		hospital_ref = Hospital.objects.get(created_by=self.request.user)
+		serializer.save(hospital_reference_id=hospital_ref)
+
+
+
+class UpdateHospitalLab(generics.UpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = HospitalLabSerializer
+
+    def get_object(self, *args, **kwargs):
+
+        queryset = HospitalLab.objects.all()
+        obj = generics.get_object_or_404(queryset, id=self.kwargs.get('hospital_lab_id'))
+		
+        return obj
+
+    def patch(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteHospitalLab(generics.DestroyAPIView):
+	permission_classes = [permissions.IsAuthenticated]
+
+	def get_queryset(self):
+
+		return HospitalLab.objects.filter(id=self.kwargs.get('pk'))
+
+	def delete(self, request, pk, format=None):
+
+		return super().delete(request, pk, format=None)
+
+
+class CreateHospitalLabTest(generics.CreateAPIView):
+
+	permission_classes = [permissions.IsAuthenticated]
+	serializer_class = HospitalLabTestSerializer
+
+	def post(self, request):
+
+		return self.create(request)

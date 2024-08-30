@@ -84,6 +84,8 @@ class Test(BasicTest):
 	price(float): The price of the test.
 	dicount_price (float, optional): The discounted price of the test.
 	'''
+	discount_price = models.DecimalField(decimal_places=2, max_digits=10)
+	discount_percent = models.CharField(max_length=10)
 	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True, through='BranchTest')
 
 
