@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Hospital, HospitalLab
+from .models import Hospital, HospitalLab, HospitalLabTest
 from sample.models import Sample
 from labs.models import Result
 from labs.serializers import TestResultSerializer
@@ -110,19 +110,6 @@ class SampleListView(HospitalMixin, generics.ListAPIView):
 
 
 
-class SampleDetailView(HospitalMixin, generics.RetrieveAPIView):
-	'''Retrieves details of a specific sample'''
-
-	def get_object(self):
-
-		try:
-			return self.get_queryset().get(pk=self.kwargs['pk'])
-
-		except Sample.DoesNotExist:
-			return Response('Sample not found')
-
-
-
 class SampleUpdateView(HospitalMixin, generics.UpdateAPIView):
 	'''Update details of a specific sample.'''
 
@@ -223,3 +210,12 @@ class CreateHospitalLabTest(generics.CreateAPIView):
 	def post(self, request):
 
 		return self.create(request)
+
+
+class GetHospitalLabTest(generics.ListAPIView):
+
+	serializer_class = HospitalLabTestSerializer
+
+	def get_queryset(self):
+		
+		return HospitalLabTest.objects.filter(hospital_lab=self.kwargs.get('h_lab_id'))
