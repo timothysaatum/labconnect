@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Hospital, HospitalLab
+from .models import Hospital, HospitalLab, HospitalLabTest
 from labs.paginators import QueryPagination
 
 
@@ -27,16 +27,57 @@ class HospitalSerializer(serializers.ModelSerializer):
 	pagination_class = QueryPagination
 
 
-class HospitalLabSerializers(serializers.ModelSerializer):
-
+class HospitalLabSerializer(serializers.ModelSerializer):
+	hospital_reference = serializers.PrimaryKeyRelatedField(queryset=Hospital.objects.all(), required=False)
 	class Meta:
 
 		model = HospitalLab
 		
-	fields = (
+		fields = (
 			'id', 
-			'name', 
+			'name',
+			'postal_address',
+			'phone',
+			'email',
 			'hospital_reference',
 			'date_modified',
 			'date_created'
 		)
+
+	def to_representation(self, instance):
+
+		data = super().to_representation(instance)
+		data['hospital_reference'] = instance.hospital_reference.name
+
+		return data
+
+
+
+class HospitalLabTestSerializer(serializers.ModelSerializer):
+
+	hospital_lab = serializers.PrimaryKeyRelatedField(queryset=HospitalLab.objects.all(), required=False)
+
+	class Meta:
+
+		model = HospitalLabTest
+
+		fields = (
+			'id',
+			'test_code',
+			'name',
+			'turn_around_time',
+			'price',
+			'patient_preparation',
+			'sample_type',
+			'hospital_lab',
+			'test_status',
+			'date_modified',
+			'date_added'
+		)
+
+	def to_representation(self, instance):
+
+		data = super().to_representation(instance)
+		data['hospital_lab'] = instance.hospital_lab.name
+
+		return data

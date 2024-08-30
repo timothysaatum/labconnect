@@ -4,6 +4,7 @@ from .models import Hospital, HospitalLab, HospitalLabTest
 
 class HospitalAdmin(admin.ModelAdmin):
 	list_display = (
+		'id',
 		'created_by',
 		'name', 
 		'region', 
