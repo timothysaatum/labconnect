@@ -217,5 +217,5 @@ class GetHospitalLabTest(generics.ListAPIView):
 	serializer_class = HospitalLabTestSerializer
 
 	def get_queryset(self):
-		
+
 		return HospitalLabTest.objects.filter(hospital_lab=self.kwargs.get('h_lab_id'))

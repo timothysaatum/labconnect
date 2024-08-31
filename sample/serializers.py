@@ -14,7 +14,7 @@ class SampleSerializer(serializers.ModelSerializer):
 		queryset=Facility.objects.all(),
 		required=False
 	)
-	to_laboratory = serializers.StringRelatedField(source='__str__')
+	to_laboratory = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all(), required=False)
 	sender_full_name = serializers.CharField(required=False)
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
