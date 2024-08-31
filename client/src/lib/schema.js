@@ -261,6 +261,7 @@ export const CreateLabSchema = z.object({
   description: z.string().min(1, "Description is required"),
   logo: z
     .instanceof(FileList)
+    .nullable()
     .optional()
     .refine(
       (files) => {

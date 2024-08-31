@@ -64,6 +64,8 @@ const LabLogo = ({ form }) => {
     validateLogo();
   }, [imageFile]);
 
+  console.log(form.formState.errors);
+
   return (
     <div className="grid gap-8 text-center">
       <h4 className="text-xl font-semibold">Upload Laboratory Logo</h4>
