@@ -11,4 +11,5 @@ client/node_modules
 .env
 db.sqlite3
 __pycache__/
-migrations
+*.py[cod]
+**/migrations*.py
