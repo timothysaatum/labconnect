@@ -29,9 +29,7 @@ import StackedCardsOverview from "../overviewcards";
 import SampleDetails from "@/components/dashboard/sampleDetails";
 import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  selectActiveBranch,
-} from "@/redux/branches/activeBranchSlice";
+import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { useFetchLabRequestsSent } from "../../api/queries";
 
 function EmptyLab({ keywords }) {
@@ -93,13 +91,15 @@ export default function LaboratoryDashboardOverview() {
   const [requestsReceived, setTableRequestsReceived] = useState([]);
   const [requestsSent, setTableRequestsSent] = useState([]);
   const [selectedSamples, setSelectedSamples] = useState();
-  const requestColumns = useRequestLabColumns(setSelectedSamples);
+  const { RequestReceivedColumns, RequestSentColumns } =
+    useRequestLabColumns(setSelectedSamples);
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
   const activeBranchId = useSelector(selectActiveBranch);
 
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab);
+
   const handleTabChange = (newTab) => {
     dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
   };
@@ -295,7 +295,7 @@ export default function LaboratoryDashboardOverview() {
                       data={requestsReceived}
                       error={isError}
                       loading={isPending}
-                      columnDef={requestColumns}
+                      columnDef={RequestReceivedColumns}
                       title={"Requests"}
                       filter={"Patient"}
                       selected={selectedSamples}
@@ -333,7 +333,7 @@ export default function LaboratoryDashboardOverview() {
                       data={requestsSent}
                       error={sentError}
                       loading={sentfetching}
-                      columnDef={requestColumns}
+                      columnDef={RequestSentColumns}
                       title={"Requests"}
                       filter={"Patient"}
                       selected={selectedSamples}

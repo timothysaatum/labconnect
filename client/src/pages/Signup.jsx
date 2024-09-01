@@ -73,7 +73,7 @@ export default function Signup() {
     }
   };
   const handlePrevSTep = () => {
-    if (step > 1) {
+    if (step > 0) {
       setStep((prevStep) => prevStep - 1);
     }
   };

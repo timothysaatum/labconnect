@@ -129,6 +129,20 @@ export const useFetchBranchNotifications = (id) => {
 };
 
 //hospitals
+export const useFetchUserHospital = () => {
+  const user = useSelector(selectCurrentUser);
+
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["Hospital"],
+    queryFn: async () => await axiosPrivate.get("/hospital/get-user-hospital/"),
+    refetchOnWindowFocus: true,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    enabled: user?.account_type === "Hospital",
+  });
+};
+
 export const useFetchAllHospitals = () => {
   return useQuery({
     queryKey: ["All hospitals"],

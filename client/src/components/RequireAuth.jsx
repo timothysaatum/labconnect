@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { selectCurrentUser, selectCurrenttoken } from "@/redux/auth/authSlice";
 import { toast } from "sonner";
 import { useFetchUserLab } from "@/api/queries";
+import { useFetchUserHospital } from "../api/queries";
+import Loading from "./loading";
 
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
@@ -15,26 +17,40 @@ export default function RequireAuth() {
   return <Outlet />;
 }
 
-export const LabRoutes = () => {
-  const user = useSelector(selectCurrentUser);
+// export const LabRoutes = () => {
+//   const user = useSelector(selectCurrentUser);
 
-  const location = useLocation();
-  return user?.account_type === "Laboratory" ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/sign-in" state={{ from: location }} replace />
-  );
-};
+//   const location = useLocation();
+//   return user?.account_type === "Laboratory" ? (
+//     <Outlet />
+//   ) : (
+//     <Navigate to="/sign-in" state={{ from: location }} replace />
+//   );
+// };
 
 export const CanGetStarted = () => {
   const user = useSelector(selectCurrentUser);
+  const { isError, data: userlab, isPending } = useFetchUserLab();
+  const {
+    data: userhospital,
+    isError: hospitalerror,
+    isLoading,
+  } = useFetchUserHospital();
+  const location = useLocation();
 
   if (user.account_type === "Hospital") {
-    return <Outlet />;
+    if (isLoading) return <Loading />;
+    return userhospital?.data.length > 0 ? (
+      <Outlet />
+    ) : (
+      <Navigate
+        to="/getting-started-hospital"
+        state={{ from: location }}
+        replace
+      />
+    );
   }
-  const { isError, data: userlab, isPending } = useFetchUserLab();
-  const location = useLocation();
-  if (isPending) return;
+  if (isPending) return <Loading />;
   if (isError) {
     return toast.error("An error has occured");
   }
@@ -51,17 +67,23 @@ export const CanGetStarted = () => {
 
 export const BlockGettingStarted = () => {
   const { isError, data: userlab, isPending } = useFetchUserLab();
+  const {
+    data: userhospital,
+    isError: hospitalerror,
+    isLoading,
+  } = useFetchUserHospital();
   const location = useLocation();
 
-  if (isPending) return;
-  if (isError) {
+  if (isPending || isLoading) <Loading />;
+  if (isError || hospitalerror) {
     toast.error("An error has occured. You need to sign in Again");
     return <Navigate to="/sign-in" state={{ from: location }} replace />;
   }
 
-  const labCreated = userlab?.data.length > 0;
+  const FacilityCreated =
+    userlab?.data.length > 0 || userhospital?.data?.length > 0;
 
-  if (labCreated) {
+  if (FacilityCreated) {
     toast.info("Unauthorized", {
       description: "You have already created a laboratory",
     });
