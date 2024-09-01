@@ -15,7 +15,10 @@ import {
 } from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "../data-table";
-import { useRequestLabColumns } from "../columns/RequestColumn";
+import {
+  useHospitalRequestColumns,
+  useRequestLabColumns,
+} from "../columns/RequestColumn";
 import { calcAge } from "@/util/ageCalculate";
 import { Link, useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
@@ -91,24 +94,15 @@ function ErrorLab({ refetch }) {
 }
 
 export default function LaboratoryDashboardOverview() {
-  const [samplesSent, setTableRequestsReceived] = useState([]);
-  const requestColumns = useRequestLabColumns();
+  const [samplesSent, setRequestSent] = useState([]);
   const [selectedSamples, setSelectedSamples] = useState();
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
-  const activeBranchId = useSelector(selectActiveBranch);
+  const { RequestSentColumns } = useHospitalRequestColumns(setSelectedSamples);
 
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab);
 
-  useEffect(() => {
-    // This will change the pathname to /dashboard/overview when the component mounts
-    if (currentTab === "Received") {
-      navigate("/dashboard/overview?tab=Samples-received", { replace: true });
-    } else {
-      navigate("/dashboard/overview?tab=Samples-sent", { replace: true });
-    }
-  }, []);
   const {
     isError,
     data: requests,
@@ -120,13 +114,52 @@ export default function LaboratoryDashboardOverview() {
   } = useFetchHospitalRequests();
 
   useEffect(() => {
+    if (selectedSamples) {
+      setSelected(
+        requests?.data?.find((sample) => {
+          return sample.id === selectedSamples;
+        })
+      );
+    } else {
+      setSelected(null);
+    }
+  }, [selectedSamples]);
+
+  const index = requests?.data?.findIndex(
+    (sample) => sample.id === selected?.id
+  );
+  const nextSample = () => {
+    if (index < tests?.data.length - 1) {
+      setSelectedSamples(requests?.data[index + 1]?.id);
+    } else {
+      setSelectedSamples(requests?.data[0]?.id);
+    }
+  };
+  const prevSample = () => {
+    if (index < requests?.data.length - 1) {
+      setSelectedSamples(requests?.data[index + 1]?.id);
+    } else {
+      setSelectedSamples(requests?.data[0]?.id);
+    }
+  };
+
+  useEffect(() => {
+    // This will change the pathname to /dashboard/overview when the component mounts
+    if (currentTab === "Received") {
+      navigate("/dashboard/overview?tab=Samples-received", { replace: true });
+    } else {
+      navigate("/dashboard/overview?tab=Samples-sent", { replace: true });
+    }
+  }, []);
+
+  useEffect(() => {
     if (requests) {
-      setTableRequestsReceived(
-        receivedRequests.data.map((request) => {
+      setRequestSent(
+        requests.data.map((request) => {
           return {
             id: request.id,
-            referring_facility: request.referring_facility,
             Patient: request.patient_name,
+            laboratory: request.to_laboratory,
             referring_facility_phone: request.sender_phone,
             referror_name: request.sender_full_name,
             Patient_age: calcAge(request.patient_age),
@@ -208,14 +241,14 @@ export default function LaboratoryDashboardOverview() {
                   isRefetchError={isRefetchError}
                   isRefetching={isRefetching}
                 />
-              ) : receivedRequests?.data.length < 1 ? (
+              ) : requests?.data.length < 1 ? (
                 <EmptyLab keywords={["Received", "to"]} />
               ) : (
                 <DataTable
                   data={samplesSent}
                   error={isError}
                   loading={isPending}
-                  columnDef={requestColumns}
+                  columnDef={RequestSentColumns}
                   title={"Requests"}
                   filter={"Patient"}
                   selected={selectedSamples}
@@ -230,7 +263,7 @@ export default function LaboratoryDashboardOverview() {
         <div className="hidden lg:block col-span-4">
           <SampleDetails
             selected={selected}
-            setSelectedSamples={setSelectedSamples}
+            setSelected={setSelectedSamples}
             updatedAt={dataUpdatedAt}
             nextSample={nextSample}
             prevSample={prevSample}

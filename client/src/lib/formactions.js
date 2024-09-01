@@ -262,10 +262,7 @@ export const useCreateLab = (form, setStep, fieldToStep) => {
               ? `http://${data.website}`
               : data.website,
         };
-        if (
-          newData.logo instanceof FileList &&
-          newData.logo.length > 0
-        ) {
+        if (newData.logo instanceof FileList && newData.logo.length > 0) {
           newData.logo = newData.logo[0];
         } else {
           delete newData.logo;
@@ -292,7 +289,6 @@ export const useCreateLab = (form, setStep, fieldToStep) => {
         queryClient.invalidateQueries(["Laboratory"]);
         navigate("/dashboard/my-laboratory");
       } catch (error) {
-        console.log(error);
         for (const field in error?.response?.data) {
           if (field === "logo") {
             toast.error(error.response.data[field][0]);
@@ -506,4 +502,98 @@ export const useResultUpload = (form) => {
     [form]
   );
   return onResultUpload;
+};
+
+//hospitals
+
+export const useAddHospital = (form, fieldToStep, setStep) => {
+  const axiosPrivate = useAxiosPrivate();
+  const queryClient = useQueryClient();
+  const from = location.state?.from?.pathname || "/dashboard";
+  const navigate = useNavigate();
+
+  const onAddHospital = useCallback(
+    async (data) => {
+      try {
+        await axiosPrivate.post(`/hospital/add/`, data);
+        toast.success("Hospical added sucessfully");
+        queryClient.invalidateQueries(["Hospital"]);
+        form.reset();
+        navigate(from);
+      } catch (error) {
+        for (const field in error?.response?.data) {
+          form.setError(field, {
+            type: "manual",
+            message: error.response.data[field][0],
+          });
+          // Look up the step associated with the field and set the current step
+          const step = fieldToStep[field];
+          if (step !== undefined) {
+            setStep(step);
+            break; // Exit the loop after finding the first error
+          }
+        }
+      }
+    },
+    [form]
+  );
+  return onAddHospital;
+};
+
+export const useSendHospitalSample = (form) => {
+  const queryClient = useQueryClient();
+  const axiosPrivate = useAxiosPrivate();
+
+  const onSendHospitalSample = async (data) => {
+    try {
+      const testvalue = data?.tests ? data.tests.map((test) => test.value) : [];
+      const newData = {
+        ...data,
+        patient_age: moment(data.patient_age).format("YYYY-MM-DD"),
+        tests: testvalue,
+      };
+
+      if (
+        newData.attachment instanceof FileList &&
+        newData.attachment.length > 0
+      ) {
+        newData.attachment = newData.attachment[0];
+      } else {
+        delete newData.attachment;
+      }
+
+      const formData = new FormData();
+
+      // Append other fields
+      for (const key in newData) {
+        if (key === "tests") {
+          // Stringify the array before appending
+          formData.append(key, JSON.stringify(newData.tests));
+        } else {
+          formData.append(key, newData[key]);
+        }
+      }
+      console.log(formData);
+
+      await axiosPrivate.post("hospital/health-worker/add/sample/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      form.reset();
+      queryClient.invalidateQueries(["Requests"]);
+      toast.success("Sample Sent", {
+        position: "top-center",
+      });
+    } catch (error) {
+      for (const field in error?.response?.data) {
+        form.setError(field, {
+          type: "manual",
+          message: error.response.data[field][0],
+        });
+        // Look up the step associated with the field and set the current step
+      }
+    }
+  };
+
+  return onSendHospitalSample;
 };

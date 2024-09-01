@@ -16,17 +16,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const Labgettingstarted = () => {
+const Hospitalgettingstarted = () => {
   return (
-    <div>
+      <div>
       <Outlet />
     </div>
   );
 };
 
-export default Labgettingstarted;
+export default Hospitalgettingstarted;
 
-export const GettingStartedOverView = ({ setStep }) => {
+export const GettingStartedOverViewHospital = () => {
   const logout = useLogout();
   return (
     <GridBackground>

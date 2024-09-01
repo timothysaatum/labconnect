@@ -13,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
 
 export default function SelectComponent({
   items,
@@ -38,19 +40,21 @@ export default function SelectComponent({
             value={field.value}
           >
             <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder={placeholder} className="" />
+              <SelectTrigger className={cn("text-muted-foreground",field?.value && "text-black dark:text-white")}>
+                <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
               {items?.length > 0 ? (
-                items?.map((item) => (
-                  <SelectItem value={item.value} key={item.value}>
+                items?.map((item, index) => (
+                  <SelectItem value={item.value} key={index}>
                     {item.label}
                   </SelectItem>
                 ))
               ) : (
-                <SelectItem className="whitespace-wrap">{empty || "no items to choose from"}</SelectItem>
+                <SelectItem className="whitespace-wrap" key={index}>
+                  {empty || "no items to choose from"}
+                </SelectItem>
               )}
             </SelectContent>
           </Select>

@@ -7,7 +7,6 @@ import Signup from "@/pages/Signup";
 import RequireAuth, {
   BlockGettingStarted,
   CanGetStarted,
-  LabRoutes,
 } from "./components/RequireAuth";
 import PersistLogin from "./components/persistLogin";
 import Layout from "./components/Layout";
@@ -18,14 +17,18 @@ import Notfound from "./components/notfound";
 import DashboardOverview from "@/components/dashboard/Overview.dashboard";
 import SettingProfile from "./components/dashboard/Profile";
 import Loading from "./components/loading";
-import MyLab from "@/components/mylab";
-import SendSample from "./components/dashboard/sendSample";
 import Analytics from "./components/laboratoryanalytics";
 import SampleDetails from "./components/sampleDetails";
 import CreateLab from "./components/createLab/createLab";
 import Labgettingstarted, {
   GettingStartedOverView,
 } from "./pages/labgettingstarted";
+import MyLaboratory from "./components/dashboard/MyLaboratory";
+import Hospitalgettingstarted, {
+  GettingStartedOverViewHospital,
+} from "./pages/hospital_getting_started";
+import CreateHospital from "./components/createHospital/createHospital";
+import SendSample from "./components/dashboard/sendSample";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -76,11 +79,16 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
-              <Route element={<BlockGettingStarted />}>
-                <Route path="getting-started" element={<Labgettingstarted />}>
-                  <Route index element={<GettingStartedOverView />} />
-                  <Route path="create-Laboratory" element={<CreateLab />} />
-                </Route>
+              <Route path="getting-started" element={<Labgettingstarted />}>
+                <Route index element={<GettingStartedOverView />} />
+                <Route path="create-Laboratory" element={<CreateLab />} />
+              </Route>
+              <Route
+                path="getting-started-hospital"
+                element={<Hospitalgettingstarted />}
+              >
+                <Route index element={<GettingStartedOverViewHospital />} />
+                <Route path="create-Laboratory" element={<CreateHospital />} />
               </Route>
               <Route element={<CanGetStarted />}>
                 <Route
@@ -119,18 +127,7 @@ export default function App() {
                       </React.Suspense>
                     }
                   />
-                  {/* laboratory routes */}
-                  <Route element={<LabRoutes />}>
-                    <Route path="my-laboratory" element={<MyLab />} />
-                    <Route
-                      path="/dashboard/my-laboratory/branches/:branch_Id/"
-                      element={
-                        <React.Suspense fallback={<Loading />}>
-                          <BranchDetails />
-                        </React.Suspense>
-                      }
-                    />
-                  </Route>
+                  <Route path="my-laboratory" element={<MyLaboratory />} />
                 </Route>
               </Route>
             </Route>
