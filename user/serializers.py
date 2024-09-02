@@ -8,8 +8,6 @@ from django.utils.encoding import smart_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_normal_email
-from profiles.serializers import ClientProfileSerializer
-from profiles.models import ClientProfile
 
 
 
@@ -28,7 +26,8 @@ class UserCreationSerializer(serializers.ModelSerializer):
 
 		fields = (
 					'email', 'first_name', 'last_name', 'phone_number',
-					'account_type', 'is_admin', 'is_staff', 'is_active',
+					'id_number', 'digital_address', 'emmergency_contact',
+					'bio', 'account_type', 'is_admin', 'is_staff', 'is_active',
 					'password', 'password_confirmation'
 				)
 
@@ -50,6 +49,10 @@ class UserCreationSerializer(serializers.ModelSerializer):
 				first_name=validated_data.get('first_name'),
 				last_name=validated_data.get('last_name'),
 				phone_number=validated_data.get('phone_number'),
+				id_number=validated_data.get('id_number'),
+				digital_address=validated_data.get('digital_address'),
+				emmergency_contact=validated_data.get('emmergency_contact'),
+				bio=validated_data.get('bio'),
 				account_type=validated_data.get('account_type'),
 				password=validated_data.get('password')
 			)
@@ -212,7 +215,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-	profile = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
+	# profile = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	class Meta:
 
 		model = Client
@@ -224,7 +227,7 @@ class UserSerializer(serializers.ModelSerializer):
 					'last_name', 
 					'phone_number',
 					'account_type',
-					'profile',
+					# 'profile',
 					'is_staff', 
 					'is_active', 
 					'is_admin',
@@ -234,7 +237,7 @@ class UserSerializer(serializers.ModelSerializer):
 					'last_login',
 				]
 
-	def to_representation(self, instance):
-		data = super().to_representation(instance)
-		data['profile'] = ClientProfileSerializer(ClientProfile.objects.filter(client=instance.id), many=True).data
-		return data
+	# def to_representation(self, instance):
+	# 	data = super().to_representation(instance)
+	# 	data['profile'] = ClientProfileSerializer(ClientProfile.objects.filter(client=instance.id), many=True).data
+	# 	return data

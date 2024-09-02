@@ -1,6 +1,5 @@
 from .utils import send_code_to_user, send_normal_email, run_async_function
 from .models import Client
-from profiles.models import ClientProfile#, DeliveryUserProfile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from textwrap import dedent
@@ -15,8 +14,8 @@ def email_user_on_creation(sender, instance, created, **kwargs):
 	if created:
 		email = instance.email
 		send_code_to_user(email)
-		#Thread(target=run_async_function, args=(email,)).start()
-		ClientProfile.objects.create(client=instance)
+		# Thread(target=run_async_function, args=(email,)).start()
+		# ClientProfile.objects.create(client=instance)
 		if instance.account_type == 'Laboratory':
 
 			data = {

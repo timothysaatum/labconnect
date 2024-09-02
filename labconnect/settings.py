@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'modelmixins',
-    'profiles',
+    # 'profiles',
     'sample',
     'user',
     'hospital',

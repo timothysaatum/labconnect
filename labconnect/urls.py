@@ -29,8 +29,6 @@ urlpatterns = [
     path('api/laboratory/', include('labs.urls')),
     path('api/sample/', include('sample.urls')),
     path('api/transactions/', include('transactions.urls')),
-    path('api/user/profile/', include('profiles.urls')),
-    #path('__debug__/', include('debug_toolbar.urls'))
 
 ]
 
