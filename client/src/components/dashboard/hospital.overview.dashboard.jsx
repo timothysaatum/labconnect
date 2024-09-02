@@ -101,7 +101,6 @@ export default function LaboratoryDashboardOverview() {
   const { RequestSentColumns } = useHospitalRequestColumns(setSelectedSamples);
 
   const dispatch = useDispatch();
-  const currentTab = useSelector(selectCurrentTab);
 
   const {
     isError,
@@ -144,12 +143,7 @@ export default function LaboratoryDashboardOverview() {
   };
 
   useEffect(() => {
-    // This will change the pathname to /dashboard/overview when the component mounts
-    if (currentTab === "Received") {
-      navigate("/dashboard/overview?tab=Samples-received", { replace: true });
-    } else {
-      navigate("/dashboard/overview?tab=Samples-sent", { replace: true });
-    }
+    navigate("/dashboard/overview?tab=Samples-sent", { replace: true });
   }, []);
 
   useEffect(() => {
@@ -226,9 +220,7 @@ export default function LaboratoryDashboardOverview() {
               <div className="flex-1">
                 <CardTitle>Samples</CardTitle>
                 <CardDescription>
-                  {currentTab === "Sent Samples"
-                    ? "Samples you have sent to other labs"
-                    : "Samples you have received "}
+                  Samples you have sent to other labs
                 </CardDescription>
               </div>
             </CardHeader>
