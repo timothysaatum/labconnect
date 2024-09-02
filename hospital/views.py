@@ -9,6 +9,8 @@ from .models import Hospital, HospitalLab, HospitalLabTest
 from sample.models import Sample
 from labs.models import Result
 from labs.serializers import TestResultSerializer
+import json
+from django.http import QueryDict
 
 
 
@@ -92,14 +94,27 @@ class SampleSerializerView(HospitalMixin, generics.CreateAPIView):
 
 
 	def post(self, request):
+		data = request.data.dict() if isinstance(request.data, QueryDict) else request.data.copy()
+		# print(data)
+		if 'tests' in data:
+
+			tests = json.loads(data['tests'])
+			if isinstance(tests, list):
+				
+				data['tests'] = tests
+			
+		request._full_data = data
 		
 		return self.create(request)
 
 	def perform_create(self, serializer):
 
 		facility = Hospital.objects.get(created_by=self.request.user)
-		sample = serializer.save(referring_facility=facility)
-		tests = self.request.data.getlist('tests')
+		tests = self.request.data['tests']
+		sample = serializer.save(
+			referring_facility=facility,
+			facility_type='Hospital'
+			)
 
 		sample.tests.add(*tests)
 

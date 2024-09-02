@@ -18,9 +18,10 @@ REFERRING_FACILITY_TYPE = [
 	('Hospital', 'Hospital')
 ]
 SAMPLE_STATUS = [
-	('Received by delivery', 'Received by delivery'),
-	('Received by laboratory', 'Received by laboratory'),
-	('Rejected by laboratory', 'Rejected by laboratory')
+	('Pending', 'Pending'),
+	('Received', 'Received'),
+	('Processed', 'Processed'),
+	('Rejected', 'Rejected')
 ]
 
 PRIORITIES = [

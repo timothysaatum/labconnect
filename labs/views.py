@@ -28,6 +28,7 @@ from .tasks import copy_test_to_branch
 import logging
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
+from modelmixins.pagination import CustomPagination
 
 
 
@@ -503,7 +504,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 				sender_email=user.email,
 				facility_type='Laboratory'
 			)
-		print(sample)
+		# print(sample)
 		sample.tests.add(*tests)
 
 
@@ -539,18 +540,30 @@ class AllLaboratories(generics.ListAPIView):
 
 	serializer_class = FacilitySerializer
 	queryset = Facility.objects.filter(Q(hospitallab__isnull=False) | Q(branch__isnull=False)).select_related('branch', 'hospitallab').order_by('?')
-	# print(queryset)
+	
 
 
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
+	pagination_class = CustomPagination
 
 	def get_queryset(self):
-
+		status = self.request.GET.get('status')
+		from_date = self.request.GET.get('from_date')
+		to_date = self.request.GET.get('to_date')
 		pk = self.kwargs.get('pk')
 		try:
+
+			if status:
+				return Sample.objects.filter(
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).filter(sample_status=status).order_by('-date_created')
+
+			if from_date and to_date:
+				return Sample.objects.filter(
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).filter(date__range=(from_date, to_date)).order_by('-date_created')
+
 			return Sample.objects.filter(
-				Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).order_by('-date_created')
 
 		except Sample.DoesNotExist:
 			return Response(
@@ -564,7 +577,16 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
 
 	def get_queryset(self):
+		status = self.request.GET.get('status')
+		from_date = self.request.GET.get('from_date')
+		to_date = self.request.GET.get('to_date')
 
+		if status:
+			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status=status).order_by('-date_created')
+		
+		if from_date and to_date:
+			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(date__range=(from_date, to_date)).order_by('-date_created')
+		
 		return Sample.objects.filter(
 			referring_facility=self.kwargs.get('pk')
 		).order_by('-date_created')
@@ -578,6 +600,7 @@ class SampleTypeView(PermissionMixin, generics.CreateAPIView):
 		if not self.has_laboratory_permission(self.request.user):
 
 			return Response(
+				
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)

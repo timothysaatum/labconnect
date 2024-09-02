@@ -50,12 +50,13 @@ class SampleSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
+
 		data['tests'] = [test.name for test in instance.tests.all()]
-		data['referring_facility'] = (instance.referring_facility.hospital.name
-								if instance.facility_type == 'Hospital' else f'{instance.referring_facility.branch.laboratory.name}({instance.referring_facility.branch.town})')
+		data['referring_facility'] = str(instance.to_laboratory)
 		
 		
 		data['delivery'] = instance.delivery.name if instance.delivery else None
+		data['to_laboratory'] = str(instance.to_laboratory)
 
 		return data
 
