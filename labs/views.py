@@ -215,6 +215,7 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 	"""
 
 	serializer_class = BranchSerializer
+	pagination_class = CustomPagination
 
 	def get_queryset(self):
 
@@ -319,6 +320,7 @@ class TestListView(generics.ListAPIView):
 	serializer_class = TestSerializer
 	filter_backends = [DjangoFilterBackend]
 	filterset_class = TestFilter
+	pagination_class = CustomPagination
 	#cache_timeout = 600
 	def get_serializer_context(self):
 		context = super().get_serializer_context()
@@ -420,6 +422,7 @@ class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
 
 class TestResultListView(BranchListView):
 	serializer_class = TestResultSerializer
+	pagination_class = CustomPagination
 
 	def get_queryset(self):
 		return Result.objects.filter(
@@ -430,6 +433,7 @@ class TestResultListView(BranchListView):
 
 class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = TestResultSerializer
+	pagination_class = CustomPagination
 
 	def get_queryset(self):
 		return Result.objects.all()
@@ -575,14 +579,15 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	serializer_class = SampleSerializer
+	pagination_class = CustomPagination
 
 	def get_queryset(self):
-		status = self.request.GET.get('status')
+		status = self.request.GET.get('status').capitalize()
 		from_date = self.request.GET.get('from_date')
 		to_date = self.request.GET.get('to_date')
 
 		if status:
-			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status=status).order_by('-date_created')
+			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status).order_by('-date_created')
 		
 		if from_date and to_date:
 			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(date__range=(from_date, to_date)).order_by('-date_created')
