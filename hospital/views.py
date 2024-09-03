@@ -9,6 +9,7 @@ from .models import Hospital, HospitalLab, HospitalLabTest
 from sample.models import Sample
 from labs.models import Result
 from labs.serializers import TestResultSerializer
+from modelmixins.pagination import CustomPagination
 import json
 from django.http import QueryDict
 
@@ -122,6 +123,7 @@ class SampleSerializerView(HospitalMixin, generics.CreateAPIView):
 class SampleListView(HospitalMixin, generics.ListAPIView):
 	'''List view for samples created by the authenticated user.'''
 	filter_backends = [filters.SearchFilter]
+	pagination_class = CustomPagination
 
 
 
@@ -162,6 +164,7 @@ class SampleResultList(generics.ListAPIView):
 
 	permission_classes = [permissions.IsAuthenticated]
 	serializer_class = TestResultSerializer
+	pagination_class = CustomPagination
 
 	def get_queryset(self):
 
@@ -230,6 +233,7 @@ class CreateHospitalLabTest(generics.CreateAPIView):
 class GetHospitalLabTest(generics.ListAPIView):
 
 	serializer_class = HospitalLabTestSerializer
+	pagination_class = CustomPagination
 
 	def get_queryset(self):
 
