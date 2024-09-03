@@ -1,4 +1,4 @@
-import { ChevronDown, RefreshCcw } from "lucide-react";
+import { ChevronDown, RefreshCcw, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,6 +31,7 @@ import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { useFetchLabRequestsSent } from "../../api/queries";
+import { selectRowCount } from "../../redux/dataTable/rowcount";
 
 function EmptyLab({ keywords }) {
   return (
@@ -41,6 +42,20 @@ function EmptyLab({ keywords }) {
         </h3>
         <p className="text-sm text-muted-foreground">
           you will see Requests made {keywords[1]} your lab here{" "}
+        </p>
+      </div>
+    </div>
+  );
+}
+function QueriedEmpty({ keywords }) {
+  return (
+    <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+      <div className="px-4 flex flex-col items-center  text-center py-16 ">
+        <h3 className="text-xl font-semibold ">
+          No samples found for the query
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Adjust your query to see more results
         </p>
       </div>
     </div>
@@ -96,12 +111,26 @@ export default function LaboratoryDashboardOverview() {
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
   const activeBranchId = useSelector(selectActiveBranch);
+  const QueryOptions = ["Processed", "Pending", "Rejected"];
+  const [querys, setQuerys] = useState({});
 
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab);
 
   const handleTabChange = (newTab) => {
     dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
+  };
+
+  const handleFilterChange = (query) => {
+    setQuerys((prevQueries) => {
+      const newQueries = { ...prevQueries };
+      if (newQueries.status === query) {
+        delete newQueries.status;
+      } else {
+        newQueries.status = query;
+      }
+      return newQueries;
+    });
   };
 
   useEffect(() => {
@@ -120,7 +149,7 @@ export default function LaboratoryDashboardOverview() {
     refetch,
     isRefetchError,
     dataUpdatedAt,
-  } = useFetchLabRequestsReceived(activeBranchId);
+  } = useFetchLabRequestsReceived(activeBranchId, querys);
 
   const {
     data: sentRequests,
@@ -134,7 +163,7 @@ export default function LaboratoryDashboardOverview() {
   useEffect(() => {
     if (selectedSamples) {
       setSelected(
-        receivedRequests?.data?.find((sample) => {
+        receivedRequests?.data?.data?.find((sample) => {
           return sample.id === selectedSamples;
         })
       );
@@ -143,38 +172,28 @@ export default function LaboratoryDashboardOverview() {
     }
   }, [selectedSamples]);
 
-  const index = receivedRequests?.data?.findIndex(
+  const index = receivedRequests?.data?.data?.findIndex(
     (sample) => sample.id === selected?.id
   );
   const nextSample = () => {
     if (index < tests?.data.length - 1) {
-      setSelectedSamples(receivedRequests?.data[index + 1]?.id);
+      setSelectedSamples(receivedRequests?.data?.data[index + 1]?.id);
     } else {
-      setSelectedSamples(receivedRequests?.data[0]?.id);
+      setSelectedSamples(receivedRequests?.data?.data[0]?.id);
     }
   };
   const prevSample = () => {
-    if (index < receivedRequests?.data.length - 1) {
-      setSelectedSamples(receivedRequests?.data[index + 1]?.id);
+    if (index < receivedRequests?.data?.data?.length - 1) {
+      setSelectedSamples(receivedRequests?.data?.data[index + 1]?.id);
     } else {
-      setSelectedSamples(receivedRequests?.data[0]?.id);
+      setSelectedSamples(receivedRequests?.data?.data[0]?.id);
     }
   };
-
-  const {
-    data: branches,
-    isPending: branchesLoading,
-    isError: branchesError,
-  } = useFetchUserBranches();
-
-  const activeBranch =
-    branches?.data?.find((branch) => branch.id === activeBranchId)?.town +
-    " Branch";
 
   useEffect(() => {
     if (receivedRequests) {
       setTableRequestsReceived(
-        receivedRequests.data.map((request) => {
+        receivedRequests?.data?.data?.map((request) => {
           return {
             id: request.id,
             referring_facility: request.referring_facility,
@@ -267,6 +286,7 @@ export default function LaboratoryDashboardOverview() {
                 <TabsTrigger value="Sent Samples">Sent Samples</TabsTrigger>
               </Link>
             </TabsList>
+
             <TabsContent value="Received">
               <Card className="max-md:border-none">
                 <CardHeader className="flex flex-row max-md:px-2">
@@ -278,6 +298,29 @@ export default function LaboratoryDashboardOverview() {
                         : "Samples you have received "}
                     </CardDescription>
                   </div>
+                  {receivedRequests?.data?.data.length < 1 && querys.status ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="ml-auto text-xs">
+                          <SlidersHorizontal className="w-4 h-4 mr-2" />
+                          {QueryOptions.find(
+                            (query) => querys.status === query
+                          ) ?? "Filter"}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {QueryOptions.map((query) => (
+                          <DropdownMenuCheckboxItem
+                            key={query}
+                            checked={querys.status === query}
+                            onCheckedChange={() => handleFilterChange(query)}
+                          >
+                            {query}
+                          </DropdownMenuCheckboxItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : null}
                 </CardHeader>
                 <CardContent className="max-md:px-2">
                   {isPending ? (
@@ -288,8 +331,12 @@ export default function LaboratoryDashboardOverview() {
                       isRefetchError={isRefetchError}
                       isRefetching={isRefetching}
                     />
-                  ) : receivedRequests?.data.length < 1 ? (
-                    <EmptyLab keywords={["Received", "to"]} />
+                  ) : receivedRequests?.data?.data?.length < 1 &&
+                    querys?.status ? (
+                    <QueriedEmpty />
+                  ) : receivedRequests?.data?.data?.length < 1 &&
+                    !querys?.status ? (
+                    <EmptyLab keywords={["Received", "from"]} />
                   ) : (
                     <DataTable
                       data={requestsReceived}
@@ -300,6 +347,13 @@ export default function LaboratoryDashboardOverview() {
                       filter={"Patient"}
                       selected={selectedSamples}
                       setSelected={setSelectedSamples}
+                      querys={querys}
+                      setQuerys={setQuerys}
+                      handleFilterChange={handleFilterChange}
+                      QueryOptions={QueryOptions}
+                      TotalRowCount={
+                        receivedRequests?.data?.pagination?.total_items
+                      }
                     />
                   )}
                 </CardContent>

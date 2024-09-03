@@ -9,9 +9,22 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useFetchLabRequestsReceived } from "../api/queries";
 
 export default function SampleDatePicker() {
   const [date, setDate] = React.useState();
+
+  const {
+    isError,
+    data: receivedRequests,
+    isPending,
+    isRefetching,
+    refetch,
+    isRefetchError,
+    dataUpdatedAt,
+  } = useFetchLabRequestsReceived("53b06bfc-cd2d-42c9-93b5-006d27fc1975");
+
+  console.log(receivedRequests?.data?.data);
 
   return (
     <Popover>

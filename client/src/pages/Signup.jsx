@@ -20,7 +20,6 @@ import Passwords from "@/components/auth/signupThree";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import axios from "@/api/axios";
 import { DotBackground } from "@/components/ui/dotbackground";
-import { Progress } from "@/components/ui/progress";
 
 export default function Signup() {
   const [step, setStep] = useState(0);
@@ -32,6 +31,8 @@ export default function Signup() {
       last_name: "",
       email: "",
       phone_number: "",
+      id_number: "",
+      digital_address: "",
       password: "",
       password_confirmation: "",
       tc: false,

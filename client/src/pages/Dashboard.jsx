@@ -164,7 +164,7 @@ export default function Dashboard() {
       </aside>
       {user?.account_type === "Laboratory" &&
         userbranches?.data?.length === 0 && (
-          <div className="bg-primary text-background sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
+          <div className="bg-primary z-50 text-background sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
             Your Laboratory has no branches. you need to add at least one branch
           </div>
         )}

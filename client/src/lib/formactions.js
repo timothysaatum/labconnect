@@ -81,7 +81,7 @@ export const useBranchAdd = (
           position: "top-center",
           duration: 5000,
         });
-        form.reset();
+        // form.reset();
         if (!keepOpen) setOpen(false);
       } catch (error) {
         for (const field in error?.response?.data) {
@@ -90,7 +90,6 @@ export const useBranchAdd = (
             message: error.response.data[field][0],
           });
         }
-        console.log(error);
         if (
           error?.response?.status === 401 ||
           error?.response?.status === 403
