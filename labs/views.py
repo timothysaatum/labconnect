@@ -28,7 +28,6 @@ from .tasks import copy_test_to_branch
 import logging
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
-from modelmixins.pagination import CustomPagination
 
 
 
@@ -215,7 +214,6 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 	"""
 
 	serializer_class = BranchSerializer
-	pagination_class = CustomPagination
 
 	def get_queryset(self):
 
@@ -320,7 +318,6 @@ class TestListView(generics.ListAPIView):
 	serializer_class = TestSerializer
 	filter_backends = [DjangoFilterBackend]
 	filterset_class = TestFilter
-	pagination_class = CustomPagination
 	#cache_timeout = 600
 	def get_serializer_context(self):
 		context = super().get_serializer_context()
@@ -422,7 +419,6 @@ class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
 
 class TestResultListView(BranchListView):
 	serializer_class = TestResultSerializer
-	pagination_class = CustomPagination
 
 	def get_queryset(self):
 		return Result.objects.filter(
@@ -433,7 +429,6 @@ class TestResultListView(BranchListView):
 
 class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = TestResultSerializer
-	pagination_class = CustomPagination
 
 	def get_queryset(self):
 		return Result.objects.all()
@@ -549,7 +544,6 @@ class AllLaboratories(generics.ListAPIView):
 
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
-	pagination_class = CustomPagination
 
 	def get_queryset(self):
 		status = self.request.GET.get('status')
@@ -579,7 +573,6 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	serializer_class = SampleSerializer
-	pagination_class = CustomPagination
 
 	def get_queryset(self):
 		status = self.request.GET.get('status').capitalize()
