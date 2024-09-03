@@ -52,7 +52,7 @@ export default function SelectComponent({
                   </SelectItem>
                 ))
               ) : (
-                <SelectItem className="whitespace-wrap" key={index}>
+                <SelectItem className="whitespace-wrap">
                   {empty || "no items to choose from"}
                 </SelectItem>
               )}

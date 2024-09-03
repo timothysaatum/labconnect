@@ -7,6 +7,8 @@ export const SignupSchema = z
     account_type: z.string().min(1, "Please select an account type"),
     first_name: z.string().min(1, "First name is required"),
     last_name: z.string().min(1, "Last name is required"),
+    id_number: z.string().min(1, "Ghana Card Number is Required"),
+    digital_address: z.string().min(1, "Digital address is required"),
     email: z
       .string()
       .min(1, "Email is required")

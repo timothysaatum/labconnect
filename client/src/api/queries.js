@@ -17,12 +17,14 @@ export const useFetchUserDetails = () => {
   });
 };
 
-export const useFetchLabRequestsReceived = (id) => {
+export const useFetchLabRequestsReceived = (id, querys) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["RequestsReceived", id],
+    queryKey: ["RequestsReceived", id, querys],
     queryFn: async () =>
-      await axiosPrivate.get(`/laboratory/samples-list/${id}/`),
+      await axiosPrivate.get(`/laboratory/samples-list/${id}/`, {
+        params: querys,
+      }),
     staleTime: 1000 * 60 * 5,
     enabled: !!id,
   });

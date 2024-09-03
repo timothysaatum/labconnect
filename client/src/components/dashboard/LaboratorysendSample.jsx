@@ -117,7 +117,7 @@ export default function LaboratorySendSample() {
       referring_facility: activeBranch,
       brief_description: "",
       priority: "",
-      sample_status: "Received by delivery",
+      sample_status: "Pending",
       payment_mode: "Manual",
       payment_status: "Paid",
       tests: [],

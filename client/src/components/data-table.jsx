@@ -31,14 +31,13 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ChevronsUpDown,
-  CirclePlus,
   Search,
   SlidersHorizontal,
+  View,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedRows } from "@/redux/dataTable/selectedrowsSlice";
 import { selectRowCount, setRowCount } from "@/redux/dataTable/rowcount";
-import { Popover, PopoverTrigger } from "./ui/popover";
 
 export function DataTable({
   data,
@@ -47,6 +46,11 @@ export function DataTable({
   filter,
   setSelected,
   selected,
+  querys,
+  setQuerys,
+  QueryOptions,
+  handleFilterChange,
+  TotalRowCount,
 }) {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
@@ -62,6 +66,7 @@ export function DataTable({
     pageIndex: 0,
     pageSize: 5,
   });
+
   const table = useReactTable({
     columns: finalColumnDef,
     data: finalData,
@@ -92,11 +97,15 @@ export function DataTable({
       );
     }
   }, [rowSelection, title]);
-  const possiblePageSizes = [5, 10, 15, 20, 25];
+  const possiblePageSizes = [1, 2, 5, 10, 15, 20, 25];
+
   useEffect(() => {
     table.setPageSize(rowCount);
     table.setPageIndex(0);
   }, [rowCount]);
+
+
+
   return (
     <>
       <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-4">
@@ -115,23 +124,32 @@ export function DataTable({
             />
           </div>
         </div>
+        {title === "Requests" && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto text-xs">
+                <SlidersHorizontal className="w-4 h-4 mr-2" />
+                {QueryOptions?.find((query) => query === querys.status) ||
+                  "Filter"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {QueryOptions.map((query) => (
+                <DropdownMenuCheckboxItem
+                  key={query}
+                  checked={querys.status === query}
+                  onCheckedChange={() => handleFilterChange(query)}
+                >
+                  {query}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto text-xs">
-              <SlidersHorizontal className="w-4 h-4 mr-2" />
-              Filter
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuCheckboxItem>Pending</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Processed</DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem>Rejected</DropdownMenuCheckboxItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto text-xs">
-              <SlidersHorizontal className="w-4 h-4 mr-2" />
+              <View className="w-4 h-4 mr-2" />
               Visibility
             </Button>
           </DropdownMenuTrigger>
