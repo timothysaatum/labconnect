@@ -170,21 +170,7 @@ export const useTestColumns = (setSelected) => {
       header: createSortableHeader("Date added"),
       cell: createCell("date_added"),
     },
-    {
-      id: "details",
-      cell: ({ row }) => {
-        const test = row.original;
 
-        return (
-          <span
-            className="text-xs underline hover:no-underline"
-            onClick={() => setSelected(test.id)}
-          >
-            Details
-          </span>
-        );
-      },
-    },
     {
       accessorKey: "inactive",
       header: createSortableHeader("Active"),
@@ -202,6 +188,21 @@ export const useTestColumns = (setSelected) => {
           <div className="flex justify-center items-center">
             <Check className="w-4 h-4 " />
           </div>
+        );
+      },
+    },
+    {
+      id: "details",
+      cell: ({ row }) => {
+        const test = row.original;
+
+        return (
+          <span
+            className="text-xs underline hover:no-underline"
+            onClick={() => setSelected(test.id)}
+          >
+            Details
+          </span>
         );
       },
     },

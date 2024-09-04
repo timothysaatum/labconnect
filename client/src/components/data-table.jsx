@@ -97,14 +97,12 @@ export function DataTable({
       );
     }
   }, [rowSelection, title]);
-  const possiblePageSizes = [1, 2, 5, 10, 15, 20, 25];
+  const possiblePageSizes = [5, 10, 15, 20, 25];
 
   useEffect(() => {
     table.setPageSize(rowCount);
     table.setPageIndex(0);
   }, [rowCount]);
-
-
 
   return (
     <>
