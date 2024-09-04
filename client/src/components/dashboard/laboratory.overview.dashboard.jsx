@@ -111,8 +111,10 @@ export default function LaboratoryDashboardOverview() {
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
   const activeBranchId = useSelector(selectActiveBranch);
-  const QueryOptions = ["Processed", "Pending", "Rejected"];
-  const [querys, setQuerys] = useState({});
+  const QueryOptions = ["All", "Processed", "Pending", "Rejected"];
+  const [querys, setQuerys] = useState({
+    status: "Pending",
+  });
 
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab);
@@ -163,7 +165,7 @@ export default function LaboratoryDashboardOverview() {
   useEffect(() => {
     if (selectedSamples) {
       setSelected(
-        receivedRequests?.data?.data?.find((sample) => {
+        receivedRequests?.data?.find((sample) => {
           return sample.id === selectedSamples;
         })
       );
@@ -172,28 +174,28 @@ export default function LaboratoryDashboardOverview() {
     }
   }, [selectedSamples]);
 
-  const index = receivedRequests?.data?.data?.findIndex(
+  const index = receivedRequests?.data?.findIndex(
     (sample) => sample.id === selected?.id
   );
   const nextSample = () => {
     if (index < tests?.data.length - 1) {
-      setSelectedSamples(receivedRequests?.data?.data[index + 1]?.id);
+      setSelectedSamples(receivedRequests?.data[index + 1]?.id);
     } else {
-      setSelectedSamples(receivedRequests?.data?.data[0]?.id);
+      setSelectedSamples(receivedRequests?.data[0]?.id);
     }
   };
   const prevSample = () => {
-    if (index < receivedRequests?.data?.data?.length - 1) {
-      setSelectedSamples(receivedRequests?.data?.data[index + 1]?.id);
+    if (index < receivedRequests?.data?.length - 1) {
+      setSelectedSamples(receivedRequests?.data[index + 1]?.id);
     } else {
-      setSelectedSamples(receivedRequests?.data?.data[0]?.id);
+      setSelectedSamples(receivedRequests?.data[0]?.id);
     }
   };
 
   useEffect(() => {
     if (receivedRequests) {
       setTableRequestsReceived(
-        receivedRequests?.data?.data?.map((request) => {
+        receivedRequests?.data?.map((request) => {
           return {
             id: request.id,
             referring_facility: request.referring_facility,
@@ -298,7 +300,7 @@ export default function LaboratoryDashboardOverview() {
                         : "Samples you have received "}
                     </CardDescription>
                   </div>
-                  {receivedRequests?.data?.data.length < 1 && querys.status ? (
+                  {receivedRequests?.data.length < 1 && querys.status ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto text-xs">
@@ -331,11 +333,9 @@ export default function LaboratoryDashboardOverview() {
                       isRefetchError={isRefetchError}
                       isRefetching={isRefetching}
                     />
-                  ) : receivedRequests?.data?.data?.length < 1 &&
-                    querys?.status ? (
+                  ) : receivedRequests?.data?.length < 1 && querys?.status ? (
                     <QueriedEmpty />
-                  ) : receivedRequests?.data?.data?.length < 1 &&
-                    !querys?.status ? (
+                  ) : receivedRequests?.data?.length < 1 && !querys?.status ? (
                     <EmptyLab keywords={["Received", "from"]} />
                   ) : (
                     <DataTable

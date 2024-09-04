@@ -18,6 +18,14 @@ export const useFetchUserDetails = () => {
 };
 
 export const useFetchLabRequestsReceived = (id, querys) => {
+  if (
+    querys?.status === "All" ||
+    querys.status === undefined ||
+    querys.status === ""
+  ) {
+    const { status, ...rest } = querys;
+    querys = rest;
+  }
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
     queryKey: ["RequestsReceived", id, querys],
@@ -27,6 +35,7 @@ export const useFetchLabRequestsReceived = (id, querys) => {
       }),
     staleTime: 1000 * 60 * 5,
     enabled: !!id,
+    placeholderData: keepPreviousData,
   });
 };
 export const useFetchLabRequestsSent = (id) => {
