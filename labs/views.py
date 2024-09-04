@@ -550,13 +550,16 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 		from_date = self.request.GET.get('from_date')
 		to_date = self.request.GET.get('to_date')
 		pk = self.kwargs.get('pk')
+
 		try:
 
 			if status:
+
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).filter(sample_status=status).order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).filter(sample_status=status.capitalize()).order_by('-date_created')
 
 			if from_date and to_date:
+
 				return Sample.objects.filter(
 					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).filter(date__range=(from_date, to_date)).order_by('-date_created')
 
@@ -575,14 +578,16 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
 
 	def get_queryset(self):
-		status = self.request.GET.get('status').capitalize()
+		status = self.request.GET.get('status')
 		from_date = self.request.GET.get('from_date')
 		to_date = self.request.GET.get('to_date')
 
 		if status:
-			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status).order_by('-date_created')
+
+			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status.capitalize()).order_by('-date_created')
 		
 		if from_date and to_date:
+
 			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(date__range=(from_date, to_date)).order_by('-date_created')
 		
 		return Sample.objects.filter(
