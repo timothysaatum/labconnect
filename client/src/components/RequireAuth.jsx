@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useFetchUserLab } from "@/api/queries";
 import { useFetchUserHospital } from "../api/queries";
 import Loading from "./loading";
+import { useEffect } from "react";
 
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
@@ -66,29 +67,31 @@ export const CanGetStarted = () => {
 };
 
 export const BlockGettingStarted = () => {
-  const { isError, data: userlab, isPending } = useFetchUserLab();
-  const {
-    data: userhospital,
-    isError: hospitalerror,
-    isLoading,
-  } = useFetchUserHospital();
+  const { isError: labError, data: userlab, isLoading: labLoading } = useFetchUserLab();
+  const { isError: hospitalError, data: userhospital, isLoading: hospitalLoading } = useFetchUserHospital();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  if (isPending || isLoading) <Loading />;
-  if (isError || hospitalerror) {
-    toast.error("An error has occured. You need to sign in Again");
-    return <Navigate to="/sign-in" state={{ from: location }} replace />;
-  }
+  useEffect(() => {
+    if (labLoading || hospitalLoading) return;
 
-  const FacilityCreated =
-    userlab?.data.length > 0 || userhospital?.data?.length > 0;
+    if (labError || hospitalError) {
+      toast.error("An error has occurred. You need to sign in again");
+      navigate("/sign-in", { state: { from: location }, replace: true });
+      return;
+    }
 
-  if (FacilityCreated) {
-    toast.info("Unauthorized", {
-      description: "You have already created a laboratory",
-    });
-    return <Navigate to="/dashboard" />;
-  }
+    const FacilityCreated = userlab?.data.length > 0 || userhospital?.data?.length > 0;
 
-  return <Outlet />;
+    if (FacilityCreated) {
+      toast.info("Unauthorized", {
+        description: "You have already created a laboratory",
+      });
+      navigate("/dashboard");
+    }
+  }, [labLoading, hospitalLoading, labError, hospitalError, userlab, userhospital, navigate, location]);
+
+  if (labLoading || hospitalLoading) return <Loading />;
+
+  return null;
 };

@@ -251,8 +251,7 @@ export default function MyLab() {
   const tabContent = [
     {
       title: "Tests",
-      description:
-        "All tests run in this laboratory. you can add new test,update existing tests and delete tests. you can also discounts to specific tests",
+      description: "Manage all tests run in this laboratory here.",
       data: labtests,
       columnDef: testscolumnDef,
       loading: testsLoading,
