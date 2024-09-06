@@ -38,6 +38,7 @@ class BranchSerializer(serializers.ModelSerializer):
 	laboratory = serializers.PrimaryKeyRelatedField(read_only=True)
 	manager_id = serializers.CharField(read_only=True)
 	name = serializers.CharField(read_only=True)
+	branch_name = serializers.CharField(required=False)
 
 	class Meta:
 
@@ -45,6 +46,7 @@ class BranchSerializer(serializers.ModelSerializer):
 
 		fields = (
 			'id',
+			'branch_name',
 			'branch_manager',
 			'manager_id',
 			'laboratory',
