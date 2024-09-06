@@ -11,7 +11,7 @@ import (
 
 func main() {
     // Initialize the database
-    db.InitDB("db.sqlite3")
+    db.InitDB("./db.sqlite3")
 
     // Create a new router
     r := mux.NewRouter()

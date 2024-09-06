@@ -7,27 +7,29 @@ import (
     "net/http"
     "database-api/db"
     "database-api/models"
-    "strconv"
-
+    // "strconv"
+    "fmt"
+    "github.com/google/uuid"
     "github.com/gorilla/mux"
 )
 
 func GetSamplesByFacilityID(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     facilityIDStr := vars["facility_id"]
-    facilityID, err := strconv.Atoi(facilityIDStr)
+    to_laboratory_id, err := uuid.Parse(facilityIDStr)
+    
     if err != nil {
         http.Error(w, "Invalid facility ID", http.StatusBadRequest)
         return
     }
 
     rows, err := db.DB.Query(`
-        SELECT id, referring_facility, facility_type, sender_full_name, sender_phone, sender_email,
-               patient_name, patient_age, patient_sex, delivery, to_laboratory, clinical_history,
+        SELECT id, referring_facility_id, facility_type, sender_full_name, sender_phone, sender_email,
+               patient_name, patient_age, patient_sex, delivery_id, to_laboratory_id, clinical_history,
                attachment, is_marked_sent, sample_status, is_rejected, rejection_reason, priority,
                date_created, date_modified
-        FROM sample
-        WHERE referring_facility = ?`, facilityID)
+        FROM sample_sample
+        WHERE to_laboratory_id = ?`, to_laboratory_id)
     
     if err != nil {
         log.Printf("Error querying database: %v", err)
@@ -54,7 +56,7 @@ func GetSamplesByFacilityID(w http.ResponseWriter, r *http.Request) {
         }
         samples = append(samples, sample)
     }
-
+    fmt.Println(samples)
     if err = rows.Err(); err != nil {
         log.Printf("Error with rows: %v", err)
         http.Error(w, "Error fetching samples", http.StatusInternalServerError)
