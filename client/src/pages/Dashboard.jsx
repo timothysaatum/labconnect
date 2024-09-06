@@ -49,6 +49,7 @@ import {
   selectActiveBranch,
 } from "@/redux/branches/activeBranchSlice";
 import AddBranch from "@/components/dashboard/addbranch";
+import { Helmet } from "react-helmet-async";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
@@ -58,6 +59,11 @@ export default function Dashboard() {
   const [activeBranch, setActiveBranch] = useState(
     <Skeleton className="h-4 w-20" />
   );
+  const [title, setTitle] = useState();
+
+  useEffect(() => {
+    setTitle(sideLinks.find((item) => location.pathname.includes(item.link)));
+  }, [location.pathname]);
 
   const pathnames = location.pathname.split("/").filter((x) => x);
   const {
@@ -95,8 +101,12 @@ export default function Dashboard() {
     isPending: notifsloading,
   } = useFetchBranchNotifications(activeBranchId || undefined);
 
+  console.log(title);
   return (
     <div className="flex flex-col min-h-screen">
+      <Helmet>
+        <title>{title?.name}</title>
+      </Helmet>
       <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link

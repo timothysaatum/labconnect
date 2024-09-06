@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import RequestDialog from "./requestdialog";
 import {
   useFetchLabRequestsReceived,
@@ -31,7 +32,6 @@ import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { useFetchLabRequestsSent } from "../../api/queries";
-import { selectRowCount } from "../../redux/dataTable/rowcount";
 
 function EmptyLab({ keywords }) {
   return (
@@ -52,7 +52,7 @@ function QueriedEmpty({ keywords }) {
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
       <div className="px-4 flex flex-col items-center  text-center py-16 ">
         <h3 className="text-xl font-semibold ">
-          No samples found for the query
+          No {keywords[0]} Samples Found
         </h3>
         <p className="text-sm text-muted-foreground">
           Adjust your query to see more results
@@ -333,9 +333,10 @@ export default function LaboratoryDashboardOverview() {
                       isRefetchError={isRefetchError}
                       isRefetching={isRefetching}
                     />
-                  ) : receivedRequests?.data?.length < 1 && querys?.status ? (
-                    <QueriedEmpty />
-                  ) : receivedRequests?.data?.length < 1 && !querys?.status ? (
+                  ) : receivedRequests?.data?.length < 1 &&
+                    querys?.status !== "All" ? (
+                    <QueriedEmpty keywords={[querys.status]} />
+                  ) : receivedRequests?.data?.length < 1 && querys?.status==="All" ? (
                     <EmptyLab keywords={["Received", "from"]} />
                   ) : (
                     <DataTable

@@ -78,7 +78,7 @@ export const GettingStartedOverViewHospital = () => {
           </BlurFade>
           <BlurFade inView delay={0.5 * 4}>
             <div className="mt-14">
-              <Link to="create-Laboratory">
+              <Link to="create-hospital">
                 <Button variant="outline" size="lg" className="w-56">
                   Let's Get Started
                 </Button>

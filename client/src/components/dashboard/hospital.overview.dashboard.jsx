@@ -46,7 +46,7 @@ function EmptyLab({ keywords }) {
           You have {keywords[0]} no samples yet
         </h3>
         <p className="text-sm text-muted-foreground">
-          you will see Requests made {keywords[1]} your lab here{" "}
+          you will see Samples you referred to laboratories here.
         </p>
       </div>
     </div>
@@ -234,7 +234,7 @@ export default function LaboratoryDashboardOverview() {
                   isRefetching={isRefetching}
                 />
               ) : requests?.data.length < 1 ? (
-                <EmptyLab keywords={["Received", "to"]} />
+                <EmptyLab keywords={["Sent", "to"]} />
               ) : (
                 <DataTable
                   data={samplesSent}

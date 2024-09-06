@@ -79,16 +79,18 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
-              <Route path="getting-started" element={<Labgettingstarted />}>
-                <Route index element={<GettingStartedOverView />} />
-                <Route path="create-Laboratory" element={<CreateLab />} />
-              </Route>
-              <Route
-                path="getting-started-hospital"
-                element={<Hospitalgettingstarted />}
-              >
-                <Route index element={<GettingStartedOverViewHospital />} />
-                <Route path="create-Laboratory" element={<CreateHospital />} />
+              <Route element={<BlockGettingStarted />}>
+                <Route path="getting-started" element={<Labgettingstarted />}>
+                  <Route index element={<GettingStartedOverView />} />
+                  <Route path="create-haboratory" element={<CreateLab />} />
+                </Route>
+                <Route
+                  path="getting-started-hospital"
+                  element={<Hospitalgettingstarted />}
+                >
+                  <Route index element={<GettingStartedOverViewHospital />} />
+                  <Route path="create-hospital" element={<CreateHospital />} />
+                </Route>
               </Route>
               <Route element={<CanGetStarted />}>
                 <Route

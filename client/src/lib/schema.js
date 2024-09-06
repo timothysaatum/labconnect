@@ -73,7 +73,7 @@ export const labRequestSchema = z.object({
   tests: z.array(multiSelectSchema).min(1, "Choose at least one test"),
   priority: z.string().min(1, "Choose test priority"),
   payment_mode: z.string().min(1, "Choose a payment mode"),
-  sample_status: z.string().min(1, ""),
+  // sample_status: z.string().min(1, ""),
   payment_status: z.string(),
   brief_description: z.string(),
   shareWith: z.string().optional(),
