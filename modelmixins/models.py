@@ -25,6 +25,7 @@ class Facility(models.Model):
     phone = models.CharField(max_length=15)
     email = models.EmailField()
     facility_type = models.CharField(max_length=155, choices=FACILITY_TYPE)
+    deleted_at = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
