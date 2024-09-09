@@ -6,6 +6,7 @@ from .serializers import (
 	SetNewPasswordSerializer, 
 	UserSerializer
 )
+from django.db import transaction
 from rest_framework.generics import (
 	GenericAPIView, 
 	CreateAPIView,
@@ -359,32 +360,64 @@ class FetchUserData(APIView):
 		return Response({'error': 'Token is invalid or you have been logged out.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def create_branch_manager_user(invitation, user_data):
-	"""
-	Creates a new user with the provided data and sets the account type and staff status.
-	"""
-	branch = Branch.objects.get(id=invitation.branch_id)
-	try:
-		client = Client.objects.get(email=invitation.receiver_email)
-		if not client.is_branch_manager:
-			client.is_branch_manager = True
-			client.save()
-		branch.branch_manager = client
-	except Client.DoesNotExist:
-		serializer = UserCreationSerializer(data=user_data)
-		serializer.is_valid(raise_exception=True)
-		client = serializer.save()
-		client.account_type = 'Laboratory'
-		client.is_staff = True
-		client.is_branch_manager = True
-		branch.branch_manager = client
-		client.save()
+# def create_branch_manager_user(invitation, user_data):
+# 	"""
+# 	Creates a new user with the provided data and sets the account type and staff status.
+# 	"""
+# 	branch = Branch.objects.get(id=invitation.branch_id)
+# 	try:
+# 		client = Client.objects.get(email=invitation.receiver_email)
+# 		if not client.is_branch_manager:
+# 			client.is_branch_manager = True
+# 			client.save()
+# 		branch.branch_manager = client
+# 	except Client.DoesNotExist:
+# 		serializer = UserCreationSerializer(data=user_data)
+# 		serializer.is_valid(raise_exception=True)
+# 		client = serializer.save()
+# 		client.account_type = 'Laboratory'
+# 		client.is_staff = True
+# 		client.is_branch_manager = True
+# 		branch.branch_manager = client
+# 		client.save()
 
-	branch.save()
-	invitation.used = True
-	invitation.save()
+# 	branch.save()
+# 	invitation.used = True
+# 	invitation.save()
 	
-	return client
+# 	return client
+
+
+def create_branch_manager_user(invitation, user_data):
+    """
+    Creates a new user with the provided data and sets the account type and staff status.
+    """
+    branch = Branch.objects.select_related('branch_manager').get(id=invitation.branch_id)
+    
+    try:
+        client = Client.objects.get(email=invitation.receiver_email)
+        if not client.is_branch_manager:
+            client.is_branch_manager = True
+            client.save()
+        branch.branch_manager = client
+    except Client.DoesNotExist:
+        with transaction.atomic():  # Ensure atomicity of operations
+            serializer = UserCreationSerializer(data=user_data)
+            serializer.is_valid(raise_exception=True)
+            client = serializer.save()
+            client.account_type = 'Laboratory'
+            client.is_staff = True
+            client.is_branch_manager = True
+            client.save()
+
+        branch.branch_manager = client
+
+    branch.save()
+    invitation.used = True
+    invitation.save()
+
+    return client
+
 
 
 class BranchManagerAcceptView(CreateAPIView):
@@ -392,17 +425,29 @@ class BranchManagerAcceptView(CreateAPIView):
 	def get_queryset(self):
 		"""
 		Retrieves the BranchManagerInvitation object based on pk and invitation_code.
-		Raises DoesNotExist if not found.
-		"""
+        Raises DoesNotExist if not found.
+        """
 		pk, invitation_code = self.kwargs.get('pk'), self.kwargs.get('invitation_code')
-
 		try:
 			return BranchManagerInvitation.objects.get(pk=pk, invitation_code=invitation_code)
 		except BranchManagerInvitation.DoesNotExist:
-			return Response(
-					{'error': 'Invite not found'},
-				   	status=status.HTTP_404_NOT_FOUND
-				   )
+			
+			return Response({'error': 'Invitation does not exist'}, status=status.HTTP_404_NOT_FOUND)
+	
+	# def get_queryset(self):
+	# 	"""
+	# 	Retrieves the BranchManagerInvitation object based on pk and invitation_code.
+	# 	Raises DoesNotExist if not found.
+	# 	"""
+	# 	pk, invitation_code = self.kwargs.get('pk'), self.kwargs.get('invitation_code')
+
+	# 	try:
+	# 		return BranchManagerInvitation.objects.get(pk=pk, invitation_code=invitation_code)
+	# 	except BranchManagerInvitation.DoesNotExist:
+	# 		return Response(
+	# 				{'error': 'Invite not found'},
+	# 			   	status=status.HTTP_404_NOT_FOUND
+	# 			   )
 			
 	def post(self, request, *args, **kwargs):
 		invitation = self.get_queryset()

@@ -113,6 +113,7 @@ class SampleSerializerView(HospitalMixin, generics.CreateAPIView):
 		tests = self.request.data['tests']
 		sample = serializer.save(
 			referring_facility=facility,
+			sample_status='Pending',
 			facility_type='Hospital'
 			)
 

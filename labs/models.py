@@ -59,6 +59,7 @@ class Branch(Facility):
 	A brach: is a local set up of a particular laboratory that carries out test within that enclave.
 	Branch_name: refers to the name of a branch.
 	'''
+	branch_name = models.CharField(max_length=155, blank=True, null=True)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	town = models.CharField(max_length=200)
 	digital_address = models.CharField(max_length=15)
