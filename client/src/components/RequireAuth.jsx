@@ -93,5 +93,5 @@ export const BlockGettingStarted = () => {
 
   if (labLoading || hospitalLoading) return <Loading />;
 
-  return null;
+  return <Outlet/>;
 };

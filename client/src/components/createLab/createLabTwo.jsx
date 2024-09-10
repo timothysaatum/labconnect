@@ -30,7 +30,6 @@ import { selectCurrentUser } from "@/redux/auth/authSlice";
 export default function CreateLab() {
   const [step, setStep] = useState(0);
   const user = useSelector(selectCurrentUser);
-  console.log(user?.user_id);
   const form = useForm({
     resolver: zodResolver(CreateLabSchema),
     defaultValues: {
@@ -55,11 +54,6 @@ export default function CreateLab() {
     logo: 4,
   };
   const onCreateLab = useCreateLab(form, setStep, fieldToStep);
-
-  useEffect(() => {
-    console.log(form.formState.errors);
-  }, [form.formState.errors]);
-
 
   const handleNextStep = async () => {
     let fieldToValidate;
