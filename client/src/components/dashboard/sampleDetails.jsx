@@ -79,21 +79,7 @@ const RequestDetails = ({
                     </a>
                   </Button>
                 )}
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="outline" className="h-8 w-8">
-                      <MoreVertical className="h-3.5 w-3.5" />
-                      <span className="sr-only">More</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Export</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Trash</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                
                 <Button
                   className="h-8 w-8"
                   size="icons"

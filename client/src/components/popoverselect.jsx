@@ -16,6 +16,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { useSelector } from "react-redux";
+import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 
 const PopoverSelect = ({
   form,
@@ -30,6 +32,8 @@ const PopoverSelect = ({
   ...rest
 }) => {
   const [open, setOpen] = useState(false);
+  const activeBranch = useSelector(selectActiveBranch);
+
   return (
     <FormField
       control={form.control}
@@ -76,27 +80,29 @@ const PopoverSelect = ({
                 </CommandEmpty>
                 <CommandGroup>
                   <CommandList>
-                    {items?.data?.map((item) => (
-                      <CommandItem
-                        key={item.id}
-                        onSelect={() => {
-                          form.setValue(name, item.id);
-                          form.clearErrors(name);
-                          setOpen(false);
-                        }}
-                      >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            item.id === field.value
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
+                    {items?.data
+                      ?.filter((item) => item.id !== activeBranch)
+                      .map((item) => (
+                        <CommandItem
+                          key={item.id}
+                          onSelect={() => {
+                            form.setValue(name, item.id);
+                            form.clearErrors(name);
+                            setOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              item.id === field.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
 
-                        {item.name}
-                      </CommandItem>
-                    ))}
+                          {item.name}
+                        </CommandItem>
+                      ))}
                   </CommandList>
                 </CommandGroup>
               </Command>

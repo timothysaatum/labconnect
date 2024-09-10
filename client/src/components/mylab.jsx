@@ -148,6 +148,13 @@ export default function MyLab() {
     setSelectedBranch();
   }, [currentTab]);
 
+    const {
+    error: testError,
+    isPending: testsLoading,
+    data: tests,
+    refetch: refetchTests,
+  } = useFetchLabTests(activeBranch);
+  
   useEffect(() => {
     if (selectedTests) {
       setSelected(
@@ -164,14 +171,9 @@ export default function MyLab() {
     } else {
       setSelected(null);
     }
-  }, [selectedTests, selectedBranch]);
+  }, [selectedTests, selectedBranch, tests, userbranches]);
 
-  const {
-    error: testError,
-    isPending: testsLoading,
-    data: tests,
-    refetch: refetchTests,
-  } = useFetchLabTests(activeBranch);
+
 
   useEffect(() => {
     if (tests?.data) {

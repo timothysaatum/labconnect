@@ -101,7 +101,6 @@ export default function Dashboard() {
     isPending: notifsloading,
   } = useFetchBranchNotifications(activeBranchId || undefined);
 
-  console.log(title);
   return (
     <div className="flex flex-col min-h-screen">
       <Helmet>

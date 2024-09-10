@@ -120,7 +120,15 @@ export const useBranchUpdate = (form, setOpen, id) => {
   const onBranchUpdate = useCallback(
     async (data) => {
       try {
-        await axiosPrivate.patch(`/laboratory/branch/update/${id}/`, data);
+        const manager = data?.branch_manager
+          ? data.branch_manager.map((item) => item.value)
+          : [];
+
+        const newData = {
+          ...data,
+          branch_manager: manager,
+        };
+        await axiosPrivate.patch(`/laboratory/branch/update/${id}/`, newData);
         queryClient.invalidateQueries(["userbranches"]);
         toast.success("Branch updated successfully");
         form.reset();
@@ -133,7 +141,7 @@ export const useBranchUpdate = (form, setOpen, id) => {
           });
         }
         console.log(error);
-        toast.error("unable to add branch. try again later", {
+        toast.error("Unable to update branch. try again later", {
           position: "top-center",
           duration: 5000,
         });
@@ -349,7 +357,11 @@ export const useAddTest = (keepOpen, setOpen, form) => {
             position: "top-center",
           }
         );
-        if (!keepOpen) setOpen(false);
+        if (keepOpen) {
+          setOpen(true);
+        } else {
+          setOpen(false);
+        }
         form.reset();
       } catch (error) {
         console.error(error);

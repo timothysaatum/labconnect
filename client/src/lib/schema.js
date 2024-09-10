@@ -158,7 +158,7 @@ export const AddTestSchema = z
     name: z.string().min(1, "Test Name is required"),
     turn_around_time: z.string().min(1, "Turn around time is required"),
     unit: z.string().min(1, "unit for turn around time is required"),
-    patient_preparation: z.string(),
+    patient_preparation: z.string().optional(),
     price: z
       .string()
       .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
@@ -240,7 +240,14 @@ export const AddBranchSchema = z.object({
   town: z.string().min(1, "Location is required"),
   postal_address: z.string().min(1, "Postal address is required"),
   region: z.string().min(1, "Region is required"),
-  branch_manager: z.string().optional(),
+  branch_manager: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.number(),
+      })
+    )
+    .optional(),
 });
 export const ManagerInviteSchema = z.object({
   receiver_email: z

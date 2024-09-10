@@ -1,4 +1,4 @@
-import { Loader2, Plus } from "lucide-react";
+import { ChevronsUpDown, Loader2, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Drawer,
@@ -43,24 +43,57 @@ import SelectComponent from "../selectcomponent";
 import AddManager from "./addManager";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
+import MultipleSelector from "@/components/ui/multi-select";
 
 export const BranchForm = ({ setOpen, form, className, id }) => {
+  const [currentBranchManager, setCurrentBranchManager] = useState(null);
+  const [branchToUpdate, setBranchToUpdate] = useState(null);
   //form submission
   const onBranchAdd = useBranchUpdate(form, setOpen, id);
   const { data: userlab, isError: labError } = useFetchUserLab();
   const { data: managers, isError } = useFetchLabManagers(userlab?.data[0]?.id);
+  const { data: userbranches, isError: branchError } = useFetchUserBranches();
+  const [selectData, setSelectData] = useState([]);
   const user = useSelector(selectCurrentUser);
 
-  if (isError || labError) {
+  if (isError || labError || branchError) {
     toast.error("An error occurred");
   }
-  const Labmanagers = managers?.data
-    ?.filter((manager) => manager?.id !== user?.user_id)
-    .map((manager) => ({
-      label: `${manager?.first_name} ${manager?.last_name}`,
-      value: manager?.id,
-    }));
-  console.log(managers?.data);
+
+  useEffect(() => {
+    if (userbranches?.data) {
+      setBranchToUpdate(userbranches?.data?.find((branch) => branch.id === id));
+    }
+  }, [userbranches]);
+
+  useEffect(() => {
+    if (managers) {
+      setSelectData(
+        managers?.data?.map((manager) => ({
+          label: `${manager.first_name} ${manager.last_name}`,
+          value: manager.id,
+        }))
+      );
+      if (branchToUpdate) {
+        setCurrentBranchManager(
+          managers?.data?.find(
+            (manager) => manager.id === branchToUpdate?.manager_id
+          )
+        );
+      }
+    }
+  }, [branchToUpdate, managers]);
+  useEffect(() => {
+    if (currentBranchManager) {
+      form.setValue("branch_manager", [
+        {
+          label: `${currentBranchManager.first_name} ${currentBranchManager.last_name}`,
+          value: currentBranchManager.id,
+        },
+      ]);
+    }
+  }, [currentBranchManager]);
+
   return (
     <Form {...form}>
       <form
@@ -68,19 +101,40 @@ export const BranchForm = ({ setOpen, form, className, id }) => {
         noValidate
         onSubmit={form.handleSubmit(onBranchAdd)}
       >
-       
         {user?.is_admin && (
-          <div className="flex items-center gap-2">
-            <SelectComponent
-              name={"branch_manager"}
+          <div className="flex gap-2 items-end">
+            <FormField
+              name="branch_manager"
               control={form.control}
-              label={"Change Branch Manager (Optional)"}
-              items={Labmanagers}
-              placeholder={"Select Branch Manager"}
-              className="flex-1"
-              description={"click on the + to send a new invite"}
-              empty={"This laboratory has no other users."}
+              render={({ field }) => (
+                <FormItem className="-mb-2 flex-1">
+                  <FormLabel>Branch Manager</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <MultipleSelector
+                        options={selectData}
+                        placeholder="Select Branch Manager"
+                        hidePlaceholderWhenSelected
+                        className="-z-0"
+                        
+                        emptyIndicator={
+                          <p className="text-center text-md text-muted-foreground">
+                            {isError
+                              ? "Error loading managers"
+                              : managers?.data?.length < 1
+                                ? "No Managers available"
+                                : "No managers available"}
+                          </p>
+                        }
+                        {...field}
+                      />
+                      <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
             />
+
             <AddManager branchId={id}>
               <Button variant="ghost" size="icon">
                 <Plus className="h-4 w-4" />
@@ -206,7 +260,7 @@ const UpdateBranch = ({ branchId }) => {
       </DrawerTrigger>
       <DrawerContent className="px-2">
         <div className="max-h-[90vh] overflow-auto ">
-          <DrawerHeader className="sticky top-0 bg-background items-center flex justify-center flex-col">
+          <DrawerHeader className="sticky top-0 bg-background items-center flex justify-center flex-col z-50">
             <DrawerTitle>Update Branch</DrawerTitle>
             <DialogDescription>
               Make changes to the branch details

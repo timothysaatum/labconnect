@@ -8,7 +8,7 @@ export const createSortableHeader =
     return (
       <p
         variant="ghost"
-        className="font-bold  cursor-pointer gap-1 text-center"
+        className="font-bold  cursor-pointer gap-1 text-start"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         {columnName}

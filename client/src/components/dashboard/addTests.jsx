@@ -250,10 +250,10 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
         </div>
         <FormBuilder
           name={"patient_preparation"}
-          label={"Patient Preparation required"}
+          label={"Patient Preparation (Optional)"}
           control={form.control}
         >
-          <Textarea placeholder="Patient preration required for this test" />
+          <Textarea placeholder="Patient preration needed for this test" />
         </FormBuilder>
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? (
