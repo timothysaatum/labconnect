@@ -4,6 +4,7 @@ import (
     "gorm.io/gorm"
     "gorm.io/driver/sqlite"  // Use SQLite driver for connecting to SQLite3
     "database-api/pkg/config"
+    "fmt"
 )
 
 func SetupDatabase(cfg config.Config) (*gorm.DB, error) {
@@ -11,6 +12,6 @@ func SetupDatabase(cfg config.Config) (*gorm.DB, error) {
     if err != nil {
         return nil, err
     }
-
+    fmt.Println(db)
     return db, nil
 }

@@ -19,6 +19,7 @@ class SampleSerializer(serializers.ModelSerializer):
 	sender_phone = serializers.CharField(required=False)
 	sender_email = serializers.CharField(required=False)
 	facility_type = serializers.CharField(required=False)
+	sample_status = serializers.CharField(required=False)
 
 	class Meta:
 

@@ -70,7 +70,7 @@ class Sample(models.Model):
 		null=True
 	)
 	is_marked_sent = models.BooleanField(default=False)
-	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS)
+	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default=1)
 	is_rejected = models.BooleanField(default=False)
 	rejection_reason = models.TextField(blank=True, null=True)
 	priority = models.CharField(max_length=50, choices=PRIORITIES)

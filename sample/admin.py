@@ -17,6 +17,7 @@ class SampleAdmin(admin.ModelAdmin):
 		'is_marked_sent',
 		'priority'
 	)
+	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
 	list_editable = (
 		'sample_status',
 		'is_marked_sent' 
