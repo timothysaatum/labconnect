@@ -466,7 +466,7 @@ class BranchManagerAcceptView(CreateAPIView):
 			'phone_number':request.data['phone_number'],
 			'account_type':'Laboratory',
 			'password':request.data['password'],
-			'password_confirmation':request.data['confirm_password']
+			'password_confirmation':request.data['password_confirmation']
 		}
 
 		create_branch_manager_user(invitation, data)
