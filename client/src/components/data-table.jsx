@@ -132,7 +132,7 @@ export function DataTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {QueryOptions.map((query) => (
+              {QueryOptions?.map((query) => (
                 <DropdownMenuCheckboxItem
                   key={query}
                   checked={querys.status === query}
