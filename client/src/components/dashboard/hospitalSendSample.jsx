@@ -117,7 +117,6 @@ export default function HospitalSendSample() {
       referring_facility: userhospital?.data[0]?.id,
       brief_description: "",
       priority: "",
-      // sample_status: "Received by delivery",
       payment_mode: "Manual",
       payment_status: "Paid",
       tests: [],
