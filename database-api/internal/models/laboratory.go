@@ -2,12 +2,18 @@ package models
 
 import (
     "gorm.io/gorm"
+     "time"
 )
 
 type Facility struct {
     gorm.Model
-    Name               string `json:"name"`
-    AccreditationNumber string `json:"accreditation_number"`
+    ID              uint `json:"id"`
+    PostalAddress   string `json:"postal_address"`
+    Email           string `json:"email"`
+    Phone           string `json:"phone"`
+    FacilityType    string `json:"facility_type"`
+    DateCreated     time.Time `json:"date_created"`
+    DateModified    time.Time `json:"date_modified"`
 }
 
 

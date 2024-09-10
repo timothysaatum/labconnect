@@ -12,6 +12,6 @@ func SetupDatabase(cfg config.Config) (*gorm.DB, error) {
     if err != nil {
         return nil, err
     }
-    fmt.Println(db)
+    fmt.Printf("Here %v", db)
     return db, nil
 }
