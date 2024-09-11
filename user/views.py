@@ -408,6 +408,7 @@ def create_branch_manager_user(invitation, user_data):
             client.account_type = 'Laboratory'
             client.is_staff = True
             client.is_branch_manager = True
+			# client.is_admin = False
             client.save()
 
         branch.branch_manager = client
