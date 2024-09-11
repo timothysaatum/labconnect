@@ -48,9 +48,6 @@ const LabLogo = ({ form }) => {
     }
     form.clearErrors("logo");
   };
-  useEffect(() => {
-    form.setValue("logo", imageFile);
-  }, [imageFile]);
 
   useEffect(() => {
     const validateLogo = async () => {
@@ -59,12 +56,12 @@ const LabLogo = ({ form }) => {
         setImagefile(null);
         form.setValue("logo", undefined);
         toast.error(form.formState.errors.logo.message);
+      } else {
+        form.setValue("logo", imageFile);
       }
     };
     validateLogo();
   }, [imageFile]);
-
-  console.log(form.formState.errors);
 
   return (
     <div className="grid gap-8 text-center">

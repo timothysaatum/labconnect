@@ -83,14 +83,21 @@ export const useFetchAllLabsBranches = () => {
     staleTime: 100000 * 60 * 60,
   });
 };
-export const useFetchLabTests = (id) => {
-  const controller = new AbortController();
+export const useFetchLabTests = (id, querys) => {
+  if (
+    querys?.status === "All" ||
+    querys?.status === undefined ||
+    querys?.status === ""
+  ) {
+    const { status, ...rest } = querys;
+    querys = rest;
+  }
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["tests", id],
+    queryKey: ["tests", id, querys],
     queryFn: async () =>
-      await axiosPrivate.get(`/laboratory/test/list/${id}/?limit=2`, {
-        signal: newAbortSignal(30000),
+      await axiosPrivate.get(`/laboratory/test/list/${id}/`, {
+        params: querys,
       }),
     refetchOnWindowFocus: false,
     placeholderData: keepPreviousData,
@@ -162,12 +169,22 @@ export const useFetchAllHospitals = () => {
   });
 };
 
-export const useFetchHospitalRequests = () => {
+export const useFetchHospitalRequests = (querys) => {
+  if (
+    querys?.status === "All" ||
+    querys.status === undefined ||
+    querys.status === ""
+  ) {
+    const { status, ...rest } = querys;
+    querys = rest;
+  }
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["Requests"],
+    queryKey: ["Requests", querys],
     queryFn: async () =>
-      await axiosPrivate.get("/hospital/health-worker/sample/list/"),
+      await axiosPrivate.get("/hospital/health-worker/sample/list/", {
+        params: querys,
+      }),
     staleTime: 1000 * 60 * 5,
   });
 };

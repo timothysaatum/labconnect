@@ -35,7 +35,6 @@ import {
   useFetchAllDeliveries,
   useFetchAllLabsBranches,
   useFetchLabTests,
-  useFetchUserBranches,
 } from "@/api/queries";
 import PopoverSelect from "../popoverselect";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -181,7 +180,7 @@ export default function LaboratorySendSample() {
     data: tests,
     isError: testsError,
     isFetching: testsLoading,
-  } = useFetchLabTests(id);
+  } = useFetchLabTests(id, { status: "active" });
 
   //saving form to redux
   const handleSave = () => {
@@ -289,17 +288,7 @@ export default function LaboratorySendSample() {
     return form.resetField("to_laboratory");
   }
   return (
-    <motion.div
-      className="sm:pl-14 my-10 md:py-0 "
-      initial={{ y: 6, opacity: 0, filter: "blur(6px)" }}
-      animate={{ y: -6, opacity: 1, filter: "blur(0px)" }}
-      transition={{
-        delay: 0.3,
-        duration: 0.4,
-        ease: "easeOut",
-      }}
-      exit={{ y: 6, opacity: 0, filter: "blur(6px)" }}
-    >
+    <div>
       <RestoreDialog
         setOpen={setOpen}
         open={open}
@@ -687,6 +676,6 @@ export default function LaboratorySendSample() {
           </section>
         </div>
       </main>
-    </motion.div>
+    </div>
   );
 }

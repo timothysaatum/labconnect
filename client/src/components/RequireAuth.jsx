@@ -67,8 +67,16 @@ export const CanGetStarted = () => {
 };
 
 export const BlockGettingStarted = () => {
-  const { isError: labError, data: userlab, isLoading: labLoading } = useFetchUserLab();
-  const { isError: hospitalError, data: userhospital, isLoading: hospitalLoading } = useFetchUserHospital();
+  const {
+    isError: labError,
+    data: userlab,
+    isLoading: labLoading,
+  } = useFetchUserLab();
+  const {
+    isError: hospitalError,
+    data: userhospital,
+    isLoading: hospitalLoading,
+  } = useFetchUserHospital();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -81,7 +89,8 @@ export const BlockGettingStarted = () => {
       return;
     }
 
-    const FacilityCreated = userlab?.data.length > 0 || userhospital?.data?.length > 0;
+    const FacilityCreated =
+      userlab?.data.length > 0 || userhospital?.data?.length > 0;
 
     if (FacilityCreated) {
       toast.info("Unauthorized", {
@@ -89,9 +98,18 @@ export const BlockGettingStarted = () => {
       });
       navigate("/dashboard");
     }
-  }, [labLoading, hospitalLoading, labError, hospitalError, userlab, userhospital, navigate, location]);
+  }, [
+    labLoading,
+    hospitalLoading,
+    labError,
+    hospitalError,
+    userlab,
+    userhospital,
+    navigate,
+    location,
+  ]);
 
   if (labLoading || hospitalLoading) return <Loading />;
 
-  return <Outlet/>;
+  return <Navigate to="/dashboard" state={{ from: location }} replace />;
 };

@@ -35,7 +35,6 @@ import {
   useFetchAllDeliveries,
   useFetchAllLabsBranches,
   useFetchLabTests,
-  useFetchUserBranches,
 } from "@/api/queries";
 import PopoverSelect from "../popoverselect";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -64,13 +63,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useSendSample } from "@/lib/formactions";
 import { motion } from "framer-motion";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
 import { calculateTotalCost } from "@/util/totalCost";
-import FormWrapper from "../FormWrapper";
 import { useFetchUserHospital } from "../../api/queries";
 import { useSendHospitalSample } from "../../lib/formactions";
+import { hospitalRequestSchema } from "../../lib/schema";
 
 //the prompt dialog
 export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
@@ -107,7 +105,7 @@ export default function HospitalSendSample() {
 
   //form declaration
   const form = useForm({
-    resolver: zodResolver(labRequestSchema),
+    resolver: zodResolver(hospitalRequestSchema),
     defaultValues: {
       patient_name: "",
       patient_age: "",
@@ -175,7 +173,8 @@ export default function HospitalSendSample() {
     data: tests,
     isError: testsError,
     isFetching: testsLoading,
-  } = useFetchLabTests(id);
+  } = useFetchLabTests(id, { status: "active" });
+  console.log(form.formState.errors)
 
   //saving form to redux
   const handleSave = () => {

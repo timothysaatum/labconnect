@@ -1,4 +1,4 @@
-import { ChevronDown, RefreshCcw } from "lucide-react";
+import {  RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,36 +7,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  useFetchHospitalRequests,
-  useFetchLabRequestsReceived,
-  useFetchLabRequestsSent,
-  useFetchUserBranches,
-} from "@/api/queries";
+import { useFetchHospitalRequests } from "@/api/queries";
 import { useEffect, useState } from "react";
 import { DataTable } from "../data-table";
-import {
-  useHospitalRequestColumns,
-  useRequestLabColumns,
-} from "../columns/RequestColumn";
+import { useHospitalRequestColumns } from "../columns/RequestColumn";
 import { calcAge } from "@/util/ageCalculate";
 import { Link, useNavigate } from "react-router-dom";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import StackedCardsOverview from "../overviewcards";
 import SampleDetails from "@/components/dashboard/sampleDetails";
-import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  changeBranch,
-  selectActiveBranch,
-} from "@/redux/branches/activeBranchSlice";
 
 function EmptyLab({ keywords }) {
   return (
@@ -99,8 +78,23 @@ export default function LaboratoryDashboardOverview() {
   const [selected, setSelected] = useState();
   const navigate = useNavigate();
   const { RequestSentColumns } = useHospitalRequestColumns(setSelectedSamples);
+  const QueryOptions = ["All", "Processed", "Pending", "Rejected"];
 
-  const dispatch = useDispatch();
+  const [querys, setQuerys] = useState({
+    status: "Pending",
+  });
+
+  const handleFilterChange = (query) => {
+    setQuerys((prevQueries) => {
+      const newQueries = { ...prevQueries };
+      if (newQueries.status === query) {
+        delete newQueries.status;
+      } else {
+        newQueries.status = query;
+      }
+      return newQueries;
+    });
+  };
 
   const {
     isError,
@@ -110,7 +104,7 @@ export default function LaboratoryDashboardOverview() {
     refetch,
     isRefetchError,
     dataUpdatedAt,
-  } = useFetchHospitalRequests();
+  } = useFetchHospitalRequests(querys);
 
   useEffect(() => {
     if (selectedSamples) {
@@ -241,10 +235,14 @@ export default function LaboratoryDashboardOverview() {
                   error={isError}
                   loading={isPending}
                   columnDef={RequestSentColumns}
-                  title={"Requests"}
+                  title="Requests"
                   filter={"Patient"}
                   selected={selectedSamples}
                   setSelected={setSelectedSamples}
+                  querys={querys}
+                  QueryOptions={QueryOptions}
+                  handleFilterChange={handleFilterChange}
+                  setQuerys={setQuerys}
                 />
               )}
             </CardContent>

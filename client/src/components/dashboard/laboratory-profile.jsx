@@ -9,7 +9,8 @@ import { useFetchUserLab } from "@/api/queries";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import LabLogo from "/images/defaultlabLogo.jpg";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   FormField,
   FormItem,
@@ -18,44 +19,64 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useQueryClient } from "@tanstack/react-query";
+import { CreateLabSchema } from "../../lib/schema";
 
 const LaboratoryProfile = () => {
   const { data: userlab } = useFetchUserLab();
   const queryClient = useQueryClient();
   const axiosPrivate = useAxiosPrivate();
-  const [imagefile, setImagefile] = useState(null);
-  const [imagefileUrl, setImagefileUrl] = useState(null);
+  const filePickRef = useRef(null);
+  const [imageFile, setImagefile] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files;
+    if (file) {
+      setImagefile(file);
+    }
+    form.clearErrors("logo");
+  };
+
+  useEffect(() => {
+    const validateLogo = async () => {
+      const isValid = await form.trigger("logo");
+      if (!isValid && imageFile?.length > 0) {
+        setImagefile(null);
+        form.setValue("logo", undefined);
+        toast.error(form.formState.errors.logo.message);
+      } else {
+        form.setValue("logo", imageFile);
+      }
+    };
+    validateLogo();
+  }, [imageFile]);
 
   const form = useForm({
+    resolver: zodResolver(CreateLabSchema),
     defaultValues: {
       name: "",
       main_email: "",
       main_phone: "",
       website: "",
       description: "",
-      hefra_id: "",
+      herfra_id: "",
       postal_address: "",
     },
   });
   const fileref = form.register("logo");
-  useMemo(() => {
+
+  useEffect(() => {
     if (userlab) {
       form.setValue("name", userlab?.data[0]?.name);
       form.setValue("main_email", userlab?.data[0]?.main_email);
       form.setValue("main_phone", userlab?.data[0]?.main_phone);
-      form.setValue("hefra_id", userlab?.data[0]?.herfra_id);
+      form.setValue("herfra_id", userlab?.data[0]?.herfra_id);
       form.setValue("description", userlab?.data[0]?.description);
       form.setValue("website", userlab?.data[0]?.website);
       form.setValue("postal_address", userlab?.data[0]?.postal_address);
-      form.setValue("logo", userlab?.data[0]?.logo);
     }
-  }, []);
+  }, [userlab?.data]);
 
   const onSubmit = async (data) => {
-    console.log(data);
-    if (data.logo instanceof FileList && data.logo.length > 0) {
-      data.logo = data.logo[0];
-    }
     let newData = {
       ...data,
       website:
@@ -63,13 +84,20 @@ const LaboratoryProfile = () => {
           ? `http://${data.website}`
           : data.website,
     };
+    console.log(newData.logo instanceof FileList);
+
+    if (newData.logo instanceof FileList && newData.logo.length > 0) {
+      newData.logo = newData.logo[0];
+    } else {
+      delete newData.logo;
+    }
+
     try {
       const formData = new FormData();
 
       for (const key in newData) {
         formData.append(key, newData[key]);
       }
-      console.log(newData);
       await axiosPrivate.patch(
         `laboratory/update/${userlab?.data[0]?.id}/`,
         formData,
@@ -96,21 +124,6 @@ const LaboratoryProfile = () => {
     }
   };
 
-  const filePickeRef = useRef();
-  useEffect(() => {
-    setImagefileUrl(userlab?.data[0]?.logo);
-  }, []);
-  const handleImageChange = (e) => {
-    const file = e.target.files;
-    if (file) {
-      setImagefile(file);
-      setImagefileUrl(URL.createObjectURL(file[0]));
-    }
-    form.clearErrors("logo");
-  };
-  useEffect(() => {
-    form.setValue("logo", imagefile);
-  }, [imagefile]);
   return (
     <Form {...form}>
       <form className="flex-1" onSubmit={form.handleSubmit(onSubmit)}>
@@ -126,12 +139,19 @@ const LaboratoryProfile = () => {
             Choose your logo
           </p>
           <img
-            src={imagefileUrl || LabLogo}
+            src={
+              imageFile && imageFile[0]
+                ? URL.createObjectURL(imageFile[0])
+                : userlab?.data[0]?.logo
+                  ? userlab?.data[0]?.logo
+                  : null
+            }
             alt="laboratory logo"
-            onClick={() => filePickeRef.current.click()}
+            onClick={() => filePickRef.current.click()}
             className="rounded-full w-44 h-44 object-cover max-h-36 max-w-36 cursor-pointer ring-2 ring-primary drop-shadow-xl shadow-lg"
           />
         </div>
+
         <div className="flex flex-col gap-4 mb-4 py-2">
           <FormBuilder
             name={"name"}
@@ -157,7 +177,7 @@ const LaboratoryProfile = () => {
           <FormBuilder name={"postal_address"} label={"Postal address"}>
             <Input type="text" />
           </FormBuilder>
-          <FormBuilder name={"hefra_id"} label={"HEFRA ID"}>
+          <FormBuilder name={"herfra_id"} label={"HEFRA ID"}>
             <Input type="text" />
           </FormBuilder>
           <FormBuilder
@@ -180,7 +200,7 @@ const LaboratoryProfile = () => {
                     {...fileref}
                     accept="image/*"
                     onChange={handleImageChange}
-                    ref={filePickeRef}
+                    ref={filePickRef}
                   />
                 </FormControl>
                 <FormMessage />

@@ -45,7 +45,7 @@ import UsersAnalytics from "@/components/analytics/users.analytics";
 export default function Analytics() {
   return (
     <div class="flex items-center justify-center min-h-screen bg-background text-foreground px-4">
-      <div class="text-center max-w-lg p-8 bg-card rounded-2xl shadow-xl transition-transform transform hover:scale-105 duration-500">
+      <div class="text-center max-w-lg p-8 bg-card rounded-2xl transition-transform transform hover:scale-105 duration-500">
         <h1 class="text-5xl font-extrabold mb-6 text-primary animate-pulse">
           Coming Soon
         </h1>
