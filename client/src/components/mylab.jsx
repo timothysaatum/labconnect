@@ -119,8 +119,22 @@ export default function MyLab() {
   const [selected, setSelected] = useState();
   const user = useSelector(selectCurrentUser);
   const selectedRows = useSelector(selectSelectedRows);
-  const [BranchSelected, setBranchSelected] = useState();
   const [selectedBranch, setSelectedBranch] = useState();
+  const [testQuerys, setQuerys] = useState({
+    status: "active",
+  });
+
+  const handleFilterChange = (query) => {
+    setQuerys((prevQueries) => {
+      const newQueries = { ...prevQueries };
+      if (newQueries.status === query) {
+        delete newQueries.status;
+      } else {
+        newQueries.status = query;
+      }
+      return newQueries;
+    });
+  };
 
   const testscolumnDef = useTestColumns(setSelectedTests);
 
@@ -148,13 +162,13 @@ export default function MyLab() {
     setSelectedBranch();
   }, [currentTab]);
 
-    const {
+  const {
     error: testError,
     isPending: testsLoading,
     data: tests,
     refetch: refetchTests,
-  } = useFetchLabTests(activeBranch);
-  
+  } = useFetchLabTests(activeBranch, testQuerys, setQuerys);
+
   useEffect(() => {
     if (selectedTests) {
       setSelected(
@@ -172,8 +186,6 @@ export default function MyLab() {
       setSelected(null);
     }
   }, [selectedTests, selectedBranch, tests, userbranches]);
-
-
 
   useEffect(() => {
     if (tests?.data) {
@@ -262,6 +274,9 @@ export default function MyLab() {
       filter: "test_name",
       setItems: setSelectedTests,
       selected: selectedTests,
+      QueryOptions: ["All", "active", "inactive"],
+      setQuerys: setQuerys,
+      querys: testQuerys,
     },
     {
       title: "Branches",
@@ -346,6 +361,10 @@ export default function MyLab() {
                           filter={tab.filter}
                           setSelected={tab.setItems}
                           selected={tab.selected}
+                          QueryOptions={tab.QueryOptions}
+                          handleFilterChange={handleFilterChange}
+                          setQuerys={tab.setQuerys}
+                          querys={tab.querys}
                         />
                       )}
                     </CardContent>

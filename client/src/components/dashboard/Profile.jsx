@@ -96,9 +96,6 @@ const SettingProfile = () => {
             <TabsTrigger value="laboratory-profile">
               <Link to={"?tab=laboratory-profile"}>Laboratory Profile</Link>
             </TabsTrigger>
-            <TabsTrigger value="branch-profile">
-              <Link to={"?tab=branch-profile"}>Branch Profile</Link>
-            </TabsTrigger>
           </TabsList>
           <TabsContent value="user-profile">
             <UserProfile />

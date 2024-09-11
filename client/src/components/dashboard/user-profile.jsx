@@ -33,17 +33,14 @@ const UserProfile = () => {
       last_name: "",
       email: "",
       phone_number: "",
-      profile: [
-        {
-          gender: "",
-          id_number: "",
-          digital_address: "",
-          emergency_contact: "",
-          bio: "",
-        },
-      ],
+      gender: "",
+      id_number: "",
+      digital_address: "",
+      emergency_contact: "",
+      bio: "",
     },
   });
+
   const onSubmit = async (data) => {
     try {
       const response = await axiosPrivate.patch(
@@ -106,29 +103,21 @@ const UserProfile = () => {
             <PhoneInput defaultCountry="GH" />
           </FormBuilder>
           <FormBuilder
-            name={`profile.${[0]}.emergency_contact`}
+            name={`emergency_contact`}
             label={"Emergency contact"}
             message
           >
             <PhoneInput defaultCountry="GH" />
           </FormBuilder>
-          <SelectComponent
-            items={gender}
-            name={`profile.${[0]}.gender`}
-            placeholder={"choose your gender"}
-            control={form.control}
-            label={"Gender"}
-            message
-          />
           <FormBuilder
-            name={`profile.${[0]}.id_number`}
-            label={"Id number"}
+            name={`id_number`}
+            label={"Ghana Card number"}
             message
           >
             <Input type="text" placeholder="Id number" />
           </FormBuilder>
           <FormBuilder
-            name={`profile.${[0]}.digital_address`}
+            name={`digital_address`}
             label={"Digital aadress"}
             message
           >

@@ -42,24 +42,37 @@ const multiSelectSchema = z.object({
 });
 
 //send sample by hospital schema
+
+
 export const hospitalRequestSchema = z.object({
-  name_of_patient: z.string().min(1, "Patient name is required"),
+  patient_name: z.string().min(1, "Patient name is required"),
   patient_age: z.date({
     required_error: "Date of birth is required",
     invalid_type_error: "Enter a valid date format YYY-MM-DD",
   }),
   patient_sex: z.string().min(1, "Sex is required"),
-  sample_type: z.string().min(1, "Sample type is required"),
-  hospital: z.number({
-    required_error: "hospital is required",
-    invalid_type_error: "enter valid data",
-  }),
-  lab: z.string().min(1, "laboratory is required"),
-  tests: z.array(multiSelectSchema).min(1),
+  referring_facility: z.string().min(1, "laboratory is required"),
+  to_laboratory: z.string().min(1, "laboratory is required"),
+  tests: z.array(multiSelectSchema).min(1, "Choose at least one test"),
+  priority: z.string().min(1, "Choose test priority"),
+  payment_mode: z.string().min(1, "Choose a payment mode"),
+  payment_status: z.string(),
   brief_description: z.string(),
-  attachment: z.instanceof(FileList),
+  shareWith: z.string().optional(),
+  attachment: z
+    .instanceof(FileList)
+    .nullable()
+    .optional()
+    .refine(
+      (files) =>
+        files === null ||
+        files.length === 0 ||
+        files[0].size <= 4 * 1024 * 1024,
+      {
+        message: "The file must be less than 4MB",
+      }
+    ),
 });
-
 //send sample by laboratory schema
 export const labRequestSchema = z.object({
   patient_name: z.string().min(1, "Patient name is required"),

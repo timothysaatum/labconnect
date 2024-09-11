@@ -261,7 +261,6 @@ export const useCreateLab = (form, setStep, fieldToStep) => {
   const onCreateLab = useCallback(
     async (data) => {
       try {
-        console.log(data);
         let newData = {
           ...data,
           website:

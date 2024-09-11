@@ -18,11 +18,6 @@ export const useGetSideLinks = (account_type) => {
       name: "Overview",
     },
     {
-      icon: <Microscope className="h-5 w-5" />,
-      link: "my-laboratory",
-      name: "My Laboratory",
-    },
-    {
       icon: <Truck className="h-5 w-5" />,
       link: "send-sample",
       name: "Send sample",
@@ -44,17 +39,17 @@ export const useGetSideLinks = (account_type) => {
     },
   ];
 
-  // if (account_type === "Laboratory") {
-  //   return [
-  //     ...commonLinks.slice(0, 1), // get the first two elements of commonLinks
-  //     {
-  //       icon: <Microscope className="h-5 w-5" />,
-  //       link: "my-laboratory",
-  //       name: "My Laboratory",
-  //     },
-  //     ...commonLinks.slice(1), // get the rest of the elements of commonLinks
-  //   ];
-  // }
+  if (account_type === "Laboratory") {
+    return [
+      ...commonLinks.slice(0, 1), // get the first two elements of commonLinks
+      {
+        icon: <Microscope className="h-5 w-5" />,
+        link: "my-laboratory",
+        name: "My Laboratory",
+      },
+      ...commonLinks.slice(1), // get the rest of the elements of commonLinks
+    ];
+  }
 
   // handle case where account type is neither 'type1' nor 'type2'
   return commonLinks;
@@ -95,18 +90,18 @@ export const useGetSettingsSideLinks = () => {
       name: "Account",
       link: "account",
     },
-    {
-      name: "Preferences",
-      link: "preferences",
-    },
-    {
-      name: "Security",
-      link: "security",
-    },
-    {
-      name: "Notifications",
-      link: "notifications",
-    },
+    // {
+    //   name: "Preferences",
+    //   link: "preferences",
+    // },
+    // {
+    //   name: "Security",
+    //   link: "security",
+    // },
+    // {
+    //   name: "Notifications",
+    //   link: "notifications",
+    // },
   ];
   return SettingsSideLinks;
 };

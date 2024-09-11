@@ -223,7 +223,7 @@ export default function Dashboard() {
               </nav>
             </SheetContent>
           </Sheet>
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-4 items-center">
             {userbranches?.data?.length === 0 ? (
               user?.is_admin && <AddBranch />
             ) : (
@@ -267,31 +267,10 @@ export default function Dashboard() {
           </div>
         </header>
         {user?.account_type === "Laboratory" ? (
-          <header className="flex justify-between items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
-            <Breadcrumb className="">
-              <BreadcrumbList>
-                {pathnames.map((name, index) => {
-                  const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
-                  const isLast = index === pathnames.length - 1;
-                  return (
-                    <React.Fragment key={name}>
-                      {index !== 0 && <BreadcrumbSeparator />}
-                      <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                          {isLast ? (
-                            <span className="cursor-default">{name}</span>
-                          ) : (
-                            <Link to={routeTo}>{name}</Link>
-                          )}
-                        </BreadcrumbLink>
-                      </BreadcrumbItem>
-                    </React.Fragment>
-                  );
-                })}
-              </BreadcrumbList>
-            </Breadcrumb>
-            <div className="flex justify-around items-center gap-4">
-              <div className="relative ">
+          <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
+            <div className="flex justify-around items-center gap-6">
+              {/* maybe later or never */}
+              {/* <div className="relative ">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
@@ -299,7 +278,7 @@ export default function Dashboard() {
                   placeholder={`Search Laboratories ...`}
                   className="w-full h-10 rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10 max-w-[350px]"
                 />
-              </div>
+              </div> */}
               <div>
                 {userbranches?.data?.length === 0 ? (
                   user?.is_admin && <AddBranch />
@@ -311,7 +290,6 @@ export default function Dashboard() {
                         variant="ghost"
                         className="flex items-center justify-between gap-2 px-2 text-sm max-sm:w-full"
                       >
-                        <span className="text-muted-foreground">Active:</span>
                         {branchesError
                           ? "Error loading branches"
                           : activeBranch}
@@ -350,29 +328,8 @@ export default function Dashboard() {
             </div>
           </header>
         ) : (
-          <header className="flex justify-between items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
-            <Breadcrumb className="">
-              <BreadcrumbList>
-                {pathnames.map((name, index) => {
-                  const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
-                  const isLast = index === pathnames.length - 1;
-                  return (
-                    <React.Fragment key={name}>
-                      {index !== 0 && <BreadcrumbSeparator />}
-                      <BreadcrumbItem>
-                        <BreadcrumbLink asChild>
-                          {isLast ? (
-                            <span className="cursor-default">{name}</span>
-                          ) : (
-                            <Link to={routeTo}>{name}</Link>
-                          )}
-                        </BreadcrumbLink>
-                      </BreadcrumbItem>
-                    </React.Fragment>
-                  );
-                })}
-              </BreadcrumbList>
-            </Breadcrumb>
+          <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden ">
+            
             <div className="flex justify-around items-center gap-4">
               <NotiicationsPopover
                 notifs={notifs}

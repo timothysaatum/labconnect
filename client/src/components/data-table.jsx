@@ -103,6 +103,7 @@ export function DataTable({
     table.setPageSize(rowCount);
     table.setPageIndex(0);
   }, [rowCount]);
+  console.log(title === "Requests");
 
   return (
     <>
@@ -122,12 +123,12 @@ export function DataTable({
             />
           </div>
         </div>
-        {title === "Requests" && (
+        {title === "Requests" ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto text-xs">
                 <SlidersHorizontal className="w-4 h-4 mr-2" />
-                {QueryOptions?.find((query) => query === querys.status) ||
+                {QueryOptions?.find((query) => query === querys?.status) ||
                   "Filter"}
               </Button>
             </DropdownMenuTrigger>
@@ -135,7 +136,7 @@ export function DataTable({
               {QueryOptions?.map((query) => (
                 <DropdownMenuCheckboxItem
                   key={query}
-                  checked={querys.status === query}
+                  checked={querys?.status === query}
                   onCheckedChange={() => handleFilterChange(query)}
                 >
                   {query}
@@ -143,7 +144,28 @@ export function DataTable({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        )}
+        ) : title === "Tests" ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto text-xs">
+                <SlidersHorizontal className="w-4 h-4 mr-2" />
+                {QueryOptions?.find((query) => query === querys?.status) ||
+                  "Filter"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {QueryOptions?.map((query) => (
+                <DropdownMenuCheckboxItem
+                  key={query}
+                  checked={querys?.status === query}
+                  onCheckedChange={() => handleFilterChange(query)}
+                >
+                  {query}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto text-xs">
