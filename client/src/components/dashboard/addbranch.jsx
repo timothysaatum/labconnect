@@ -80,7 +80,7 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
           placeholder={"Select Branch Manager"}
           className="flex-1"
           description={
-            "Choose from Current managers or Send an invite to new manager after adding branch"
+            "Choose from Current managers or invite new manager after adding branch"
           }
           empty={"This laboratory has no other users."}
         />
@@ -88,13 +88,13 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
           name={"customname"}
           label={"Custom branch name (Optional)"}
           description={
-            "if you do not provide a branch name, a default name will be used (laboratory name + town)"
+            "Defaults to (laboratory name + town)"
           }
         >
-          <Input type="text" placeholder="custom branch name" />
+          <Input type="text" placeholder="Custom Branch Name" />
         </FormBuilder>
         <FormBuilder name={"email"} label={"Branch Email"}>
-          <Input type="email" placeholder="branch email" />
+          <Input type="email" placeholder="Branch Email" />
         </FormBuilder>
         <FormBuilder name={"phone"} label={"Branch Contact"}>
           <PhoneInput defaultCountry="GH" placeholder="Branch Contact" />
@@ -106,10 +106,10 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
           placeholder={"Choose Branch Region"}
         />
         <FormBuilder name={"town"} label={"City/Town"}>
-          <Input type="text" placeholder="branch location" />
+          <Input type="text" placeholder="Branch Location" />
         </FormBuilder>
         <FormBuilder name={"postal_address"} label={"Postal Address"}>
-          <Input type="text" placeholder="Postal address" />
+          <Input type="text" placeholder="Postal Address" />
         </FormBuilder>
         <FormBuilder name={"digital_address"} label={"Digital Address"}>
           <Input type="text" placeholder="Digital Address" />

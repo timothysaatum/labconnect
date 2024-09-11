@@ -15,11 +15,11 @@ const HospitalName = ({ form }) => {
       <div className="flex flex-col gap-4 ">
         <FormBuilder
           name={"name"}
-          label={"What is the name of your Hospital?"}
+          label={"Name of your Hospital?"}
           className="flex flex-col gap-3"
           message={true}
         >
-          <Input type="text" placeholder="hospital name" />
+          <Input type="text" placeholder="Hospital Name" />
         </FormBuilder>
         <SelectComponent
           name={"hospital_type"}
@@ -35,7 +35,7 @@ const HospitalName = ({ form }) => {
           className="flex flex-col gap-3"
           message={true}
         >
-          <Input type="email" placeholder="hospital email" />
+          <Input type="email" placeholder="Hospital Email" />
         </FormBuilder>
         <FormBuilder
           name={"phone"}
@@ -43,7 +43,7 @@ const HospitalName = ({ form }) => {
           className="flex flex-col gap-3"
           message={true}
         >
-          <PhoneInput defaultCountry="GH" placeholder="hospital Contact" />
+          <PhoneInput defaultCountry="GH" placeholder="Hospital Contact" />
         </FormBuilder>
       </div>
     </BlurFade>

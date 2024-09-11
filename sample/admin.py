@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Sample, Notification
+from .models import Sample, Notification, SampleTrackingHistory
 
 
 class SampleAdmin(admin.ModelAdmin):
@@ -14,13 +14,13 @@ class SampleAdmin(admin.ModelAdmin):
 		'to_laboratory', 
 		'sample_status',
 		'rejection_reason',
-		'is_marked_sent',
+		# 'is_marked_sent',
 		'priority'
 	)
 	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
 	list_editable = (
 		'sample_status',
-		'is_marked_sent' 
+		# 'is_marked_sent' 
 	)
 
 class NotificationAdmin(admin.ModelAdmin):
@@ -31,6 +31,10 @@ class NotificationAdmin(admin.ModelAdmin):
 		'date_created',
 		'date_modified'
 	)
+
+@admin.register(SampleTrackingHistory)
+class SampleTrackingHistoryAdmin(admin.ModelAdmin):
+    list_display = ('sample', 'status', 'location', 'updated_at')
 
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(Notification, NotificationAdmin)

@@ -43,7 +43,8 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sample_status',
 			'delivery',
 			'priority',
-			'is_marked_sent',
+			# 'request_status'
+			# 'is_marked_sent',
 			'date_modified',
 			'date_created'
 		)

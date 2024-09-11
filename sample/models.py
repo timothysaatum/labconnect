@@ -13,15 +13,37 @@ PATIENT_SEX = [
 	('Male', 'Male'),
 	('Female', 'Female')
 ]
+
+PHLEBOTOMIST_REQUIREMENTS = [
+	('Yes', 'Yes'),
+	('No', 'No')
+]
+
+REPORT_DELIVERY_MODE = [
+	('hard_copy', 'Hard Copy'),
+	('soft_copy', 'Soft Copy')
+]
+
 REFERRING_FACILITY_TYPE = [
 	('Laboratory', 'Laboratory'),
 	('Hospital', 'Hospital')
 ]
+
 SAMPLE_STATUS = [
 	('Pending', 'Pending'),
 	('Received', 'Received'),
 	('Processed', 'Processed'),
 	('Rejected', 'Rejected')
+]
+
+
+REQUEST_STATUS = [
+
+	('Request Made', 'Request Made'),
+	('Sample Received by Delivery', 'Sample Received by Delivery'),
+	('Request Completed', 'Request Completed'),
+	('Request Accepted', 'Request Accepted')
+
 ]
 
 PRIORITIES = [
@@ -57,7 +79,7 @@ class Sample(models.Model):
 	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
 	delivery = models.ForeignKey(
 			Delivery,
-			on_delete=models.CASCADE,
+			on_delete=models.SET_NULL,
 			null=True,
 			blank=True
 		)
@@ -69,8 +91,10 @@ class Sample(models.Model):
 		blank=True,
 		null=True
 	)
-	is_marked_sent = models.BooleanField(default=False)
-	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default=1)
+	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending')
+	requires_phlebotomist = models.CharField(max_length=10, choices=PHLEBOTOMIST_REQUIREMENTS)
+	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS)
+	report_delivery_mode = models.CharField(max_length=55, choices=REPORT_DELIVERY_MODE)
 	is_rejected = models.BooleanField(default=False)
 	rejection_reason = models.TextField(blank=True, null=True)
 	priority = models.CharField(max_length=50, choices=PRIORITIES)
@@ -83,6 +107,17 @@ class Sample(models.Model):
 	def delivery_phone(self) -> str:
 
 		return Delivery.objects.get(id=self.delivery.id).phone if self.delivery else None
+
+
+class SampleTrackingHistory(models.Model):
+
+	sample = models.ForeignKey(Sample, related_name="tracking_history", on_delete=models.CASCADE)
+	status = models.CharField(max_length=50, choices=REQUEST_STATUS)
+	location = models.CharField(max_length=255, null=True, blank=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	
+	def __str__(self) -> str:
+		return self.status
 
 
 class Notification(models.Model):
