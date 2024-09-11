@@ -16,8 +16,8 @@ class UserCreationSerializer(serializers.ModelSerializer):
 
 	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
 	password_confirmation = serializers.CharField(max_length=68, min_length=8, write_only=True)
-	id_number = serializers.CharField(max_length=10, required=False)
-	digital_address = serializers.CharField(max_length=10, required=False)
+	id_number = serializers.CharField(max_length=20, required=False)
+	digital_address = serializers.CharField(max_length=20, required=False)
 	is_admin = serializers.CharField(max_length=10, read_only=True)
 	is_staff = serializers.CharField(max_length=10, read_only=True)
 	is_active = serializers.CharField(max_length=10, read_only=True)

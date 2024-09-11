@@ -260,7 +260,7 @@ export default function LaboratoryDashboardOverview() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between p-4">
                   <CardTitle className="text-xs font-medium tracking-wide">
-                    proccessed today:
+                    Proccessed Today:
                   </CardTitle>
                   <div className="text-sm font-bold">+573</div>
                 </CardHeader>
@@ -268,7 +268,7 @@ export default function LaboratoryDashboardOverview() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between p-4">
                   <CardTitle className="text-xs font-medium tracking-wide">
-                    samples rejected:
+                    Samples Rejected:
                   </CardTitle>
                   <div className="text-sm font-bold">+573</div>
                 </CardHeader>

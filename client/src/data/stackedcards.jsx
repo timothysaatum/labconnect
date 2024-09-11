@@ -39,7 +39,7 @@ export const stackedCards = [
       <Card>
         <CardHeader className="flex flex-row items-center justify-between p-4">
           <CardTitle className="text-xs font-medium tracking-wide">
-            proccessed today:
+            Proccessed Today:
           </CardTitle>
           <div className="text-sm font-bold">+573</div>
         </CardHeader>
@@ -54,7 +54,7 @@ export const stackedCards = [
       <Card>
         <CardHeader className="flex flex-row items-center justify-between p-4">
           <CardTitle className="text-xs font-medium tracking-wide">
-            rejected today:
+            Rejected Today:
           </CardTitle>
           <div className="text-sm font-bold">3</div>
         </CardHeader>

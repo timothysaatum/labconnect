@@ -328,7 +328,7 @@ class TestListView(generics.ListAPIView):
 		return context
 
 	def get_queryset(self):
-		test_status = self.request.GET.get('test_status')
+		test_status = self.request.GET.get('status')
 		if test_status:
 			return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
