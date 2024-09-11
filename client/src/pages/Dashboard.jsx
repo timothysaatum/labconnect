@@ -106,7 +106,7 @@ export default function Dashboard() {
       <Helmet>
         <title>{title?.name}</title>
       </Helmet>
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
             to="/dashboard?tab=overview"
@@ -173,7 +173,7 @@ export default function Dashboard() {
       </aside>
       {user?.account_type === "Laboratory" &&
         userbranches?.data?.length === 0 && (
-          <div className="bg-primary z-50 text-background sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
+          <div className="bg-primary z-20 text-background sm:pl-14 text-center py-2 shadow-md sticky top-0 left-0">
             Your Laboratory has no branches. you need to add at least one branch
           </div>
         )}
