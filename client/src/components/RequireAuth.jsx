@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useFetchUserLab } from "@/api/queries";
 import { useFetchUserHospital } from "../api/queries";
 import Loading from "./loading";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function RequireAuth() {
   const token = useSelector(selectCurrenttoken);
@@ -92,52 +92,77 @@ export const CanGetStarted = () => {
   // If everything is fine, allow access to the content
   return <Outlet />;
 };
-
-
 export const BlockGettingStarted = () => {
   const {
     isError: labError,
     data: userlab,
-    isLoading: labLoading,
+    isFetching: labLoading,
   } = useFetchUserLab();
+  console.log(userlab);
   const {
     isError: hospitalError,
     data: userhospital,
-    isLoading: hospitalLoading,
+    isFetching: hospitalLoading,
   } = useFetchUserHospital();
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useSelector(selectCurrentUser);
+  const [proceed, setProceed] = useState(false); // Always initialize the state hook
 
+  // Ensure hooks are always called in the same order by restructuring the logic
   useEffect(() => {
-    if (labLoading || hospitalLoading) return;
-
-    if (labError || hospitalError) {
-      toast.error("An error has occurred. You need to sign in again");
-      navigate("/sign-in", { state: { from: location }, replace: true });
-      return;
-    }
-
-    const FacilityCreated =
-      userlab?.data.length > 0 || userhospital?.data?.length > 0;
-
-    if (FacilityCreated) {
-      toast.info("Unauthorized", {
-        description: "You have already created a laboratory",
-      });
-      navigate("/dashboard");
+    if (user?.account_type === "Hospital") {
+      // Check if hospital data has been loaded
+      if (!hospitalLoading && userhospital?.data?.length === 0) {
+        setProceed(false);
+        navigate("/getting-started-hospital", {
+          state: { from: location },
+          replace: true,
+        });
+      } else {
+        setProceed(true);
+      }
+    } else if (user?.account_type === "Laboratory") {
+      if (!labLoading && user?.is_branch_manager) {
+        setProceed(true);
+      } else if (!labLoading && userlab?.data?.length === 0) {
+        setProceed(false);
+        navigate("/getting-started", {
+          state: { from: location },
+          replace: true,
+        });
+      } else {
+        setProceed(true);
+      }
     }
   }, [
-    labLoading,
-    hospitalLoading,
-    labError,
-    hospitalError,
+    user,
     userlab,
     userhospital,
-    navigate,
+    labLoading,
+    hospitalLoading,
     location,
+    navigate,
   ]);
 
-  if (labLoading || hospitalLoading) return <Loading />;
+  // Handle loading states for both lab and hospital
+  if (user?.account_type === "Hospital" && hospitalLoading) {
+    return <Loading />;
+  }
+  if (user?.account_type === "Laboratory" && labLoading) {
+    return <Loading />;
+  }
 
-  return <Navigate to="/dashboard" state={{ from: location }} replace />;
+  // Handle errors
+  if (labError) {
+    toast.error("An error has occurred while fetching lab data");
+    return null;
+  }
+  if (hospitalError) {
+    toast.error("An error has occurred while fetching hospital data");
+    return null;
+  }
+
+  // If proceed is true, allow access
+  return proceed ? <Outlet /> : null;
 };
