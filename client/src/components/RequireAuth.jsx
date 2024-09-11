@@ -31,40 +31,68 @@ export default function RequireAuth() {
 
 export const CanGetStarted = () => {
   const user = useSelector(selectCurrentUser);
-  const { isError, data: userlab, isPending } = useFetchUserLab();
   const {
+    isError: labError,
+    data: userlab,
+    isPending: labLoading,
+  } = useFetchUserLab();
+  const {
+    isError: hospitalError,
     data: userhospital,
-    isError: hospitalerror,
-    isLoading,
+    isLoading: hospitalLoading,
   } = useFetchUserHospital();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  if (user.account_type === "Hospital") {
-    if (isLoading) return <Loading />;
-    return userhospital?.data.length > 0 ? (
-      <Outlet />
-    ) : (
-      <Navigate
-        to="/getting-started-hospital"
-        state={{ from: location }}
-        replace
-      />
-    );
-  }
-  if (isPending) return <Loading />;
-  if (isError) {
-    return toast.error("An error has occured");
-  }
-  if (user?.is_branch_manager) {
-    return <Outlet />;
-  }
+  useEffect(() => {
+    // If the user is of type Hospital
+    if (user?.account_type === "Hospital") {
+      if (!hospitalLoading && userhospital?.data?.length === 0) {
+        navigate("/getting-started-hospital", {
+          state: { from: location },
+          replace: true,
+        });
+      }
+    }
 
-  return userlab?.data.length > 0 ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/getting-started" state={{ from: location }} replace />
-  );
+    // If the user is a laboratory user and not a branch manager
+    if (
+      !user?.is_branch_manager &&
+      !labLoading &&
+      userlab?.data?.length === 0
+    ) {
+      navigate("/getting-started", {
+        state: { from: location },
+        replace: true,
+      });
+    }
+
+    // Error handling for both lab and hospital
+    if (labError) {
+      toast.error("An error has occurred while fetching lab data");
+    }
+    if (hospitalError) {
+      toast.error("An error has occurred while fetching hospital data");
+    }
+  }, [
+    userlab,
+    userhospital,
+    labError,
+    hospitalError,
+    labLoading,
+    hospitalLoading,
+    user,
+    navigate,
+    location,
+  ]);
+
+  // Loading states
+  if (labLoading || hospitalLoading) return <Loading />;
+
+  // If everything is fine, allow access to the content
+  return <Outlet />;
 };
+
 
 export const BlockGettingStarted = () => {
   const {
