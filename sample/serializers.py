@@ -86,16 +86,16 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 class CountObjectsSerializer(serializers.Serializer):
 
-	samples_received = serializers.IntegerField(read_only=True)
-	samples_sent = serializers.IntegerField(read_only=True)
-	samples_rejected = serializers.IntegerField(read_only=True)
-	samples_processed = serializers.IntegerField(read_only=True)
+	pending = serializers.IntegerField(read_only=True)
+	received = serializers.IntegerField(read_only=True)
+	rejected = serializers.IntegerField(read_only=True)
+	processed = serializers.IntegerField(read_only=True)
 
 	class Meta:
 
 		fields = (
-			'samples_received',
-			'samples_sent',
-			'samples_rejected',
-			'samples_processed'
+			'pending',
+			'received',
+			'rejected',
+			'processed'
 		)

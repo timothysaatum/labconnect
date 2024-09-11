@@ -24,10 +24,13 @@ from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
 import json
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
-from .tasks import copy_test_to_branch
+from .tasks import copy_test_to_branch, get_sample_counts_for_facility
 import logging
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
+from celery.result import AsyncResult
+from rest_framework.views import APIView
+from sample.serializers import CountObjectsSerializer
 
 
 
@@ -328,7 +331,7 @@ class TestListView(generics.ListAPIView):
 		
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk'))
+			Q(branch__laboratory__id=self.kwargs.get('pk'))#, branch_test__test_status='active'
 		).order_by('-date_added')
 
 
@@ -692,3 +695,37 @@ class CopyTests(generics.CreateAPIView):
 		task = copy_test_to_branch.delay(test_ids, target_branch_id)
 
 		return Response({'task_id': task.id}, status=status.HTTP_202_ACCEPTED)
+	
+
+
+class CountFacilityObjects(APIView):
+	
+	def get(self, request, *args, **kwargs):
+
+		facility_id = self.kwargs.get('facility_id')
+
+		counts = {
+
+			'pending': Sample.objects.filter(referring_facility=facility_id, sample_status='Pending').count(),
+			'process': Sample.objects.filter(referring_facility=facility_id, sample_status='Processed').count(),
+			'rejected': Sample.objects.filter(referring_facility=facility_id, sample_status='Rejected').count(),
+			'received': Sample.objects.filter(referring_facility=facility_id, sample_status='Received').count()
+
+			}
+
+		return Response(counts, status=status.HTTP_200_OK)
+
+
+# class TaskStatusView(generics.GenericAPIView):
+#     def get(self, request, *args, **kwargs):
+#         task_id = self.kwargs.get('task_id')
+#         async_result = AsyncResult(task_id)
+
+#         if async_result.ready():
+#             try:
+#                 counts = async_result.get(timeout=10)
+#                 return Response(counts)
+#             except Exception as e:
+#                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         else:
+#             return Response({"status": "Processing"}, status=status.HTTP_202_ACCEPTED)
