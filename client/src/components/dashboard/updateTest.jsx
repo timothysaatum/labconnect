@@ -204,7 +204,7 @@ const TestForm = ({ setOpen, form, test }) => {
             </span>
           ) : (
             <span className="flex items-center">
-              Add Test <Plus className="w-4 h-4 ml-2" />
+              Update Test <Plus className="w-4 h-4 ml-2" />
             </span>
           )}
         </Button>
@@ -271,7 +271,7 @@ const UpdateTest = ({ branch, test }) => {
               <div>
                 <DialogTitle>Update {test.test_name}</DialogTitle>
                 <DialogDescription>
-                  you can make changes to the current test
+                  You can make changes to the current test
                 </DialogDescription>
               </div>
             </DialogHeader>

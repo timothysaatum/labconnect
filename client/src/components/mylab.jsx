@@ -253,7 +253,7 @@ export default function MyLab() {
   const tabContent = [
     {
       title: "Tests",
-      description: "Manage all tests run in this laboratory here.",
+      description: "Showing Tests for Active Branch",
       data: labtests,
       columnDef: testscolumnDef,
       loading: testsLoading,
@@ -266,7 +266,7 @@ export default function MyLab() {
     {
       title: "Branches",
       description:
-        "All Branches can be managed here you can create,delete and update branches",
+        "Viewing branches for this account",
       data: branches,
       columnDef: branchcolumnDef,
       refetch: refreshBranches,

@@ -297,7 +297,7 @@ export default function LaboratoryDashboardOverview() {
                     <CardDescription>
                       {currentTab === "Sent Samples"
                         ? "Samples you have sent to other labs"
-                        : "Samples you have received "}
+                        : "Working List(50 Samples Pending Processing)"}
                     </CardDescription>
                   </div>
                   {receivedRequests?.data.length < 1 && querys.status ? (
