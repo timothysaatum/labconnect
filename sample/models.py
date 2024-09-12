@@ -43,6 +43,7 @@ REQUEST_STATUS = [
 	('Request Made', 'Request Made'),
 	('Sample Received by Delivery', 'Sample Received by Delivery'),
 	('Sample Received by Lab', 'Sample Received by Lab'),
+	('Testing Sample', 'Testing Sample'),
 	('Request Completed', 'Request Completed'),
 	('Request Accepted', 'Request Accepted')
 
