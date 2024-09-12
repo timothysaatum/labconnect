@@ -530,6 +530,9 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 		# sample.tests.clear()
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
+		if self.request.data['request_status']:
+			pass
+
 		tests = query_dict.getlist('tests')
 		sample.tests.add(*tests)
 

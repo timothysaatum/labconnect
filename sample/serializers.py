@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from sample.models import Sample, Notification
+from sample.models import Sample, Notification, SampleTrackingHistory
 from labs.models import Test
 from modelmixins.models import Facility
 
@@ -82,6 +82,24 @@ class NotificationSerializer(serializers.ModelSerializer):
 			'is_hidden',
 			'date_created',
 			'date_modified'
+		)
+
+
+class SampleTrackingSerializer(serializers.ModelSerializer):
+
+	sample = serializers.PrimaryKeyRelatedField(queryset=Sample.objects.all(), required=False)
+	location = serializers.CharField(required=False)	
+
+	class Meta:
+
+		model = SampleTrackingHistory
+
+		fields = (
+			'id', 
+			'sample', 
+			'status',
+			'location',
+			'updated_at'
 		)
 
 

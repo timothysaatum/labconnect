@@ -3,6 +3,7 @@ from labs.models import Branch, Test
 from modelmixins.models import Facility
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
+import uuid
 
 
 client = get_user_model()
@@ -111,6 +112,7 @@ class Sample(models.Model):
 
 class SampleTrackingHistory(models.Model):
 
+	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	sample = models.ForeignKey(Sample, related_name="tracking_history", on_delete=models.CASCADE)
 	status = models.CharField(max_length=50, choices=REQUEST_STATUS)
 	location = models.CharField(max_length=255, null=True, blank=True)

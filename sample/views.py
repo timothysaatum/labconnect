@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
-from .serializers import NotificationSerializer, CountObjectsSerializer, SampleSerializer
-from .models import Notification, Sample
+from .serializers import NotificationSerializer, CountObjectsSerializer, SampleSerializer, SampleTrackingSerializer
+from .models import Notification, Sample, SampleTrackingHistory
 import json
 from django.http import QueryDict
 from user.models import Client
@@ -113,3 +113,28 @@ class CountObjects(generics.GenericAPIView):
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         print(serializer.data)
+
+
+class TrackSampleState(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SampleTrackingSerializer
+
+    def get_object(self, *args, **kwargs):
+
+        queryset = SampleTrackingHistory.objects.all()
+        obj = generics.get_object_or_404(queryset, id=self.kwargs.get('sample_id'))
+
+        return obj
+
+    def patch(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        sample = instance.sample
+        print(sample.request_status)
+        sample.request_status = serializer.validated_data['status']
+        sample.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
