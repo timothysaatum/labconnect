@@ -115,26 +115,41 @@ class CountObjects(generics.GenericAPIView):
         print(serializer.data)
 
 
-class TrackSampleState(generics.UpdateAPIView):
+class TrackSampleState(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
-    def get_object(self, *args, **kwargs):
+    # def get_object(self, *args, **kwargs):
 
-        queryset = SampleTrackingHistory.objects.all()
-        obj = generics.get_object_or_404(queryset, id=self.kwargs.get('sample_id'))
+    #     queryset = SampleTrackingHistory.objects.all()
+    #     obj = generics.get_object_or_404(queryset, id=self.kwargs.get('sample_id'))
 
-        return obj
+    #     return obj
 
-    def patch(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        sample = instance.sample
-        print(sample.request_status)
+    # def patch(self, request, *args, **kwargs):
+
+    #     partial = kwargs.pop('partial', False)
+    #     instance = self.get_object()
+    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_update(serializer)
+
+    #     sample = instance.sample
+    #     sample.request_status = serializer.validated_data['status']
+    #     sample.save()
+
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    def post(self, request, format=None):
+        
+        return self.create(request)
+    
+    def perform_create(self, serializer):
+        tracking_history = serializer.save()
+
+        sample = tracking_history.sample
         sample.request_status = serializer.validated_data['status']
         sample.save()
-
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    
+

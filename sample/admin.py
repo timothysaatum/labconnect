@@ -5,22 +5,16 @@ from .models import Sample, Notification, SampleTrackingHistory
 class SampleAdmin(admin.ModelAdmin):
 	list_display = (
 		'patient_name',
-		'patient_age',
-		# 'sample_type', 
-		'sender_phone', 
 		'referring_facility',
-		'facility_type',
-		'attachment',
 		'to_laboratory', 
 		'sample_status',
-		'rejection_reason',
-		# 'is_marked_sent',
+		'request_status',
 		'priority'
 	)
 	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
 	list_editable = (
 		'sample_status',
-		# 'is_marked_sent' 
+		'request_status' 
 	)
 
 class NotificationAdmin(admin.ModelAdmin):
