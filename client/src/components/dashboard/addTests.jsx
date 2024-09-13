@@ -227,14 +227,14 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
             name="unit"
             render={({ field }) => (
               <FormItem className="col-span-2">
-                <FormLabel>unit</FormLabel>
+                <FormLabel>Unit</FormLabel>
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select unit" />
+                      <SelectValue placeholder="Select Unit" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="minutes">Minutes</SelectItem>

@@ -42,9 +42,9 @@ function EmptyLab({ title, user }) {
       <div className="flex flex-col items-center py-16 text-center ">
         {title === "Tests" ? (
           <>
-            <h3 className="text-xl font-semibold ">This Branch has no Tests</h3>
+            <h3 className="text-xl font-semibold ">Active Branch has no Tests</h3>
             <p className="text-sm text-muted-foreground">
-              you will see tests added to branches here
+              No Tests available in Active Branch
             </p>
             <div className="mt-4">
               <AddTest />
@@ -89,7 +89,7 @@ function ErrorLab({ refetch, error }) {
             : "oops something went wrong"}
         </h3>
         <p className="text-sm text-destructive">
-          verify your internet connection and retry.
+          Verify your internet connection and retry.
         </p>
         <Button
           variant="outline"
@@ -265,7 +265,7 @@ export default function MyLab() {
   const tabContent = [
     {
       title: "Tests",
-      description: "Manage all tests run in this laboratory here.",
+      description: "Showing Tests for Active Branch",
       data: labtests,
       columnDef: testscolumnDef,
       loading: testsLoading,
@@ -281,7 +281,7 @@ export default function MyLab() {
     {
       title: "Branches",
       description:
-        "All Branches can be managed here you can create,delete and update branches",
+        "Viewing branches for this account",
       data: branches,
       columnDef: branchcolumnDef,
       refetch: refreshBranches,

@@ -23,7 +23,7 @@ const HospitalLocation = ({ form }) => {
           className="flex flex-col gap-3"
           message={true}
         >
-          <Input type="text" placeholder="hospital email" />
+          <Input type="text" placeholder="Town of Location" />
         </FormBuilder>
         <FormBuilder
           name={"digital_address"}
@@ -31,7 +31,7 @@ const HospitalLocation = ({ form }) => {
           className="flex flex-col gap-3"
           message={true}
         >
-          <Input type="text" placeholder="digital address" />
+          <Input type="text" placeholder="Digital Address" />
         </FormBuilder>
         <FormBuilder
           name={"postal_address"}
@@ -39,7 +39,7 @@ const HospitalLocation = ({ form }) => {
           className="flex flex-col gap-3"
           message={true}
         >
-          <Input type="text" placeholder="postal address" />
+          <Input type="text" placeholder="Postal Address" />
         </FormBuilder>
       </div>
     </BlurFade>

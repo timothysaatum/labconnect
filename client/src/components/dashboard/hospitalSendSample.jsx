@@ -331,7 +331,7 @@ export default function HospitalSendSample() {
                     <CardHeader className="max-sm:px-2">
                       <CardTitle className="text-lg">Patient Details</CardTitle>
                       <CardDescription>
-                        please enter the correct patient details here
+                        Please enter the correct patient details here
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="max-sm:px-2">
@@ -342,7 +342,7 @@ export default function HospitalSendSample() {
                             label={"Patient Name"}
                             className="grid gap-3"
                           >
-                            <Input placeholder="patient name" />
+                            <Input placeholder="Patient Name" />
                           </FormBuilder>
                         </div>
 
@@ -453,7 +453,7 @@ export default function HospitalSendSample() {
                                   options={testOptions}
                                   title="tests"
                                   detailedContent={tests?.data}
-                                  placeholder="choose tests"
+                                  placeholder="Choose tests"
                                   hidePlaceholderWhenSelected
                                   emptyIndicator={
                                     !form.watch("to_laboratory")
@@ -503,7 +503,7 @@ export default function HospitalSendSample() {
                         Delivery (Optional)
                       </CardTitle>
                       <CardDescription>
-                        choose a delivery service
+                        Choose a delivery service
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -526,7 +526,7 @@ export default function HospitalSendSample() {
                       "A copy of the results will be share with this email "
                     }
                   >
-                    <Input type="email" placeholder="share with this email" />
+                    <Input type="email" placeholder="Share with this email" />
                   </FormBuilder>
                   {selectedTests?.length > 0 ? (
                     <motion.div

@@ -24,13 +24,13 @@ from .filters import TestFilter
 from django_filters.rest_framework import DjangoFilterBackend
 import json
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
-from .tasks import copy_test_to_branch, get_sample_counts_for_facility
+from .tasks import copy_test_to_branch#, get_sample_counts_for_facility
 import logging
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
-from celery.result import AsyncResult
+# from celery.result import AsyncResult
 from rest_framework.views import APIView
-from sample.serializers import CountObjectsSerializer
+# from sample.serializers import CountObjectsSerializer
 
 
 
@@ -206,6 +206,7 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 		"""
 
 		lab = Laboratory.objects.get(created_by=self.request.user)
+
 		serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
 
 
@@ -530,6 +531,9 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 		# sample.tests.clear()
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
+		if self.request.data['request_status']:
+			pass
+
 		tests = query_dict.getlist('tests')
 		sample.tests.add(*tests)
 
@@ -565,15 +569,15 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 			if status:
 
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).filter(sample_status=status.capitalize()).order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), sample_status=status.capitalize(), request_status='Request Accepted').order_by('-date_created')
 
 			if from_date and to_date:
 
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).filter(date__range=(from_date, to_date)).order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), date__range=(from_date, to_date), request_status='Request Accepted').order_by('-date_created')
 
 			return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)).order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), request_status='Request Accepted').order_by('-date_created')
 
 		except Sample.DoesNotExist:
 			return Response(
