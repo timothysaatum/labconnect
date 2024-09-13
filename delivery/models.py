@@ -23,6 +23,8 @@ class Delivery(models.Model):
 	digital_address = models.CharField(max_length=15)
 	phone = models.CharField(max_length=15)
 	email = models.CharField(max_length=100)
+	vehicle_registeration_number = models.CharField(max_length=100)
+	licence_id = models.CharField(max_length=100)
 	website = models.URLField()
 	service_fee = models.ForeignKey(PriceModel, on_delete=models.CASCADE)
 	date_added = models.DateTimeField(auto_now_add=True)
