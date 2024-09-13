@@ -115,6 +115,7 @@ class Sample(models.Model):
 class SampleTrackingHistory(models.Model):
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+	
 	sample = models.ForeignKey(Sample, related_name="tracking_history", on_delete=models.CASCADE)
 	status = models.CharField(max_length=50, choices=REQUEST_STATUS)
 	location = models.CharField(max_length=255, null=True, blank=True)
@@ -127,6 +128,8 @@ class SampleTrackingHistory(models.Model):
 class Notification(models.Model):
 
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	referring_signature = models.BooleanField(default=False)
+	referring_signature = models.BooleanField(default=False)
 	message = models.CharField(max_length=150)
 	is_read = models.BooleanField(default=False)
 	is_hidden = models.BooleanField(default=False)
