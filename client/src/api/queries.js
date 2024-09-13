@@ -85,11 +85,11 @@ export const useFetchAllLabsBranches = () => {
 };
 export const useFetchLabTests = (id, querys) => {
   if (
-    querys?.status === "All" ||
-    querys?.status === undefined ||
-    querys?.status === ""
+    querys?.test_status === "All" ||
+    querys?.test_status === undefined ||
+    querys?.test_status === ""
   ) {
-    const { status, ...rest } = querys;
+    const { test_status, ...rest } = querys;
     querys = rest;
   }
   const axiosPrivate = useAxiosPrivate();

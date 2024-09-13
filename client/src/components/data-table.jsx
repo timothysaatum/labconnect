@@ -149,7 +149,7 @@ export function DataTable({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto text-xs">
                 <SlidersHorizontal className="w-4 h-4 mr-2" />
-                {QueryOptions?.find((query) => query === querys?.status) ||
+                {QueryOptions?.find((query) => query === querys?.test_status) ||
                   "Filter"}
               </Button>
             </DropdownMenuTrigger>
@@ -157,7 +157,7 @@ export function DataTable({
               {QueryOptions?.map((query) => (
                 <DropdownMenuCheckboxItem
                   key={query}
-                  checked={querys?.status === query}
+                  checked={querys?.test_status === query}
                   onCheckedChange={() => handleFilterChange(query)}
                 >
                   {query}
