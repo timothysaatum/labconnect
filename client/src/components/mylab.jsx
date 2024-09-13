@@ -121,16 +121,16 @@ export default function MyLab() {
   const selectedRows = useSelector(selectSelectedRows);
   const [selectedBranch, setSelectedBranch] = useState();
   const [testQuerys, setQuerys] = useState({
-    status: "active",
+    test_status: "Active",
   });
 
   const handleFilterChange = (query) => {
     setQuerys((prevQueries) => {
       const newQueries = { ...prevQueries };
-      if (newQueries.status === query) {
-        delete newQueries.status;
+      if (newQueries.test_status === query) {
+        delete newQueries.test_status;
       } else {
-        newQueries.status = query;
+        newQueries.test_status = query;
       }
       return newQueries;
     });
@@ -274,7 +274,7 @@ export default function MyLab() {
       filter: "test_name",
       setItems: setSelectedTests,
       selected: selectedTests,
-      QueryOptions: ["All", "active", "inactive"],
+      QueryOptions: ["All", "active", "Inactive"],
       setQuerys: setQuerys,
       querys: testQuerys,
     },
