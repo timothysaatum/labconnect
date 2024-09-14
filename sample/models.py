@@ -96,7 +96,7 @@ class Sample(models.Model):
 	)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending')
 	requires_phlebotomist = models.CharField(max_length=10, choices=PHLEBOTOMIST_REQUIREMENTS)
-	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS, default='Request Made')
+	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS, default='Request Accepted')
 	report_delivery_mode = models.CharField(max_length=55, choices=REPORT_DELIVERY_MODE)
 	referring_signature = models.BooleanField(default=False)
 	referror_signature = models.BooleanField(default=False)

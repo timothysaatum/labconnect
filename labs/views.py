@@ -329,17 +329,25 @@ class TestListView(generics.ListAPIView):
 		return context
 
 	def get_queryset(self):
-		test_status = self.request.GET.get('status')
-		if test_status:
+		# test_status = self.request.GET.get('status').lower() or self.request.GET.get('test_status').lower()
+		status = self.request.GET.get('status')
+		test_status = self.request.GET.get('test_status')
+
+		test_status = (status or test_status or '').lower()
+
+		print(test_status)
+		
+		if test_status in ('active', 'inactive'):
+			print(Test.objects.filter(
+			Q(branch__id=self.kwargs.get('pk')) | 
+			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(test_status=test_status).order_by('?'))
 			return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk')), branch_test__test_status='active'
-		).order_by('?')
+			Q(branch__laboratory__id=self.kwargs.get('pk')), branch_test__test_status=test_status).order_by('?')
 
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk'))
-		).order_by('?')
+			Q(branch__laboratory__id=self.kwargs.get('pk'))).order_by('?')
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):

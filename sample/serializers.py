@@ -106,6 +106,8 @@ class CountObjectsSerializer(serializers.Serializer):
 	received = serializers.IntegerField(read_only=True)
 	rejected = serializers.IntegerField(read_only=True)
 	processed = serializers.IntegerField(read_only=True)
+	growth = serializers.BooleanField(default=False)
+	percentage_change = serializers.FloatField()
 
 	class Meta:
 
@@ -113,5 +115,7 @@ class CountObjectsSerializer(serializers.Serializer):
 			'pending',
 			'received',
 			'rejected',
-			'processed'
+			'processed',
+			'growth',
+			'percentage_change'
 		)
