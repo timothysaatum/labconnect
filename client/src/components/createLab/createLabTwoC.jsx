@@ -15,7 +15,7 @@ const CreateLabTwoC = () => {
         <FormBuilder name={"main_phone"} label={"Laboratory Tel."} message>
           <PhoneInput defaultCountry="GH" placeholder="Laboratory Phone" />
         </FormBuilder>
-        <FormBuilder name={"postal_address"} label={"postal_address"} message>
+        <FormBuilder name={"postal_address"} label={"Postal Address"} message>
           <Input type="text" placeholder="Postal Address" />
         </FormBuilder>
       </div>

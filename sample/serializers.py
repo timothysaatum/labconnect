@@ -36,15 +36,12 @@ class SampleSerializer(serializers.ModelSerializer):
 			'sender_full_name',
 			'sender_phone',
 			'sender_email',
-			'is_rejected',
 			'tests',
 			'clinical_history',
 			'attachment',
 			'sample_status',
 			'delivery',
 			'priority',
-			# 'request_status'
-			# 'is_marked_sent',
 			'date_modified',
 			'date_created'
 		)

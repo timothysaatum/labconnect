@@ -131,7 +131,7 @@ class CreateUserView(CreateAPIView):
 	serializer_class = UserCreationSerializer
 
 	def post(self, request, format=None):
-		logger.info(f'Account created for {request.data['last_name']}')
+		logger.info(f"Account created for {request.data['last_name']}")
 		return self.create(request)
 
 
