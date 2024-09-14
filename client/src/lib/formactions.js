@@ -77,7 +77,7 @@ export const useBranchAdd = (
       try {
         await axiosPrivate.post("/laboratory/create-branch/", data);
         queryClient.invalidateQueries(["userbranches"]);
-        toast.success(`New branch - ${data?.branch_name || dt} added`, {
+        toast.success(`New branch - ${data?.branch_name} added`, {
           position: "top-center",
           duration: 5000,
         });
