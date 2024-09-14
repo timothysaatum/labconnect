@@ -6,17 +6,15 @@ import BlurFade from "../magicui/blur-fade";
 const LabName = () => {
   return (
     <BlurFade inView delay={0.45}>
-      <div className="flex flex-col gap-4 ">
         <FormBuilder
           name={"name"}
           label={"What is the name of your laboratory?"}
-          className="flex flex-col gap-3"
-          labelClassName={"text-xl text-center font-semibold capitalize mb-5"}
-          message={true}
+          labelClassName={"font-semibold text-lg text-center mb-1"}
+        message={true}
+        className="flex items-center flex-col"
         >
-          <Input type="text" placeholder="Laboratory name" />
+          <Input type="text" placeholder="Laboratory name"  className="py-10 text-lg"/>
         </FormBuilder>
-      </div>
     </BlurFade>
   );
 };

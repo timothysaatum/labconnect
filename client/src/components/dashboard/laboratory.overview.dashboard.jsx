@@ -1,4 +1,10 @@
-import { ChevronDown, RefreshCcw, SlidersHorizontal } from "lucide-react";
+import {
+  ChevronDown,
+  RefreshCcw,
+  SlidersHorizontal,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,9 +37,14 @@ import SampleDetails from "@/components/dashboard/sampleDetails";
 import { changeTab, selectCurrentTab } from "@/redux/mylabtab/sampletab";
 import { useDispatch, useSelector } from "react-redux";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
-import { useFetchLabRequestsSent } from "../../api/queries";
+import {
+  useFetchLabCardCount,
+  useFetchLabRequestsSent,
+} from "../../api/queries";
+import { EmptyLab } from "../mylab";
+import { selectCurrentUser } from "../../redux/auth/authSlice";
 
-function EmptyLab({ keywords }) {
+function EmptyRequest({ keywords }) {
   return (
     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
       <div className="px-4 flex flex-col items-center  text-center py-16 ">
@@ -115,9 +126,11 @@ export default function LaboratoryDashboardOverview() {
   const [querys, setQuerys] = useState({
     status: "Pending",
   });
-
+  const { data: userbranches, isLoading: branchesloading } =
+    useFetchUserBranches();
   const dispatch = useDispatch();
   const currentTab = useSelector(selectCurrentTab);
+  const user = useSelector(selectCurrentUser);
 
   const handleTabChange = (newTab) => {
     dispatch(changeTab(newTab)); // dispatch the changeTab action when the tab changes
@@ -152,6 +165,12 @@ export default function LaboratoryDashboardOverview() {
     isRefetchError,
     dataUpdatedAt,
   } = useFetchLabRequestsReceived(activeBranchId, querys);
+
+  const {
+    data: countdata,
+    isLoading: countloading,
+    isError: countError,
+  } = useFetchLabCardCount(activeBranchId);
 
   const {
     data: sentRequests,
@@ -242,35 +261,76 @@ export default function LaboratoryDashboardOverview() {
           {isDesktop && !selected ? (
             <>
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between p-4">
-                  <CardTitle className="text-xs font-medium tracking-wide">
-                    Samples Received:
-                  </CardTitle>
-                  <div className="text-sm font-bold">+2350</div>
+                <CardHeader className="p-4">
+                  <div className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xs font-medium tracking-wide">
+                      Samples Received:
+                    </CardTitle>
+                    <div className="text-sm font-bold">
+                      {countdata?.data?.received}
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center gap-2">
+                    <TrendingUp className="text-green-500 w-4 h-4" />{" "}
+                    <p className="text-xs text-muted-foreground">
+                      +9% from yesterday
+                    </p>
+                  </div>
+                </CardHeader>
+                
+              </Card>
+              <Card>
+                <CardHeader className="p-4">
+                  <div className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xs font-medium tracking-wide">
+                      Samples Processed:
+                    </CardTitle>
+                    <div className="text-sm font-bold">
+                      {countdata?.data?.process}
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center gap-2">
+                    <TrendingDown className="text-red-500 w-4 h-4" />{" "}
+                    <p className="text-xs text-muted-foreground">
+                      -13% from yesterday
+                    </p>
+                  </div>
                 </CardHeader>
               </Card>
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between p-4">
-                  <CardTitle className="text-xs font-medium tracking-wide">
-                    Samples Sent:
-                  </CardTitle>
-                  <div className="text-sm font-bold">+12,234</div>
+                <CardHeader className="p-4">
+                  <div className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xs font-medium tracking-wide">
+                      Samples Pending:
+                    </CardTitle>
+                    <div className="text-sm font-bold">
+                      {countdata?.data?.pending}
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center gap-2">
+                    <TrendingDown className="text-red-500 w-4 h-4" />{" "}
+                    <p className="text-xs text-muted-foreground">
+                      -23% from yesterday
+                    </p>
+                  </div>
                 </CardHeader>
               </Card>
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between p-4">
-                  <CardTitle className="text-xs font-medium tracking-wide">
-                    Proccessed Today:
-                  </CardTitle>
-                  <div className="text-sm font-bold">+573</div>
-                </CardHeader>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between p-4">
-                  <CardTitle className="text-xs font-medium tracking-wide">
-                    Samples Rejected:
-                  </CardTitle>
-                  <div className="text-sm font-bold">+573</div>
+                <CardHeader className="p-4">
+                  <div className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-xs font-medium tracking-wide">
+                      Samples Rejected:
+                    </CardTitle>
+                    <div className="text-sm font-bold">
+                      {countdata?.data?.rejected}
+                    </div>
+                  </div>
+                  <div className="flex justify-end items-center gap-2">
+                    <TrendingUp className="text-green-500 w-4 h-4" />{" "}
+                    <p className="text-xs text-muted-foreground">
+                      +45% from yesterday
+                    </p>
+                  </div>
                 </CardHeader>
               </Card>
             </>
@@ -295,9 +355,7 @@ export default function LaboratoryDashboardOverview() {
                   <div className="flex-1">
                     <CardTitle>Samples</CardTitle>
                     <CardDescription>
-                      {currentTab === "Sent Samples"
-                        ? "Samples you have sent to other labs"
-                        : "Working List(50 Samples Pending Processing)"}
+                      Samples you have received from other labs
                     </CardDescription>
                   </div>
                   {receivedRequests?.data.length < 1 && querys.status ? (
@@ -325,7 +383,9 @@ export default function LaboratoryDashboardOverview() {
                   ) : null}
                 </CardHeader>
                 <CardContent className="max-md:px-2">
-                  {isPending ? (
+                  {userbranches?.data?.length < 1 ? (
+                    <EmptyLab title={"Branches"} user={user} />
+                  ) : isPending ? (
                     <LoadingLab />
                   ) : isError ? (
                     <ErrorLab
@@ -336,8 +396,9 @@ export default function LaboratoryDashboardOverview() {
                   ) : receivedRequests?.data?.length < 1 &&
                     querys?.status !== "All" ? (
                     <QueriedEmpty keywords={[querys.status]} />
-                  ) : receivedRequests?.data?.length < 1 && querys?.status==="All" ? (
-                    <EmptyLab keywords={["Received", "from"]} />
+                  ) : receivedRequests?.data?.length < 1 &&
+                    querys?.status === "All" ? (
+                    <EmptyRequest keywords={["Received", "from"]} />
                   ) : (
                     <DataTable
                       data={requestsReceived}
@@ -373,7 +434,9 @@ export default function LaboratoryDashboardOverview() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  {sentfetching ? (
+                  {userbranches?.data?.length < 1 ? (
+                    <EmptyLab title={"Branches"} user={user} />
+                  ) : sentfetching ? (
                     <LoadingLab />
                   ) : sentError ? (
                     <ErrorLab
@@ -382,7 +445,7 @@ export default function LaboratoryDashboardOverview() {
                       isRefetching={sentrefetching}
                     />
                   ) : sentRequests?.data?.length < 1 ? (
-                    <EmptyLab keywords={["Sent", "from"]} />
+                    <EmptyRequest keywords={["Sent", "from"]} />
                   ) : (
                     <DataTable
                       data={requestsSent}

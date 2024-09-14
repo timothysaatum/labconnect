@@ -36,13 +36,15 @@ import {
 import TableSkeleton from "./dashboard/tableskeleton";
 import BranchDetails from "./dashboard/branchDetails";
 
-function EmptyLab({ title, user }) {
+export function EmptyLab({ title, user }) {
   return (
     <div className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm">
       <div className="flex flex-col items-center py-16 text-center ">
         {title === "Tests" ? (
           <>
-            <h3 className="text-xl font-semibold ">Active Branch has no Tests</h3>
+            <h3 className="text-xl font-semibold ">
+              Active Branch has no Tests
+            </h3>
             <p className="text-sm text-muted-foreground">
               No Tests available in Active Branch
             </p>
@@ -280,8 +282,7 @@ export default function MyLab() {
     },
     {
       title: "Branches",
-      description:
-        "Viewing branches for this account",
+      description: "Viewing branches for this account",
       data: branches,
       columnDef: branchcolumnDef,
       refetch: refreshBranches,
@@ -347,7 +348,14 @@ export default function MyLab() {
                       )}
                     </CardHeader>
                     <CardContent>
-                      {tab.loading ? (
+                      {tab.title === "Tests" && branchesLoading ? (
+                        <TableSkeleton />
+                      ) : tab.title === "Tests" && branchesError ? (
+                        <ErrorLab refetch={tab.refetch} error={tab.error} />
+                      ) : tab.title === "Tests" &&
+                        userbranches?.data.length < 1 ? (
+                        <EmptyLab title="Branches" user={user} />
+                      ) : tab.loading ? (
                         <TableSkeleton />
                       ) : tab.error ? (
                         <ErrorLab refetch={tab.refetch} error={tab.error} />

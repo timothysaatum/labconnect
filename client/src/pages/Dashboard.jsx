@@ -6,29 +6,20 @@ import {
   LogOut,
   Bell,
   ChevronDown,
-  Search,
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { Input } from "@/components/ui/input";
 import NotiicationsPopover from "@/components/dashboard/notificationsPopover";
 import { Button } from "@/components/ui/button";
 
@@ -50,6 +41,8 @@ import {
 } from "@/redux/branches/activeBranchSlice";
 import AddBranch from "@/components/dashboard/addbranch";
 import { Helmet } from "react-helmet-async";
+import { useFetchLabCardCount } from "../api/queries";
+import { DatePickerWithRange } from "../components/dashboard/calenderpopover";
 
 export default function Dashboard() {
   const user = useSelector(selectCurrentUser);
@@ -104,7 +97,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col min-h-screen">
       <Helmet>
-        <title>{title?.name}</title>
+        <title>{`${title?.name || ""} - LabConnect`}</title>
       </Helmet>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
@@ -223,7 +216,7 @@ export default function Dashboard() {
               </nav>
             </SheetContent>
           </Sheet>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center ">
             {userbranches?.data?.length === 0 ? (
               user?.is_admin && <AddBranch />
             ) : (
@@ -267,7 +260,7 @@ export default function Dashboard() {
           </div>
         </header>
         {user?.account_type === "Laboratory" ? (
-          <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden">
+          <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden mb-4">
             <div className="flex justify-around items-center gap-6">
               {/* maybe later or never */}
               {/* <div className="relative ">
@@ -279,6 +272,10 @@ export default function Dashboard() {
                   className="w-full h-10 rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10 max-w-[350px]"
                 />
               </div> */}
+              {location.pathname.includes("overview") && (
+                <DatePickerWithRange />
+              )}
+
               <div>
                 {userbranches?.data?.length === 0 ? (
                   user?.is_admin && <AddBranch />
@@ -329,7 +326,6 @@ export default function Dashboard() {
           </header>
         ) : (
           <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden ">
-            
             <div className="flex justify-around items-center gap-4">
               <NotiicationsPopover
                 notifs={notifs}

@@ -66,10 +66,7 @@ export default function CreateLab() {
         fieldToValidate = ["main_email", "main_phone", "postal_address"];
         break;
       case 2:
-        fieldToValidate = ["herfra_id"];
-        break;
-      case 3:
-        fieldToValidate = ["website", "description"];
+        fieldToValidate = ["website", "description", "herfra_id"];
         break;
       default:
         fieldToValidate = [];
@@ -93,28 +90,24 @@ export default function CreateLab() {
       case 1:
         return <CreateLabTwoC />;
       case 2:
-        return <Herfra />;
-      case 3:
         return <Others form={form} />;
-      case 4:
+      case 3:
         return <LabLogo form={form} />;
       default:
         return null;
     }
   };
   return (
-    <div className="flex justify-center items-center min-h-dvh max-md:flex-col gap-5">
-      <BlurFade inView delay={0.5}>
-        <div>
-          <img src={logo} alt="LabConnect's logo" className="w-56 md:w-72" />
-        </div>
-      </BlurFade>
-
+    <div className="px-14 pb-8">
       <Form {...form}>
-        <form noValidate onSubmit={form.handleSubmit(onCreateLab)}>
+        <form
+          noValidate
+          onSubmit={form.handleSubmit(onCreateLab)}
+          className="mx-auto"
+        >
           <div className="flex flex-col gap-2 min-w-[350px]">{formStep()}</div>
           <div className="mt-5">
-            <div className="flex justify-between items-center gap-6">
+            <div className="flex justify-between items-center gap-3">
               {step > 0 && (
                 <Button
                   onClick={handlePrevSTep}
@@ -122,21 +115,26 @@ export default function CreateLab() {
                   variant="outline"
                   size="icon"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 " />
                 </Button>
               )}
-              {step < 4 ? (
-                <Button onClick={handleNextStep} type="button" size="lg">
+              {step < 3 ? (
+                <Button
+                  onClick={handleNextStep}
+                  type="button"
+                  size="lg"
+                  className="w-full bg-teal-600 hover:bg-teal-700"
+                >
                   Proceed
                 </Button>
-              ) : null}
-              {step === 4 ? (
+              ) : undefined}
+              {step === 3 ? (
                 <div className="flex-1">
                   <Button
                     type="submit"
                     size="lg"
-                    className="w-full"
-                    disabled={form.formState.isSubmitting}
+                    className="w-full bg-teal-600 hover:bg-teal-700"
+                    disabled={form.formState.isSubmitting || step < 3}
                   >
                     {form.formState.isSubmitting ? (
                       <span className="flex items-center">
@@ -150,7 +148,7 @@ export default function CreateLab() {
                     )}
                   </Button>
                 </div>
-              ) : null}
+              ) : undefined}
             </div>
           </div>
         </form>

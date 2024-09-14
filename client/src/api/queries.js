@@ -48,6 +48,18 @@ export const useFetchLabRequestsSent = (id) => {
     enabled: !!id,
   });
 };
+export const useFetchLabCardCount = (id) => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["SampleCounts", id],
+    queryFn: async () =>
+      await axiosPrivate.get(
+        `/laboratory/get-sample-counts-for-facility/${id}/`
+      ),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!id,
+  });
+};
 
 //deliveries
 export const useFetchAllDeliveries = () => {

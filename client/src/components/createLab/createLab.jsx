@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import CreateLabOne from "./createLabOne";
-import CreateLabTwo from "./createLabTwo";
 import {
   Tooltip,
   TooltipContent,
@@ -10,29 +9,10 @@ import {
 import { LogOut } from "lucide-react";
 import useLogout from "@/hooks/uselogout";
 import ThemeToggler from "../ThemeToggler";
+import CreateLaboratory from "./createLabOne";
 
 const CreateLab = () => {
   const logout = useLogout();
-  const [step, setStep] = useState(1);
-
-  const LabStep = () => {
-    switch (step) {
-      case 1:
-        return <CreateLabOne setStep={setStep} />;
-      case 2:
-        return <CreateLabTwo setStep={setStep} />;
-      case 3:
-        return (
-          <div>
-            <h1>Step 3</h1>
-            <button onClick={() => setStep(1)}>Next</button>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <div>
       <div className="fixed z-50 left-0 top-0 h-full flex justify-end gap-4 p-4 flex-col">
@@ -53,7 +33,7 @@ const CreateLab = () => {
         </TooltipProvider>
       </div>
 
-      {LabStep()}
+      <CreateLaboratory />
     </div>
   );
 };

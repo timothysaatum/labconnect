@@ -98,7 +98,6 @@ export const BlockGettingStarted = () => {
     data: userlab,
     isFetching: labLoading,
   } = useFetchUserLab();
-  console.log(userlab);
   const {
     isError: hospitalError,
     data: userhospital,

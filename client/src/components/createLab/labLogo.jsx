@@ -29,7 +29,6 @@ const FileSvgDraw = () => {
       </svg>
       <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
         <span className="font-semibold">Click to upload</span>
-        &nbsp; or drag and drop
       </p>
       <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG</p>
     </>
@@ -64,7 +63,7 @@ const LabLogo = ({ form }) => {
   }, [imageFile]);
 
   return (
-    <div className="grid gap-8 text-center">
+    <div className="grid gap-3 text-center">
       <h4 className="text-xl font-semibold">Upload Laboratory Logo</h4>
       <div className="flex justify-center items-center">
         <FormField

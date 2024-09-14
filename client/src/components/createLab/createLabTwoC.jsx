@@ -8,7 +8,6 @@ import BlurFade from "../magicui/blur-fade";
 const CreateLabTwoC = () => {
   return (
     <BlurFade inView delay={0.1}>
-      <h4 className="text-xl font-semibold mb-5">How Do We Reach You?</h4>
       <div className="flex gap-4 flex-col">
         <FormBuilder name={"main_email"} label={"Laboratory Email"} message>
           <Input type="email" placeholder="Laboratory email" />
