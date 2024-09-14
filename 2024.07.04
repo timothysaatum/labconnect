@@ -1,0 +1,10 @@
+Requirement already satisfied: certifi in c:\users\timothy\appdata\local\programs\python\python312\lib\site-packages (2024.2.2)
+Collecting certifi
+  Downloading certifi-2024.8.30-py3-none-any.whl.metadata (2.2 kB)
+Downloading certifi-2024.8.30-py3-none-any.whl (167 kB)
+Installing collected packages: certifi
+  Attempting uninstall: certifi
+    Found existing installation: certifi 2024.2.2
+    Uninstalling certifi-2024.2.2:
+      Successfully uninstalled certifi-2024.2.2
+Successfully installed certifi-2024.8.30
