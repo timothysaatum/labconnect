@@ -180,6 +180,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # for React
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:5173',
+    'https://labconnect-eight.vercel.app'
 )
 CORS_ALLOW_CREDENTIALS = True
 

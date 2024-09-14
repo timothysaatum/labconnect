@@ -10,6 +10,8 @@ from django.http import QueryDict
 from user.models import Client
 from labs.models import Branch
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
+from datetime import timedelta
 
 
 
@@ -98,16 +100,36 @@ class CountObjects(generics.GenericAPIView):
     serializer_class = CountObjectsSerializer
 
     def get(self, request):
-        samples_received = Sample.objects.filter(is_marked_sent=True).count()
-        samples_sent = Sample.objects.filter(is_marked_sent=True).count()
-        samples_rejected = Sample.objects.filter(is_rejected=True).count()
-        samples_processed = Sample.objects.filter(is_marked_sent=True).count()
+        today = timezone.now().date()
+        yesterday = today - timedelta(days=1)
+        samples_received = Sample.objects.filter(referring_signature=True, date_created__date=today).count()
+        samples_sent = Sample.objects.filter(referror_signature=True, date_created__date=today).count()
+        samples_rejected = Sample.objects.filter(sample_status='Rejected', date_created__date=today).count()
+        samples_processed = Sample.objects.filter(sample_status='Processed', date_created__date=today).count()
+        
+        # Count the records for today
+        today_count = Sample.objects.filter(date_created__date=today).count()
+        
+        # Count the records for yesterday
+        yesterday_count = Sample.objects.filter(date_created__date=yesterday).count()
+        
+        # Calculate percentage change
+        growth = False
+        if yesterday_count > 0:
+            percentage_change = ((today_count - yesterday_count) / yesterday_count) * 100
+            growth = True
+        else:
+            percentage_change = 100 if today_count > 0 else 0
 
         data = {
             samples_received:samples_received,
             samples_sent:samples_sent,
             samples_rejected:samples_rejected,
-            samples_processed:samples_processed
+            samples_processed:samples_processed,
+            growth:growth,
+            today_count:today_count,
+            yesterday_count:yesterday_count,
+            percentage_change:percentage_change
         }
 
         serializer = self.serializer_class(data=data)
