@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ChevronLeft, Search } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
-import Stepper from "../components/dashboard/stepper";
+import DeliveryStepper from "../components/dashboard/stepper";
 
 const Tracking = () => {
   return (
@@ -34,7 +34,33 @@ const Tracking = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <Stepper />
+          <div className="border-b-[1px] pb-5">
+            <DeliveryStepper currentStep={2} />
+          </div>
+            <div className="grid sm:grid-cols-2 place-items-center gap-5 mt-5" >
+              <p className="flex flex-col text-sm">
+                <span className="text-muted-foreground"> Courier's name</span>
+                <span> Saatum Timothy</span>
+              </p>
+              <p className="flex flex-col text-sm">
+                <span className="text-muted-foreground">
+                  {" "}
+                  Courier's Contact
+                </span>
+                <span>0249906015</span>
+              </p>
+              <p className="flex flex-col text-sm">
+                <span className="text-muted-foreground"> Laboratory name</span>
+                <span> Advanced Diagnostics</span>
+              </p>
+              <p className="flex flex-col text-sm">
+                <span className="text-muted-foreground">
+                  {" "}
+                  Laboratory Contact
+                </span>
+                <span> Saatum Timothy</span>
+              </p>
+            </div>
         </CardContent>
       </Card>
     </div>
