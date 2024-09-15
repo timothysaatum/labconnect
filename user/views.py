@@ -225,7 +225,7 @@ class LoginUserView(GenericAPIView):
 				return Response({'error': 'An error occured, try again.'}, status=status.HTTP_404_NOT_FOUND)
 
 			user_tokens = user.tokens()
-			logger.info(f'Logged in user.last_name user.last_name')
+			logger.info(f'Logged in {user.last_name} {user.last_name}')
 			response = Response({'data': serializer.data, 'access_token':user_tokens.get('access')}, status=status.HTTP_200_OK)
 
 			response.set_cookie(
