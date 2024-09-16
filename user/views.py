@@ -17,12 +17,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
-from .models import OneTimePassword
+# from .models import OneTimePassword
 # from .utils import send_normal_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from .models import Client
+from .models import Client, OneTimePassword
 import pyotp
 from django.middleware import csrf
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -35,6 +35,7 @@ from labs.models import (
 )
 from labs.serializers import BranchManagerInvitationSerializer
 import random
+from .utils import send_code_to_user
 import string
 from django.db.models import Subquery
 import logging
@@ -170,6 +171,9 @@ class VerifyUserEmail(GenericAPIView):
 			user_code_obj = OneTimePassword.objects.get(code=code)
 			secret_key = user_code_obj.secrete
 			totp = pyotp.TOTP(secret_key, interval=180, digits=10)
+
+			if user_code_obj.is_expired():
+				return Response({'message': 'Code has expired code'}, status=status.HTTP_400_BAD_REQUEST)
 
 			if not totp.verify(totp.now()):
 
@@ -360,32 +364,6 @@ class FetchUserData(APIView):
 		return Response({'error': 'Token is invalid or you have been logged out.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# def create_branch_manager_user(invitation, user_data):
-# 	"""
-# 	Creates a new user with the provided data and sets the account type and staff status.
-# 	"""
-# 	branch = Branch.objects.get(id=invitation.branch_id)
-# 	try:
-# 		client = Client.objects.get(email=invitation.receiver_email)
-# 		if not client.is_branch_manager:
-# 			client.is_branch_manager = True
-# 			client.save()
-# 		branch.branch_manager = client
-# 	except Client.DoesNotExist:
-# 		serializer = UserCreationSerializer(data=user_data)
-# 		serializer.is_valid(raise_exception=True)
-# 		client = serializer.save()
-# 		client.account_type = 'Laboratory'
-# 		client.is_staff = True
-# 		client.is_branch_manager = True
-# 		branch.branch_manager = client
-# 		client.save()
-
-# 	branch.save()
-# 	invitation.used = True
-# 	invitation.save()
-	
-# 	return client
 
 
 def create_branch_manager_user(invitation, user_data):
@@ -434,21 +412,7 @@ class BranchManagerAcceptView(CreateAPIView):
 		except BranchManagerInvitation.DoesNotExist:
 			
 			return Response({'error': 'Invitation does not exist'}, status=status.HTTP_404_NOT_FOUND)
-	
-	# def get_queryset(self):
-	# 	"""
-	# 	Retrieves the BranchManagerInvitation object based on pk and invitation_code.
-	# 	Raises DoesNotExist if not found.
-	# 	"""
-	# 	pk, invitation_code = self.kwargs.get('pk'), self.kwargs.get('invitation_code')
 
-	# 	try:
-	# 		return BranchManagerInvitation.objects.get(pk=pk, invitation_code=invitation_code)
-	# 	except BranchManagerInvitation.DoesNotExist:
-	# 		return Response(
-	# 				{'error': 'Invite not found'},
-	# 			   	status=status.HTTP_404_NOT_FOUND
-	# 			   )
 			
 	def post(self, request, *args, **kwargs):
 		invitation = self.get_queryset()
@@ -494,3 +458,22 @@ class FetchLabManagers(ListAPIView):
 		managers = Branch.objects.filter(laboratory_id=self.kwargs.get('pk')).values('branch_manager').distinct()
 		branch_managers = Client.objects.filter(id__in=Subquery(managers))
 		return branch_managers
+	
+
+class RequestNewOTP(CreateAPIView):
+
+	def post(self, request, *args, **kwargs):
+
+		user_email = request.data['email']
+
+		try:
+			c = Client.objects.get(email=user_email)
+
+		except Client.DoesNotExist:
+			return Response({'error': f'An error occured'})
+
+		if c.is_verified:
+			return Response({'error': f'An error occured'})
+
+		send_code_to_user(user_email)
+		return Response({'message': f'Code sent'}, status=status.HTTP_200_OK)

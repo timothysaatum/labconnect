@@ -14,7 +14,7 @@ class SampleAdmin(admin.ModelAdmin):
 	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
 	list_editable = (
 		'sample_status',
-		'request_status' 
+		'request_status'
 	)
 
 class NotificationAdmin(admin.ModelAdmin):

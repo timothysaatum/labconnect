@@ -119,7 +119,7 @@ class CountObjectsSerializer(serializers.Serializer):
 			'received',
 			'rejected',
 			'processed',
-			'growth',
+			# 'growth',
 			'change_received',
 			'change_processed',
 			'change_pending',

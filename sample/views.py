@@ -50,14 +50,14 @@ class CountObjects(generics.GenericAPIView):
         yesterday = today - timedelta(days=1)
 
         # Aggregate counts for today and yesterday in one query each
-        today_stats = Sample.objects.filter(referring_facility=facility_id, date_created__date=today).aggregate(
+        today_stats = Sample.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_created__date=today).aggregate(
             received=Count('id', filter=Q(request_status='Request Accepted')),
             processed=Count('id', filter=Q(sample_status='processed')),
             pending=Count('id', filter=Q(sample_status='pending')),
             rejected=Count('id', filter=Q(sample_status='rejected')),
         )
 
-        yesterday_stats = Sample.objects.filter(referring_facility=facility_id, date_created__date=yesterday).aggregate(
+        yesterday_stats = Sample.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_created__date=yesterday).aggregate(
             received=Count('id', filter=Q(request_status='Request Accepted')),
             processed=Count('id', filter=Q(sample_status='processed')),
             pending=Count('id', filter=Q(sample_status='pending')),
@@ -85,7 +85,7 @@ class CountObjects(generics.GenericAPIView):
             'change_pending': change_pending,
             'change_rejected': change_rejected,
         }
-        # print(data)
+        print(data)
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         print(serializer.is_valid(raise_exception=True))

@@ -245,3 +245,11 @@ class UserSerializer(serializers.ModelSerializer):
 	# 	data = super().to_representation(instance)
 	# 	data['profile'] = ClientProfileSerializer(ClientProfile.objects.filter(client=instance.id), many=True).data
 	# 	return data
+
+class NewOPTSerializer(serializers.Serializer):
+	email = serializers.CharField(max_length=50)
+
+	class Meta:
+		fields = [
+			'email'
+		]
