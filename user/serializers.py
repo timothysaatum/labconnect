@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import smart_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-from .utils import send_normal_email
+from .utils import send_normal_email, send_code_to_user
 
 
 
@@ -99,8 +99,8 @@ class LoginSerializer(serializers.ModelSerializer):
 			raise AuthenticationFailed('Invalid Credentials!')
 
 		if not user.is_verified:
-
-			raise AuthenticationFailed('Email is not verified!')
+			send_code_to_user(user.email)
+			raise AuthenticationFailed('Email is not verified, verification sent.')
 
 		return {
 
