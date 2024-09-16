@@ -288,7 +288,7 @@ export default function LaboratorySendSample() {
     return form.resetField("to_laboratory");
   }
   return (
-    <div>
+    <div className="pl-14">
       <RestoreDialog
         setOpen={setOpen}
         open={open}
