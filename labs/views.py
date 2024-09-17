@@ -30,6 +30,7 @@ logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
 # from celery.result import AsyncResult
 from rest_framework.views import APIView
+from .constants import LEVEL_ORDER
 # from sample.serializers import CountObjectsSerializer
 
 
@@ -559,9 +560,13 @@ class AllLaboratories(generics.ListAPIView):
 	serializer_class = FacilitySerializer
 	def get_queryset(self):
 		facility_level = self.request.GET.get('facility_level')
-		if facility_level:
+		if facility_level in  LEVEL_ORDER:
+
+			level_value = LEVEL_ORDER[facility_level]
+
 			return Facility.objects.filter(Q(hospitallab__isnull=False) | Q(branch__isnull=False)).filter(
-				Q(hospitallab__level=facility_level) | Q(branch__level=facility_level)
+				Q(hospitallab__level__in=[level for level, value in LEVEL_ORDER.items() if value >= level_value]) | 
+				Q(branch__level__in=[level for level, value in LEVEL_ORDER.items() if value >= level_value])
 			).select_related('branch', 'hospitallab').order_by('?')
 	
 
