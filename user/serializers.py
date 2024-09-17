@@ -100,7 +100,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 		if not user.is_verified:
 			send_code_to_user(user.email)
-			raise AuthenticationFailed('Email is not verified, verification sent.')
+			raise AuthenticationFailed('Email is not verified. New verification sent.')
 
 		return {
 

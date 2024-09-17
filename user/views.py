@@ -470,10 +470,10 @@ class RequestNewOTP(CreateAPIView):
 			c = Client.objects.get(email=user_email)
 
 		except Client.DoesNotExist:
-			return Response({'error': f'An error occured'})
+			return Response({'error': f'An error occured'}, status=status.HTTP_400_BAD_REQUEST)
 
 		if c.is_verified:
-			return Response({'error': f'An error occured'})
+			return Response({'error': f'An error occured'}, status=status.HTTP_400_BAD_REQUEST)
 
 		send_code_to_user(user_email)
 		return Response({'message': f'Code sent'}, status=status.HTTP_200_OK)

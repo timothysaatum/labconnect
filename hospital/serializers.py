@@ -32,10 +32,12 @@ class HospitalLabSerializer(serializers.ModelSerializer):
 	class Meta:
 
 		model = HospitalLab
-		
+
 		fields = (
 			'id', 
 			'name',
+			'accreditation_number',
+			'level',
 			'postal_address',
 			'phone',
 			'email',

@@ -61,6 +61,8 @@ class HospitalLab(Facility):
     Reuses the hospital's address and contact details by default.
     """
 	name = models.CharField(max_length=155)
+	accreditation_number = models.CharField(max_length=100)
+	level = models.CharField(max_length=100)
 	hospital_reference  = models.OneToOneField(Hospital, on_delete=models.CASCADE, related_name='hospital_lab', db_index=True)
 	
 	def __str__(self) -> str:

@@ -21,7 +21,6 @@ class LaboratorySerializer(serializers.ModelSerializer):
 		fields = (
 			'id',
 			'name', 
-			'herfra_id', 
 			'main_phone', 
 			'main_email',
 			'postal_address', 
@@ -47,6 +46,8 @@ class BranchSerializer(serializers.ModelSerializer):
 		fields = (
 			'id',
 			'branch_name',
+			'accreditation_number',
+			'level',
 			'branch_manager',
 			'manager_id',
 			'laboratory',

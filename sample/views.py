@@ -111,3 +111,12 @@ class TrackSampleState(generics.CreateAPIView):
 
     
 
+class GetTrackerDetails(generics.ListAPIView):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = SampleTrackingSerializer
+
+    def get_queryset(self, *args, **kwargs):
+
+        sample_id = self.kwargs.get('sample_id')
+        return SampleTrackingHistory.objects.filter(sample=sample_id)
