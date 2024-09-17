@@ -558,16 +558,31 @@ class LaboratorySampleDeleteView(PermissionMixin, generics.DestroyAPIView):
 class AllLaboratories(generics.ListAPIView):
 
 	serializer_class = FacilitySerializer
+	
 	def get_queryset(self):
+        # Get the level from the request query parameters
 		facility_level = self.request.GET.get('facility_level')
-		if facility_level in  LEVEL_ORDER:
-
+        
+        # Check if the level is valid
+		if facility_level in LEVEL_ORDER:
+            # Get the numeric value for the level
 			level_value = LEVEL_ORDER[facility_level]
 
-			return Facility.objects.filter(Q(hospitallab__isnull=False) | Q(branch__isnull=False)).filter(
-				Q(hospitallab__level__in=[level for level, value in LEVEL_ORDER.items() if value >= level_value]) | 
-				Q(branch__level__in=[level for level, value in LEVEL_ORDER.items() if value >= level_value])
-			).select_related('branch', 'hospitallab').order_by('?')
+            # Generate the levels to include (levels >= the current one)
+			valid_levels = [level for level, value in LEVEL_ORDER.items() if value >= level_value]
+
+            # Build the query
+			return Facility.objects.filter(
+                Q(hospitallab__isnull=False) | Q(branch__isnull=False)
+            ).filter(
+                Q(hospitallab__level__in=valid_levels) | 
+                Q(branch__level__in=valid_levels)
+            ).select_related('branch', 'hospitallab')#.order_by('?')
+
+        # Return an all labs queryset if no valid level is provided
+		return Facility.objects.filter(
+			Q(hospitallab__isnull=False) | Q(branch__isnull=False)
+			).select_related('branch', 'hospitallab')
 	
 
 
