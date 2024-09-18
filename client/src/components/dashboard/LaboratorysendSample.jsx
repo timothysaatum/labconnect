@@ -68,6 +68,7 @@ import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { motion } from "framer-motion";
 import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
 import { calculateTotalCost } from "@/util/totalCost";
+import { useFetchUserBranches } from "../../api/queries";
 
 //the prompt dialog
 export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
@@ -101,6 +102,7 @@ export default function LaboratorySendSample() {
   const [imageFile, setImagefile] = useState(null);
   const [selectedTests, setSelectedTests] = useState(null);
   const [testOptions, setTestOptions] = useState(null);
+  const [level, SetLevel] = useState(null);
 
   //form declaration
   const form = useForm({
@@ -122,6 +124,9 @@ export default function LaboratorySendSample() {
     },
   });
 
+  //userbranches
+  const { data: userbranches } = useFetchUserBranches();
+
   //send sample action
   const onSendSample = useSendSample(form);
 
@@ -137,6 +142,15 @@ export default function LaboratorySendSample() {
     { value: "Female", label: "Female" },
   ];
 
+  //getting userbranch level
+  useEffect(() => {
+    if (activeBranch) {
+      const level = userbranches?.data?.find(
+        (branch) => branch.id === activeBranch
+      )?.level;
+      SetLevel(level);
+    }
+  }, [activeBranch, userbranches?.data]);
   // fetching deliveries
   const {
     data: deliveries,
@@ -149,7 +163,7 @@ export default function LaboratorySendSample() {
     data: labs,
     isError: labsError,
     isLoading: labsLoading,
-  } = useFetchAllLabsBranches();
+  } = useFetchAllLabsBranches({ facility_level: level });
 
   //filepicker ref
   const fileref = form.register("attachment");
@@ -362,7 +376,7 @@ export default function LaboratorySendSample() {
                             />
                           </div>
                           <div>
-                            <CalenderDatePickder
+                            <CalenderDatePicker
                               name={"patient_age"}
                               control={form.control}
                             />

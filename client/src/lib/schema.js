@@ -43,7 +43,6 @@ const multiSelectSchema = z.object({
 
 //send sample by hospital schema
 
-
 export const hospitalRequestSchema = z.object({
   patient_name: z.string().min(1, "Patient name is required"),
   patient_age: z.date({
@@ -253,14 +252,10 @@ export const AddBranchSchema = z.object({
   town: z.string().min(1, "Location is required"),
   postal_address: z.string().min(1, "Postal address is required"),
   region: z.string().min(1, "Region is required"),
-  branch_manager: z
-    .array(
-      z.object({
-        label: z.string(),
-        value: z.number(),
-      })
-    )
-    .optional(),
+  level: z.string().min(1, "Branch level is required"),
+  accreditation_number: z.string().min(1, "Accreditation number is required"),
+  branch_manager: z.string(),
+  name: z.string().optional(),
 });
 export const ManagerInviteSchema = z.object({
   receiver_email: z

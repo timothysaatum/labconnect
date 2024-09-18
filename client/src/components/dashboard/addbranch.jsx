@@ -20,23 +20,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { FormBuilder } from "../formbuilder";
 import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
-import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useState } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { PhoneInput } from "../ui/phone-input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddBranchSchema } from "@/lib/schema";
-import AddManager from "./addManager";
 import { regions } from "@/data/data";
 import { useBranchAdd } from "@/lib/formactions";
 import SelectComponent from "../selectcomponent";
@@ -65,6 +54,7 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
     setServerErrors
   );
 
+  console.log(form.formState.errors)
   return (
     <Form {...form}>
       <form
@@ -75,23 +65,37 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
         <SelectComponent
           name={"branch_manager"}
           control={form.control}
-          label={"Choose Branch manager (Optional)"}
+          label={"Choose Branch manager"}
           items={Labmanagers}
           placeholder={"Select Branch Manager"}
           className="flex-1"
           description={
             "Choose from Current managers or invite new manager after adding branch"
           }
-          empty={"This laboratory has no other users."}
         />
         <FormBuilder
-          name={"customname"}
+          name={"name"}
           label={"Custom branch name (Optional)"}
-          description={
-            "Defaults to (laboratory name + town)"
-          }
+          description={"Defaults to (laboratory name + town)"}
         >
           <Input type="text" placeholder="Custom Branch Name" />
+        </FormBuilder>
+        <SelectComponent
+          items={[
+            { label: "Basic", value: "Basic" },
+            { label: "Primary", value: "Primary" },
+            { label: "Secondary", value: "Secondary" },
+            { label: "Tertiary", value: "Tertiary" },
+          ]}
+          name={"level"}
+          label={"Branch Level"}
+          placeholder={"Choose Branch Level"}
+        />
+        <FormBuilder
+          name={"accreditation_number"}
+          label={"Accreditiation number"}
+        >
+          <Input type="text" placeholder="Accreditation number" />
         </FormBuilder>
         <FormBuilder name={"email"} label={"Branch Email"}>
           <Input type="email" placeholder="Branch Email" />
@@ -144,6 +148,9 @@ const AddBranch = () => {
       postal_address: "",
       town: "",
       digital_address: "",
+      level: "",
+      branch_manager: "",
+      name: "",
     },
   });
   if (isDesktop) {

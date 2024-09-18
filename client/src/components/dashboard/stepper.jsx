@@ -43,7 +43,9 @@ function Step({ step, isActive, isCompleted, length, index, currentStep }) {
           {isCompleted ? (
             <CheckCircle2 className="w-6 h-6 text-white" />
           ) : (
-            <div className={`${isActive ? "text-blue-500" : "text-muted-foreground"}`}>
+            <div
+              className={`${isActive ? "text-blue-500" : "text-muted-foreground"}`}
+            >
               {step.icon}
             </div>
           )}
@@ -61,7 +63,6 @@ function Step({ step, isActive, isCompleted, length, index, currentStep }) {
 }
 
 export default function DeliveryStepper({ steps = defaultSteps, currentStep }) {
-    console.log(defaultSteps.at(2))
   return (
     <div className="w-full max-w-5xl px-4 mx-auto mt-10">
       {/* Wrapper for icons and connecting lines */}
@@ -79,10 +80,10 @@ export default function DeliveryStepper({ steps = defaultSteps, currentStep }) {
             {/* Conditionally render the line between icons */}
             {index < steps.length - 1 && (
               <div
-                className={ `hidden md:block flex-1 h-[2px] mx-1 -mt-10 min-w-20 transition-colors duration-300 ${
+                className={`hidden md:block flex-1 h-[2px] mx-1 -mt-10 min-w-20 transition-colors duration-300 ${
                   currentStep > step.id
                     ? "bg-green-500"
-                    : currentStep === step.id 
+                    : currentStep === step.id
                       ? "bg-gradient-to-r from-blue-600 to-muted-foreground from_5%"
                       : "bg-muted-foreground"
                 }`}

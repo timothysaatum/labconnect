@@ -38,12 +38,15 @@ const CalenderDatePicker = ({ name, control }) => {
               <PopoverContent className="max-w-3xl w-full p-0" align="start">
                 <Calendar
                   mode="single"
-                  captionLayout=""
+                  captionLayout="dropdown-buttons"
                   fromYear={1900}
                   toYear={new Date().getFullYear()}
                   selected={field.value}
                   onSelect={field.onChange}
                   today={false}
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
                 />
               </PopoverContent>
             </Popover>

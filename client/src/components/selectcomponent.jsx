@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-
 export default function SelectComponent({
   items,
   placeholder,
@@ -40,7 +39,12 @@ export default function SelectComponent({
             value={field.value}
           >
             <FormControl>
-              <SelectTrigger className={cn("text-muted-foreground",field?.value && "text-black dark:text-white")}>
+              <SelectTrigger
+                className={cn(
+                  "text-muted-foreground",
+                  field?.value && "text-black dark:text-white"
+                )}
+              >
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>
@@ -52,9 +56,9 @@ export default function SelectComponent({
                   </SelectItem>
                 ))
               ) : (
-                <SelectItem className="whitespace-wrap">
+                <p className="whitespace-wrap  px-4 flex justify-center items-center text-muted-foreground text-sm">
                   {empty || "no items to choose from"}
-                </SelectItem>
+                </p>
               )}
             </SelectContent>
           </Select>

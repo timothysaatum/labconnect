@@ -3,7 +3,6 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "./axios";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
-import { newAbortSignal } from "./abortsignal";
 
 // users
 
@@ -71,6 +70,16 @@ export const useFetchAllDeliveries = () => {
     staleTime: 1000 * 60 * 60,
   });
 };
+export const useFetchSampleTracking = (id) => {
+  const axiosPrivate = useAxiosPrivate();
+  return useQuery({
+    queryKey: ["tracking", id],
+    queryFn: async () =>
+      await axiosPrivate.get(`/sample/get-tracker-details/${id}/`),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 60,
+  });
+};
 
 // laboratories
 export const useFetchUserLab = () => {
@@ -86,11 +95,14 @@ export const useFetchUserLab = () => {
     enabled: user?.account_type === "Laboratory",
   });
 };
-export const useFetchAllLabsBranches = () => {
+export const useFetchAllLabsBranches = (query) => {
   const axiosPrivate = useAxiosPrivate();
   return useQuery({
-    queryKey: ["All labs"],
-    queryFn: async () => await axiosPrivate.get("/laboratory/branch/all/"),
+    queryKey: ["All labs", query],
+    queryFn: async () =>
+      await axiosPrivate.get("/laboratory/branch/all/", {
+        params: query,
+      }),
     refetchOnWindowFocus: false,
     staleTime: 100000 * 60 * 60,
   });
