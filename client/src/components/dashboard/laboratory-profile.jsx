@@ -210,7 +210,7 @@ const LaboratoryProfile = () => {
           <FormBuilder
             name={"description"}
             label={"Laboratory Bio"}
-            description={"enter a brief overview of your laboratory here"}
+            description={"Enter a brief overview of your laboratory here."}
           >
             <Textarea className="resize-none" rows={5} maxLength={250} />
           </FormBuilder>

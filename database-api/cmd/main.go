@@ -15,6 +15,7 @@ func main() {
     database.ConnectDB()
 
     // Register routes
+
     labs.SetupRoutes(app)
     // samples.SetupRoutes(app)
 

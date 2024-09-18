@@ -31,6 +31,7 @@ query_dict = QueryDict('', mutable=True)
 # from celery.result import AsyncResult
 from rest_framework.views import APIView
 from .constants import LEVEL_ORDER
+from .paginators import QueryPagination
 # from sample.serializers import CountObjectsSerializer
 
 
@@ -323,6 +324,7 @@ class TestListView(generics.ListAPIView):
 	serializer_class = TestSerializer
 	filter_backends = [DjangoFilterBackend]
 	filterset_class = TestFilter
+	# pagination_class = QueryPagination
 	#cache_timeout = 600
 	def get_serializer_context(self):
 		context = super().get_serializer_context()
@@ -336,17 +338,16 @@ class TestListView(generics.ListAPIView):
 
 		test_status = (status or test_status or '').lower()
 
-		print(test_status)
-		
+
 		if test_status in ('active', 'inactive'):
-			
+
 			return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(test_status=test_status).order_by('?')
+			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(test_status=test_status)#.order_by('?')
 
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk'))).order_by('?')
+			Q(branch__laboratory__id=self.kwargs.get('pk')))#.order_by('?')
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -732,7 +733,7 @@ class CopyTests(generics.CreateAPIView):
 	def post(self, request, *args, **kwargs):
 		test_ids = self.request.data.getlist('test_ids', [])
 		target_branch_id = self.kwargs.get('branch_to_copy_id')
-		
+
 		task = copy_test_to_branch.delay(test_ids, target_branch_id)
 
 		return Response({'task_id': task.id}, status=status.HTTP_202_ACCEPTED)
