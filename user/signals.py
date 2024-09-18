@@ -30,7 +30,7 @@ def email_user_on_creation(sender, instance, created, **kwargs):
 						 LabConnect Team.
 					''')
 			}
-			print(email)
+			# print(email)
 			send_normal_email(data)
 
 		# if instance.account_type == 'Delivery':

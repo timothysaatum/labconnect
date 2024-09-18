@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
+    # 'django_extensions',
     'modelmixins',
     'sample',
     'user',
@@ -180,7 +181,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # for React
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:5173',
-    'https://labconnect-eight.vercel.app'
+    # 'https://labconnect-eight.vercel.app'
 )
 CORS_ALLOW_CREDENTIALS = True
 
@@ -246,7 +247,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_PATH': '/',
     'AUTH_COOKIE_SECURE': True,
     'AUTH_COOKIE_HTTP_ONLY': True,
-    'AUTH_COOKIE_SAMESITE': 'Lax',
+    'AUTH_COOKIE_SAMESITE': 'None',
     'USER_ID_CLAIM': 'user_id'
 }
 

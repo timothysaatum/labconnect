@@ -78,7 +78,6 @@ class LaboratoryAdmin(admin.ModelAdmin):
 		'branches',
 		'main_phone',
 		'main_email',
-		'herfra_id',
 		'website',
 		'date_created',
 		'date_modified'

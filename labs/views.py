@@ -30,6 +30,7 @@ logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
 # from celery.result import AsyncResult
 from rest_framework.views import APIView
+from .constants import LEVEL_ORDER
 # from sample.serializers import CountObjectsSerializer
 
 
@@ -338,12 +339,10 @@ class TestListView(generics.ListAPIView):
 		print(test_status)
 		
 		if test_status in ('active', 'inactive'):
-			print(Test.objects.filter(
-			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(test_status=test_status).order_by('?'))
+			
 			return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk')), branch_test__test_status=test_status).order_by('?')
+			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(test_status=test_status).order_by('?')
 
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
@@ -559,7 +558,31 @@ class LaboratorySampleDeleteView(PermissionMixin, generics.DestroyAPIView):
 class AllLaboratories(generics.ListAPIView):
 
 	serializer_class = FacilitySerializer
-	queryset = Facility.objects.filter(Q(hospitallab__isnull=False) | Q(branch__isnull=False)).select_related('branch', 'hospitallab').order_by('?')
+	
+	def get_queryset(self):
+        # Get the level from the request query parameters
+		facility_level = self.request.GET.get('facility_level')
+        
+        # Check if the level is valid
+		if facility_level in LEVEL_ORDER:
+            # Get the numeric value for the level
+			level_value = LEVEL_ORDER[facility_level]
+
+            # Generate the levels to include (levels >= the current one)
+			valid_levels = [level for level, value in LEVEL_ORDER.items() if value >= level_value]
+
+            # Build the query
+			return Facility.objects.filter(
+                Q(hospitallab__isnull=False) | Q(branch__isnull=False)
+            ).filter(
+                Q(hospitallab__level__in=valid_levels) | 
+                Q(branch__level__in=valid_levels)
+            ).select_related('branch', 'hospitallab')#.order_by('?')
+
+        # Return an all labs queryset if no valid level is provided
+		return Facility.objects.filter(
+			Q(hospitallab__isnull=False) | Q(branch__isnull=False)
+			).select_related('branch', 'hospitallab')
 	
 
 
@@ -733,17 +756,3 @@ class CountFacilityObjects(APIView):
 
 		return Response(counts, status=status.HTTP_200_OK)
 
-
-# class TaskStatusView(generics.GenericAPIView):
-#     def get(self, request, *args, **kwargs):
-#         task_id = self.kwargs.get('task_id')
-#         async_result = AsyncResult(task_id)
-
-#         if async_result.ready():
-#             try:
-#                 counts = async_result.get(timeout=10)
-#                 return Response(counts)
-#             except Exception as e:
-#                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-#         else:
-#             return Response({"status": "Processing"}, status=status.HTTP_202_ACCEPTED)
