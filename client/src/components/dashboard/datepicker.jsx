@@ -35,10 +35,10 @@ const CalenderDatePicker = ({ name, control }) => {
                   </Button>
                 </FormControl>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="start">
+              <PopoverContent className="max-w-3xl w-full p-0" align="start">
                 <Calendar
                   mode="single"
-                  captionLayout="dropdown-buttons"
+                  captionLayout=""
                   fromYear={1900}
                   toYear={new Date().getFullYear()}
                   selected={field.value}

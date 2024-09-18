@@ -103,7 +103,6 @@ export function DataTable({
     table.setPageSize(rowCount);
     table.setPageIndex(0);
   }, [rowCount]);
-  console.log(title === "Requests");
 
   return (
     <>

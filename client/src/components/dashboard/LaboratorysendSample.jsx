@@ -362,7 +362,7 @@ export default function LaboratorySendSample() {
                             />
                           </div>
                           <div>
-                            <CalenderDatePicker
+                            <CalenderDatePickder
                               name={"patient_age"}
                               control={form.control}
                             />

@@ -6,8 +6,8 @@ let interval;
 
 export const CardStack = ({ items, offset, scaleFactor, selected }) => {
   const [hovered, setHovered] = useState(false);
-  const CARD_OFFSET = hovered ? 15 : offset || 10;
-  const SCALE_FACTOR = scaleFactor || 0.06;
+  const CARD_OFFSET = hovered ? 15 : offset || 0;
+  const SCALE_FACTOR = scaleFactor || 0.00;
   const [cards, setCards] = useState(items);
 
   useEffect(() => {

@@ -344,8 +344,8 @@ const AddTest = () => {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button size="icon" variant="outline">
-          <Plus className="w-4 h-4" />
+        <Button size={"sm"} variant="outline">
+          <Plus className="w-4 h-4" /> Add new Test
         </Button>
       </DrawerTrigger>
       <DrawerContent className="px-2">
