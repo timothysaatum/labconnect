@@ -2,11 +2,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft, Search } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DeliveryStepper from "../components/dashboard/stepper";
+import { useFetchSampleTracking } from "../api/queries";
+import { GetCurrentStep } from "../hooks/usesampleStatus";
 
 const Tracking = () => {
+  const { data, error, isLoading } = useFetchSampleTracking(1);
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    if (data?.data) {
+      const state = data?.data?.status;
+      setStatus(state);
+    }
+  }, [data?.data]);
+  const currentStep = GetCurrentStep(status);
+
+  console.log(currentStep)
+  console.log(status)
+  console.log(data?.data)
+
   return (
     <div className="my-5 sm:pl-14 mx-2">
       <Card className="max-w-5xl mx-auto">
@@ -37,30 +54,24 @@ const Tracking = () => {
           <div className="border-b-[1px] pb-5">
             <DeliveryStepper currentStep={2} />
           </div>
-            <div className="grid sm:grid-cols-2 place-items-center gap-5 mt-5" >
-              <p className="flex flex-col text-sm">
-                <span className="text-muted-foreground"> Courier's name</span>
-                <span> Saatum Timothy</span>
-              </p>
-              <p className="flex flex-col text-sm">
-                <span className="text-muted-foreground">
-                  
-                  Courier's Contact
-                </span>
-                <span>0249906015</span>
-              </p>
-              <p className="flex flex-col text-sm">
-                <span className="text-muted-foreground"> Laboratory name</span>
-                <span> Advanced Diagnostics</span>
-              </p>
-              <p className="flex flex-col text-sm">
-                <span className="text-muted-foreground">
-                  {" "}
-                  Laboratory Contact
-                </span>
-                <span> Saatum Timothy</span>
-              </p>
-            </div>
+          <div className="flex justify-around gap-5 mt-5">
+            <p className="flex flex-col text-sm">
+              <span className="text-muted-foreground"> Courier's name</span>
+              <span className="font-semibold"> Saatum Timothy</span>
+            </p>
+            <p className="flex flex-col text-sm">
+              <span className="text-muted-foreground">Courier's Contact</span>
+              <span className="font-semibold">0249906015</span>
+            </p>
+            <p className="flex flex-col text-sm">
+              <span className="text-muted-foreground"> Laboratory name</span>
+              <span className="font-semibold"> Advanced Diagnostics</span>
+            </p>
+            <p className="flex flex-col text-sm">
+              <span className="text-muted-foreground"> Laboratory Contact</span>
+              <span className="font-semibold"> Saatum Timothy</span>
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
