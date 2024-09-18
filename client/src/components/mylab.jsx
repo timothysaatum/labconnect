@@ -141,8 +141,13 @@ export default function MyLab() {
   const selectedRows = useSelector(selectSelectedRows);
   const [selectedBranch, setSelectedBranch] = useState();
   const QueryOptions = ["All", "Active", "Inactive"];
+  const [cursorOptions, setCursorOptions] = useState({
+    prev: null,
+    next: null,
+  });
   const [testQuerys, setQuerys] = useState({
     test_status: "Active",
+    cursor: undefined,
   });
 
   const handleFilterChange = (query) => {
@@ -179,21 +184,52 @@ export default function MyLab() {
     setSelectedTests();
   }, [currentTab]);
 
+  console.log(testQuerys);
+
   useEffect(() => {
     setSelectedBranch();
   }, [currentTab]);
 
   const {
     error: testError,
-    isPending: testsLoading,
+    isLoading: testsLoading,
     data: tests,
     refetch: refetchTests,
   } = useFetchLabTests(activeBranch, testQuerys, setQuerys);
 
   useEffect(() => {
+    if (tests?.data?.results) {
+      setCursorOptions((prevOptions) => {
+        const nextUrl = tests?.data?.next;
+        const prevUrl = tests?.data?.prev;
+        let nextCursor = null;
+        let prevCursor = null;
+
+        if (nextUrl) {
+          const nextQueryString = nextUrl.split("?")[1];
+          const nextUrlParams = new URLSearchParams(nextQueryString);
+          nextCursor = nextUrlParams.get("cursor");
+          console.log(nextCursor);
+        }
+
+        if (prevUrl) {
+          const prevQueryString = prevUrl.split("?")[1];
+          const prevUrlParams = new URLSearchParams(prevQueryString);
+          prevCursor = prevUrlParams.get("cursor");
+        }
+
+        return {
+          next: nextCursor,
+          prev: prevCursor,
+        };
+      });
+    }
+  }, [tests?.data, activeBranch]);
+
+  useEffect(() => {
     if (selectedTests) {
       setSelected(
-        tests?.data?.find((test) => {
+        tests?.data?.results?.find((test) => {
           return test.id === selectedTests;
         })
       );
@@ -211,7 +247,7 @@ export default function MyLab() {
   useEffect(() => {
     if (tests?.data) {
       setLabTests(
-        tests.data.map((test) => {
+        tests?.data?.results.map((test) => {
           return {
             id: test?.id,
             test_code: test?.test_code,
@@ -247,13 +283,15 @@ export default function MyLab() {
     }
   }, [userbranches]);
 
-  const index = tests?.data?.findIndex((test) => test.id === selected?.id);
+  const index = tests?.data?.results?.findIndex(
+    (test) => test.id === selected?.id
+  );
   const nextTest = () => {
     if (selectedTests) {
-      if (index < tests?.data.length - 1) {
-        setSelectedTests(tests?.data[index + 1]?.id);
+      if (index < tests?.data.results?.length - 1) {
+        setSelectedTests(tests?.data?.results?.[index + 1]?.id);
       } else {
-        setSelectedTests(tests?.data[0]?.id);
+        setSelectedTests(tests?.data?.results[0]?.id);
       }
     } else if (selectedBranch) {
       if (index < userbranches?.data.length - 1) {
@@ -270,7 +308,7 @@ export default function MyLab() {
       if (index === 0) {
         return;
       } else {
-        setSelectedTests(tests?.data[index - 1]?.id);
+        setSelectedTests(tests?.data?.results[index - 1]?.id);
       }
     } else if (selectedBranch) {
       if (index === 0) {
@@ -298,6 +336,7 @@ export default function MyLab() {
       QueryOptions,
       setQuerys: setQuerys,
       querys: testQuerys,
+      cursorOptions,
     },
     {
       title: "Branches",
@@ -342,7 +381,7 @@ export default function MyLab() {
                         <CardDescription>{tab.description}</CardDescription>
                       </div>
                       {tab.title === "Tests" &&
-                      tests?.data.length < 1 &&
+                      tests?.data?.results?.length < 1 &&
                       testQuerys.test_status ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -426,6 +465,7 @@ export default function MyLab() {
                           handleFilterChange={handleFilterChange}
                           setQuerys={tab.setQuerys}
                           querys={tab.querys}
+                          cursorOptions={tab.cursorOptions}
                         />
                       )}
                     </CardContent>

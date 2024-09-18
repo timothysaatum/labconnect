@@ -50,7 +50,7 @@ export function DataTable({
   setQuerys,
   QueryOptions,
   handleFilterChange,
-  TotalRowCount,
+  cursorOptions,
 }) {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
@@ -298,7 +298,6 @@ export function DataTable({
               variant="outline"
               size="icon"
               onClick={() => table.firstPage()}
-              disabled={!table.getCanPreviousPage()}
               className="w-8 h-8"
             >
               <ChevronsLeft />
@@ -306,8 +305,9 @@ export function DataTable({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              onClick={() =>
+                setQuerys({ ...querys, cursor: cursorOptions?.prev })
+              }
               className="w-8 h-8"
             >
               <ChevronLeft />
@@ -315,8 +315,9 @@ export function DataTable({
             <Button
               variant="outline"
               size="icon"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              onClick={() =>
+                setQuerys({ ...querys, cursor: cursorOptions?.next })
+              }
               className="w-8 h-8"
             >
               <ChevronRight />
@@ -325,7 +326,6 @@ export function DataTable({
               variant="outline"
               size="icon"
               onClick={() => table.lastPage()}
-              disabled={!table.getCanNextPage()}
               className="w-8 h-8"
             >
               <ChevronsRight />
