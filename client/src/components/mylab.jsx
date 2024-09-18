@@ -20,7 +20,7 @@ import {
 } from "./ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "./ui/button";
-import { ChevronDown, RotateCw } from "lucide-react";
+import { ChevronDown, RotateCw, SlidersHorizontal } from "lucide-react";
 import TestDetails from "./dashboard/testsDetails";
 import AddTest from "./dashboard/addTests";
 import AddBranch from "./dashboard/addbranch";
@@ -43,10 +43,10 @@ export function EmptyLab({ title, user }) {
         {title === "Tests" ? (
           <>
             <h3 className="text-xl font-semibold ">
-              Active Branch has no Tests
+              Active branch has no Tests
             </h3>
             <p className="text-sm text-muted-foreground">
-              No Tests available in Active Branch
+              you can add tests and manage them here.
             </p>
             <div className="mt-4">
               <AddTest />
@@ -67,6 +67,24 @@ export function EmptyLab({ title, user }) {
             )}
           </>
         )}
+      </div>
+    </div>
+  );
+}
+export function EmptyQuery({ title, user, query }) {
+  console.log(query);
+  return (
+    <div className="flex items-center justify-center flex-1 border border-dashed rounded-lg shadow-sm">
+      <div className="flex flex-col items-center py-16 text-center ">
+        <>
+          <h3 className="text-xl font-semibold ">{`Active branch has no ${query} tests`}</h3>
+          <p className="text-sm text-muted-foreground">
+            you can add tests and manage them here.
+          </p>
+          <div className="mt-4">
+            <AddTest />
+          </div>
+        </>
       </div>
     </div>
   );
@@ -122,6 +140,7 @@ export default function MyLab() {
   const user = useSelector(selectCurrentUser);
   const selectedRows = useSelector(selectSelectedRows);
   const [selectedBranch, setSelectedBranch] = useState();
+  const QueryOptions = ["All", "Active", "Inactive"];
   const [testQuerys, setQuerys] = useState({
     test_status: "Active",
   });
@@ -276,7 +295,7 @@ export default function MyLab() {
       filter: "test_name",
       setItems: setSelectedTests,
       selected: selectedTests,
-      QueryOptions: ["All", "active", "Inactive"],
+      QueryOptions,
       setQuerys: setQuerys,
       querys: testQuerys,
     },
@@ -322,6 +341,36 @@ export default function MyLab() {
                         <CardTitle>{tab.title}</CardTitle>
                         <CardDescription>{tab.description}</CardDescription>
                       </div>
+                      {tab.title === "Tests" &&
+                      tests?.data.length < 1 &&
+                      testQuerys.test_status ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className="ml-auto text-xs"
+                            >
+                              <SlidersHorizontal className="w-4 h-4 mr-2" />
+                              {QueryOptions.find(
+                                (query) => testQuerys.test_status === query
+                              ) ?? "Filter"}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {QueryOptions.map((query) => (
+                              <DropdownMenuCheckboxItem
+                                key={query}
+                                checked={QueryOptions.test_status === query}
+                                onCheckedChange={() =>
+                                  handleFilterChange(query)
+                                }
+                              >
+                                {query}
+                              </DropdownMenuCheckboxItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : null}
                       {selectedRows?.length > 0 && currentTab === "Branches" ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -359,6 +408,10 @@ export default function MyLab() {
                         <TableSkeleton />
                       ) : tab.error ? (
                         <ErrorLab refetch={tab.refetch} error={tab.error} />
+                      ) : tab.title === "Tests" &&
+                        tab.data?.length < 1 &&
+                        testQuerys.test_status !== "All" ? (
+                        <EmptyQuery query={testQuerys.test_status} />
                       ) : tab.data?.length < 1 ? (
                         <EmptyLab title={tab.title} user={user} />
                       ) : (

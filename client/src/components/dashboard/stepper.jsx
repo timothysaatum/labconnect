@@ -61,6 +61,7 @@ function Step({ step, isActive, isCompleted, length, index, currentStep }) {
 }
 
 export default function DeliveryStepper({ steps = defaultSteps, currentStep }) {
+    console.log(defaultSteps.at(2))
   return (
     <div className="w-full max-w-5xl px-4 mx-auto mt-10">
       {/* Wrapper for icons and connecting lines */}

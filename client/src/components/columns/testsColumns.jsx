@@ -172,26 +172,6 @@ export const useTestColumns = (setSelected) => {
     },
 
     {
-      accessorKey: "inactive",
-      header: createSortableHeader("Active"),
-      cell: ({ row }) => {
-        const test = row.original;
-
-        if (test?.test_status === "inactive")
-          return (
-            <div className="flex justify-center items-center">
-              <X className="w-4 h-4 text-muted-foreground" />
-            </div>
-          );
-
-        return (
-          <div className="flex justify-center items-center">
-            <Check className="w-4 h-4 " />
-          </div>
-        );
-      },
-    },
-    {
       id: "details",
       cell: ({ row }) => {
         const test = row.original;

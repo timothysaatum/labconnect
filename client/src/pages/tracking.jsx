@@ -44,7 +44,7 @@ const Tracking = () => {
               </p>
               <p className="flex flex-col text-sm">
                 <span className="text-muted-foreground">
-                  {" "}
+                  
                   Courier's Contact
                 </span>
                 <span>0249906015</span>

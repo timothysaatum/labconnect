@@ -24,14 +24,13 @@ export function DatePickerWithRange({ className }) {
           <Button
             id="date"
             variant={"outline"}
-            size="icon"
-            // className={cn(
-            //   "w-[300px] justify-start text-left font-normal",
-            //   !date && "text-muted-foreground"
-            // )}
+            className={cn(
+              "w-[300px] justify-start text-left font-normal",
+              !date && "text-muted-foreground"
+            )}
           >
-            <CalendarIcon className="h-4 w-4" />
-            {/* {date?.from ? (
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date?.from ? (
               date.to ? (
                 <>
                   {format(date.from, "LLL dd, y")} -{" "}
@@ -42,7 +41,7 @@ export function DatePickerWithRange({ className }) {
               )
             ) : (
               <span>Pick a date</span>
-            )} */}
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
@@ -54,7 +53,7 @@ export function DatePickerWithRange({ className }) {
             onSelect={setDate}
             numberOfMonths={2}
             classNames={{
-              today: `text-red-500`,
+              today:`text-red-500`
             }}
           />
         </PopoverContent>

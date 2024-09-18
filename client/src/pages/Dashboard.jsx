@@ -260,7 +260,7 @@ export default function Dashboard() {
           </div>
         </header>
         {user?.account_type === "Laboratory" ? (
-          <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden mb-4">
+        <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden mb-4">
             <div className="flex justify-around items-center gap-6">
               {/* maybe later or never */}
               {/* <div className="relative ">
