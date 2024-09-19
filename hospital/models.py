@@ -38,7 +38,7 @@ class Hospital(Facility):
 	'''
 	Model: Representing a hospital
 	'''
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
+	created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_index=True)
 	name = models.CharField(max_length=200)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	town = models.CharField(max_length=200)

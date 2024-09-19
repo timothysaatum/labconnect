@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .paginators import QueryPagination
+from ..modelmixins.paginators import QueryPagination
 from .models import (
 		Laboratory, 
 		Test, Branch,  

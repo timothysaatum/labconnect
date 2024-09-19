@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Hospital, HospitalLab, HospitalLabTest
-from labs.paginators import QueryPagination
+from modelmixins.paginators import QueryPagination
 
 
 

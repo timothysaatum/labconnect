@@ -61,7 +61,7 @@ class Branch(Facility):
 	'''
 
 	accreditation_number = models.CharField(max_length=100)
-	level = models.CharField(max_length=100)
+	level = models.CharField(max_length=100, db_index=True)
 	branch_name = models.CharField(max_length=155, blank=True, null=True)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	town = models.CharField(max_length=200)
@@ -111,8 +111,8 @@ class BranchTest(models.Model):
 	]
 
 	test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='branch_test')
-	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
-	test_status = models.CharField(max_length=10 ,choices=STATUS_CHOICES, default='active')
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, db_index=True)
+	test_status = models.CharField(max_length=10 ,choices=STATUS_CHOICES, default='active', db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
 	discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
 	discount_percent = models.CharField(max_length=10, blank=True, null=True)
@@ -127,10 +127,10 @@ class BranchTest(models.Model):
 
 class BranchManagerInvitation(BaseModel):
 
-	invitation_code = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-	sender = models.ForeignKey(user, on_delete=models.CASCADE)
+	invitation_code = models.UUIDField(default=uuid.uuid4, unique=True, editable=False, db_index=True)
+	sender = models.ForeignKey(user, on_delete=models.CASCADE, db_index=True)
 	receiver_email = models.EmailField(validators=[validate_email])
-	branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, db_index=True)
 	used = models.BooleanField(default=False)
 
 	def __str__(self):

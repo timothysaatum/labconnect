@@ -31,7 +31,7 @@ query_dict = QueryDict('', mutable=True)
 # from celery.result import AsyncResult
 from rest_framework.views import APIView
 from .constants import LEVEL_ORDER
-from .paginators import QueryPagination
+from modelmixins.paginators import QueryPagination
 # from sample.serializers import CountObjectsSerializer
 
 
@@ -332,7 +332,7 @@ class TestListView(generics.ListAPIView):
 		return context
 
 	def get_queryset(self):
-		# test_status = self.request.GET.get('status').lower() or self.request.GET.get('test_status').lower()
+
 		status = self.request.GET.get('status')
 		test_status = self.request.GET.get('test_status')
 
@@ -437,6 +437,7 @@ class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
 
 class TestResultListView(BranchListView):
 	serializer_class = TestResultSerializer
+	pagination_class = QueryPagination
 
 	def get_queryset(self):
 		return Result.objects.filter(
@@ -589,6 +590,7 @@ class AllLaboratories(generics.ListAPIView):
 
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
+	pagination_class = QueryPagination
 
 	def get_queryset(self):
 		status = self.request.GET.get('status')
@@ -621,6 +623,7 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	serializer_class = SampleSerializer
+	pagination_class = QueryPagination
 
 	def get_queryset(self):
 		status = self.request.GET.get('status')
@@ -694,6 +697,7 @@ class GetTestSampleType(generics.ListAPIView):
 	params: test id=UUID
 	"""
 	serializer_class = SampleTypeSerializer
+	pagination_class = QueryPagination
 
 	def get_queryset(self):
 		obj_id = self.kwargs.get('pk')
