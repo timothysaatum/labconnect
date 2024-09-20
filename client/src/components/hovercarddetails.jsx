@@ -4,7 +4,12 @@ import SampleTypehoverCard from "./sampleTypehoverCard";
 import TestsHoverCard from "./dashboard/testshoverCard";
 
 const HoverCardDetails = ({ children, option, items, title }) => {
-  const hoveredcard = items?.find((item) => item.id === option)
+  let hoveredcard;
+  if (title === "tests") {
+    hoveredcard = items?.results?.find((item) => item.id === option);
+  } else {
+    hoveredcard = items?.find((item) => item.id === option);
+  }
 
   const CardType = () => {
     switch (title) {
@@ -19,7 +24,9 @@ const HoverCardDetails = ({ children, option, items, title }) => {
   return (
     <HoverCard>
       <HoverCardTrigger>{children}</HoverCardTrigger>
-      <HoverCardContent className="min-w-[30rem]">{CardType()}</HoverCardContent>
+      <HoverCardContent className="min-w-[30rem]">
+        {CardType()}
+      </HoverCardContent>
     </HoverCard>
   );
 };
