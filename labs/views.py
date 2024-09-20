@@ -335,7 +335,7 @@ class TestListView(generics.ListAPIView):
 
 		status = self.request.GET.get('status')
 		test_status = self.request.GET.get('test_status')
-
+		search_term = self.request.query_params.get('search', None)
 		test_status = (status or test_status or '').lower()
 
 
@@ -343,7 +343,9 @@ class TestListView(generics.ListAPIView):
 
 			return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(test_status=test_status)#.order_by('?')
+			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(
+				Q(name__icontains=search_term) | Q(test_status=test_status)
+				)
 
 		return Test.objects.filter(
 			Q(branch__id=self.kwargs.get('pk')) | 
