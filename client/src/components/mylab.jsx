@@ -35,6 +35,7 @@ import {
 } from "@/redux/branches/activeBranchSlice";
 import TableSkeleton from "./dashboard/tableskeleton";
 import BranchDetails from "./dashboard/branchDetails";
+import useDebounce from "../hooks/useDebounce";
 
 export function EmptyLab({ title, user }) {
   return (
@@ -141,6 +142,8 @@ export default function MyLab() {
   const selectedRows = useSelector(selectSelectedRows);
   const [selectedBranch, setSelectedBranch] = useState();
   const QueryOptions = ["All", "Active", "Inactive"];
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedsearchedTerm = useDebounce(searchTerm, 5000);
   const [cursorOptions, setCursorOptions] = useState({
     prev: null,
     next: null,
@@ -148,8 +151,15 @@ export default function MyLab() {
   const [testQuerys, setQuerys] = useState({
     test_status: "Active",
     cursor: undefined,
+    search: "",
   });
 
+  useEffect(() => {
+    setQuerys({
+      ...testQuerys,
+      search: debouncedsearchedTerm,
+    });
+  }, [debouncedsearchedTerm]);
   const handleFilterChange = (query) => {
     setQuerys((prevQueries) => {
       const newQueries = { ...prevQueries };
@@ -337,6 +347,8 @@ export default function MyLab() {
       setQuerys: setQuerys,
       querys: testQuerys,
       cursorOptions,
+      setSearchTerm,
+      searchTerm,
     },
     {
       title: "Branches",
@@ -466,6 +478,8 @@ export default function MyLab() {
                           setQuerys={tab.setQuerys}
                           querys={tab.querys}
                           cursorOptions={tab.cursorOptions}
+                          setSearchTerm={tab.setSearchTerm}
+                          searchTerm={tab.searchTerm}
                         />
                       )}
                     </CardContent>

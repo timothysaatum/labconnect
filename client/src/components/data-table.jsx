@@ -51,6 +51,8 @@ export function DataTable({
   QueryOptions,
   handleFilterChange,
   cursorOptions,
+  setSearchTerm,
+  searchTerm,
 }) {
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
@@ -106,92 +108,93 @@ export function DataTable({
 
   return (
     <>
-      <div className=" ml-auto  md:grow-0 flex justify-end mb-2 gap-4">
-        <div className="flex-1">
-          <div className="relative ">
+      <div className="flex justify-between mb-4 max-sm:flex-col gap-5">
+        <div>
+          <div className="relative w-full">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               id="search"
               placeholder={`Search ${title} ...`}
-              className="w-full h-10 rounded-lg bg-background md:w-[200px] lg:w-[336px] pl-10 max-w-[350px]"
-              value={table.getColumn(`${filter}`)?.getFilterValue() ?? ""}
-              onChange={(event) =>
-                table.getColumn(`${filter}`)?.setFilterValue(event.target.value)
-              }
+              className="w-full h-10 rounded-lg bg-background pl-8 md:w-[350px]"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
-        {title === "Requests" ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto text-xs">
-                <SlidersHorizontal className="w-4 h-4 mr-2" />
-                {QueryOptions?.find((query) => query === querys?.status) ||
-                  "Filter"}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {QueryOptions?.map((query) => (
-                <DropdownMenuCheckboxItem
-                  key={query}
-                  checked={querys?.status === query}
-                  onCheckedChange={() => handleFilterChange(query)}
-                >
-                  {query}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : title === "Tests" ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto text-xs">
-                <SlidersHorizontal className="w-4 h-4 mr-2" />
-                {QueryOptions?.find((query) => query === querys?.test_status) ||
-                  "Filter"}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {QueryOptions?.map((query) => (
-                <DropdownMenuCheckboxItem
-                  key={query}
-                  checked={querys?.test_status === query}
-                  onCheckedChange={() => handleFilterChange(query)}
-                >
-                  {query}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : null}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto text-xs">
-              <View className="w-4 h-4 mr-2" />
-              Visibility
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
+        <div className="flex justify-end gap-4">
+          {title === "Requests" ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="text-xs">
+                  <SlidersHorizontal className="w-4 h-4 mr-2" />
+                  {QueryOptions?.find((query) => query === querys?.status) ||
+                    "Filter"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {QueryOptions?.map((query) => (
                   <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    key={query}
+                    checked={querys?.status === query}
+                    onCheckedChange={() => handleFilterChange(query)}
                   >
-                    {column.id.split("_").join(" ")}
+                    {query}
                   </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : title === "Tests" ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className=" text-xs">
+                  <SlidersHorizontal className="w-4 h-4 mr-2" />
+                  {QueryOptions?.find(
+                    (query) => query === querys?.test_status
+                  ) || "Filter"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {QueryOptions?.map((query) => (
+                  <DropdownMenuCheckboxItem
+                    key={query}
+                    checked={querys?.test_status === query}
+                    onCheckedChange={() => handleFilterChange(query)}
+                  >
+                    {query}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : null}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="text-xs">
+                <View className="w-4 h-4 mr-2" />
+                Visibility
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id.split("_").join(" ")}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="rounded-md md:border max-md:pt-4">
         <Table>
