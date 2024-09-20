@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..modelmixins.paginators import QueryPagination
+# from modelmixins.paginators import QueryPagination
 from .models import (
 		Laboratory, 
 		Test, Branch,  
@@ -172,7 +172,7 @@ class TestResultSerializer(serializers.ModelSerializer):
 			'date_added'
 		)
 
-		pagination_class = QueryPagination
+		# pagination_class = QueryPagination
 
 	def to_representation(self, instance):
 

@@ -590,7 +590,7 @@ class AllLaboratories(generics.ListAPIView):
 
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
-	pagination_class = QueryPagination
+	# pagination_class = QueryPagination
 
 	def get_queryset(self):
 		status = self.request.GET.get('status')
@@ -623,7 +623,7 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	serializer_class = SampleSerializer
-	pagination_class = QueryPagination
+	# pagination_class = QueryPagination
 
 	def get_queryset(self):
 		status = self.request.GET.get('status')
@@ -697,7 +697,7 @@ class GetTestSampleType(generics.ListAPIView):
 	params: test id=UUID
 	"""
 	serializer_class = SampleTypeSerializer
-	pagination_class = QueryPagination
+	# pagination_class = QueryPagination
 
 	def get_queryset(self):
 		obj_id = self.kwargs.get('pk')

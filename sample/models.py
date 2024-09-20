@@ -3,7 +3,7 @@ from labs.models import Branch, Test
 from modelmixins.models import Facility
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
-from django_cryptography.fields import encrypt
+# from django_cryptography.fields import encrypt
 import uuid
 
 
@@ -67,20 +67,20 @@ class Sample(models.Model):
 			related_name='facilities',
 			db_index=True
 		)
-	facility_type = encrypt(models.CharField(
+	facility_type = models.CharField(
 			max_length=50,
 			choices=REFERRING_FACILITY_TYPE
-		))
-	sender_full_name = encrypt(models.CharField(
+		)   
+	sender_full_name = models.CharField(
 		max_length=200, 
 		null=True, 
 		blank=True
-	))
-	sender_phone = encrypt(models.CharField(max_length=20, null=True, blank=True))
-	sender_email = encrypt(models.EmailField(null=True, blank=True))
-	patient_name = encrypt(models.CharField(max_length=200))
-	patient_age = encrypt(models.DateField())
-	patient_sex = encrypt(models.CharField(max_length=20, choices=PATIENT_SEX))
+	)         
+	sender_phone = models.CharField(max_length=20, null=True, blank=True)
+	sender_email = models.EmailField(null=True, blank=True)
+	patient_name = models.CharField(max_length=200)
+	patient_age = models.DateField()
+	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
 	delivery = models.ForeignKey(
 			Delivery,
 			on_delete=models.SET_NULL,
@@ -88,23 +88,23 @@ class Sample(models.Model):
 			blank=True, db_index=True
 		)
 	to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
-	tests = encrypt(models.ManyToManyField(Test, related_name='tests'))
-	clinical_history = encrypt(models.TextField(null=True, blank=True))
-	attachment = encrypt(models.FileField(
+	tests = models.ManyToManyField(Test, related_name='tests')
+	clinical_history = models.TextField(null=True, blank=True)
+	attachment = (models.FileField(
 		upload_to='sample/attachments',
 		blank=True,
 		null=True
 	))
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)
-	requires_phlebotomist = encrypt(models.CharField(max_length=10, choices=PHLEBOTOMIST_REQUIREMENTS))
+	requires_phlebotomist = models.CharField(max_length=10, choices=PHLEBOTOMIST_REQUIREMENTS)
 	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS, default='Request Accepted', db_index=True)
-	report_delivery_mode = encrypt(models.CharField(max_length=55, choices=REPORT_DELIVERY_MODE))
-	referring_signature = encrypt(models.BooleanField(default=False))
-	referror_signature = encrypt(models.BooleanField(default=False))
-	rejection_reason = encrypt(models.TextField(blank=True, null=True))
-	priority = encrypt(models.CharField(max_length=50, choices=PRIORITIES))
-	date_created = encrypt(models.DateTimeField(auto_now_add=True))
-	date_modified = encrypt(models.DateTimeField(auto_now=True))
+	report_delivery_mode = models.CharField(max_length=55, choices=REPORT_DELIVERY_MODE)
+	referring_signature = models.BooleanField(default=False)
+	referror_signature = models.BooleanField(default=False)
+	rejection_reason = (models.TextField(blank=True, null=True))
+	priority = models.CharField(max_length=50, choices=PRIORITIES)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
 		return self.patient_name
@@ -118,9 +118,9 @@ class SampleTrackingHistory(models.Model):
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
 	sample = models.ForeignKey(Sample, related_name="tracking_history", on_delete=models.CASCADE, db_index=True)
-	status = encrypt(models.CharField(max_length=50, choices=REQUEST_STATUS, db_index=True))
-	location = encrypt(models.CharField(max_length=255, null=True, blank=True))
-	updated_at = encrypt(models.DateTimeField(auto_now=True))
+	status = models.CharField(max_length=50, choices=REQUEST_STATUS, db_index=True)
+	location = models.CharField(max_length=255, null=True, blank=True)
+	updated_at = models.DateTimeField(auto_now=True)
 	
 	def __str__(self) -> str:
 		return self.status
@@ -129,11 +129,11 @@ class SampleTrackingHistory(models.Model):
 class Notification(models.Model):
 
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, db_index=True)
-	message = encrypt(models.CharField(max_length=150))
-	is_read = encrypt(models.BooleanField(default=False))
-	is_hidden = encrypt(models.BooleanField(default=False))
-	date_created = encrypt(models.DateTimeField(auto_now_add=True))
-	date_modified = encrypt(models.DateTimeField(auto_now=True))
+	message = models.CharField(max_length=150)
+	is_read = models.BooleanField(default=False)
+	is_hidden = models.BooleanField(default=False)
+	date_created = models.DateTimeField(auto_now_add=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
 		return f'{self.branch.town} - {self.branch.laboratory.name}'
