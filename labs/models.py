@@ -18,10 +18,10 @@ class Laboratory(BaseModel):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	created_by = models.ForeignKey(user, on_delete=models.CASCADE)
 	name = models.CharField(max_length=200)
-	postal_address = models.CharField(max_length=255)
+	# postal_address = models.CharField(max_length=255)
 	main_phone = models.CharField(max_length=15)
 	main_email = models.EmailField()
-	website = models.URLField(blank=True, null=True)
+	# website = models.URLField(blank=True, null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	logo = models.ImageField(upload_to='labs/logo', default='logo.jpg')
@@ -29,7 +29,7 @@ class Laboratory(BaseModel):
 
 	class Meta:
 		verbose_name_plural = 'Laboratories'
-		unique_together = ('website', 'created_by')
+		unique_together = ('created_by', 'name')
 
 	def __str__(self) -> str:
 		return self.name
