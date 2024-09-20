@@ -67,6 +67,7 @@ class Sample(models.Model):
 			related_name='facilities',
 			db_index=True
 		)
+
 	facility_type = models.CharField(
 			max_length=50,
 			choices=REFERRING_FACILITY_TYPE

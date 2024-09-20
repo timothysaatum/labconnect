@@ -343,12 +343,15 @@ class TestListView(generics.ListAPIView):
 			Q(branch__id=self.kwargs.get('pk')) | Q(branch__laboratory__id=self.kwargs.get('pk'))
 			)
 
-		if test_status in ('active', 'inactive', 'Active', 'Inactive'):
-
-			return tests.filter(test_status__icontains=test_status)
-		
+		print(search_term)
 		if search_term:
+			print('Here')
 			return tests.filter(name__icontains=search_term)
+
+
+		if test_status in ('active', 'inactive', 'Active', 'Inactive'):
+			print(test_status)
+			return tests.filter(test_status__icontains=test_status)
 
 		return tests
 
