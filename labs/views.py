@@ -335,21 +335,22 @@ class TestListView(generics.ListAPIView):
 
 		status = self.request.GET.get('status')
 		test_status = self.request.GET.get('test_status')
-		search_term = self.request.query_params.get('search', None)
-		test_status = (status or test_status or '').lower()
+		search_term = self.request.query_params.get('search')
+		test_status = (status or test_status or '')
 
 
-		if test_status in ('active', 'inactive'):
+		tests = Test.objects.filter(
+			Q(branch__id=self.kwargs.get('pk')) | Q(branch__laboratory__id=self.kwargs.get('pk'))
+			)
 
-			return Test.objects.filter(
-			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk'))).filter(
-				Q(name__icontains=search_term) | Q(test_status=test_status)
-				)
+		if test_status in ('active', 'inactive', 'Active', 'Inactive'):
 
-		return Test.objects.filter(
-			Q(branch__id=self.kwargs.get('pk')) | 
-			Q(branch__laboratory__id=self.kwargs.get('pk')))#.order_by('?')
+			return tests.filter(test_status__icontains=test_status)
+		
+		if search_term:
+			return tests.filter(name__icontains=search_term)
+
+		return tests
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
