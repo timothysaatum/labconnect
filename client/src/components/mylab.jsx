@@ -143,7 +143,7 @@ export default function MyLab() {
   const [selectedBranch, setSelectedBranch] = useState();
   const QueryOptions = ["All", "Active", "Inactive"];
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedsearchedTerm = useDebounce(searchTerm, 5000);
+  const debouncedsearchedTerm = useDebounce(searchTerm, 500);
   const [cursorOptions, setCursorOptions] = useState({
     prev: null,
     next: null,
@@ -151,7 +151,7 @@ export default function MyLab() {
   const [testQuerys, setQuerys] = useState({
     test_status: "Active",
     cursor: undefined,
-    search: "",
+    search: null,
   });
 
   useEffect(() => {

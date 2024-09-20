@@ -272,7 +272,7 @@ export default function LaboratorySendSample() {
   // constructing tests in the multiselct format
   useEffect(() => {
     setTestOptions(
-      tests?.data?.map((item) => ({
+      tests?.data?.results?.map((item) => ({
         label: item.name,
         value: item.id,
       }))
