@@ -63,7 +63,7 @@ class BranchSerializer(serializers.ModelSerializer):
 		)
 
 	def to_representation(self, instance):
-		print(instance.branch_name)
+
 		data = super().to_representation(instance)
 		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else instance.laboratory.created_by.full_name
 		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else instance.laboratory.created_by.id
