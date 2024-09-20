@@ -126,7 +126,7 @@ export const BlockGettingStarted = () => {
         setProceed(true);
       } else if (!labLoading && userlab?.data?.length === 0) {
         setProceed(false);
-        navigate("/getting-started", {
+        navigate("/create-laboratory", {
           state: { from: location },
           replace: true,
         });
