@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-
+CRYPTOGRAPHY_KEY = 'r04keof03gcc@FV$£F£$_TLFc430o5e@C:C$+£db_index=True$_£L£%LCL$W)%£I%KKODCK£O$RI$)IKGPGJM:EGKP%KJVrjeog90935535fmijcer@?:!":£{{}}'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = []
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
-    # 'django_extensions',
+    'django_cryptography',
     'modelmixins',
     'sample',
     'user',
@@ -152,6 +152,12 @@ CONNECTION_broker_connection_max_retries = None
 CELERY_broker_connection_retry_INTERVAL = 1
 CELERY_broker_connection_retry_MAX = 20
 CELERY_broker_connection_retry_INTERVAL_STEP = 1
+
+
+# FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
+# DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
+# DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
+# DATA_UPLOAD_MAX_NUMBER_FILES = 100
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -170,11 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# JAZZMIN_SETTINGS = {
-#     'site_title': 'LabConnect Administration',
-#     'site_header': 'LabConnect Administration Panel',
-#     'hide_docs': True
-# }
+
 
 CORS_ALLOW_ALL_ORIGINS = True
 # White listing the localhost:3000 port
@@ -212,11 +214,11 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'user.Client'
 REST_FRAMEWORK = {
+
     'DEFAULT_AUTHENTICATION_CLASSES':(
             'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 10,
+
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
@@ -262,10 +264,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-#AUTHENTICATION_BACKENDS = (
-#        'django.contrib.auth.backends.ModelBackend',
-#        'allauth.account.auth_backends.AuthenticationBackend'
-#    )
 
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')

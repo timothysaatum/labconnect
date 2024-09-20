@@ -78,7 +78,7 @@ class LaboratoryAdmin(admin.ModelAdmin):
 		'branches',
 		'main_phone',
 		'main_email',
-		'website',
+		# 'website',
 		'date_created',
 		'date_modified'
 	)

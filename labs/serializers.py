@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .paginators import QueryPagination
+# from modelmixins.paginators import QueryPagination
 from .models import (
 		Laboratory, 
 		Test, Branch,  
@@ -13,6 +13,7 @@ from modelmixins.serializers import SampleTypeSerializer
 
 class LaboratorySerializer(serializers.ModelSerializer):
 	logo = serializers.ImageField(required=False)
+	# website = serializers.URLField(required=False)
 
 	class Meta:
 
@@ -23,8 +24,8 @@ class LaboratorySerializer(serializers.ModelSerializer):
 			'name', 
 			'main_phone', 
 			'main_email',
-			'postal_address', 
-			'website', 
+			# 'postal_address', 
+			# 'website', 
 			'description',
 			'logo', 
 			'date_modified', 
@@ -62,11 +63,11 @@ class BranchSerializer(serializers.ModelSerializer):
 		)
 
 	def to_representation(self, instance):
-
+		print(instance.branch_name)
 		data = super().to_representation(instance)
 		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else instance.laboratory.created_by.full_name
 		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else instance.laboratory.created_by.id
-		data['name'] = f'{instance.laboratory.name} - {instance.town}'
+		data['name'] = instance.branch_name if instance.branch_name else f'{instance.laboratory.name} - {instance.town}'
 
 		return data
 
@@ -172,7 +173,7 @@ class TestResultSerializer(serializers.ModelSerializer):
 			'date_added'
 		)
 
-		pagination_class = QueryPagination
+		# pagination_class = QueryPagination
 
 	def to_representation(self, instance):
 
