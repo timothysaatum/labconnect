@@ -19,16 +19,10 @@ import SettingProfile from "./components/dashboard/Profile";
 import Loading from "./components/loading";
 import Analytics from "./components/laboratoryanalytics";
 import SampleDetails from "./components/sampleDetails";
-import CreateLab from "./components/createLab/createLab";
-import Labgettingstarted, {
-  GettingStartedOverView,
-} from "./pages/labgettingstarted";
 import MyLaboratory from "./components/dashboard/MyLaboratory";
-import Hospitalgettingstarted, {
-  GettingStartedOverViewHospital,
-} from "./pages/hospital_getting_started";
 import CreateHospital from "./components/createHospital/createHospital";
 import SendSample from "./components/dashboard/sendSample";
+import CreateLaboratory from "./pages/labgettingstarted";
 const ForgotPassword = React.lazy(() => import("./pages/forgotpassword"));
 
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
@@ -79,17 +73,8 @@ export default function App() {
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
-              <Route path="getting-started" element={<Labgettingstarted />}>
-                <Route index element={<GettingStartedOverView />} />
-                <Route path="create-laboratory" element={<CreateLab />} />
-              </Route>
-              <Route
-                path="getting-started-hospital"
-                element={<Hospitalgettingstarted />}
-              >
-                <Route index element={<GettingStartedOverViewHospital />} />
-                <Route path="create-hospital" element={<CreateHospital />} />
-              </Route>
+              <Route path="create-laboratory" element={<CreateLaboratory />} />
+              <Route path="create-hospital" element={<CreateHospital />} />
               <Route element={<BlockGettingStarted />}>
                 <Route
                   path="dashboard"
