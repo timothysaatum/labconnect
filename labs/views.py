@@ -327,9 +327,23 @@ class TestListView(generics.ListAPIView):
 	pagination_class = QueryPagination
 	#cache_timeout = 600
 	def get_serializer_context(self):
+
 		context = super().get_serializer_context()
 		context.update({'pk': self.kwargs.get('pk')})
+
 		return context
+
+	def list(self, request, *args, **kwargs):
+		paginate = self.request.query_params.get('paginate', 'true').lower()
+        
+        # Disable pagination if ?paginate=false is in the query params
+		if paginate == 'false':
+			queryset = self.get_queryset()
+			serializer = self.get_serializer(queryset, many=True)
+			return Response(serializer.data)
+		else:
+            # Apply pagination normally
+			return super().list(request, *args, **kwargs)
 
 	def get_queryset(self):
 
