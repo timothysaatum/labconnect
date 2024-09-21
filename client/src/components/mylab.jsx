@@ -151,7 +151,8 @@ export default function MyLab() {
   const [testQuerys, setQuerys] = useState({
     test_status: "Active",
     cursor: undefined,
-    search: null,
+    search: undefined,
+    size: undefined,
   });
 
   useEffect(() => {
@@ -461,9 +462,10 @@ export default function MyLab() {
                         <ErrorLab refetch={tab.refetch} error={tab.error} />
                       ) : tab.title === "Tests" &&
                         tab.data?.length < 1 &&
-                        testQuerys.test_status !== "All" ? (
+                        testQuerys.test_status !== "All" &&
+                        !testQuerys.search ? (
                         <EmptyQuery query={testQuerys.test_status} />
-                      ) : tab.data?.length < 1 ? (
+                      ) : tab.data?.length < 1 && !testQuerys.search ? (
                         <EmptyLab title={tab.title} user={user} />
                       ) : (
                         <DataTable

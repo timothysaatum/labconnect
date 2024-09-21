@@ -519,7 +519,7 @@ export const useResultUpload = (form) => {
 export const useAddHospital = (form, fieldToStep, setStep) => {
   const axiosPrivate = useAxiosPrivate();
   const queryClient = useQueryClient();
-  const from =  "/dashboard/overview";
+  const from = "/dashboard/overview";
   const navigate = useNavigate();
 
   const onAddHospital = useCallback(

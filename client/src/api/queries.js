@@ -1,5 +1,9 @@
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
 import axios from "./axios";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/redux/auth/authSlice";
@@ -127,6 +131,31 @@ export const useFetchLabTests = (id, querys) => {
     placeholderData: keepPreviousData,
     enabled: !!id,
     staleTime: 10000 * 60 * 60,
+  });
+};
+export const useFetchInfiniteLabTests = (id, querys, cursorOptions) => {
+  if (
+    querys?.test_status === "All" ||
+    querys?.test_status === undefined ||
+    querys?.test_status === ""
+  ) {
+    const { test_status, ...rest } = querys;
+    querys = rest;
+  }
+  const axiosPrivate = useAxiosPrivate();
+  return useInfiniteQuery({
+    queryKey: ["infinitetests", id, querys],
+    queryFn: async ({ pageParam }) =>
+      await axiosPrivate.get(`/laboratory/test/list/${id}/`, {
+        params: { ...querys, cursor: pageParam },
+      }),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      console.log(cursorOptions);
+      console.log("next cursor", cursorOptions.next);
+      return cursorOptions.next;
+    },
+    enabled: !!id,
   });
 };
 export const useFetchSampleTypes = (id) => {
