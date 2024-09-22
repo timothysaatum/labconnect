@@ -26,7 +26,7 @@ import json
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .tasks import copy_test_to_branch#, get_sample_counts_for_facility
 import logging
-import uuid
+from modelmixins.utils import ensure_uuid
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
 # from celery.result import AsyncResult
@@ -754,8 +754,7 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 
 
 class CopyTests(generics.CreateAPIView):
-    serializer_class = TestSerializer
-
+    
     def post(self, request, *args, **kwargs):
         test_ids = self.request.data.getlist('test_ids', [])
         target_branch_id = self.kwargs.get('branch_to_copy_to_id')
@@ -763,15 +762,6 @@ class CopyTests(generics.CreateAPIView):
         if not test_ids or not target_branch_id:
             return Response({'error': 'Test IDs and target branch ID are required'}, 
                             status=status.HTTP_400_BAD_REQUEST)
-
-        # Convert string UUIDs to UUID objects if necessary
-        def ensure_uuid(value):
-            if isinstance(value, uuid.UUID):
-                return str(value)
-            try:
-                return str(uuid.UUID(value))
-            except ValueError:
-                return None
 
         test_ids = [ensure_uuid(test_id) for test_id in test_ids]
         target_branch_id = ensure_uuid(target_branch_id)
