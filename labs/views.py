@@ -646,18 +646,19 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 	# pagination_class = QueryPagination
 
 	def get_queryset(self):
+
 		status = self.request.GET.get('status')
 		from_date = self.request.GET.get('from_date')
 		to_date = self.request.GET.get('to_date')
 
 		if status:
 
-			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status.capitalize()).order_by('-date_created')
-		
+			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status).order_by('-date_created')
+
 		if from_date and to_date:
 
 			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(date__range=(from_date, to_date)).order_by('-date_created')
-		
+
 		return Sample.objects.filter(
 			referring_facility=self.kwargs.get('pk')
 		).order_by('-date_created')
@@ -671,7 +672,7 @@ class SampleTypeView(PermissionMixin, generics.CreateAPIView):
 		if not self.has_laboratory_permission(self.request.user):
 
 			return Response(
-				
+
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
@@ -749,23 +750,24 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 		self.perform_update(serializer)
 
 		return Response(serializer.data, status=status.HTTP_200_OK)
-	
+
 
 class CopyTests(generics.CreateAPIView):
+
 	serializer_class = TestSerializer
 
 	def post(self, request, *args, **kwargs):
-		test_ids = self.request.data.getlist('test_ids', [])
-		target_branch_id = self.kwargs.get('branch_to_copy_id')
 
-		task = copy_test_to_branch.delay(test_ids, target_branch_id)
+		test_ids = self.request.data.get('test_ids', [])
+		target_branch_id = self.kwargs.get('branch_to_copy_to_id')
 
-		return Response({'task_id': task.id}, status=status.HTTP_202_ACCEPTED)
-	
+		result = copy_test_to_branch.apply_async(args=[test_ids, target_branch_id], countdown=30)
+
+		return Response({'task_id': result.id}, status=status.HTTP_202_ACCEPTED)
 
 
 class CountFacilityObjects(APIView):
-	
+
 	def get(self, request, *args, **kwargs):
 
 		facility_id = self.kwargs.get('facility_id')
@@ -780,4 +782,3 @@ class CountFacilityObjects(APIView):
 			}
 
 		return Response(counts, status=status.HTTP_200_OK)
-
