@@ -9,11 +9,11 @@ from sample.models import Sample
 def copy_test_to_branch(test_ids, target_branch_id):
     print('Hello')
     if not test_ids:
-        raise('Test ids must be provided')
+        print('Test ids must be provided')
 
 
     if not target_branch_id:
-        raise('Target branch not provided')
+        print('Target branch not provided')
 
     
     tests = []
@@ -23,7 +23,7 @@ def copy_test_to_branch(test_ids, target_branch_id):
         print(test)
         test.branch.add(target_branch_id)
         test.save()
-        test.append(test)
+        tests.append(test)
 
     return TestSerializer(tests, many=True).data
 
