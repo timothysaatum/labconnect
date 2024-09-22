@@ -759,10 +759,12 @@ class CopyTests(generics.CreateAPIView):
 	def post(self, request, *args, **kwargs):
 
 		test_ids = self.request.data.getlist('test_ids', [])
+		print(test_ids)
 		target_branch_id = self.kwargs.get('branch_to_copy_to_id')
 
 		result = copy_test_to_branch.delay(test_ids, target_branch_id)
-		print(result)
+
+		print(result) 
 
 		return Response({'task_id': result.id}, status=status.HTTP_202_ACCEPTED)
 

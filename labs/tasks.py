@@ -2,9 +2,10 @@ from celery import shared_task
 from .models import Test
 from .serializers import TestSerializer
 from sample.models import Sample
+import sys
 
 
-# print('Hello there')
+
 @shared_task
 def copy_test_to_branch(test_ids, target_branch_id):
     print('Hello')
@@ -24,17 +25,17 @@ def copy_test_to_branch(test_ids, target_branch_id):
         test.branch.add(target_branch_id)
         test.save()
         tests.append(test)
-
+    sys.stdout.flush() 
     return TestSerializer(tests, many=True).data
 
 
-@shared_task
+# @shared_task
 def count_activity(branch_id):
     pass
     # from celery import shared_task
 
 
-@shared_task
+# @shared_task
 def get_sample_counts_for_facility(facility_id):
     counts = {
         'pending': Sample.objects.filter(referring_facility=facility_id, sample_status='pending').count(),
