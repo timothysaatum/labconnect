@@ -14,7 +14,6 @@ cryptography==43.0.1
 Django==5.1.1
 django-appconf==1.0.6
 django-cors-headers==4.4.0
-django-cryptography==1.1
 django-dramatiq==0.11.6
 django-extensions==3.2.3
 django-filter==24.3
@@ -31,6 +30,7 @@ pillow==10.4.0
 prometheus_client==0.21.0
 prompt_toolkit==3.0.47
 pycparser==2.22
+pycryptodome==3.20.0
 pydotplus==2.0.2
 PyJWT==2.9.0
 pyotp==2.9.0

@@ -3,7 +3,7 @@ from rest_framework import pagination
 
 class QueryPagination(pagination.CursorPagination):
 
-	page_size = 8
+	page_size = 7
 	ordering = '-date_added'
 	cursor_query_param='cursor'
 	page_query_param = 'size'

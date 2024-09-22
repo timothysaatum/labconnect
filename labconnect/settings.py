@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from cryptography.fernet import Fernet
 from datetime import timedelta
 from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
-    'django_cryptography',
+    # 'django_cryptography',
     'modelmixins',
     'django_dramatiq',
     'sample',
@@ -130,6 +131,10 @@ WSGI_APPLICATION = 'labconnect.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
+
+ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY', 'f08c63883828ff694c54e78eefa646dc37bed17e90f5fc030b3031a453d9da0d')  # 32 bytes for AES-256
+FERNET_KEY = os.environ.get('FERNET_KEY', Fernet.generate_key())
 
 DATABASES = {
     'default': {

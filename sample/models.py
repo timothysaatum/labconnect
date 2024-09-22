@@ -1,6 +1,7 @@
 from django.db import models
 from labs.models import Branch, Test
 from modelmixins.models import Facility
+from modelmixins.encryption import AESEncryptedField, FernetEncryptedField
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
 # from django_cryptography.fields import encrypt
@@ -80,7 +81,7 @@ class Sample(models.Model):
 			related_name='facilities',
 			db_index=True
 		)
-
+	# test_field = AESEncryptedField()
 	facility_type = models.CharField(
 			max_length=50,
 			choices=REFERRING_FACILITY_TYPE

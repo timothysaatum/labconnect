@@ -46,7 +46,6 @@
 #     return counts
 import dramatiq
 from django.apps import apps
-import sys
 import uuid
 
 @dramatiq.actor
@@ -62,6 +61,7 @@ def copy_test_to_branch(test_ids, target_branch_id):
         return
 
     copied_tests = 0
+    
     for test_id in test_ids:
 
         try:
@@ -77,4 +77,3 @@ def copy_test_to_branch(test_ids, target_branch_id):
             print(f"Invalid UUID: {test_id}")
     
     print(f"Copied {copied_tests} tests to branch {target_branch_id}")
-    sys.stdout.flush()
