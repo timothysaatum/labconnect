@@ -139,25 +139,35 @@ DATABASES = {
 
 #Celery config
 # CELERY_broker_url = 'redis://127.0.0.1::5672/0'
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-RESULT_BACKEND = 'redis://127.0.0.1::6379/0'
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'
+# RESULT_BACKEND = 'redis://127.0.0.1::6379/0'
 
-ACCEPT_CONTENT = ['json']
-TASK_SERIALIZER = 'json'
-result_serializer = 'json'
-timezone = 'utc'
+# ACCEPT_CONTENT = ['json']
+# TASK_SERIALIZER = 'json'
+# result_serializer = 'json'
+# timezone = 'utc'
+# broker_connection_retry_on_startup = True
+# CELERY_broker_connection_retry = True
+# CONNECTION_broker_connection_max_retries = None
+# CELERY_broker_connection_retry_INTERVAL = 1
+# CELERY_broker_connection_retry_MAX = 20
+# CELERY_broker_connection_retry_INTERVAL_STEP = 1
+# settings.py
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Using Redis as the message broker
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_EXPIRES = 3600  # Optional: task results expire after 1 hour
 broker_connection_retry_on_startup = True
-CELERY_broker_connection_retry = True
-CONNECTION_broker_connection_max_retries = None
-CELERY_broker_connection_retry_INTERVAL = 1
-CELERY_broker_connection_retry_MAX = 20
-CELERY_broker_connection_retry_INTERVAL_STEP = 1
 
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
-DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
-DATA_UPLOAD_MAX_NUMBER_FILES = 100
+
+# FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
+# DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
+# DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
+# DATA_UPLOAD_MAX_NUMBER_FILES = 100
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 

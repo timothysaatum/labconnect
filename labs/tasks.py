@@ -2,27 +2,36 @@ from celery import shared_task
 from .models import Test
 from .serializers import TestSerializer
 from sample.models import Sample
+
+
 # print('Hello there')
 @shared_task
 def copy_test_to_branch(test_ids, target_branch_id):
+    print('Hello')
     if not test_ids:
-        raise('Test ids must be provided')
+        print('Test ids must be provided')
+
+
     if not target_branch_id:
-        raise('Target branch not provided')
+        print('Target branch not provided')
+
+    
     tests = []
     for test_id in test_ids:
+
         test = Test.objects.get(id=test_id)
         print(test)
         test.branch.add(target_branch_id)
         test.save()
-        test.append(test)
-        
+        tests.append(test)
+
     return TestSerializer(tests, many=True).data
 
 
 @shared_task
 def count_activity(branch_id):
-    from celery import shared_task
+    pass
+    # from celery import shared_task
 
 
 @shared_task
