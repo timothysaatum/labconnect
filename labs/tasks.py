@@ -46,34 +46,35 @@
 #     return counts
 import dramatiq
 from django.apps import apps
-from django.core.serializers import serialize
 import sys
-import json
-from .utils import UUIDEncoder  # Assuming you put the UUIDEncoder in a utils.py file
+import uuid
 
 @dramatiq.actor
 def copy_test_to_branch(test_ids, target_branch_id):
     Test = apps.get_model('labs', 'Test')
-    
+
     if not test_ids:
         print('Test ids must be provided')
-        return []
+        return
+
     if not target_branch_id:
         print('Target branch not provided')
-        return []
-   
-    tests = []
+        return
+
+    copied_tests = 0
     for test_id in test_ids:
+
         try:
-            test = Test.objects.get(id=test_id)
-            test.branch.add(target_branch_id)
+            test = Test.objects.get(id=uuid.UUID(test_id))
+            test.branch.add(uuid.UUID(target_branch_id))
             test.save()
-            tests.append(test)
+            copied_tests += 1
+
         except Test.DoesNotExist:
             print(f"Test with id {test_id} does not exist")
+
+        except ValueError:
+            print(f"Invalid UUID: {test_id}")
     
+    print(f"Copied {copied_tests} tests to branch {target_branch_id}")
     sys.stdout.flush()
-    
-    # Use Django's serialize with our custom JSON encoder
-    serialized_data = serialize('python', tests)
-    return json.dumps(serialized_data, cls=UUIDEncoder)

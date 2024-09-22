@@ -140,6 +140,7 @@ DATABASES = {
 
 
 # In your settings.py
+# In your settings.py
 
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
@@ -151,13 +152,22 @@ DRAMATIQ_BROKER = {
         "dramatiq.middleware.TimeLimit",
         "dramatiq.middleware.Callbacks",
         "dramatiq.middleware.Retries",
+        "dramatiq.results.Results",
         "django_dramatiq.middleware.DbConnectionsMiddleware",
         "django_dramatiq.middleware.AdminMiddleware",
     ]
 }
 
-# Defines which broker should be used
-DRAMATIQ_BROKER_CLASS = "dramatiq.brokers.redis.RedisBroker"
+# Optional: configure the result backend
+DRAMATIQ_RESULT_BACKEND = {
+    "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
+    "BACKEND_OPTIONS": {
+        "url": "redis://localhost:6379",
+    },
+    "MIDDLEWARE_OPTIONS": {
+        "result_ttl": 60000
+    }
+}
 #Celery config
 # CELERY_broker_url = 'redis://127.0.0.1::5672/0'
 # CELERY_BROKER_URL = 'redis://localhost:6379/0'

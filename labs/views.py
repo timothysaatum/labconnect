@@ -763,18 +763,33 @@ class CopyTests(generics.CreateAPIView):
         if not test_ids or not target_branch_id:
             return Response({'error': 'Test IDs and target branch ID are required'}, 
                             status=status.HTTP_400_BAD_REQUEST)
-        
-        # Convert string UUIDs to UUID objects
-        try:
-            test_ids = [uuid.UUID(test_id) for test_id in test_ids]
-            target_branch_id = uuid.UUID(target_branch_id)
-        except ValueError:
+
+        # Convert string UUIDs to UUID objects if necessary
+        def ensure_uuid(value):
+            if isinstance(value, uuid.UUID):
+                return str(value)
+            try:
+                return str(uuid.UUID(value))
+            except ValueError:
+                return None
+
+        test_ids = [ensure_uuid(test_id) for test_id in test_ids]
+        target_branch_id = ensure_uuid(target_branch_id)
+
+        # Remove any None values (invalid UUIDs)
+        test_ids = [test_id for test_id in test_ids if test_id is not None]
+
+        if not test_ids or target_branch_id is None:
             return Response({'error': 'Invalid UUID format'}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         # Call the Dramatiq task
         task = copy_test_to_branch.send(test_ids, target_branch_id)
-        
-        return Response({'task_id': task.message_id}, status=status.HTTP_202_ACCEPTED)
+
+        return Response({
+            'message': 'Task dispatched successfully',
+            'task_id': task.message_id
+        }, status=status.HTTP_202_ACCEPTED)
+
 
 class CountFacilityObjects(APIView):
 
