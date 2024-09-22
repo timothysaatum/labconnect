@@ -99,7 +99,7 @@ export function DataTable({
       );
     }
   }, [rowSelection, title]);
-  const possiblePageSizes = [5, 10, 15, 20, 25];
+  const possiblePageSizes = [5, 10, 15, 20, 25,50,100,500,1000];
 
   useEffect(() => {
     table.setPageSize(rowCount);
@@ -117,7 +117,7 @@ export function DataTable({
               id="search"
               placeholder={`Search ${title} ...`}
               className="w-full h-10 rounded-lg bg-background pl-8 md:w-[350px]"
-              value={searchTerm}
+              defaultValue={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>

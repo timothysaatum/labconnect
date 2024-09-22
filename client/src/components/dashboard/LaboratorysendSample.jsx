@@ -66,9 +66,12 @@ import {
 import { useSendSample } from "@/lib/formactions";
 import { selectActiveBranch } from "@/redux/branches/activeBranchSlice";
 import { motion } from "framer-motion";
-import MultipleSelectorWithHover from "../ui/multiSelectWithHover";
+import MultipleSelectorWithInfiniteHover from "../ui/infinitemultiselect";
 import { calculateTotalCost } from "@/util/totalCost";
-import { useFetchUserBranches } from "../../api/queries";
+import {
+  useFetchInfiniteLabTests,
+  useFetchUserBranches,
+} from "../../api/queries";
 
 //the prompt dialog
 export function RestoreDialog({ open, setOpen, handleDiscard, handleRestore }) {
@@ -103,6 +106,16 @@ export default function LaboratorySendSample() {
   const [selectedTests, setSelectedTests] = useState(null);
   const [testOptions, setTestOptions] = useState(null);
   const [level, SetLevel] = useState(null);
+  const [cursorOptions, setCursorOptions] = useState({
+    prev: null,
+    next: null,
+  });
+  const [testQuerys, setQuerys] = useState({
+    test_status: "Active",
+    cursor: undefined,
+    search: undefined,
+    size: undefined,
+  });
 
   //form declaration
   const form = useForm({
@@ -190,11 +203,54 @@ export default function LaboratorySendSample() {
   }, [form.watch("to_laboratory")]);
 
   //fetching selected lab test
+  // const {
+  //   data: tests,
+  //   isError: testsError,
+  //   isFetching: testsLoading,
+  // } = useFetchLabTests(id, { status: "active" });
+
+  //
+
   const {
     data: tests,
     isError: testsError,
+    fetchNextPage,
     isFetching: testsLoading,
-  } = useFetchLabTests(id, { status: "active" });
+    hasNextPage,
+    isFetchNextPageError,
+    isFetchingNextPage,
+  } = useFetchInfiniteLabTests(id, testQuerys, cursorOptions);
+
+  //
+  useEffect(() => {
+    if (tests?.pages?.length > 0) {
+      const lastPage = tests.pages[tests.pages.length - 1];
+
+      setCursorOptions((prevOptions) => {
+        const nextUrl = lastPage?.data?.next;
+        const prevUrl = lastPage?.data?.previous;
+        let nextCursor = null;
+        let prevCursor = null;
+
+        if (nextUrl) {
+          const nextQueryString = nextUrl.split("?")[1];
+          const nextUrlParams = new URLSearchParams(nextQueryString);
+          nextCursor = nextUrlParams.get("cursor");
+        }
+
+        if (prevUrl) {
+          const prevQueryString = prevUrl.split("?")[1];
+          const prevUrlParams = new URLSearchParams(prevQueryString);
+          prevCursor = prevUrlParams.get("cursor");
+        }
+
+        return {
+          next: nextCursor,
+          prev: prevCursor,
+        };
+      });
+    }
+  }, [tests?.pages]);
 
   //saving form to redux
   const handleSave = () => {
@@ -271,20 +327,25 @@ export default function LaboratorySendSample() {
 
   // constructing tests in the multiselct format
   useEffect(() => {
-    setTestOptions(
-      tests?.data?.results?.map((item) => ({
-        label: item.name,
-        value: item.id,
-      }))
-    );
-  }, [tests?.data]);
+    const allResults =
+      tests?.pages?.flatMap((page) => page?.data?.results || []) || []; // Ensure allResults is an array
+
+    const formattedTestOptions = allResults.map((test) => ({
+      label: test.name,
+      value: test.id,
+    }));
+
+    setTestOptions(formattedTestOptions);
+  }, [tests?.pages]);
   //selected tests
 
   useEffect(() => {
+    const allResults =
+      tests?.pages?.flatMap((page) => page?.data?.results || []) || [];
     setSelectedTests(
       form
         .watch("tests")
-        ?.map((field) => tests?.data?.find((test) => test.id === field.value))
+        ?.map((field) => allResults?.find((test) => test.id === field.value))
         .map((test) => ({
           ...test,
           amount_to_pay: test.price - test?.discount_price,
@@ -346,6 +407,58 @@ export default function LaboratorySendSample() {
                   />
                 </div>
                 <div className="flex flex-col gap-10 self-start">
+                  <Card className="mb-4">
+                    <CardHeader>
+                      <CardTitle className="text-lg">Choose Tests</CardTitle>
+                      <CardDescription>
+                        These tests are available in the laboratory you
+                        selected. <br />
+                        Hover over the tests for details and requirements
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <FormField
+                        name="tests"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className="flex-1 -mb-2">
+                            <FormLabel>Choose Tests</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <MultipleSelectorWithInfiniteHover
+                                  options={testOptions}
+                                  title="tests"
+                                  detailedContent={tests?.pages?.map(
+                                    (page) => page
+                                  )}
+                                  placeholder="Choose tests"
+                                  hidePlaceholderWhenSelected
+                                  fetchNextPage={fetchNextPage}
+                                  hasNextPage={hasNextPage}
+                                  isFetchNextPageError={isFetchNextPageError}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  emptyIndicator={
+                                    !form.watch("to_laboratory")
+                                      ? "Select a laboratory to view tests"
+                                      : testsLoading
+                                        ? "loading tests..."
+                                        : testsError
+                                          ? "Error loading tests"
+                                          : tests?.data?.length
+                                            ? "This Laboratory has no tests available"
+                                            : "No more tests"
+                                  }
+                                  {...field}
+                                />
+                                <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />{" "}
+                    </CardContent>
+                  </Card>
                   <Card className="max-sm:border-none ">
                     <CardHeader className="max-sm:px-2">
                       <CardTitle className="text-lg">Patient Details</CardTitle>
@@ -448,52 +561,6 @@ export default function LaboratorySendSample() {
                           </p>
                         )}
                       </div>
-                    </CardContent>
-                  </Card>
-                  <Card className="mb-4">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Choose Tests</CardTitle>
-                      <CardDescription>
-                        These tests are available in the laboratory you
-                        selected. <br />
-                        Hover over the tests for details and requirements
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <FormField
-                        name="tests"
-                        control={form.control}
-                        render={({ field }) => (
-                          <FormItem className="flex-1 -mb-2">
-                            <FormLabel>Choose Tests</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <MultipleSelectorWithHover
-                                  options={testOptions}
-                                  title="tests"
-                                  detailedContent={tests?.data}
-                                  placeholder="Choose tests"
-                                  hidePlaceholderWhenSelected
-                                  emptyIndicator={
-                                    !form.watch("to_laboratory")
-                                      ? "Select a laboratory to view tests"
-                                      : testsLoading
-                                        ? "loading tests..."
-                                        : testsError
-                                          ? "Error loading tests"
-                                          : tests?.data?.length
-                                            ? "This Laboratory has no tests available"
-                                            : "something went wrong"
-                                  }
-                                  {...field}
-                                />
-                                <ChevronsUpDown className="-z-10  absolute top-2.5 right-0 mr-2 h-4 w-4 shrink-0 opacity-50" />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />{" "}
                     </CardContent>
                   </Card>
                 </div>
