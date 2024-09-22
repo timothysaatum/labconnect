@@ -10,6 +10,9 @@
 # Content-Type: application/x-www-form-urlencoded
 
 import requests
+import json
+from uuid import UUID
+
 
 
 
@@ -24,3 +27,11 @@ def get_gps_coords(digital_address):
     response = requests.request("POST", url, headers=headers, data = payload)
 
     print(response.json())
+
+
+class UUIDEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UUID):
+            # if the obj is uuid, we simply return the value of uuid
+            return str(obj)
+        return json.JSONEncoder.default(self, obj)

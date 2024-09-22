@@ -26,6 +26,7 @@ import json
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .tasks import copy_test_to_branch#, get_sample_counts_for_facility
 import logging
+import uuid
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
 # from celery.result import AsyncResult
@@ -753,21 +754,27 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 
 
 class CopyTests(generics.CreateAPIView):
+    serializer_class = TestSerializer
 
-	serializer_class = TestSerializer
-
-	def post(self, request, *args, **kwargs):
-
-		test_ids = self.request.data.getlist('test_ids', [])
-		print(test_ids)
-		target_branch_id = self.kwargs.get('branch_to_copy_to_id')
-
-		result = copy_test_to_branch.delay(test_ids, target_branch_id)
-
-		print(result) 
-
-		return Response({'task_id': result.id}, status=status.HTTP_202_ACCEPTED)
-
+    def post(self, request, *args, **kwargs):
+        test_ids = self.request.data.getlist('test_ids', [])
+        target_branch_id = self.kwargs.get('branch_to_copy_to_id')
+        
+        if not test_ids or not target_branch_id:
+            return Response({'error': 'Test IDs and target branch ID are required'}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+        
+        # Convert string UUIDs to UUID objects
+        try:
+            test_ids = [uuid.UUID(test_id) for test_id in test_ids]
+            target_branch_id = uuid.UUID(target_branch_id)
+        except ValueError:
+            return Response({'error': 'Invalid UUID format'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Call the Dramatiq task
+        task = copy_test_to_branch.send(test_ids, target_branch_id)
+        
+        return Response({'task_id': task.message_id}, status=status.HTTP_202_ACCEPTED)
 
 class CountFacilityObjects(APIView):
 

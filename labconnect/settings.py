@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_cryptography',
     'modelmixins',
+    'django_dramatiq',
     'sample',
     'user',
     'hospital',
@@ -137,6 +138,26 @@ DATABASES = {
     }
 }
 
+
+# In your settings.py
+
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.redis.RedisBroker",
+    "OPTIONS": {
+        "url": "redis://localhost:6379",
+    },
+    "MIDDLEWARE": [
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
+        "dramatiq.middleware.Callbacks",
+        "dramatiq.middleware.Retries",
+        "django_dramatiq.middleware.DbConnectionsMiddleware",
+        "django_dramatiq.middleware.AdminMiddleware",
+    ]
+}
+
+# Defines which broker should be used
+DRAMATIQ_BROKER_CLASS = "dramatiq.brokers.redis.RedisBroker"
 #Celery config
 # CELERY_broker_url = 'redis://127.0.0.1::5672/0'
 # CELERY_BROKER_URL = 'redis://localhost:6379/0'

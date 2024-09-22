@@ -1,46 +1,79 @@
-from celery import shared_task
-from .models import Test
-from .serializers import TestSerializer
-from sample.models import Sample
-import sys
+# from celery import shared_task
+# from .models import Test
+# from .serializers import TestSerializer
+# from sample.models import Sample
+# import sys
 
 
 
-@shared_task
-def copy_test_to_branch(test_ids, target_branch_id):
-    print('Hello')
-    if not test_ids:
-        print('Test ids must be provided')
+# @shared_task
+# def copy_test_to_branch(test_ids, target_branch_id):
+#     print('Hello')
+#     if not test_ids:
+#         print('Test ids must be provided')
 
 
-    if not target_branch_id:
-        print('Target branch not provided')
+#     if not target_branch_id:
+#         print('Target branch not provided')
 
     
+#     tests = []
+#     for test_id in test_ids:
+
+#         test = Test.objects.get(id=test_id)
+#         print(test)
+#         test.branch.add(target_branch_id)
+#         test.save()
+#         tests.append(test)
+#     sys.stdout.flush() 
+#     return TestSerializer(tests, many=True).data
+
+
+# # @shared_task
+# def count_activity(branch_id):
+#     return 'completed'
+#     # from celery import shared_task
+
+
+# # @shared_task
+# def get_sample_counts_for_facility(facility_id):
+#     counts = {
+#         'pending': Sample.objects.filter(referring_facility=facility_id, sample_status='pending').count(),
+#         'process': Sample.objects.filter(referring_facility=facility_id, sample_status='process').count(),
+#         'rejected': Sample.objects.filter(referring_facility=facility_id, sample_status='rejected').count(),
+#         'received': Sample.objects.filter(referring_facility=facility_id, sample_status='received').count(),
+#     }
+#     return counts
+import dramatiq
+from django.apps import apps
+from django.core.serializers import serialize
+import sys
+import json
+from .utils import UUIDEncoder  # Assuming you put the UUIDEncoder in a utils.py file
+
+@dramatiq.actor
+def copy_test_to_branch(test_ids, target_branch_id):
+    Test = apps.get_model('labs', 'Test')
+    
+    if not test_ids:
+        print('Test ids must be provided')
+        return []
+    if not target_branch_id:
+        print('Target branch not provided')
+        return []
+   
     tests = []
     for test_id in test_ids:
-
-        test = Test.objects.get(id=test_id)
-        print(test)
-        test.branch.add(target_branch_id)
-        test.save()
-        tests.append(test)
-    sys.stdout.flush() 
-    return TestSerializer(tests, many=True).data
-
-
-# @shared_task
-def count_activity(branch_id):
-    pass
-    # from celery import shared_task
-
-
-# @shared_task
-def get_sample_counts_for_facility(facility_id):
-    counts = {
-        'pending': Sample.objects.filter(referring_facility=facility_id, sample_status='pending').count(),
-        'process': Sample.objects.filter(referring_facility=facility_id, sample_status='process').count(),
-        'rejected': Sample.objects.filter(referring_facility=facility_id, sample_status='rejected').count(),
-        'received': Sample.objects.filter(referring_facility=facility_id, sample_status='received').count(),
-    }
-    return counts
+        try:
+            test = Test.objects.get(id=test_id)
+            test.branch.add(target_branch_id)
+            test.save()
+            tests.append(test)
+        except Test.DoesNotExist:
+            print(f"Test with id {test_id} does not exist")
+    
+    sys.stdout.flush()
+    
+    # Use Django's serialize with our custom JSON encoder
+    serialized_data = serialize('python', tests)
+    return json.dumps(serialized_data, cls=UUIDEncoder)
