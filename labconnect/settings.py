@@ -144,9 +144,15 @@ DATABASES = {
 }
 
 
-# In your settings.py
-# In your settings.py
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'key_cache_table',
+    }
+}
 
+
+#dramatiq
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {

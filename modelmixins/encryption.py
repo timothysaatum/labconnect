@@ -4,22 +4,34 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from cryptography.fernet import Fernet
 import base64
+from Crypto.Random import get_random_bytes
+from .key_management import KeyManagement
+
+
+
 
 class AESEncryptedField(models.TextField):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.key = settings.ENCRYPTION_KEY.encode()  # Make sure to set this in your settings.py
+        self.key = settings.ENCRYPTION_KEY.encode()[:32]  # Ensure key is 32 bytes
+
+    def get_key(self):
+        return base64.urlsafe_b64decode(KeyManagement.get_current_key())[:32]
 
     def from_db_value(self, value, expression, connection):
         if value is None:
             return value
         try:
-            iv = base64.b64decode(value[:24])
-            encrypted_data = base64.b64decode(value[24:])
+
+            # key = self.get_key()
+            encrypted_data = base64.b64decode(value)
+            iv = encrypted_data[:16]
+            ciphertext = encrypted_data[16:]
             cipher = AES.new(self.key, AES.MODE_CBC, iv)
-            decrypted = unpad(cipher.decrypt(encrypted_data), AES.block_size)
+            decrypted = unpad(cipher.decrypt(ciphertext), AES.block_size)
             return decrypted.decode('utf-8')
-        except Exception:
+        except Exception as e:
+            print(f"Decryption error: {e}")
             return None
 
     def to_python(self, value):
@@ -28,11 +40,17 @@ class AESEncryptedField(models.TextField):
     def get_prep_value(self, value):
         if value is None:
             return value
+        
+        # KeyManagement.rotate_key_if_needed()
+        # key = self.get_key()
         value = str(value)
-        iv = AES.new(self.key, AES.MODE_CBC).iv
+        value = str(value)
+        iv = get_random_bytes(16)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         encrypted_data = cipher.encrypt(pad(value.encode(), AES.block_size))
-        return base64.b64encode(iv).decode() + base64.b64encode(encrypted_data).decode()
+        return base64.b64encode(iv + encrypted_data).decode()
+
+
 
 class FernetEncryptedField(models.TextField):
     def __init__(self, *args, **kwargs):
