@@ -70,7 +70,9 @@ const BranchDetails = ({ selected, setSelected, nextTest, prevTest }) => {
             <ul className="grid gap-3">
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Branch name</span>
-                <span>{selected?.town + " Branch"}</span>
+                <span>
+                  {selected?.branch_name || selected?.town + " Branch"}
+                </span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">Branch manager</span>

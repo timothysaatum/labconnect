@@ -89,7 +89,7 @@ const TestForm = ({ setOpen, keepOpen, form }) => {
   useEffect(() => {
     setBranchOptions(
       branches?.data?.map((item) => ({
-        label: item.town + " Branch",
+        label: item?.branch_name ? item?.branch_name : item.town + " Branch",
         value: item.id,
       }))
     );
@@ -298,7 +298,7 @@ const AddTest = () => {
     if (userbranches?.data) {
       setBranches(
         userbranches?.data?.map((branch) => ({
-          label: branch.town + "Branch",
+          label: branch?.branch_name ? branch.branch_name : branch.town + " Branch",
           value: branch.id,
         }))
       );

@@ -41,7 +41,6 @@ import {
 } from "@/redux/branches/activeBranchSlice";
 import AddBranch from "@/components/dashboard/addbranch";
 import { Helmet } from "react-helmet-async";
-import { useFetchLabCardCount } from "../api/queries";
 import { DatePickerWithRange } from "../components/dashboard/calenderpopover";
 
 export default function Dashboard() {
@@ -58,7 +57,6 @@ export default function Dashboard() {
     setTitle(sideLinks.find((item) => location.pathname.includes(item.link)));
   }, [location.pathname]);
 
-  const pathnames = location.pathname.split("/").filter((x) => x);
   const {
     data: userbranches,
     isPending: branchesLoading,
@@ -67,18 +65,22 @@ export default function Dashboard() {
   const activeBranchId = useSelector(selectActiveBranch);
   const dispatch = useDispatch();
 
-  // const activeBranch = `${
-  //   userbranches?.data?.find((branch) => branch.id === activeBranchId)?.town
-  // } Branch`;
+  console.log(activeBranch);
 
   useEffect(() => {
     if (userbranches?.data) {
       if (activeBranchId) {
         const active = userbranches?.data?.find(
           (branch) => branch.id === activeBranchId
-        )?.town;
+        );
+        console.log("active", active);
+
+        const name = active?.branch_name || active?.town;
+        console.log("name", name);
         if (active) {
-          setActiveBranch(active + " Branch");
+          const branchname = name + (!active?.branch_name ? " Branch" : "");
+          console.log("branchname", branchname);
+          setActiveBranch(branchname);
         } else {
           dispatch(changeBranch(userbranches?.data[0]?.id));
         }
@@ -238,7 +240,7 @@ export default function Dashboard() {
                       checked={activeBranchId === branch.id}
                       onCheckedChange={() => dispatch(changeBranch(branch.id))}
                     >
-                      {branch.town} Branch
+                      {branch?.branch_name || branch?.town + " Branch"}
                     </DropdownMenuCheckboxItem>
                   ))}
                 </DropdownMenuContent>
@@ -260,7 +262,7 @@ export default function Dashboard() {
           </div>
         </header>
         {user?.account_type === "Laboratory" ? (
-        <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden mb-4">
+          <header className="flex justify-end items-center sm:pl-14 mx-4 py-2 max-sm:hidden mb-4">
             <div className="flex justify-around items-center gap-6">
               {/* maybe later or never */}
               {/* <div className="relative ">
@@ -302,7 +304,7 @@ export default function Dashboard() {
                             dispatch(changeBranch(branch.id))
                           }
                         >
-                          {branch.town} Branch
+                          {branch?.branch_name || branch?.town + " Branch"}
                         </DropdownMenuCheckboxItem>
                       ))}
                     </DropdownMenuContent>

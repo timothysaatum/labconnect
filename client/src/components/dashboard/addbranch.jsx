@@ -74,7 +74,7 @@ export const BranchForm = ({ setOpen, keepOpen, form, className }) => {
           }
         />
         <FormBuilder
-          name={"name"}
+          name={"branch_name"}
           label={"Custom branch name (Optional)"}
           description={"Defaults to (laboratory name + town)"}
         >
@@ -150,7 +150,7 @@ const AddBranch = () => {
       digital_address: "",
       level: "",
       branch_manager: "",
-      name: "",
+      branch_name: "",
     },
   });
   if (isDesktop) {
