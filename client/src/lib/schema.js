@@ -255,7 +255,7 @@ export const AddBranchSchema = z.object({
   level: z.string().min(1, "Branch level is required"),
   accreditation_number: z.string().min(1, "Accreditation number is required"),
   branch_manager: z.string(),
-  name: z.string().optional(),
+  branch_name: z.string().optional(),
 });
 export const ManagerInviteSchema = z.object({
   receiver_email: z

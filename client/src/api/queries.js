@@ -57,7 +57,7 @@ export const useFetchLabCardCount = (id) => {
     queryKey: ["SampleCounts", id],
     queryFn: async () =>
       await axiosPrivate.get(
-        `/laboratory/get-sample-counts-for-facility/${id}/`
+        `/sample/get-sample-counts-for-facility/${id}/`
       ),
     staleTime: 1000 * 60 * 5,
     enabled: !!id,
