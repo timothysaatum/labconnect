@@ -42,7 +42,7 @@ class GetNotifications(generics.ListAPIView):
 
 
 class CountObjects(generics.GenericAPIView):
-    serializer_class = CountObjectsSerializer
+    # serializer_class = CountObjectsSerializer
 
     def get(self, request, *args, **kwargs):
         facility_id = self.kwargs.get('facility_id')
@@ -63,7 +63,8 @@ class CountObjects(generics.GenericAPIView):
             pending=Count('id', filter=Q(sample_status='pending')),
             rejected=Count('id', filter=Q(sample_status='rejected')),
         )
-
+        # print(Sample.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_created__date=today))
+        # print(yesterday_stats)
         # Calculate percentage changes
         def percentage_change(today_count, yesterday_count):
             if yesterday_count == 0:
@@ -85,11 +86,11 @@ class CountObjects(generics.GenericAPIView):
             'change_pending': change_pending,
             'change_rejected': change_rejected,
         }
-        print(data)
-        serializer = self.serializer_class(data=data)
-        serializer.is_valid(raise_exception=True)
-        print(serializer.is_valid(raise_exception=True))
-        return Response(serializer.data)
+        # print(data)
+        # serializer = self.serializer_class(data=data)
+        # serializer.is_valid(raise_exception=True)
+        # print(serializer.data)
+        return Response(data)
 
 
 class TrackSampleState(generics.CreateAPIView):

@@ -91,7 +91,7 @@ export function ApplyDisCount({ test }) {
                 className="grid grid-cols-3 items-center gap-4"
                 message
                 messageClassName={"col-span-3"}
-                description={"enter 0 to remove discount"}
+                description={"Enter 0 to remove discount"}
                 descriptionClassName={"col-span-3 text-xs"}
               >
                 <Input

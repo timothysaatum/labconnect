@@ -7,7 +7,11 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import smart_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
+from labs.models import Laboratory, Branch
 from .utils import send_normal_email, send_code_to_user
+from labs.serializers import LaboratorySerializer, BranchSerializer
+from hospital.models import Hospital
+from hospital.serializers import HospitalSerializer
 
 
 
@@ -68,6 +72,9 @@ class LoginSerializer(serializers.ModelSerializer):
 	password = serializers.CharField(max_length=200, write_only=True)
 	full_name = serializers.CharField(max_length=255, read_only=True)
 	account_type = serializers.CharField(max_length=255, read_only=True)
+	lab = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
+	branch = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
+	hospital = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	is_branch_manager = serializers.BooleanField(read_only=True)
 	is_staff = serializers.CharField(max_length=255, read_only=True)
 	is_active = serializers.CharField(max_length=255, read_only=True)
@@ -81,8 +88,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
 		fields = [
 
-			'user_id', 'email', 'password', 'full_name', 'account_type',
-			'is_staff', 'is_verified', 'is_active', 'is_admin', 'is_branch_manager'
+			'user_id', 'email', 'password', 'full_name', 'account_type','lab', 'branch',
+			'is_staff', 'is_verified', 'is_active', 'is_admin', 'is_branch_manager', 'hospital'
 		]
 
 	def validate(self, attrs):
@@ -115,6 +122,19 @@ class LoginSerializer(serializers.ModelSerializer):
 			'email':user.email,
 			'is_branch_manager': user.is_branch_manager
 		}
+	
+	def to_representation(self, instance):
+		
+		data = super().to_representation(instance)
+		if instance.get('account_type') == 'Laboratory':
+			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance.get('user_id')), many=True).data
+			data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance.get('user_id')), many=True).data
+
+		if instance.get('account_type') == 'Hospital':
+			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.get('user_id')), many=True).data
+
+
+		return data
 
 
 class VerifyEmailSerializer(serializers.ModelSerializer):
@@ -217,7 +237,9 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-	# profile = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
+	lab = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
+	branch = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
+	hospital = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	class Meta:
 
 		model = Client
@@ -235,16 +257,26 @@ class UserSerializer(serializers.ModelSerializer):
 					'is_staff', 
 					'is_active', 
 					'is_admin',
-					'is_branch_manager', 
+					'is_branch_manager',
+					'lab',
+					'branch',
+					'hospital',
 					'is_verified', 
 					'date_joined', 
 					'last_login',
 				]
 
-	# def to_representation(self, instance):
-	# 	data = super().to_representation(instance)
-	# 	data['profile'] = ClientProfileSerializer(ClientProfile.objects.filter(client=instance.id), many=True).data
-	# 	return data
+	def to_representation(self, instance):
+		
+		data = super().to_representation(instance)
+		if instance.account_type == 'Laboratory':
+			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance), many=True).data
+			data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance), many=True).data
+
+		if instance.account_type == 'Hospital':
+			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance), many=True).data
+		return data
+
 
 class NewOPTSerializer(serializers.Serializer):
 	email = serializers.CharField(max_length=50)

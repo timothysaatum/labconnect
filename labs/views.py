@@ -29,7 +29,6 @@ import logging
 from modelmixins.utils import ensure_uuid
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
-# from celery.result import AsyncResult
 from rest_framework.views import APIView
 from .constants import LEVEL_ORDER
 from modelmixins.paginators import QueryPagination
@@ -358,14 +357,14 @@ class TestListView(generics.ListAPIView):
 			Q(branch__id=self.kwargs.get('pk')) | Q(branch__laboratory__id=self.kwargs.get('pk'))
 			)
 
-		print(search_term)
+		# print(search_term)
 		if search_term:
 			print('Here')
 			return tests.filter(name__icontains=search_term)
 
 
 		if test_status in ('active', 'inactive', 'Active', 'Inactive'):
-			print(test_status)
+			# print(test_status)
 			return tests.filter(test_status__icontains=test_status)
 
 		return tests
@@ -447,7 +446,7 @@ class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
-		print(request.data)
+		# print(request.data)
 		return self.create(request)
 
 
@@ -624,7 +623,7 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 			if status:
 
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), sample_status=status.capitalize(), request_status='Request Accepted').order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), sample_status__icontains=status, request_status='Request Accepted').order_by('-date_created')
 
 			if from_date and to_date:
 
