@@ -59,7 +59,8 @@ class BranchSerializer(serializers.ModelSerializer):
 			'town',
 			'digital_address',
 			'region',
-			'date_created'
+			'date_created',
+			'date_modified'
 		)
 
 	def to_representation(self, instance):

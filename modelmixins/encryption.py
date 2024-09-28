@@ -72,3 +72,4 @@ class FernetEncryptedField(models.TextField):
         if value is None:
             return value
         return self.fernet.encrypt(str(value).encode()).decode()
+

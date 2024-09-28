@@ -223,14 +223,17 @@ class LoginUserView(GenericAPIView):
 
 		if serializer.is_valid(raise_exception=True):
 			try:
-				user = Client.objects.get(id=serializer.data['user_id'])
+				# print(serializer.data['user'].get('email'))
+				user = Client.objects.get(id=serializer.data['user'].get('id'))
 
 			except Client.DoesNotExist:
 				return Response({'error': 'An error occured, try again.'}, status=status.HTTP_404_NOT_FOUND)
 
 			user_tokens = user.tokens()
 			logger.info(f'Logged in {user.last_name} {user.last_name}')
-			response = Response({'data': serializer.data, 'access_token':user_tokens.get('access')}, status=status.HTTP_200_OK)
+			# serializer.data['user']['access_token'] = user_tokens.get('access')
+			# print(serializer.data['user'])
+			response = Response({'data':serializer.data, 'access_token':user_tokens.get('access')}, status=status.HTTP_200_OK)
 
 			response.set_cookie(
 					key=settings.SIMPLE_JWT['AUTH_COOKIE'],
@@ -353,7 +356,7 @@ class FetchUserData(APIView):
 
 				serialized_data = UserSerializer(user)
 
-				return Response({'data': serialized_data.data}, status=status.HTTP_200_OK)
+				return Response(serialized_data.data, status=status.HTTP_200_OK)
 
 			except AttributeError as e:
 				return Response({'error': f'User could not be retrieved{str(e)}'}, status=status.HTTP_400_BAD_REQUEST)

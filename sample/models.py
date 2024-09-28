@@ -77,7 +77,7 @@ class Sample(models.Model):
 
 	referring_facility = models.ForeignKey(
 			Facility,
-			on_delete=models.CASCADE, 
+			on_delete=models.CASCADE,
 			related_name='facilities',
 			db_index=True
 		)

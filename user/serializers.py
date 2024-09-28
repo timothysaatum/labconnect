@@ -12,6 +12,8 @@ from .utils import send_normal_email, send_code_to_user
 from labs.serializers import LaboratorySerializer, BranchSerializer
 from hospital.models import Hospital
 from hospital.serializers import HospitalSerializer
+# from django.conf import settings
+# import jwt
 
 
 
@@ -66,21 +68,53 @@ class UserCreationSerializer(serializers.ModelSerializer):
 		return user
 
 
+
+class NaiveUserSerializer(serializers.ModelSerializer):
+	# access_token = serializers.CharField(max_length=2000, read_only=True)
+	
+	class Meta:
+
+		model = Client
+
+		fields = [
+					'id', 
+					'email', 
+					'first_name', 
+					'last_name', 
+					'phone_number',
+					'account_type',
+					'id_number',
+					'emmergency_contact',
+					'digital_address',
+					'is_staff', 
+					'is_active', 
+					'is_admin',
+					'is_branch_manager',
+					'is_an_individual',
+					'is_verified', 
+					'date_joined', 
+					'last_login',
+					# 'access_token'
+				]
+
+
+
 class LoginSerializer(serializers.ModelSerializer):
 
-	email = serializers.EmailField(max_length=200, min_length=5)
+	email = serializers.EmailField(max_length=200, min_length=5, write_only=True)
 	password = serializers.CharField(max_length=200, write_only=True)
-	full_name = serializers.CharField(max_length=255, read_only=True)
-	account_type = serializers.CharField(max_length=255, read_only=True)
+	# first_name = serializers.CharField(max_length=255, read_only=True)
+	# last_name = serializers.CharField(max_length=255, read_only=True)
+	# account_type = serializers.CharField(max_length=255, read_only=True)
 	lab = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	branch = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	hospital = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
-	is_branch_manager = serializers.BooleanField(read_only=True)
-	is_staff = serializers.CharField(max_length=255, read_only=True)
-	is_active = serializers.CharField(max_length=255, read_only=True)
-	is_admin = serializers.CharField(max_length=255, read_only=True)
-	is_verified = serializers.CharField(max_length=255, read_only=True)
-	user_id = serializers.IntegerField(read_only=True)
+	# is_branch_manager = serializers.BooleanField(read_only=True)
+	# is_staff = serializers.CharField(max_length=255, read_only=True)
+	# is_active = serializers.CharField(max_length=255, read_only=True)
+	# is_admin = serializers.CharField(max_length=255, read_only=True)
+	# is_verified = serializers.CharField(max_length=255, read_only=True)
+	user = serializers.PrimaryKeyRelatedField(read_only=True, many=True)
 
 	class Meta:
 
@@ -88,8 +122,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 		fields = [
 
-			'user_id', 'email', 'password', 'full_name', 'account_type','lab', 'branch',
-			'is_staff', 'is_verified', 'is_active', 'is_admin', 'is_branch_manager', 'hospital'
+			'user', 'email', 'password','lab', 'branch', 'hospital'#, 'access_token'
 		]
 
 	def validate(self, attrs):
@@ -98,6 +131,15 @@ class LoginSerializer(serializers.ModelSerializer):
 		password = attrs.get('password')
 
 		request = self.context.get('request')
+		# r_token = request.COOKIES.get('refresh_token')
+
+		# try:
+		# 	jwt.decode(r_token, settings.SECRET_KEY, algorithms=['HS256'])
+		# except jwt.ExpiredSignatureError:
+		# 	raise AuthenticationFailed('Already logged in')
+		
+		# if user.is_authenticated:
+		# 	raise AuthenticationFailed('Already logged in')
 
 		user = authenticate(request, email=username, password=password)
 
@@ -108,31 +150,35 @@ class LoginSerializer(serializers.ModelSerializer):
 		if not user.is_verified:
 			send_code_to_user(user.email)
 			raise AuthenticationFailed('New verification code sent to your email. Verify your email to login')
-
-		return {
-
-			'user_id': user.id,
-			'full_name': user.full_name,
-			'is_staff': user.is_staff,
-			'is_verified': user.is_verified,
-			'is_active': user.is_active,
-			'is_admin': user.is_admin,
-			'account_type': user.account_type,
-			'first_name': user.first_name,
-			'email':user.email,
-			'is_branch_manager': user.is_branch_manager
-		}
-	
-	def to_representation(self, instance):
 		
+		return user#{
+
+		# 	'user_id': user.id,
+		# 	'first_name': user.full_name,
+		# 	'last_name': user.last_name,
+		# 	'is_staff': user.is_staff,
+		# 	'is_verified': user.is_verified,
+		# 	'is_active': user.is_active,
+		# 	'is_admin': user.is_admin,
+		# 	'account_type': user.account_type,
+		# 	'email':user.email,
+		# 	'is_branch_manager': user.is_branch_manager
+
+		# }
+
+	def to_representation(self, instance):
+
 		data = super().to_representation(instance)
-		if instance.get('account_type') == 'Laboratory':
-			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance.get('user_id')), many=True).data
-			data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance.get('user_id')), many=True).data
+		# print(data)
+		data['user'] = NaiveUserSerializer(instance).data
 
-		if instance.get('account_type') == 'Hospital':
-			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.get('user_id')), many=True).data
+		if instance.account_type == 'Laboratory':
+			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance.id), many=True).data
+			data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance.id), many=True).data
 
+
+		if instance.account_type == 'Hospital':
+			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.id), many=True).data
 
 		return data
 
@@ -211,7 +257,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
 		try:
 			token = attrs.get('token')
 			uidb64 = attrs.get('uidb64')
-			print(uidb64)
+			# print(uidb64)
 			password = attrs.get('password')
 			password_confirmation = attrs.get('password_confirmation')
 
@@ -240,35 +286,38 @@ class UserSerializer(serializers.ModelSerializer):
 	lab = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	branch = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	hospital = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
+	user = serializers.PrimaryKeyRelatedField(read_only=True ,many=True)
 	class Meta:
 
 		model = Client
 
 		fields = [
-					'id', 
-					'email', 
-					'first_name', 
-					'last_name', 
-					'phone_number',
-					'account_type',
-					'id_number',
-					'emmergency_contact',
-					'digital_address',
-					'is_staff', 
-					'is_active', 
-					'is_admin',
-					'is_branch_manager',
+					# 'id', 
+					# 'email', 
+					# 'first_name', 
+					# 'last_name', 
+					# 'phone_number',
+					# 'account_type',
+					# 'id_number',
+					# 'emmergency_contact',
+					# 'digital_address',
+					# 'is_staff', 
+					# 'is_active', 
+					# 'is_admin',
+					# 'is_branch_manager',
+					'user',
 					'lab',
 					'branch',
 					'hospital',
-					'is_verified', 
-					'date_joined', 
-					'last_login',
+					# 'is_verified', 
+					# 'date_joined', 
+					# 'last_login',
 				]
 
 	def to_representation(self, instance):
-		
+
 		data = super().to_representation(instance)
+		data['user'] = NaiveUserSerializer(instance).data
 		if instance.account_type == 'Laboratory':
 			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance), many=True).data
 			data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance), many=True).data
