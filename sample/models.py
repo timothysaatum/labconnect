@@ -1,7 +1,7 @@
 from django.db import models
 from labs.models import Branch, Test
 from modelmixins.models import Facility
-from modelmixins.encryption import AESEncryptedField, FernetEncryptedField
+# from modelmixins.encryption import AESEncryptedField, FernetEncryptedField
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
 # from django_cryptography.fields import encrypt
@@ -59,13 +59,17 @@ PRIORITIES = [
 
 
 class Patient(models.Model):
-    patient_id = models.CharField(max_length=100, unique=True)
-    full_name = models.CharField(max_length=255)
-    date_of_birth = models.DateField()
-    gender = models.CharField(max_length=10)
-    contact_number = models.CharField(max_length=15)
-    email = models.EmailField()
-    address = models.TextField(null=True, blank=True)
+
+	patient_id = models.CharField(max_length=100, unique=True)
+	full_name = models.CharField(max_length=255)
+	date_of_birth = models.DateField()
+	gender = models.CharField(max_length=10)
+	contact_number = models.CharField(max_length=15)
+	email = models.EmailField()
+	address = models.TextField(null=True, blank=True)
+
+	def __str__(self) -> str:
+		return self.full_name
 
 
 
@@ -81,7 +85,7 @@ class Sample(models.Model):
 			related_name='facilities',
 			db_index=True
 		)
-	test_field = AESEncryptedField()
+	# test_field = FernetEncryptedField(max_length=50)
 	facility_type = models.CharField(
 			max_length=50,
 			choices=REFERRING_FACILITY_TYPE
@@ -101,7 +105,7 @@ class Sample(models.Model):
 			on_delete=models.SET_NULL,
 			null=True,
 			blank=True, db_index=True
-		)	
+		)
 	to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
 	tests = models.ManyToManyField(Test, related_name='tests')
 	clinical_history = models.TextField(null=True, blank=True)

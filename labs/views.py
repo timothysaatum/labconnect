@@ -176,15 +176,14 @@ class LaboratoryUserVIew(PermissionMixin, generics.ListAPIView):
 	serializer_class = LaboratorySerializer
 
 	def get_queryset(self):
-		return Laboratory.objects.filter(created_by=self.request.user).order_by('id')
-
+		return Laboratory.objects.filter(created_by=self.request.user)
 
 
 class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 
 	"""
 	Api endpoint for adding a branch to the laboratory the user has created.
-	This auto assigns he Branch manager role to the genral manager that is the logged in user.
+	This auto assigns the Branch manager role to the general manager that is the logged in user.
 	The branch manager the option of inviting a branch manager to take over that role as the branch manager.
 	"""
 
@@ -207,8 +206,8 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 		A data base query to ge the laboratory the branch is being added to
 		"""
 
-		lab = Laboratory.objects.get(created_by=self.request.user)
-
+		lab = self.request.user.laboratory_set.all().first()
+		# print()
 		serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
 
 
@@ -322,8 +321,8 @@ class TestListView(generics.ListAPIView):
 	It takes either the branch id or the Laboratory id
 	"""
 	serializer_class = TestSerializer
-	filter_backends = [DjangoFilterBackend]
-	filterset_class = TestFilter
+	# filter_backends = [DjangoFilterBackend]
+	# filterset_class = TestFilter
 	pagination_class = QueryPagination
 	#cache_timeout = 600
 	def get_serializer_context(self):

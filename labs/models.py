@@ -73,6 +73,7 @@ class Branch(Facility):
 	class Meta:
 
 		verbose_name_plural = 'Branches'
+		unique_together = ('accreditation_number', 'branch_name', 'digital_address')
 
 	def __str__(self) -> str:
 
