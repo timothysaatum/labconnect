@@ -12,6 +12,8 @@ from .utils import send_normal_email, send_code_to_user
 from labs.serializers import LaboratorySerializer, BranchSerializer
 from hospital.models import Hospital
 from hospital.serializers import HospitalSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 # from django.conf import settings
 # import jwt
 
@@ -131,27 +133,22 @@ class LoginSerializer(serializers.ModelSerializer):
 		password = attrs.get('password')
 
 		request = self.context.get('request')
-		# r_token = request.COOKIES.get('refresh_token')
+		r_token = request.COOKIES.get('refresh_token')
 
-		# try:
-		# 	jwt.decode(r_token, settings.SECRET_KEY, algorithms=['HS256'])
-		# except jwt.ExpiredSignatureError:
-		# 	raise AuthenticationFailed('Already logged in')
-		
-		# if user.is_authenticated:
-		# 	raise AuthenticationFailed('Already logged in')
 
-		user = authenticate(request, email=username, password=password)
+		try:
+			r = RefreshToken(r_token)
 
-		if not user:
-
-			raise AuthenticationFailed('Invalid Credentials!')
-
-		if not user.is_verified:
-			send_code_to_user(user.email)
-			raise AuthenticationFailed('New verification code sent to your email. Verify your email to login')
-		
-		return user#{
+			if not r.check_blacklist():
+				raise AuthenticationFailed('Already logged in')
+		except TokenError:		
+			user = authenticate(request, email=username, password=password)
+			if not user:
+				raise AuthenticationFailed('Invalid Credentials!')
+			if not user.is_verified:
+				send_code_to_user(user.email)
+				raise AuthenticationFailed('New verification code sent to your email. Verify your email to login')
+			return user#{
 
 		# 	'user_id': user.id,
 		# 	'first_name': user.full_name,
