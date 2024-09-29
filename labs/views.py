@@ -203,11 +203,11 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 	def perform_create(self, serializer):
 
 		"""
-		A data base query to ge the laboratory the branch is being added to
+		A data base query to get the laboratory the branch is being added to
 		"""
 
-		lab = self.request.user.laboratory_set.all().first()
-		# print()
+		lab = self.request.user.laboratory_set.first()
+		# print(lab)
 		serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
 
 
@@ -724,7 +724,7 @@ class GetTestSampleType(generics.ListAPIView):
 		return SampleType.objects.filter(
 				Q(test=obj_id)|
 				Q(test__branch__laboratory=obj_id)
-			).order_by('id')
+			).distinct()
 
 
 class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):

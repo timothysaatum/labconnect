@@ -31,7 +31,8 @@ class HospitalMixin(generics.GenericAPIView):
 	serializer_class = SampleSerializer
 
 	def get_queryset(self):
-		facility_id = Hospital.objects.get(created_by=self.request.user)
+		facility_id = self.request.user.hospital_set.first()
+		# facility_id = Hospital.objects.get(created_by=self.request.user)
 		return Sample.objects.filter(referring_facility_id=facility_id)
 
 
@@ -133,7 +134,7 @@ class SampleUpdateView(HospitalMixin, generics.UpdateAPIView):
 
 	def put(self, request, pk, format=None):
 		sample = self.get_queryset()
-		if sample.is_accessed_by_lab:
+		if sample.sample_status == 'Received':
 			return Response('Cannot update sample')
 		
 		return super().put(request, pk, format=None)
@@ -153,7 +154,7 @@ class SampleDeleteView(HospitalMixin, generics.DestroyAPIView):
 
 		sample = self.get_queryset()
 
-		if sample.is_accessed_by_lab:
+		if sample.sample_status == 'Received':
 			return Response('Cannot delete sample')
 
 		return super().delete(request, pk, format=None)
@@ -183,7 +184,9 @@ class CreateHospitalLab(generics.CreateAPIView):
 		return self.create(request)
 	
 	def preform_create(self, serializer):
-		hospital_ref = Hospital.objects.get(created_by=self.request.user)
+		# hospital_ref = Hospital.objects.get(created_by=self.request.user)
+		hospital_ref = self.request.user.hospital_set.first()
+		# print(hospital_ref)
 		serializer.save(hospital_reference_id=hospital_ref)
 
 

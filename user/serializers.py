@@ -133,22 +133,22 @@ class LoginSerializer(serializers.ModelSerializer):
 		password = attrs.get('password')
 
 		request = self.context.get('request')
-		r_token = request.COOKIES.get('refresh_token')
+		# r_token = request.COOKIES.get('refresh_token')
 
 
-		try:
-			r = RefreshToken(r_token)
+		# try:
+		# 	r = RefreshToken(r_token)
 
-			if not r.check_blacklist():
-				raise AuthenticationFailed('Already logged in')
-		except TokenError:		
-			user = authenticate(request, email=username, password=password)
-			if not user:
-				raise AuthenticationFailed('Invalid Credentials!')
-			if not user.is_verified:
-				send_code_to_user(user.email)
-				raise AuthenticationFailed('New verification code sent to your email. Verify your email to login')
-			return user#{
+		# 	if not r.check_blacklist():
+		# 		raise AuthenticationFailed('Already logged in')
+		# except TokenError:		
+		user = authenticate(request, email=username, password=password)
+		if not user:
+			raise AuthenticationFailed('Invalid Credentials!')
+		if not user.is_verified:
+			send_code_to_user(user.email)
+			raise AuthenticationFailed('Unverified user, New verification code sent to your email. Verify your email to login')
+		return user#{
 
 		# 	'user_id': user.id,
 		# 	'first_name': user.full_name,

@@ -4,6 +4,7 @@ from .models import Sample, Notification, SampleTrackingHistory
 
 class SampleAdmin(admin.ModelAdmin):
 	list_display = (
+		'id',
 		'patient_name',
 		'referring_facility',
 		'to_laboratory', 
@@ -13,12 +14,13 @@ class SampleAdmin(admin.ModelAdmin):
 	)
 	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
 	list_editable = (
-		'sample_status',
-		'request_status'
+		# 'sample_status',
+		'request_status',
 	)
 
 class NotificationAdmin(admin.ModelAdmin):
 	list_display = (
+		'id',
 		'branch',
 		'message',
 		'is_read',

@@ -1,5 +1,4 @@
 from rest_framework import serializers
-# from modelmixins.paginators import QueryPagination
 from .models import (
 		Laboratory, 
 		Test, Branch,  
@@ -13,7 +12,7 @@ from modelmixins.serializers import SampleTypeSerializer
 
 class LaboratorySerializer(serializers.ModelSerializer):
 	logo = serializers.ImageField(required=False)
-	# website = serializers.URLField(required=False)
+	website = serializers.URLField(required=False)
 
 	class Meta:
 
@@ -25,7 +24,7 @@ class LaboratorySerializer(serializers.ModelSerializer):
 			'main_phone', 
 			'main_email',
 			# 'postal_address', 
-			# 'website', 
+			'website',
 			'description',
 			'logo', 
 			'date_modified', 

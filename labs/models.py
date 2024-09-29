@@ -21,7 +21,7 @@ class Laboratory(BaseModel):
 	# postal_address = models.CharField(max_length=255)
 	main_phone = models.CharField(max_length=15)
 	main_email = models.EmailField()
-	# website = models.URLField(blank=True, null=True)
+	website = models.URLField(blank=True, null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	logo = models.ImageField(upload_to='labs/logo', default='logo.jpg')
@@ -90,8 +90,8 @@ class Test(BasicTest):
 	price(float): The price of the test.
 	dicount_price (float, optional): The discounted price of the test.
 	'''
-	discount_price = models.DecimalField(decimal_places=2, max_digits=10)
-	discount_percent = models.CharField(max_length=10)
+	discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
+	discount_percent = models.CharField(max_length=10, blank=True, null=True)
 	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True, through='BranchTest')
 
 
