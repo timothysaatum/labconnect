@@ -228,7 +228,7 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 		return Branch.objects.filter(
 			Q(laboratory__created_by=self.request.user) |
 			Q(branch_manager=self.request.user)
-		).order_by('id')
+		).order_by('-date_created')
 
 
 class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -732,6 +732,7 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = BranchTestSerializer
 
 	def get_object(self):
+
 		queryset = BranchTest.objects.all()
 		test_id = self.kwargs.get('test_id')
 		branch_id = self.kwargs.get('branch_id')
@@ -751,7 +752,7 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CopyTests(generics.CreateAPIView):
+class CopyTests(PermissionMixin, generics.CreateAPIView):
     
     def post(self, request, *args, **kwargs):
         test_ids = self.request.data.getlist('test_ids', [])
@@ -774,7 +775,7 @@ class CopyTests(generics.CreateAPIView):
         task = copy_test_to_branch.send(test_ids, target_branch_id)
 
         return Response({
-            'message': 'Task dispatched successfully',
+            'message': f'Copying test to {target_branch_id}',
             'task_id': task.message_id
         }, status=status.HTTP_202_ACCEPTED)
 
