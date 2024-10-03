@@ -41,7 +41,7 @@ class SampleSerializer(serializers.ModelSerializer):
 			'attachment',
 			'sample_status',
 			'delivery',
-			'priority',
+			'is_emmergent',
 			'date_modified',
 			'date_created'
 		)

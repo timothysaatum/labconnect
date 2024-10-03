@@ -10,7 +10,7 @@ class SampleAdmin(admin.ModelAdmin):
 		'to_laboratory', 
 		'sample_status',
 		'request_status',
-		'priority'
+		'is_emmergent'
 	)
 	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
 	list_editable = (

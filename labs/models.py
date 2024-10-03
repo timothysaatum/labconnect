@@ -25,7 +25,7 @@ class Laboratory(BaseModel):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	logo = models.ImageField(upload_to='labs/logo', default='logo.jpg')
-	description = models.TextField()
+	description = models.CharField(max_length=900)
 
 	class Meta:
 		verbose_name_plural = 'Laboratories'

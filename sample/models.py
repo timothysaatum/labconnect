@@ -115,13 +115,13 @@ class Sample(models.Model):
 		null=True
 	))
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)
-	requires_phlebotomist = models.CharField(max_length=10, choices=PHLEBOTOMIST_REQUIREMENTS)
+	requires_phlebotomist = models.BooleanField(default=False)
 	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS, default='Request Accepted', db_index=True)
-	report_delivery_mode = models.CharField(max_length=55, choices=REPORT_DELIVERY_MODE)
+	report_delivery = models.BooleanField(default=False)
 	referring_signature = models.BooleanField(default=False)
 	referror_signature = models.BooleanField(default=False)
 	rejection_reason = (models.TextField(blank=True, null=True))
-	priority = models.CharField(max_length=50, choices=PRIORITIES)
+	is_emmergent = models.BooleanField(default=False)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 

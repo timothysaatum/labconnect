@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from modelmixins.models import Facility, SampleType
-from labs.models import BranchTest, Branch
-from hospital.serializers import HospitalSerializer, HospitalLabSerializer
-from hospital.models import HospitalLab, Hospital
+# from labs.models import BranchTest, Branch
+# from hospital.serializers import HospitalSerializer, HospitalLabSerializer
+# from hospital.models import HospitalLab, Hospital
 
 
 
@@ -49,3 +49,7 @@ class SampleTypeSerializer(serializers.ModelSerializer):
 			'collection_time'
 		)
 
+
+
+class FileUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
