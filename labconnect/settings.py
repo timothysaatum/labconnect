@@ -295,8 +295,13 @@ CACHES = {
 
 SIMPLE_JWT = {
 
+<<<<<<< HEAD
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=100),
+=======
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=10),
+>>>>>>> 64b2fd92ff08074e117c55ba94af9cf9c089a902
     'AUTH_HEADER_TYPES': ('Bearer', ),
     'AUTH_COOKIE': 'refresh_token',
     'BLACKLIST_AFTER_ROTATION': True,

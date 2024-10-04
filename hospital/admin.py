@@ -13,7 +13,7 @@ class HospitalAdmin(admin.ModelAdmin):
 		'phone', 
 		'email', 
 		'website', 
-		'date_created', 
+		'date_added', 
 		'date_modified'
 	)
 
@@ -25,7 +25,7 @@ class HospitalLabAdmin(admin.ModelAdmin):
 		'phone', 
 		'email',
 		'facility_type',
-		'date_created', 
+		'date_added', 
 		'date_modified'
 	)
 

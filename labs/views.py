@@ -228,7 +228,7 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 		return Branch.objects.filter(
 			Q(laboratory__created_by=self.request.user) |
 			Q(branch_manager=self.request.user)
-		).order_by('-date_created')
+		).order_by('-date_added')
 
 
 class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -622,15 +622,15 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 			if status:
 
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), sample_status__icontains=status, request_status='Request Accepted').order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), sample_status__icontains=status, request_status='Request Accepted').order_by('-date_added')
 
 			if from_date and to_date:
 
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), date__range=(from_date, to_date), request_status='Request Accepted').order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), date__range=(from_date, to_date), request_status='Request Accepted').order_by('-date_added')
 
 			return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), request_status='Request Accepted').order_by('-date_created')
+					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), request_status='Request Accepted').order_by('-date_added')
 
 		except Sample.DoesNotExist:
 			return Response(
@@ -652,15 +652,15 @@ class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 		if status:
 
-			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status).order_by('-date_created')
+			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status).order_by('-date_added')
 
 		if from_date and to_date:
 
-			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(date__range=(from_date, to_date)).order_by('-date_created')
+			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(date__range=(from_date, to_date)).order_by('-date_added')
 
 		return Sample.objects.filter(
 			referring_facility=self.kwargs.get('pk')
-		).order_by('-date_created')
+		).order_by('-date_added')
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):

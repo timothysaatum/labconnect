@@ -17,16 +17,17 @@ from uuid import UUID
 
 
 def get_gps_coords(digital_address):
+    
     url = "https://ghanapostgps.sperixlabs.org/get-location"
 
-    payload = digital_address#'address=AK-484-9321'
+    payload = f'address={digital_address}'
     headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
+    'Content-Type': 'application/x-www-form-urlencoded'
     }
 
     response = requests.request("POST", url, headers=headers, data = payload)
 
-    print(response.json())
+    return response
 
 
 class UUIDEncoder(json.JSONEncoder):
@@ -35,3 +36,4 @@ class UUIDEncoder(json.JSONEncoder):
             # if the obj is uuid, we simply return the value of uuid
             return str(obj)
         return json.JSONEncoder.default(self, obj)
+    

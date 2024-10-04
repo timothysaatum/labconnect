@@ -22,7 +22,7 @@ class Laboratory(BaseModel):
 	main_phone = models.CharField(max_length=15)
 	main_email = models.EmailField()
 	website = models.URLField(blank=True, null=True)
-	date_created = models.DateTimeField(auto_now_add=True)
+	date_added = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
 	logo = models.ImageField(upload_to='labs/logo', default='logo.jpg')
 	description = models.CharField(max_length=900)

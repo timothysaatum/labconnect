@@ -26,7 +26,7 @@ class Facility(models.Model):
     email = models.EmailField()
     facility_type = models.CharField(max_length=155, choices=FACILITY_TYPE)
     deleted_at = models.DateTimeField(auto_now=True)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     def get_facility_name(self):

@@ -17,7 +17,7 @@ class FacilitySerializer(serializers.ModelSerializer):
 			'email',
 			'facility_type',
 			'postal_address',
-			'date_created'
+			'date_added'
 		)
 
 	# def to_representation(self, instance):

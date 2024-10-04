@@ -21,7 +21,7 @@ class HospitalSerializer(serializers.ModelSerializer):
 			'email',
 			'website',
 			'date_modified',
-			'date_created'
+			'date_added'
 		)
 
 	pagination_class = QueryPagination
@@ -43,7 +43,7 @@ class HospitalLabSerializer(serializers.ModelSerializer):
 			'email',
 			'hospital_reference',
 			'date_modified',
-			'date_created'
+			'date_added'
 		)
 
 	def to_representation(self, instance):

@@ -41,9 +41,10 @@ class SampleSerializer(serializers.ModelSerializer):
 			'attachment',
 			'sample_status',
 			'delivery',
-			'is_emmergent',
+			'is_emmergency',
+			'hardcopy_report',
 			'date_modified',
-			'date_created'
+			'date_added'
 		)
 
 	def to_representation(self, instance):
@@ -52,8 +53,6 @@ class SampleSerializer(serializers.ModelSerializer):
 
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = str(instance.to_laboratory)
-		
-		
 		data['delivery'] = instance.delivery.name if instance.delivery else None
 		data['to_laboratory'] = str(instance.to_laboratory)
 
@@ -77,7 +76,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 			'message',
 			'is_read',
 			'is_hidden',
-			'date_created',
+			'date_added',
 			'date_modified'
 		)
 
@@ -85,7 +84,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 class SampleTrackingSerializer(serializers.ModelSerializer):
 
 	sample = serializers.PrimaryKeyRelatedField(queryset=Sample.objects.all(), required=False)
-	location = serializers.CharField(required=False)	
+	location = serializers.CharField(required=False)
 
 	class Meta:
 
