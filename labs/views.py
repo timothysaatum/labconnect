@@ -609,7 +609,7 @@ class AllLaboratories(generics.ListAPIView):
 
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
-	# pagination_class = QueryPagination
+	pagination_class = QueryPagination
 
 	def get_queryset(self):
 		status = self.request.GET.get('status')
@@ -642,7 +642,7 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 
 	serializer_class = SampleSerializer
-	# pagination_class = QueryPagination
+	pagination_class = QueryPagination
 
 	def get_queryset(self):
 
