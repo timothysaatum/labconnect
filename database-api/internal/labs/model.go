@@ -11,7 +11,7 @@ type Facility struct {
     Email         string    `json:"email"`
     FacilityType  string    `json:"facility_type"`
     DeletedAt     time.Time `json:"deleted_at"`
-    DateCreated   time.Time `json:"date_created"`
+    DateCreated   time.Time `json:"date_added"`
     DateModified  time.Time `json:"date_modified"`
 }
 
