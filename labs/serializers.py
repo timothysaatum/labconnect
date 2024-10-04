@@ -28,7 +28,7 @@ class LaboratorySerializer(serializers.ModelSerializer):
 			'description',
 			'logo', 
 			'date_modified', 
-			'date_created'
+			'date_added'
 		)
 
 
@@ -58,7 +58,7 @@ class BranchSerializer(serializers.ModelSerializer):
 			'town',
 			'digital_address',
 			'region',
-			'date_created',
+			'date_added',
 			'date_modified'
 		)
 

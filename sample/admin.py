@@ -10,7 +10,7 @@ class SampleAdmin(admin.ModelAdmin):
 		'to_laboratory', 
 		'sample_status',
 		'request_status',
-		'is_emmergent'
+		'is_emmergency'
 	)
 	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
 	list_editable = (
@@ -24,7 +24,7 @@ class NotificationAdmin(admin.ModelAdmin):
 		'branch',
 		'message',
 		'is_read',
-		'date_created',
+		'date_added',
 		'date_modified'
 	)
 

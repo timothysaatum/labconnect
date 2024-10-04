@@ -79,7 +79,7 @@ class LaboratoryAdmin(admin.ModelAdmin):
 		'main_phone',
 		'main_email',
 		# 'website',
-		'date_created',
+		'date_added',
 		'date_modified'
 	)
 	list_display_links = (
@@ -123,7 +123,7 @@ class BranchAdmin(admin.ModelAdmin):
 		'town',
 		'region',
 		'laboratory',
-		'date_created',
+		'date_added',
 		'date_modified'
 	)
 
