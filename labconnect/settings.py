@@ -31,7 +31,8 @@ ALLOWED_HOSTS = []
 
 # vercel blob settings.py
 VERCEL_BLOB_BASE_URL = 'https://api.vercel.com/v2/blob/upload'
-VERCEL_BLOB_API_KEY = '<your-api-key>'
+VERCEL_BLOB_API_KEY = 'vercel_blob_rw_XgYZgqC7wzq7cyZ6_IF5b94QMHPJEY3hlAacS79LVJZKc52'
+# BLOB_READ_WRITE_TOKEN="vercel_blob_rw_XgYZgqC7wzq7cyZ6_IF5b94QMHPJEY3hlAacS79LVJZKc52"
 # Application definition
 
 INSTALLED_APPS = [
