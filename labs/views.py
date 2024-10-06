@@ -559,8 +559,13 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 		# sample.tests.clear()
 		query_dict.update(self.request.data)
 		#tests = self.request.data.getlist('tests')
-		if self.request.data['request_status']:
-			pass
+		if self.request.data['request_status'] or self.request.data['sample_status']:
+
+			sample_status = self.request.data['sample_status']
+
+			sample.sample_status = sample_status
+
+			sample.save()
 
 		tests = query_dict.getlist('tests')
 		sample.tests.add(*tests)
