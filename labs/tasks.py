@@ -1,5 +1,5 @@
-import dramatiq
-from django.apps import apps
+import dramatiq # type: ignore
+from django.apps import apps # type: ignore
 import uuid
 
 @dramatiq.actor

@@ -1,6 +1,6 @@
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.core.validators import validate_email# MinLengthValidator, MaxLengthValidator, 
+from django.db import models # type: ignore
+from django.contrib.auth import get_user_model # type: ignore
+from django.core.validators import validate_email# type: ignore # MinLengthValidator, MaxLengthValidator, 
 import uuid
 from modelmixins.models import Facility, BasicTest, BaseModel
 

@@ -1,12 +1,12 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework import generics
-from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated # type: ignore
+from rest_framework.response import Response # type: ignore
+from rest_framework import generics # type: ignore
+from rest_framework import status # type: ignore
+from rest_framework.parsers import MultiPartParser, FormParser # type: ignore
 from .serializers import (
-	LaboratorySerializer, 
-	TestSerializer, 
-	TestResultSerializer, 
+	LaboratorySerializer,
+	TestSerializer,
+	TestResultSerializer,
 	BranchSerializer,
 	BranchTestSerializer
 )
@@ -15,13 +15,13 @@ from modelmixins.models import SampleType
 from modelmixins.models import Facility
 from sample.models import Sample
 from sample.serializers import SampleSerializer
-from django.db.models import Q
+from django.db.models import Q # type: ignore
 from sample.serializers import SampleSerializer
-from django.http import QueryDict
-from django.core.cache import cache
-from rest_framework.exceptions import ValidationError
+from django.http import QueryDict # type: ignore
+from django.core.cache import cache # type: ignore
+from rest_framework.exceptions import ValidationError # type: ignore
 from .filters import TestFilter
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend # type: ignore
 import json
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .tasks import copy_test_to_branch#, get_sample_counts_for_facility
@@ -29,7 +29,7 @@ import logging
 from modelmixins.utils import ensure_uuid
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
-from rest_framework.views import APIView
+from rest_framework.views import APIView # type: ignore
 from .constants import LEVEL_ORDER
 from modelmixins.paginators import QueryPagination
 # from sample.serializers import CountObjectsSerializer
@@ -534,6 +534,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 		user = self.request.user
 		
 		tests = self.request.data['tests']
+		print(user.full_name,user.phone_number,user.email)
 
 		sample = serializer.save(
 				sender_full_name=user.full_name,
@@ -558,8 +559,9 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 		sample = serializer.save()
 		# sample.tests.clear()
 		query_dict.update(self.request.data)
+		# print(self.request.data)
 		#tests = self.request.data.getlist('tests')
-		if self.request.data['request_status'] or self.request.data['sample_status']:
+		if self.request.data.get('request_status') or self.request.data.get('sample_status'):
 
 			sample_status = self.request.data['sample_status']
 

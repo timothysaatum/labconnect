@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers # type: ignore
 from sample.models import Sample, Notification, SampleTrackingHistory
 from labs.models import Test
 from modelmixins.models import Facility
@@ -20,6 +20,8 @@ class SampleSerializer(serializers.ModelSerializer):
 	sender_email = serializers.CharField(required=False)
 	facility_type = serializers.CharField(required=False)
 	sample_status = serializers.CharField(required=False)
+	receipient_contact = serializers.CharField(read_only=True)
+	receipient_email = serializers.EmailField(read_only=True)
 
 	class Meta:
 
@@ -43,6 +45,8 @@ class SampleSerializer(serializers.ModelSerializer):
 			'delivery',
 			'is_emmergency',
 			'hardcopy_report',
+			'receipient_contact',
+			'receipient_email',
 			'date_modified',
 			'date_added'
 		)
@@ -55,6 +59,8 @@ class SampleSerializer(serializers.ModelSerializer):
 		data['referring_facility'] = str(instance.to_laboratory)
 		data['delivery'] = instance.delivery.name if instance.delivery else None
 		data['to_laboratory'] = str(instance.to_laboratory)
+		data['receipient_contact'] = instance.to_laboratory.phone if instance.to_laboratory else None
+		data['receipient_email'] = instance.to_laboratory.email if instance.to_laboratory else None
 
 		return data
 

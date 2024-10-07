@@ -9,7 +9,7 @@
 # API Parameters: address (GhanaPostGPS Address)
 # Content-Type: application/x-www-form-urlencoded
 
-import requests
+import requests # type: ignore
 import json
 from uuid import UUID
 

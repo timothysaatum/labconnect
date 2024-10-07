@@ -1,4 +1,4 @@
-from rest_framework import pagination
+from rest_framework import pagination # type: ignore
 
 
 class QueryPagination(pagination.CursorPagination):
@@ -11,6 +11,6 @@ class QueryPagination(pagination.CursorPagination):
 
 	def get_page_size(self, request):
 		page_size = super().get_page_size(request)
-		if page_size_query_param in request.query_params:
+		if self.page_size_query_param in request.query_params:
 			return min(int(request.query_params[self.page_size_query_param]), 100)  # Limit the max page size to 100
 		return page_size

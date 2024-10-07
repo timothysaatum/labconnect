@@ -4,8 +4,8 @@ from rest_framework import generics # type: ignore
 from rest_framework import status # type: ignore
 from .serializers import NotificationSerializer, CountObjectsSerializer, SampleTrackingSerializer
 from .models import Notification, Sample, SampleTrackingHistory
-from django.db.models import Count, Q
-from django.utils.timezone import now, timedelta
+from django.db.models import Count, Q # type: ignore
+from django.utils.timezone import now, timedelta # type: ignore
 # from datetime import timedelta
 
 

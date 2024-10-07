@@ -1,7 +1,7 @@
 from user.utils import send_normal_email
 from .models import BranchManagerInvitation, Laboratory, Branch
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.db.models.signals import post_save # type: ignore
+from django.dispatch import receiver # type: ignore
 from textwrap import dedent
 from .models import Result
 from sample.models import Notification
