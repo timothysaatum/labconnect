@@ -94,7 +94,7 @@ class CountObjects(generics.GenericAPIView):
 
 
 class TrackSampleState(generics.CreateAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     
@@ -114,7 +114,7 @@ class TrackSampleState(generics.CreateAPIView):
 
 class GetTrackerDetails(generics.ListAPIView):
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):
