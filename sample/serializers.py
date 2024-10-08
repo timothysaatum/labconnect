@@ -54,21 +54,22 @@ class SampleSerializer(serializers.ModelSerializer):
 	def to_representation(self, instance):
 
 		data = super().to_representation(instance)
-
+		
 		data['tests'] = [test.name for test in instance.tests.all()]
 		data['referring_facility'] = str(instance.to_laboratory)
 		data['delivery'] = instance.delivery.name if instance.delivery else None
 		data['to_laboratory'] = str(instance.to_laboratory)
-		data['receipient_contact'] = instance.to_laboratory.phone if instance.to_laboratory else None
-		data['receipient_email'] = instance.to_laboratory.email if instance.to_laboratory else None
+		# data['receipient_contact'] = instance.to_laboratory.phone if instance.to_laboratory else None
+		# data['receipient_email'] = instance.to_laboratory.email if instance.to_laboratory else None
 
 		return data
 
 
 class NotificationSerializer(serializers.ModelSerializer):
 
-	branch = serializers.PrimaryKeyRelatedField(queryset=Test.objects.all(), required=False)
+	facility = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all(), required=False)
 	message = serializers.CharField(required=False)
+	title = serializers.CharField(required=False)
 	is_read = serializers.BooleanField(default=False)
 	is_hidden = serializers.BooleanField(default=False)
 
@@ -78,7 +79,8 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 		fields = (
 			'id', 
-			'branch', 
+			'facility',
+			'title',
 			'message',
 			'is_read',
 			'is_hidden',

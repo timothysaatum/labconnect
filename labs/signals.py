@@ -72,6 +72,7 @@ def CreateNotificationForLab(sender, instance, created, **kwargs):
 def get_coords(sender, instance, created, **kwargs):
 
 	if created:
-		get_gps_coords(instance.digital_address)
-		print(instance.digital_address)
-		# instance.gps_coordinates = coords
+		try:
+			get_gps_coords(instance.digital_address)
+		except Exception as e:
+			print(str(e))

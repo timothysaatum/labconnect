@@ -11,8 +11,9 @@ def create_notification_for_lab(sender, instance, created, **kwargs):
 	if created:
 		branch = Branch.objects.get(id=instance.to_laboratory.id)
 		Notification.objects.create(
+			title='New Sample',
 			message=f'New sample from: {instance.referring_facility}',
-			branch=branch
+			facility=branch
         )
 		SampleTrackingHistory.objects.create(sample=instance, status='Request Made')
 		if instance.delivery:

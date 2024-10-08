@@ -114,6 +114,8 @@ class Sample(models.Model):
 		blank=True,
 		null=True
 	))
+	receipient_contact = models.CharField(max_length=155)
+	receipient_email = models.EmailField(max_length=155)
 	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)
 	requires_phlebotomist = models.BooleanField(default=False)
 	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS, default='Request Accepted', db_index=True)
@@ -150,7 +152,8 @@ class SampleTrackingHistory(models.Model):
 
 class Notification(models.Model):
 
-	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, db_index=True)
+	facility = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
+	title = models.CharField(max_length=200)
 	message = models.CharField(max_length=150)
 	is_read = models.BooleanField(default=False)
 	is_hidden = models.BooleanField(default=False)
@@ -158,4 +161,5 @@ class Notification(models.Model):
 	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self) -> str:
-		return f'{self.branch.town} - {self.branch.laboratory.name}'
+		return (f'{self.facility.branch.town} - {self.facility.branch.laboratory.name}' if self.facility.branch 
+		  else self.facility.hospital)

@@ -21,7 +21,7 @@ class SampleAdmin(admin.ModelAdmin):
 class NotificationAdmin(admin.ModelAdmin):
 	list_display = (
 		'id',
-		'branch',
+		'facility',
 		'message',
 		'is_read',
 		'date_added',
