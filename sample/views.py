@@ -38,7 +38,7 @@ class GetNotifications(generics.ListAPIView):
 
     def get_queryset(self):
 
-        return Notification.objects.filter(branch=self.kwargs.get('branch_id'), is_read=False)
+        return Notification.objects.filter(facility=self.kwargs.get('branch_id'), is_read=False)
 
 
 class CountObjects(generics.GenericAPIView):
@@ -94,7 +94,7 @@ class CountObjects(generics.GenericAPIView):
 
 
 class TrackSampleState(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     
@@ -114,7 +114,7 @@ class TrackSampleState(generics.CreateAPIView):
 
 class GetTrackerDetails(generics.ListAPIView):
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):

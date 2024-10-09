@@ -11,7 +11,6 @@ import uuid
 client = get_user_model()
 
 
-
 PATIENT_SEX = [
 	('Male', 'Male'),
 	('Female', 'Female')
@@ -57,7 +56,6 @@ PRIORITIES = [
 ]
 
 
-
 class Patient(models.Model):
 
 	patient_id = models.CharField(max_length=100, unique=True)
@@ -67,72 +65,74 @@ class Patient(models.Model):
 	contact_number = models.CharField(max_length=15)
 	email = models.EmailField()
 	address = models.TextField(null=True, blank=True)
-
+	health_insuarance = models.CharField(max_length=255)
 	def __str__(self) -> str:
 		return self.full_name
 
 
-
 class Sample(models.Model):
 
-	'''
+    '''
 	Model representing a medical sample
 	'''
 
-	referring_facility = models.ForeignKey(
+    referring_facility = models.ForeignKey(
 			Facility,
 			on_delete=models.CASCADE,
 			related_name='facilities',
 			db_index=True
 		)
-	# test_field = FernetEncryptedField(max_length=50)
-	facility_type = models.CharField(
+    # test_field = FernetEncryptedField(max_length=50)
+    facility_type = models.CharField(
 			max_length=50,
 			choices=REFERRING_FACILITY_TYPE
 		)
-	sender_full_name = models.CharField(
+    sender_full_name = models.CharField(
 		max_length=200, 
 		null=True, 
 		blank=True
 	)
-	sender_phone = models.CharField(max_length=20, null=True, blank=True)
-	sender_email = models.EmailField(null=True, blank=True)
-	patient_name = models.CharField(max_length=200)
-	patient_age = models.DateField()
-	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
-	delivery = models.ForeignKey(
+    sender_phone = models.CharField(max_length=20, null=True, blank=True)
+    sender_email = models.EmailField(null=True, blank=True)
+    patient_name = models.CharField(max_length=200)
+    patient_age = models.DateField()
+    patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
+    delivery = models.ForeignKey(
 			Delivery,
 			on_delete=models.SET_NULL,
 			null=True,
 			blank=True, db_index=True
 		)
-	to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
-	tests = models.ManyToManyField(Test, related_name='tests')
-	clinical_history = models.TextField(null=True, blank=True)
-	attachment = (models.FileField(
-		upload_to='sample/attachments',
-		blank=True,
-		null=True
-	))
-	receipient_contact = models.CharField(max_length=155)
-	receipient_email = models.EmailField(max_length=155)
-	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)
-	requires_phlebotomist = models.BooleanField(default=False)
-	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS, default='Request Accepted', db_index=True)
-	hardcopy_report = models.BooleanField(default=False)
-	referring_signature = models.BooleanField(default=False)
-	referror_signature = models.BooleanField(default=False)
-	rejection_reason = (models.TextField(blank=True, null=True))
-	is_emmergency = models.BooleanField(default=False)
-	date_added = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
+    to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
+    tests = models.ManyToManyField(Test, related_name="tests")
+    clinical_history = models.TextField(null=True, blank=True)
+    attachment = models.URLField(blank=True, null=True)
+    receipient_contact = models.CharField(max_length=155)
+    receipient_email = models.EmailField(max_length=155)
+    sample_status = models.CharField(
+        max_length=50, choices=SAMPLE_STATUS, default="Pending", db_index=True
+    )
+    requires_phlebotomist = models.BooleanField(default=False)
+    request_status = models.CharField(
+        max_length=155,
+        choices=REQUEST_STATUS,
+        default="Request Accepted",
+        db_index=True
+    )
+    hardcopy_report = models.BooleanField(default=False)
+    referring_signature = models.BooleanField(default=False)
+    referror_signature = models.BooleanField(default=False)
+    rejection_reason = models.TextField(blank=True, null=True)
+    is_emmergency = models.BooleanField(default=False)
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
-	def __str__(self) -> str:
-		return self.patient_name
+    def __str__(self) -> str:
+        return self.patient_name
 
-	def delivery_phone(self) -> str:
+    def delivery_phone(self) -> str:
 
-		return Delivery.objects.get(id=self.delivery.id).phone if self.delivery else None
+        return Delivery.objects.get(id=self.delivery.id).phone if self.delivery else None
 
 
 class SampleTrackingHistory(models.Model):

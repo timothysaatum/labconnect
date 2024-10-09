@@ -24,7 +24,7 @@ class Laboratory(BaseModel):
 	website = models.URLField(blank=True, null=True)
 	date_added = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
-	logo = models.ImageField(upload_to='labs/logo', default='logo.jpg')
+	logo = models.URLField()
 	description = models.CharField(max_length=900)
 
 	class Meta:
@@ -153,7 +153,7 @@ class Result(models.Model):
 	sample = models.ForeignKey('sample.Sample', on_delete=models.CASCADE, db_index=True)
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='results', db_index=True)
 	test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='results', db_index=True)
-	result = models.FileField(upload_to='labs/results')
+	result = models.URLField()
 	comments = models.TextField(blank=True, null=True)
 	is_verified = models.BooleanField(default=False)
 	is_received = models.BooleanField(default=False)

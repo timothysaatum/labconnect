@@ -9,7 +9,7 @@ from modelmixins.models import Facility
 class SampleSerializer(serializers.ModelSerializer):
 
 	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all(), required=True)
-	attachment = serializers.FileField(required=False)
+	attachment = serializers.URLField(required=False)
 	referring_facility = serializers.PrimaryKeyRelatedField(
 		queryset=Facility.objects.all(),
 		required=False
