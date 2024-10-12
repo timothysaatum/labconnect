@@ -11,7 +11,7 @@ from modelmixins.serializers import SampleTypeSerializer
 
 
 class LaboratorySerializer(serializers.ModelSerializer):
-	logo = serializers.ImageField(required=False)
+	logo = serializers.URLField(required=False)
 	website = serializers.URLField(required=False)
 
 	class Meta:
