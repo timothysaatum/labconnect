@@ -1,68 +1,107 @@
 from rest_framework import serializers # type: ignore
-from sample.models import Sample, Notification, SampleTrackingHistory
+from sample.models import Sample, Notification, SampleTrackingHistory, Referral
 from labs.models import Test
-from modelmixins.models import Facility
-
-
+from modelmixins.models import Facility, SampleType
+from modelmixins.serializers import SampleTypeSerializer
 
 
 class SampleSerializer(serializers.ModelSerializer):
 
-	tests = serializers.PrimaryKeyRelatedField(many=True, queryset=Test.objects.all(), required=True)
-	attachment = serializers.URLField(required=False)
-	referring_facility = serializers.PrimaryKeyRelatedField(
-		queryset=Facility.objects.all(),
-		required=False
-	)
-	to_laboratory = serializers.PrimaryKeyRelatedField(queryset=Facility.objects.all(), required=False)
-	sender_full_name = serializers.CharField(required=False)
-	sender_phone = serializers.CharField(required=False)
-	sender_email = serializers.CharField(required=False)
-	facility_type = serializers.CharField(required=False)
-	sample_status = serializers.CharField(required=False)
-	receipient_contact = serializers.CharField(read_only=True)
-	receipient_email = serializers.EmailField(read_only=True)
+    tests = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Test.objects.all(), required=True
+    )
+    attachment = serializers.URLField(required=False)
+    referral = serializers.PrimaryKeyRelatedField(
+        queryset=Referral.objects.all(), required=False
+    )
+    sample_type = serializers.PrimaryKeyRelatedField(
+        queryset=SampleType.objects.all(), required=False
+    )
+    is_emmergency = serializers.BooleanField(default=False)
+    rejection_reason = serializers.CharField(required=False)
+    sample_status = serializers.CharField(required=False)
 
-	class Meta:
+    class Meta:
 
-		model = Sample
+        model = Sample
 
-		fields = (
-			'id',
-			'patient_name',
-			'patient_age',
-			'patient_sex',
-			'referring_facility',
-			'facility_type',
-			'to_laboratory',
-			'sender_full_name',
-			'sender_phone',
-			'sender_email',
-			'tests',
-			'clinical_history',
-			'attachment',
-			'sample_status',
-			'delivery',
-			'is_emmergency',
-			'hardcopy_report',
-			'receipient_contact',
-			'receipient_email',
-			'date_modified',
-			'date_added'
-		)
+        fields = (
+            "id",
+            "sample_type",
+            "tests",
+            "referral",
+            "attachment",
+            "sample_status",
+            "is_emmergency",
+            "rejection_reason",
+            "date_modified",
+            "date_added",
+        )
 
-	def to_representation(self, instance):
+    def to_representation(self, instance):
 
-		data = super().to_representation(instance)
-		
-		data['tests'] = [test.name for test in instance.tests.all()]
-		data['referring_facility'] = str(instance.to_laboratory)
-		data['delivery'] = instance.delivery.name if instance.delivery else None
-		data['to_laboratory'] = str(instance.to_laboratory)
-		# data['receipient_contact'] = instance.to_laboratory.phone if instance.to_laboratory else None
-		# data['receipient_email'] = instance.to_laboratory.email if instance.to_laboratory else None
+        data = super().to_representation(instance)
 
-		return data
+        data["tests"] = [test.name for test in instance.tests.all()]
+
+        data["referral"] = str(instance.referral)
+        data["sample_type"] = SampleTypeSerializer(
+            SampleType.objects.filter(sample=instance), many=True
+        ).data
+
+        return data
+
+
+class ReferralSerializer(serializers.ModelSerializer):
+    to_laboratory = serializers.PrimaryKeyRelatedField(
+        queryset=Facility.objects.all(), required=True
+    )
+    clinical_history = serializers.CharField(required=False)
+    requires_phlebotomist = serializers.BooleanField(required=False)
+    sender_full_name = serializers.CharField(required=False)
+    sender_phone = serializers.CharField(required=False)
+    sender_email = serializers.EmailField(required=False)
+    referral_status = serializers.CharField(required=False)
+    referring_facility = serializers.PrimaryKeyRelatedField(
+        queryset=Facility.objects.all(), required=True
+    )
+    samples = serializers.PrimaryKeyRelatedField(
+        required=False, queryset=Sample.objects.all(), many=True
+    )
+    facility_type = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Referral
+        fields = (
+            "id",
+            "referring_facility",
+            "samples",
+            "facility_type",
+            "to_laboratory",
+            "delivery",
+            "patient_name",
+            "patient_sex",
+            "patient_age",
+            "clinical_history",
+            "requires_phlebotomist",
+            "sender_full_name",
+            "sender_phone",
+            "sender_email",
+            "referral_status",
+            "date_referred",
+        )
+
+    def to_representation(self, instance):
+        print("Hello")
+        data = super().to_representation(instance)
+        print('Hello')
+        print(Sample.objects.filter(referral=instance), 'hi')
+        data["samples"] = SampleSerializer(
+                Sample.objects.filter(referral=instance), many=True
+            ).data
+        data["referring_facility"] = str(instance.referring_facility)
+        data["to_laboratory"] = str(instance.to_laboratory)
+        return data
 
 
 class NotificationSerializer(serializers.ModelSerializer):

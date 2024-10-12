@@ -1,22 +1,38 @@
 from django.contrib import admin # type: ignore
-from .models import Sample, Notification, SampleTrackingHistory
+from .models import Sample, Notification, SampleTrackingHistory, Referral
+
+
+@admin.register(Referral)
+class ReferralAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "referring_facility",
+        "to_laboratory",
+        "delivery",
+        "patient_name",
+        "referral_status",
+        "date_referred",
+    )
+    list_filter = ("referral_status", "referring_facility", "to_laboratory")
+    list_editable = (
+        "referral_status",
+    )
 
 
 class SampleAdmin(admin.ModelAdmin):
-	list_display = (
-		'id',
-		'patient_name',
-		'referring_facility',
-		'to_laboratory', 
-		'sample_status',
-		'request_status',
-		'is_emmergency'
-	)
-	list_filter = ('sample_status', 'to_laboratory', 'referring_facility')
-	list_editable = (
-		# 'sample_status',
-		'request_status',
-	)
+    list_display = (
+        "id",
+        "referral",
+        "sample_type",
+        "sample_status",
+        "rejection_reason",
+        "is_emmergency",
+        "date_added",
+    )
+    list_filter = ("sample_status", "referral", "sample_type")
+    list_editable = (
+        "sample_status",
+    )
 
 class NotificationAdmin(admin.ModelAdmin):
 	list_display = (

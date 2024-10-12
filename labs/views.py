@@ -34,7 +34,6 @@ from .constants import LEVEL_ORDER
 from modelmixins.paginators import QueryPagination
 
 
-
 class PermissionMixin(object):
 	"""
 	Mixin class for laboratory specific permissions.
@@ -117,8 +116,6 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.partial_update(request, pk)
-
-
 
 
 class DeleteLaboratory(PermissionMixin, generics.DestroyAPIView):
@@ -235,7 +232,6 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.destroy(request, pk, format=None)
-
 
 
 class CreateTestView(PermissionMixin, generics.CreateAPIView):
@@ -389,7 +385,6 @@ class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
 		return self.partial_update(request, pk)
 
 
-
 class TestResultDeleteView(PermissionMixin, generics.DestroyAPIView):
 	def get_queryset(self):
 		return Result.objects.all()
@@ -406,31 +401,27 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	queryset = Sample.objects.all()
 	serializer_class = SampleSerializer
 	parser_classes = (MultiPartParser, FormParser)
+	
 	def post(self, request):
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid credentials'}, 
-				status=status.HTTP_401_UNAUTHORIZED
-			)
-		data = request.data.dict() if isinstance(request.data, QueryDict) else request.data.copy()
-		if 'tests' in data:
-			tests = json.loads(data['tests'])
+                {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+		data = (
+            request.data.dict()
+            if isinstance(request.data, QueryDict)
+            else request.data.copy()
+        )
+		if "tests" in data:
+			tests = json.loads(data["tests"])
 			if isinstance(tests, list):
-				data['tests'] = tests
-		request._full_data = data
+				data["tests"] = tests
+			request._full_data = data
 		return self.create(request)
+	
 	def perform_create(self, serializer):
-		user = self.request.user
-		tests = self.request.data['tests']
-		sample = serializer.save(
-				sender_full_name=user.full_name,
-				sender_phone=user.phone_number,
-				sender_email=user.email,
-				facility_type='Laboratory'
-			)
-		sample.receipient_contact = sample.to_laboratory.phone
-		sample.receipient_email = sample.to_laboratory.email
-		sample.save()
+		tests = self.request.data["tests"]
+		sample = serializer.save()
 		sample.tests.add(*tests)
 
 
@@ -454,12 +445,10 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 		sample.tests.add(*tests)
 
 
-
 class LaboratorySampleDeleteView(PermissionMixin, generics.DestroyAPIView):
 	'''Deletes a specific sample.'''
 	def delete(self, request, pk, format=None):
 		return super().delete(request, pk, format=None)
-
 
 
 class AllLaboratories(generics.ListAPIView):
@@ -484,7 +473,6 @@ class AllLaboratories(generics.ListAPIView):
 		return Facility.objects.filter(
 			Q(hospitallab__isnull=False) | Q(branch__isnull=False)
 			).select_related('branch', 'hospitallab')
-	
 
 
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):

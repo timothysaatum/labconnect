@@ -173,6 +173,22 @@ DRAMATIQ_BROKER = {
 }
 
 # Optional: configure the result backend
+#redis-cli -u redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681
+# DRAMATIQ_BROKER = {
+#     "BROKER": "dramatiq.brokers.redis.RedisBroker",
+#     "OPTIONS": {
+#         # "url": "redis://username:password@redis-server.com:6379/0"
+#         "url": "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
+#     },
+#     "MIDDLEWARE": [
+#         "dramatiq.middleware.AgeLimit",
+#         "dramatiq.middleware.TimeLimit",
+#         "dramatiq.middleware.Callbacks",
+#         "dramatiq.middleware.Pipelines",
+#         "dramatiq.middleware.Retries",
+#     ]
+# }
+
 DRAMATIQ_RESULT_BACKEND = {
     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
     "BACKEND_OPTIONS": {
@@ -182,22 +198,6 @@ DRAMATIQ_RESULT_BACKEND = {
         "result_ttl": 60000
     }
 }
-#Celery config
-# CELERY_broker_url = 'redis://127.0.0.1::5672/0'
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# RESULT_BACKEND = 'redis://127.0.0.1::6379/0'
-
-# ACCEPT_CONTENT = ['json']
-# TASK_SERIALIZER = 'json'
-# result_serializer = 'json'
-# timezone = 'utc'
-# broker_connection_retry_on_startup = True
-# CELERY_broker_connection_retry = True
-# CONNECTION_broker_connection_max_retries = None
-# CELERY_broker_connection_retry_INTERVAL = 1
-# CELERY_broker_connection_retry_MAX = 20
-# CELERY_broker_connection_retry_INTERVAL_STEP = 1
-# settings.py
 
 # Celery settings
 CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Using Redis as the message broker
