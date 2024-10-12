@@ -1,6 +1,7 @@
 from django.db import models
 from labs.models import Branch, Test
 from modelmixins.models import Facility
+from modelmixins.models import SampleType
 # from modelmixins.encryption import AESEncryptedField, FernetEncryptedField
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
@@ -9,7 +10,6 @@ import uuid
 
 
 client = get_user_model()
-
 
 
 PATIENT_SEX = [
@@ -57,82 +57,63 @@ PRIORITIES = [
 ]
 
 
-
 class Patient(models.Model):
 
-	patient_id = models.CharField(max_length=100, unique=True)
-	full_name = models.CharField(max_length=255)
-	date_of_birth = models.DateField()
-	gender = models.CharField(max_length=10)
-	contact_number = models.CharField(max_length=15)
-	email = models.EmailField()
-	address = models.TextField(null=True, blank=True)
+    patient_id = models.CharField(max_length=100, unique=True)
+    full_name = models.CharField(max_length=255)
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=10)
+    contact_number = models.CharField(max_length=15)
+    email = models.EmailField()
+    address = models.TextField(null=True, blank=True)
+    health_insuarance = models.CharField(max_length=255)
+    def __str__(self) -> str:
+        return self.full_name
 
-	def __str__(self) -> str:
-		return self.full_name
 
+class Referral(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    referring_facility = models.ForeignKey(
+        Facility, on_delete=models.CASCADE, related_name="referrals", db_index=True
+    )
+    facility_type = models.CharField(max_length=255, choices=REFERRING_FACILITY_TYPE)
+    patient_name = models.CharField(max_length=200)
+    patient_age = models.DateField()
+    patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
+    clinical_history = models.TextField(null=True, blank=True)
+    to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
+    delivery = models.ForeignKey(
+        Delivery, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
+    )
+    requires_phlebotomist = models.BooleanField(default=False)
+    sender_full_name = models.CharField(max_length=200, null=True, blank=True)
+    sender_phone = models.CharField(max_length=20, null=True, blank=True)
+    sender_email = models.EmailField(null=True, blank=True)
+    referral_status = models.CharField(max_length=100, choices=REQUEST_STATUS)
+    date_referred = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Referral for {self.patient_name}"
 
 
 class Sample(models.Model):
+    referral = models.ForeignKey(
+        Referral, related_name="samples", on_delete=models.CASCADE, db_index=True
+    )
+    sample_type = models.ForeignKey(SampleType, on_delete=models.CASCADE)  # e.g., EDTA, gel tube
+    tests = models.ManyToManyField(Test, related_name="tests")
+    sample_status = models.CharField(
+        max_length=50, choices=SAMPLE_STATUS, default="Pending", db_index=True
+    )
+    attactment = models.URLField()
+    rejection_reason = models.TextField(blank=True, null=True)
+    is_emmergency = models.BooleanField(default=False)
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
-	'''
-	Model representing a medical sample
-	'''
+    def __str__(self):
+        return f"Sample {self.sample_type} for {self.referral.patient_name}"
 
-	referring_facility = models.ForeignKey(
-			Facility,
-			on_delete=models.CASCADE,
-			related_name='facilities',
-			db_index=True
-		)
-	# test_field = FernetEncryptedField(max_length=50)
-	facility_type = models.CharField(
-			max_length=50,
-			choices=REFERRING_FACILITY_TYPE
-		)
-	sender_full_name = models.CharField(
-		max_length=200, 
-		null=True, 
-		blank=True
-	)
-	sender_phone = models.CharField(max_length=20, null=True, blank=True)
-	sender_email = models.EmailField(null=True, blank=True)
-	patient_name = models.CharField(max_length=200)
-	patient_age = models.DateField()
-	patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
-	delivery = models.ForeignKey(
-			Delivery,
-			on_delete=models.SET_NULL,
-			null=True,
-			blank=True, db_index=True
-		)
-	to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
-	tests = models.ManyToManyField(Test, related_name='tests')
-	clinical_history = models.TextField(null=True, blank=True)
-	attachment = (models.FileField(
-		upload_to='sample/attachments',
-		blank=True,
-		null=True
-	))
-	receipient_contact = models.CharField(max_length=155)
-	receipient_email = models.EmailField(max_length=155)
-	sample_status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)
-	requires_phlebotomist = models.BooleanField(default=False)
-	request_status = models.CharField(max_length=155, choices=REQUEST_STATUS, default='Request Accepted', db_index=True)
-	hardcopy_report = models.BooleanField(default=False)
-	referring_signature = models.BooleanField(default=False)
-	referror_signature = models.BooleanField(default=False)
-	rejection_reason = (models.TextField(blank=True, null=True))
-	is_emmergency = models.BooleanField(default=False)
-	date_added = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
-
-	def __str__(self) -> str:
-		return self.patient_name
-
-	def delivery_phone(self) -> str:
-
-		return Delivery.objects.get(id=self.delivery.id).phone if self.delivery else None
 
 
 class SampleTrackingHistory(models.Model):
