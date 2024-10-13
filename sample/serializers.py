@@ -145,6 +145,7 @@ class ReferralSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Referral
+
         fields = (
             "id",
             "referring_facility",
@@ -226,10 +227,6 @@ class ReferralSerializer(serializers.ModelSerializer):
 
         data = super().to_representation(instance)
 
-        # print(Sample.objects.filter(referral=instance), 'hi')
-        # data["samples"] = SampleSerializer(
-        #         Sample.objects.filter(referral=instance), many=True
-        #     ).data
         data["referring_facility"] = str(instance.referring_facility)
         data["to_laboratory"] = str(instance.to_laboratory)
 

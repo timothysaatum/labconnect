@@ -6,34 +6,11 @@ from .serializers import NotificationSerializer, ReferralSerializer, SampleTrack
 from .models import Notification, Sample, SampleTrackingHistory, Referral
 from django.db.models import Count, Q # type: ignore
 from django.utils.timezone import now, timedelta # type: ignore
-from modelmixins.paginators import QueryPagination
+from .paginators import QueryPagination
 
-# from datetime import timedelta
-
-
-# class CreateReferral(generics.CreateAPIView):
-#     permission_class = [IsAuthenticated]
-#     serializer_class = ReferralSerializer
-
-#     def post(self, request, format=None):
-
-#         return self.create(request)
-
-#     def perform_create(self, serializer):
-#         user = self.request.user
-#         referral = serializer.save()
-#         referral.sender_full_name = user.full_name
-#         referral.sender_phone = user.phone_number
-#         referral.sender_email = user.email
-#         referral.referral_status = "Request Made"
-#         if user.account_type == "Laboratory":
-#             referral.facility_type = 'Laboratory'
+from datetime import timedelta
 
 
-#         else:
-#             referral.facility_type = 'Hospital'
-#         referral.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
 class CreateReferral(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Referral.objects.all()
@@ -54,42 +31,10 @@ class UpdateReferral(generics.UpdateAPIView):
 
 class GetReferrals(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = QueryPagination
     queryset = Referral.objects.all()
     serializer_class = ReferralSerializer
 
-
-# class UpdateReferral(generics.UpdateAPIView):
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = ReferralSerializer
-
-#     def get_object(self, *args, **kwargs):
-
-#         queryset = Referral.objects.all()
-#         obj = generics.get_object_or_404(queryset, id=self.kwargs.get("noti_id"))
-
-#         return obj
-
-#     def patch(self, request, *args, **kwargs):
-
-#         partial = kwargs.pop("partial", False)
-#         instance = self.get_object()
-#         serializer = self.get_serializer(instance, data=request.data, partial=partial)
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_update(serializer)
-
-#         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-
-
-# class GetReferrals(generics.ListAPIView):
-#     serializer_class = ReferralSerializer
-#     permission_classes = [IsAuthenticated]
-#     # pagination_class = QueryPagination
-
-#     def get_queryset(self):
-
-#         return Referral.objects.filter(
-#             referring_facility=self.kwargs.get("facility_id")#, is_read=False
-#         )
 
 
 class UpdateNotification(generics.UpdateAPIView):
