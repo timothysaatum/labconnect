@@ -187,6 +187,33 @@ class ReferralSerializer(serializers.ModelSerializer):
         instance.referring_facility = validated_data.get(
             "referring_facility", instance.referring_facility
         )
+        instance.requires_phlebotomist = validated_data.get(
+            "requires_phlebotomist", instance.requires_phlebotomist
+        )
+        instance.sender_full_name = validated_data.get(
+            "sender_full_name", instance.sender_full_name
+        )
+        instance.sender_phone = validated_data.get(
+            "sender_phone", instance.sender_phone
+        )
+        instance.sender_email = validated_data.get(
+            "sender_email", instance.sender_email
+        )
+        instance.patient_name = validated_data.get(
+            "patient_name", instance.patient_name
+        )
+        instance.patient_age = validated_data.get(
+            "patient_age", instance.patient_age
+        )
+        instance.clinical_history = validated_data.get(
+            "clinical_history", instance.clinical_history
+        )
+        instance.referral_status = validated_data.get(
+            "referral_status", instance.referral_status
+        )
+        instance.attachment = validated_data.get(
+            "attachment", instance.attachment
+        )
         instance.to_laboratory = validated_data.get(
             "to_laboratory", instance.to_laboratory
         )
@@ -197,10 +224,16 @@ class ReferralSerializer(serializers.ModelSerializer):
                 referral=instance, id=sample_data["id"]
             ).first()
             if sample:
-                sample.patient_name = sample_data.get(
-                    "patient_name", sample.patient_name
+                sample.sample_type = sample_data.get(
+                    "sample_type", sample.sample_type
                 )
-                sample.save()
+                sample.sample_status = sample_data.get(
+                    "sample_status", sample.sample_status
+                )
+                sample.rejection_reason = sample_data.get(
+                    "rejection_reason", sample.rejection_reason
+                )
+                sample.save(referral=instance)
 
                 # Update sample tests
                 for sample_test_data in sample_data["sample_tests"]:
@@ -210,6 +243,12 @@ class ReferralSerializer(serializers.ModelSerializer):
                     if sample_test:
                         sample_test.status = sample_test_data.get(
                             "status", sample_test.status
+                        )
+                        sample_test.sample_tests = sample_test_data.get(
+                            "sample_tests", sample_test.sample_tests
+                        )
+                        sample_test.sample_type = sample_test_data.get(
+                            "sample_type", sample_test.sample_type
                         )
                         sample_test.rejection_reason = sample_test_data.get(
                             "rejection_reason", sample_test.rejection_reason
