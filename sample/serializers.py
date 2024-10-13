@@ -38,6 +38,13 @@ class SampleTestSerializer(serializers.ModelSerializer):
             "date_completed",
         )
 
+    def to_representation(self, instance):
+
+        data = super().to_representation(instance)
+        data["test"] = str(instance.test.name)
+
+        return data
+
 
 class SampleSerializer(serializers.ModelSerializer):
 
@@ -141,7 +148,6 @@ class ReferralSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "referring_facility",
-            "samples",
             "facility_type",
             "to_laboratory",
             "delivery",
@@ -155,6 +161,7 @@ class ReferralSerializer(serializers.ModelSerializer):
             "sender_email",
             "referral_status",
             "date_referred",
+            "samples"
         )
 
     def create(self, validated_data):
