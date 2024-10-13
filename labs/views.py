@@ -486,12 +486,12 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 		try:
 			if status:
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), sample_status__icontains=status, request_status='Request Accepted').order_by('-date_added')
+					Q(referral__to_laboratory=pk) | Q(referral__to_laboratory__branch__laboratory=pk), sample_status__icontains=status).order_by('-date_added')
 			if from_date and to_date:
 				return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), date__range=(from_date, to_date), request_status='Request Accepted').order_by('-date_added')
+					Q(referral__to_laboratory=pk) | Q(referral__to_laboratory__branch__laboratory=pk), date__range=(from_date, to_date)).order_by('-date_added')
 			return Sample.objects.filter(
-					Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk), request_status='Request Accepted').order_by('-date_added')
+					Q(referral__to_laboratory=pk) | Q(referral__to_laboratory__branch__laboratory=pk)).order_by('-date_added')
 		except Sample.DoesNotExist:
 			return Response(
 				{'error': 'No sample sent.'},

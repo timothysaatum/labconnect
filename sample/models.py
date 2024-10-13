@@ -85,6 +85,7 @@ class Referral(models.Model):
     delivery = models.ForeignKey(
         Delivery, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
+    attachment = models.URLField()
     requires_phlebotomist = models.BooleanField(default=False)
     sender_full_name = models.CharField(max_length=200, null=True, blank=True)
     sender_phone = models.CharField(max_length=20, null=True, blank=True)
@@ -101,19 +102,30 @@ class Sample(models.Model):
         Referral, related_name="samples", on_delete=models.CASCADE, db_index=True
     )
     sample_type = models.ForeignKey(SampleType, on_delete=models.CASCADE)  # e.g., EDTA, gel tube
-    tests = models.ManyToManyField(Test, related_name="tests")
     sample_status = models.CharField(
         max_length=50, choices=SAMPLE_STATUS, default="Pending", db_index=True
     )
-    attactment = models.URLField()
     rejection_reason = models.TextField(blank=True, null=True)
-    is_emmergency = models.BooleanField(default=False)
-    date_added = models.DateTimeField(auto_now_add=True)
+    date_collected = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Sample {self.sample_type} for {self.referral.patient_name}"
+        return f"{self.sample_type} Sample: {self.referral.patient_name}"
 
+
+class SampleTest(models.Model):
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
+    )
+    sample = models.ForeignKey(Sample, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
+    test = models.ForeignKey(Test, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
+    is_emmergency = models.BooleanField(default=False)
+    status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)  # Status of the test
+    result = models.URLField()  # To store test result (optional)
+    date_completed = models.DateTimeField(null=True, blank=True)  # When the test was completed
+
+    def __str__(self):
+        return f"{self.test.name} - Status: {self.status}"
 
 
 class SampleTrackingHistory(models.Model):

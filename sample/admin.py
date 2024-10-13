@@ -1,5 +1,5 @@
 from django.contrib import admin # type: ignore
-from .models import Sample, Notification, SampleTrackingHistory, Referral
+from .models import Sample, Notification, SampleTrackingHistory, Referral, SampleTest
 
 
 @admin.register(Referral)
@@ -19,6 +19,21 @@ class ReferralAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(SampleTest)
+class SampleTestAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "sample",
+        "test",
+        "result",
+        "status",
+        "is_emmergency",
+        "date_completed",
+    )
+    list_filter = ("status", "sample", "test")
+    list_editable = ("status",)
+
+
 class SampleAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -26,8 +41,8 @@ class SampleAdmin(admin.ModelAdmin):
         "sample_type",
         "sample_status",
         "rejection_reason",
-        "is_emmergency",
-        "date_added",
+        # "is_emmergency",
+        "date_collected",
     )
     list_filter = ("sample_status", "referral", "sample_type")
     list_editable = (
