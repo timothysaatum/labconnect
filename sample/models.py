@@ -85,7 +85,7 @@ class Referral(models.Model):
     delivery = models.ForeignKey(
         Delivery, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-    attactment = models.URLField()
+    attachment = models.URLField()
     requires_phlebotomist = models.BooleanField(default=False)
     sender_full_name = models.CharField(max_length=200, null=True, blank=True)
     sender_phone = models.CharField(max_length=20, null=True, blank=True)

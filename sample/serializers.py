@@ -160,6 +160,7 @@ class ReferralSerializer(serializers.ModelSerializer):
             "sender_phone",
             "sender_email",
             "referral_status",
+            "attachment",
             "date_referred",
             "samples"
         )
