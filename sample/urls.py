@@ -45,7 +45,7 @@ urlpatterns = [
         "get-referrals/<uuid:facility_id>/", GetReferrals.as_view(), name="get-referral"
     ),
     path(
-        "update-sample/<int:pk>/",
+        "update-sample/<int:sample_id>/",
         UpdateSample.as_view(),
         name="update-sample",
     )

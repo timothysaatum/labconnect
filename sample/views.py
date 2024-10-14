@@ -23,7 +23,10 @@ class CreateReferral(generics.CreateAPIView):
 class UpdateReferral(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Referral.objects.all()
+    lookup_url_kwarg = 'referral_id'
     serializer_class = ReferralSerializer
+    # def get_queryset(self, *args, **kwargs):
+    #     return Sample.objects.filter(pk=self.kwargs.get("pk"))
 
     def perform_update(self, serializer):
         serializer.save()
@@ -37,13 +40,13 @@ class GetReferrals(generics.ListAPIView):
 
 
 class UpdateSample(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = SampleSerializer
-    def get_queryset(self, *args, **kwargs):
-        return Sample.objects.filter(pk=self.kwargs.get('pk'))
+    lookup_url_kwarg = "sample_id"
+    queryset = Sample.objects.all()
 
-    def patch(self, request, pk, format=None):
-
-        return self.partial_update(request, pk, format=None)
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 class UpdateNotification(generics.UpdateAPIView):
