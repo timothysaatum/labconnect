@@ -363,13 +363,16 @@ class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
 
 
 class TestResultListView(BranchListView):
-	serializer_class = TestResultSerializer
-	pagination_class = QueryPagination
-	def get_queryset(self):
-		return Result.objects.filter(
-			Q(branch__branch_manager=self.request.user) | 
-			Q(branch__laboratory__created=self.request.user)
-		).order_by('-date_added')
+    serializer_class = TestResultSerializer
+    pagination_class = QueryPagination
+
+    def get_queryset(self):
+        sample_type = self.kwargs.get("sample_type")
+        return Result.objects.filter(
+            Q(branch__branch_manager=self.request.user)
+            | Q(sample_type=sample_type)
+            | Q(branch__laboratory__created=self.request.user)
+        ).order_by("-date_added")
 
 
 class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
