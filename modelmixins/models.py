@@ -21,7 +21,7 @@ FACILITY_TYPE = [
 class Facility(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    postal_address = models.CharField(max_length=255)
+    # postal_address = models.CharField(max_length=255)
     phone = models.CharField(max_length=15)
     email = models.EmailField()
     facility_type = models.CharField(max_length=155, choices=FACILITY_TYPE)

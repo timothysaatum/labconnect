@@ -260,13 +260,12 @@ class TestListView(generics.ListAPIView):
 	Api endpoint that allows the client to fetch tests for a particular laboratory
 	or its branch
 
-	It takes either the branch id or the Laboratory id
-	"""
+	It takes either the branch id or the Laboratory id"""
 	serializer_class = TestSerializer
-	# filter_backends = [DjangoFilterBackend]
-	# filterset_class = TestFilter
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_class = TestFilter
 	pagination_class = QueryPagination
-	#cache_timeout = 600
+    # cache_timeout = 600
 	def get_serializer_context(self):
 		context = super().get_serializer_context()
 		context.update({'pk': self.kwargs.get('pk')})
@@ -281,21 +280,28 @@ class TestListView(generics.ListAPIView):
 		else:
             # Apply pagination normally
 			return super().list(request, *args, **kwargs)
+
 	def get_queryset(self):
-		status = self.request.GET.get('status')
-		test_status = self.request.GET.get('test_status')
-		search_term = self.request.query_params.get('search')
-		test_status = (status or test_status or '')
+		status = self.request.GET.get("status")
+		test_status = self.request.GET.get("test_status")
+		search_term = self.request.query_params.get("search")
+		sample_type = self.request.GET.get('sample_type')
+		test_status = status or test_status or ""
 		tests = Test.objects.filter(
-			Q(branch__id=self.kwargs.get('pk')) | Q(branch__laboratory__id=self.kwargs.get('pk'))
-			)
-		# print(search_term)
+            Q(branch__id=self.kwargs.get("pk"))
+            | Q(branch__laboratory__id=self.kwargs.get("pk"))
+        )
+
 		if search_term:
-			print('Here')
+
 			return tests.filter(name__icontains=search_term)
-		if test_status in ('active', 'inactive', 'Active', 'Inactive'):
-			# print(test_status)
+		if test_status in ("active", "inactive", "Active", "Inactive"):
+
 			return tests.filter(test_status__icontains=test_status)
+		
+		if sample_type:
+			return tests.filter(sample_type=sample_type)
+
 		return tests
 
 
@@ -367,10 +373,9 @@ class TestResultListView(BranchListView):
     pagination_class = QueryPagination
 
     def get_queryset(self):
-        sample_type = self.kwargs.get("sample_type")
+
         return Result.objects.filter(
             Q(branch__branch_manager=self.request.user)
-            | Q(sample_type=sample_type)
             | Q(branch__laboratory__created=self.request.user)
         ).order_by("-date_added")
 

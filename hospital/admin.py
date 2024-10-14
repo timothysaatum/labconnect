@@ -3,25 +3,25 @@ from .models import Hospital, HospitalLab, HospitalLabTest
 
 
 class HospitalAdmin(admin.ModelAdmin):
-	list_display = (
-		'id',
-		'created_by',
-		'name', 
-		'region', 
-		'postal_address', 
-		'digital_address', 
-		'phone', 
-		'email', 
-		'website', 
-		'date_added', 
-		'date_modified'
-	)
+    list_display = (
+        "id",
+        "created_by",
+        "name",
+        "region",
+        # 'postal_address',
+        "digital_address",
+        "phone",
+        "email",
+        "website",
+        "date_added",
+        "date_modified",
+    )
 
 
 class HospitalLabAdmin(admin.ModelAdmin):
 	list_display = (
 		'id',
-		'postal_address',  
+		# 'postal_address',  
 		'phone', 
 		'email',
 		'facility_type',

@@ -54,7 +54,7 @@ class BranchSerializer(serializers.ModelSerializer):
 			'name',
 			'phone',
 			'email',
-			'postal_address',
+			# 'postal_address',
 			'town',
 			'digital_address',
 			'region',
