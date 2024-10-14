@@ -119,9 +119,9 @@ class SampleTest(models.Model):
     )
     sample = models.ForeignKey(Sample, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
     test = models.ForeignKey(Test, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
-    is_emmergency = models.BooleanField(default=False)
+    # is_emmergency = models.BooleanField(default=False)
     status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)  # Status of the test
-    result = models.URLField()  # To store test result (optional)
+    result = models.URLField(blank=True, null=True)  # To store test result (optional)
     date_completed = models.DateTimeField(null=True, blank=True)  # When the test was completed
 
     def __str__(self):

@@ -33,7 +33,7 @@ class Laboratory(BaseModel):
 
 	def __str__(self) -> str:
 		return self.name
-	
+
 
 REGIONS = [
 
@@ -53,31 +53,42 @@ REGIONS = [
 
 ]
 
+LEVEL_CHOICES = [
+    ("Basic", "Basic"),
+    ("Primary", "Primary"),
+    ("Secondary", "Secondary"),
+    ("Tertiary", "Tertiary"),
+]
+
 class Branch(Facility):
 
-	'''
+    '''
 	A brach: is a local set up of a particular laboratory that carries out test within that enclave.
 	Branch_name: refers to the name of a branch.
 	'''
 
-	accreditation_number = models.CharField(max_length=100)
-	level = models.CharField(max_length=100, db_index=True)
-	branch_name = models.CharField(max_length=155, blank=True, null=True)
-	region = models.CharField(choices=REGIONS, max_length=100)
-	town = models.CharField(max_length=200)
-	digital_address = models.CharField(max_length=15)
-	gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
-	branch_manager = models.ForeignKey(user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True)
-	laboratory = models.ForeignKey(Laboratory, on_delete=models.CASCADE, related_name='branches')	
+    accreditation_number = models.CharField(max_length=100)
+    level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
+    branch_name = models.CharField(max_length=155, blank=True, null=True)
+    region = models.CharField(choices=REGIONS, max_length=100)
+    town = models.CharField(max_length=200)
+    digital_address = models.CharField(max_length=15)
+    gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
+    branch_manager = models.ForeignKey(
+        user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
+    )
+    laboratory = models.ForeignKey(
+        Laboratory, on_delete=models.CASCADE, related_name="branches"
+    )
 
-	class Meta:
+    class Meta:
 
-		verbose_name_plural = 'Branches'
-		unique_together = ('accreditation_number', 'branch_name', 'digital_address')
+        verbose_name_plural = 'Branches'
+        unique_together = ('accreditation_number', 'branch_name', 'digital_address')
 
-	def __str__(self) -> str:
+    def __str__(self) -> str:
 
-		return f'{self.laboratory.name} - {self.town}'
+        return f'{self.laboratory.name} - {self.town}'
 
 
 class Test(BasicTest):
