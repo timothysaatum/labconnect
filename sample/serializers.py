@@ -51,9 +51,7 @@ class SampleSerializer(serializers.ModelSerializer):
     referral = serializers.PrimaryKeyRelatedField(
         queryset=Referral.objects.all(), required=False
     )
-    sample_type = serializers.PrimaryKeyRelatedField(
-        queryset=SampleType.objects.all(), required=False
-    )
+    sample_type = SampleTypeSerializer()
     rejection_reason = serializers.CharField(required=False)
     sample_status = serializers.CharField(required=False)
     sample_tests = SampleTestSerializer(many=True)

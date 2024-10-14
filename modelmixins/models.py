@@ -55,6 +55,7 @@ class SampleType(models.Model):
 	'''
 	sample_name = models.CharField(max_length=100)
 	collection_procedure = models.TextField()
+	sample_tube = models.CharField(max_length=100)
 	collection_time = models.CharField(max_length=155)
 
 	def __str__(self):

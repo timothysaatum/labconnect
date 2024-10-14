@@ -590,7 +590,7 @@ class CopyTests(PermissionMixin, generics.CreateAPIView):
         if not test_ids or not target_branch_id:
             return Response({'error': 'Test IDs and target branch ID are required'}, 
                             status=status.HTTP_400_BAD_REQUEST)
-		
+
         test_ids = [ensure_uuid(test_id) for test_id in test_ids]
         target_branch_id = ensure_uuid(target_branch_id)
         # Remove any None values (invalid UUIDs)

@@ -27,7 +27,6 @@ class SampleTestAdmin(admin.ModelAdmin):
         "test",
         "result",
         "status",
-        "is_emmergency",
         "date_completed",
     )
     list_filter = ("status", "sample", "test")
