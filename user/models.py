@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-
 SEX = [('Male', 'Male'), ('Female', 'Female')]
 
 USER_TYPE = [
@@ -78,38 +77,29 @@ class Client(AbstractBaseUser, PermissionsMixin):
 
 class OneTimePassword(models.Model):
 
-	user = models.OneToOneField(Client, on_delete=models.CASCADE)
+	user = models.OneToOneField(Client, on_delete=models.CASCADE, unique=True)
 	code = models.CharField(max_length=6, unique=True, db_index=True)
 	secrete = models.CharField(max_length=100)
 	expires_at = models.DateTimeField()
 
-
 	def save(self, *args, **kwargs):
-		if OneTimePassword.objects.exists():
-			instance = OneTimePassword.objects.get()
-			instance.delete()
-
-		self.expires_at = timezone.now() + timezone.timedelta(minutes=3)
+		if not self.expires_at:
+			self.expires_at = timezone.now() + timezone.timedelta(minutes=3)
 		super(OneTimePassword, self).save(*args, **kwargs)
-
 
 	@staticmethod
 	def get_instance():
 		return OneTimePassword.objects.get_or_create(id=1)[0]
 
-
 	def is_expired(self):
 		return timezone.now() > self.expires_at
-
 
 	def __str__(self):
 
 		return f'{self.user.last_name} | {self.code}'
 
-
 	def user_for(self):
 		return self.user
-
 
 	def email_for(self):
 		return self.user.email

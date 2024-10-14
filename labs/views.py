@@ -401,7 +401,7 @@ class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
 	queryset = Sample.objects.all()
 	serializer_class = SampleSerializer
 	parser_classes = (MultiPartParser, FormParser)
-	
+
 	def post(self, request):
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
@@ -429,8 +429,10 @@ class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
 	'''Update details of a specific sample.'''
 	serializer_class = SampleSerializer
 	queryset = Sample.objects.all()
+
 	def patch(self, request, pk):
 		return self.partial_update(request, pk)
+
 	def perform_update(self, serializer):
 		sample = serializer.save()
 		# sample.tests.clear()
@@ -561,7 +563,8 @@ class GetTestSampleType(generics.ListAPIView):
 		obj_id = self.kwargs.get('pk')
 		return SampleType.objects.filter(
 				Q(test=obj_id)|
-				Q(test__branch__laboratory=obj_id)
+				Q(test__branch__laboratory=obj_id)|
+				Q(test__branch=obj_id)
 			).distinct()
 
 
