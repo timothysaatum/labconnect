@@ -8,6 +8,7 @@ from .views import (
     CreateReferral,
     UpdateReferral,
     GetReferrals,
+    UpdateSample,
 )
 
 app_name = 'sample'
@@ -35,6 +36,17 @@ urlpatterns = [
         name="tracker-details",
     ),
     path("create-referral/", CreateReferral.as_view(), name="create-referral"),
-    path("update-referral/<uuid:referral_id>/", UpdateReferral.as_view(), name="update-referral"),
-    path("get-referrals/<uuid:facility_id>/", GetReferrals.as_view(), name="get-referral"),
+    path(
+        "update-referral/<uuid:referral_id>/",
+        UpdateReferral.as_view(),
+        name="update-referral",
+    ),
+    path(
+        "get-referrals/<uuid:facility_id>/", GetReferrals.as_view(), name="get-referral"
+    ),
+    path(
+        "update-sample/<int:pk>/",
+        UpdateSample.as_view(),
+        name="update-sample",
+    )
 ]
