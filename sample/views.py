@@ -25,8 +25,6 @@ class UpdateReferral(generics.UpdateAPIView):
     queryset = Referral.objects.all()
     lookup_url_kwarg = 'referral_id'
     serializer_class = ReferralSerializer
-    # def get_queryset(self, *args, **kwargs):
-    #     return Sample.objects.filter(pk=self.kwargs.get("pk"))
 
     def perform_update(self, serializer):
         serializer.save()
