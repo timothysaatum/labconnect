@@ -2,7 +2,7 @@ from rest_framework.permissions import IsAuthenticated # type: ignore
 from rest_framework.response import Response # type: ignore
 from rest_framework import generics # type: ignore
 from rest_framework import status # type: ignore
-from .serializers import NotificationSerializer, ReferralSerializer, SampleTrackingSerializer
+from .serializers import NotificationSerializer, ReferralSerializer, SampleTrackingSerializer, SampleSerializer
 from .models import Notification, Sample, SampleTrackingHistory, Referral
 from django.db.models import Count, Q # type: ignore
 from django.utils.timezone import now, timedelta # type: ignore
@@ -23,6 +23,7 @@ class CreateReferral(generics.CreateAPIView):
 class UpdateReferral(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Referral.objects.all()
+    lookup_url_kwarg = 'referral_id'
     serializer_class = ReferralSerializer
 
     def perform_update(self, serializer):
@@ -35,6 +36,15 @@ class GetReferrals(generics.ListAPIView):
     queryset = Referral.objects.all()
     serializer_class = ReferralSerializer
 
+
+class UpdateSample(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SampleSerializer
+    lookup_url_kwarg = "sample_id"
+    queryset = Sample.objects.all()
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 class UpdateNotification(generics.UpdateAPIView):

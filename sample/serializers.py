@@ -51,7 +51,7 @@ class SampleSerializer(serializers.ModelSerializer):
     referral = serializers.PrimaryKeyRelatedField(
         queryset=Referral.objects.all(), required=False
     )
-    sample_type = SampleTypeSerializer()
+    sample_type = SampleTypeSerializer(required=False)
     rejection_reason = serializers.CharField(required=False)
     sample_status = serializers.CharField(required=False)
     sample_tests = SampleTestSerializer(many=True)
@@ -138,7 +138,7 @@ class ReferralSerializer(serializers.ModelSerializer):
     referring_facility = serializers.PrimaryKeyRelatedField(
         queryset=Facility.objects.all(), required=True
     )
-    samples = SampleSerializer(many=True)
+    samples = SampleSerializer(many=True, required=False)
     facility_type = serializers.CharField(read_only=True)
 
     class Meta:

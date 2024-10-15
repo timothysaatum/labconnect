@@ -297,10 +297,7 @@ class TestListView(generics.ListAPIView):
 			return tests.filter(name__icontains=search_term)
 		if test_status in ("active", "inactive", "Active", "Inactive"):
 
-			return tests.filter(test_status__icontains=test_status)
-		
-		if sample_type:
-			return tests.filter(sample_type=sample_type)
+			return tests.filter(test_status__icontains=test_status, sample_type=sample_type)
 
 		return tests
 
