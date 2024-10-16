@@ -317,6 +317,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.partial_update(request, pk)
+
 	def perform_update(self, serializer):
 		#Clears the current branch set for the tests
 		query_dict.update(self.request.data)
@@ -326,7 +327,7 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 			raise ValidationError(
 				{'error': 'Test must have at least one(1) branch'}
 			)
-		# print(branches)
+
 		test = serializer.save()
 		if branches:
 			test.branch.clear()
@@ -485,11 +486,13 @@ class AllLaboratories(generics.ListAPIView):
 class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
 	pagination_class = QueryPagination
+
 	def get_queryset(self):
 		status = self.request.GET.get('status')
 		from_date = self.request.GET.get('from_date')
 		to_date = self.request.GET.get('to_date')
 		pk = self.kwargs.get('pk')
+
 		try:
 			if status:
 				return Sample.objects.filter(
@@ -509,6 +512,7 @@ class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
 class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
 	serializer_class = SampleSerializer
 	pagination_class = QueryPagination
+
 	def get_queryset(self):
 		status = self.request.GET.get('status')
 		from_date = self.request.GET.get('from_date')

@@ -31,10 +31,41 @@ class UpdateReferral(generics.UpdateAPIView):
 
 
 class GetReferrals(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = QueryPagination
-    queryset = Referral.objects.all()
+
     serializer_class = ReferralSerializer
+
+    def get_queryset(self):
+        status = self.request.GET.get('status')
+        from_date = self.request.GET.get('from_date')
+        to_date = self.request.GET.get('to_date')
+        pk = self.kwargs.get("facility_id")
+
+        try:
+            if status:
+                return Referral.objects.filter(
+					Q(to_laboratory=pk) | 
+                    Q(to_laboratory__branch__laboratory=pk), 
+                    referral_status__icontains=status).order_by('-date_referred'
+                )
+
+            if from_date and to_date:
+                return Referral.objects.filter(
+					Q(to_laboratory=pk) | 
+                    Q(to_laboratory__branch__laboratory=pk), 
+                    date__range=(from_date, to_date)).order_by('-date_referred'
+                )
+
+            return Referral.objects.filter(
+					Q(to_laboratory=pk) | 
+                    Q(to_laboratory__branch__laboratory=pk)).order_by('-date_referred')
+
+        except Referral.DoesNotExist:
+            return Response(
+				{'error': 'No referral found.'},
+				status=status.HTTP_404_NOT_FOUND
+			)
 
 
 class UpdateSample(generics.UpdateAPIView):
@@ -86,18 +117,26 @@ class CountObjects(generics.GenericAPIView):
         yesterday = today - timedelta(days=1)
 
         # Aggregate counts for today and yesterday in one query each
-        today_stats = Sample.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_added__date=today).aggregate(
-            received=Count('id', filter=Q(request_status='Request Accepted')),
-            processed=Count('id', filter=Q(sample_status='processed')),
-            pending=Count('id', filter=Q(sample_status='pending')),
-            rejected=Count('id', filter=Q(sample_status='rejected')),
+        today_stats = Sample.objects.filter(
+            Q(referral__referring_facility=facility_id)
+            | Q(referral__to_laboratory=facility_id),
+            date_collected__date=today,
+        ).aggregate(
+            received=Count("id", filter=Q(sample_status="Request Accepted")),
+            processed=Count("id", filter=Q(sample_status="processed")),
+            pending=Count("id", filter=Q(sample_status="pending")),
+            rejected=Count("id", filter=Q(sample_status="rejected")),
         )
 
-        yesterday_stats = Sample.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_added__date=yesterday).aggregate(
-            received=Count('id', filter=Q(request_status='Request Accepted')),
-            processed=Count('id', filter=Q(sample_status='processed')),
-            pending=Count('id', filter=Q(sample_status='pending')),
-            rejected=Count('id', filter=Q(sample_status='rejected')),
+        yesterday_stats = Sample.objects.filter(
+            Q(referral__referring_facility=facility_id)
+            | Q(referral__to_laboratory=facility_id),
+            date_collected__date=yesterday,
+        ).aggregate(
+            received=Count("id", filter=Q(sample_status="Request Accepted")),
+            processed=Count("id", filter=Q(sample_status="processed")),
+            pending=Count("id", filter=Q(sample_status="pending")),
+            rejected=Count("id", filter=Q(sample_status="rejected")),
         )
         # print(Sample.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_added__date=today))
         # print(yesterday_stats)
@@ -133,16 +172,15 @@ class TrackSampleState(generics.CreateAPIView):
     # permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
-    
     def post(self, request, format=None):
-        
+
         return self.create(request)
-    
+
     def perform_create(self, serializer):
         tracking_history = serializer.save()
 
         sample = tracking_history.sample
-        sample.request_status = serializer.validated_data['status']
+        sample.sample_status = serializer.validated_data["status"]
         sample.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 

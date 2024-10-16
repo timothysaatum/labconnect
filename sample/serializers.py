@@ -171,6 +171,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         # Creating Sample entries
         for sample_data in samples_data:
             sample_tests_data = sample_data.pop("sample_tests")
+            # sample_type = sample_data.pop("sample_type")
             sample = Sample.objects.create(referral=referral, **sample_data)
 
             # Creating SampleTest entries for each sample
