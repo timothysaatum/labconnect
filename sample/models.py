@@ -73,7 +73,7 @@ class Referral(models.Model):
     )
     facility_type = models.CharField(max_length=255, choices=REFERRING_FACILITY_TYPE)
     patient_name = models.CharField(max_length=200)
-    patient_age = models.DateField()
+    patient_age = models.CharField(max_length=10)
     patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
     clinical_history = models.TextField(null=True, blank=True)
     to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
