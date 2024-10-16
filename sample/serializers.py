@@ -20,7 +20,7 @@ class SampleTestSerializer(serializers.ModelSerializer):
         queryset=Test.objects.all(), required=True
     )
     status = serializers.CharField(required=False)
-    is_emmergency = serializers.BooleanField(default=False)
+    # is_emmergency = serializers.BooleanField(default=False)
     result = serializers.URLField(required=False)
 
 
@@ -34,7 +34,7 @@ class SampleTestSerializer(serializers.ModelSerializer):
             "test",
             "status",
             'result',
-            "is_emmergency",
+            # "is_emmergency",
             "date_completed",
         )
 
@@ -54,7 +54,7 @@ class SampleSerializer(serializers.ModelSerializer):
     sample_type = SampleTypeSerializer(required=False)
     rejection_reason = serializers.CharField(required=False)
     sample_status = serializers.CharField(required=False)
-    sample_tests = SampleTestSerializer(many=True)
+    sample_tests = SampleTestSerializer(many=True, required=False)
 
     class Meta:
 
@@ -139,6 +139,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         queryset=Facility.objects.all(), required=True
     )
     samples = SampleSerializer(many=True, required=False)
+    attachment = serializers.URLField(required=False)
     facility_type = serializers.CharField(read_only=True)
 
     class Meta:
@@ -165,7 +166,8 @@ class ReferralSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        samples_data = validated_data.pop("samples")
+        print(validated_data)
+        samples_data = validated_data.pop("sample")
         referral = Referral.objects.create(**validated_data)
 
         # Creating Sample entries

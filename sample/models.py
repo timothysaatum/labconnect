@@ -35,25 +35,20 @@ REFERRING_FACILITY_TYPE = [
 SAMPLE_STATUS = [
 	('Pending', 'Pending'),
 	('Received', 'Received'),
-	('Processed', 'Processed'),
 	('Rejected', 'Rejected')
 ]
 
-
-REQUEST_STATUS = [
-
-	('Request Made', 'Request Made'),
-	('Sample Received by Delivery', 'Sample Received by Delivery'),
-	('Sample Received by Lab', 'Sample Received by Lab'),
-	('Testing Sample', 'Testing Sample'),
-	('Request Completed', 'Request Completed'),
-	('Request Accepted', 'Request Accepted')
-
+TEST_STATUS = [
+    ("Pending Results Upload", "Pending Results Upload"),
+    ("Completed", "Completed"),
 ]
 
-PRIORITIES = [
-	('Express', 'Express'),
-	('Normal', 'Normal')
+REQUEST_STATUS = [
+	('Request Made', 'Request Made'),
+    ('Request Accepted', 'Request Accepted'),
+	('Sample Received by Delivery', 'Sample Received by Delivery'),
+	('Sample Received by Lab', 'Sample Received by Lab'),
+	('Request Completed', 'Request Completed')
 ]
 
 
@@ -85,7 +80,7 @@ class Referral(models.Model):
     delivery = models.ForeignKey(
         Delivery, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-    attachment = models.URLField()
+    attachment = models.URLField(null=True, blank=True)
     requires_phlebotomist = models.BooleanField(default=False)
     sender_full_name = models.CharField(max_length=200, null=True, blank=True)
     sender_phone = models.CharField(max_length=20, null=True, blank=True)
@@ -114,13 +109,15 @@ class Sample(models.Model):
 
 
 class SampleTest(models.Model):
+
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, db_index=True
     )
     sample = models.ForeignKey(Sample, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
     test = models.ForeignKey(Test, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
-    # is_emmergency = models.BooleanField(default=False)
-    status = models.CharField(max_length=50, choices=SAMPLE_STATUS, default='Pending', db_index=True)  # Status of the test
+    status = models.CharField(
+        max_length=50, choices=TEST_STATUS, default="Pending", db_index=True
+    )  # Status of the test
     result = models.URLField(blank=True, null=True)  # To store test result (optional)
     date_completed = models.DateTimeField(null=True, blank=True)  # When the test was completed
 
