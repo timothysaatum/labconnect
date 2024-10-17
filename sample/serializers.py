@@ -51,10 +51,14 @@ class SampleSerializer(serializers.ModelSerializer):
     referral = serializers.PrimaryKeyRelatedField(
         queryset=Referral.objects.all(), required=False
     )
-    sample_type = SampleTypeSerializer(required=False)
+    sample_type = serializers.PrimaryKeyRelatedField(
+        queryset=SampleType.objects.all(), required=False
+    )
     rejection_reason = serializers.CharField(required=False)
     sample_status = serializers.CharField(required=False)
-    sample_tests = SampleTestSerializer(many=True, required=False)
+    sample_tests = serializers.PrimaryKeyRelatedField(
+        queryset=SampleTest.objects.all(), many=True, required=False
+    )
 
     class Meta:
 
@@ -118,9 +122,8 @@ class SampleSerializer(serializers.ModelSerializer):
 
         data = super().to_representation(instance)
         data["referral"] = str(instance.referral)
-        data["sample_type"] = SampleTypeSerializer(
-            SampleType.objects.filter(sample=instance), many=True
-        ).data
+        data["sample_type"] = SampleTypeSerializer(instance.sample_type).data
+        data['sample_tests'] = SampleTestSerializer(instance.sample_tests.all(), many=True).data
 
         return data
 
@@ -173,7 +176,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         # Creating Sample entries
         for sample_data in samples_data:
             sample_tests_data = sample_data.pop("sample_tests")
-            # sample_type = sample_data.pop("sample_type")
+
             sample = Sample.objects.create(referral=referral, **sample_data)
 
             # Creating SampleTest entries for each sample
