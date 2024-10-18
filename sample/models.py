@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 # from django_cryptography.fields import encrypt
 import uuid
 import random, string
-# import datetime from datetime
 import datetime
 
 
@@ -42,6 +41,7 @@ SAMPLE_STATUS = [
 ]
 
 TEST_STATUS = [
+    ("Not Initialized", "Not Initialized"),
     ("Pending Results Upload", "Pending Results Upload"),
     ("Completed", "Completed"),
 ]
@@ -55,6 +55,9 @@ REQUEST_STATUS = [
 ]
 
 def generate_referral_id():
+    '''
+    Generates a unique id that comprises: SAM-24-10-2V5
+    '''
     date_part = datetime.datetime.now().strftime('%y-%m')
 
     random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=3))
@@ -64,7 +67,9 @@ def generate_referral_id():
     return referral_id
 
 class Patient(models.Model):
-
+    '''
+    This Table holds information about the patient including their insuarance
+    '''
     patient_id = models.CharField(max_length=100, unique=True)
     full_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
@@ -78,6 +83,7 @@ class Patient(models.Model):
 
 
 class Referral(models.Model):
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     referral_id = models.CharField(max_length=50, unique=True, editable=False, default=generate_referral_id)
     referring_facility = models.ForeignKey(
@@ -146,7 +152,7 @@ class SampleTrackingHistory(models.Model):
 	updated_at = models.DateTimeField(auto_now=True)
 
 	class Meta:
-		verbose_name_plural = 'Sample Tracking Histories'
+		verbose_name_plural = 'Sample Trackings'
 
 	def __str__(self) -> str:
 		return self.status
