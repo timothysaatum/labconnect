@@ -87,35 +87,23 @@ class SampleSerializer(serializers.ModelSerializer):
         return sample
 
     def update(self, instance, validated_data):
+
         sample_tests_data = validated_data.pop("sample_tests")
-        instance.patient_name = validated_data.get(
-            "patient_name", instance.patient_name
-        )
-        instance.patient_age = validated_data.get("patient_age", instance.patient_age)
-        instance.patient_sex = validated_data.get("patient_sex", instance.patient_sex)
-        instance.clinical_history = validated_data.get(
-            "clinical_history", instance.clinical_history
-        )
-        instance.requires_phlebotomist = validated_data.get(
-            "requires_phlebotomist", instance.requires_phlebotomist
-        )
-        instance.sample_status = validated_data.get(
-            "sample_status", instance.sample_status
-        )
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
         instance.save()
 
-        for sample_test_data in sample_tests_data:
-            sample_test = SampleTest.objects.filter(
-                sample=instance, test=sample_test_data["test"]
-            ).first()
-            if sample_test:
-                sample_test.status = sample_test_data.get("status", sample_test.status)
-                sample_test.rejection_reason = sample_test_data.get(
-                    "rejection_reason", sample_test.rejection_reason
+        # Wrap the sample and sample_test updates in a transaction
+        with transaction.atomic():
+            # Update existing samples or create new ones
+            for sample_test in sample_tests_data:
+                _, created = Sample.objects.update_or_create(
+                    id=sample_test.get("id"),  # Find by ID if it exists
+                    sample=instance,  # Always associate it with the current referral
+                    defaults={"result": sample_test.get("result")}
                 )
-                sample_test.save()
-            else:
-                SampleTest.objects.create(sample=instance, **sample_test_data)
 
         return instance
 
@@ -124,9 +112,7 @@ class SampleSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["referral"] = str(instance.referral)
         data["sample_type"] = SampleTypeSerializer(instance.sample_type).data
-        data["sample_tests_data"] = SampleTestSerializer(
-            instance.sample_tests.all(), many=True
-        ).data
+        data["sample_tests_data"] = SampleTestSerializer(instance.sample_tests.all(), many=True).data
 
         return data
 
