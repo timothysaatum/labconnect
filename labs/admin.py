@@ -5,8 +5,7 @@ from .models import (
 		Branch, 
 		BranchManagerInvitation,
 		# SampleType,
-		BranchTest,
-		Result
+		BranchTest
 	)
 import csv
 from django.http import HttpResponse # type: ignore
@@ -92,28 +91,6 @@ class LaboratoryAdmin(admin.ModelAdmin):
 		return ", ".join([branch.town for branch in obj.branches.all()])
 
 
-class ResultAdmin(admin.ModelAdmin):
-
-	list_display = (
-		'id',
-		'send_by',
-		'branch',
-		'test',
-		'result',
-		'comments',
-		'is_verified',
-		'is_received',
-		'date_added',
-		'date_modified'
-	)
-
-	list_editable = (
-		'is_verified',
-		'is_received'
-	)
-
-	list_per_page = 10
-
 
 class BranchAdmin(admin.ModelAdmin):
 	list_display = (
@@ -136,6 +113,5 @@ class BranchManagerInvitationAdmin(admin.ModelAdmin):
 admin.site.register(Test, TestAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(BranchManagerInvitation, BranchManagerInvitationAdmin)
-admin.site.register(Result, ResultAdmin)
 admin.site.register(Laboratory, LaboratoryAdmin)
 admin.site.register(BranchTest, BranchTestAdmin)

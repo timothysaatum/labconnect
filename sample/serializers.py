@@ -139,6 +139,7 @@ class ReferralSerializer(serializers.ModelSerializer):
 
         fields = (
             "id",
+            'referral_id',
             "referring_facility",
             "facility_type",
             "to_laboratory",

@@ -6,6 +6,7 @@ from .models import Sample, Notification, SampleTrackingHistory, Referral, Sampl
 class ReferralAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "referral_id",
         "referring_facility",
         "to_laboratory",
         "delivery",

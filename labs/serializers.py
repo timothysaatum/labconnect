@@ -3,8 +3,7 @@ from .models import (
 		Laboratory, 
 		Test, Branch,  
 		BranchManagerInvitation,
-		BranchTest,
-		Result
+		BranchTest
 	)
 from modelmixins.models import SampleType
 from modelmixins.serializers import SampleTypeSerializer
@@ -145,46 +144,6 @@ class BranchTestSerializer(serializers.ModelSerializer):
 			'turn_around_time'
 		]
 
-
-class TestResultSerializer(serializers.ModelSerializer):
-
-	send_by = serializers.PrimaryKeyRelatedField(read_only=True)
-	branch = serializers.PrimaryKeyRelatedField(read_only=True)
-	hospital = serializers.PrimaryKeyRelatedField(read_only=True)
-	test = serializers.PrimaryKeyRelatedField(read_only=True)
-	sample = serializers.PrimaryKeyRelatedField(read_only=True)
-	branch = serializers.StringRelatedField(source='__str__')
-
-	class Meta:
-
-		model = Result
-		fields = (
-			'id',
-			'send_by', 
-			'branch', 
-			'hospital', 
-			'test', 
-			'result', 
-			'sample',
-			'comments', 
-			'is_verified', 
-			'is_received', 
-			'date_modified', 
-			'date_added'
-		)
-
-		# pagination_class = QueryPagination
-
-	def to_representation(self, instance):
-
-		data = super().to_representation(instance)
-		data['send_by'] = instance.send_by.full_name
-		data['hospital'] = instance.hospital.name
-		data['sample'] = instance.sample.sample_type
-		data['test'] = instance.test.name
-		data['laboratory'] = instance.laboratory.name
-
-		return data
 
 
 class BranchManagerInvitationSerializer(serializers.ModelSerializer):

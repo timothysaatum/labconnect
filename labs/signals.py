@@ -3,7 +3,6 @@ from .models import BranchManagerInvitation, Laboratory, Branch
 from django.db.models.signals import post_save # type: ignore
 from django.dispatch import receiver # type: ignore
 from textwrap import dedent
-from .models import Result
 from sample.models import Notification
 from labs.utils import get_gps_coords
 
@@ -56,16 +55,6 @@ def mail_lab_user(sender, instance, created, **kwargs):
 			''')		
 		}
 		send_normal_email(data)
-
-
-receiver(post_save, sender=Result)
-def CreateNotificationForLab(sender, instance, created, **kwargs):
-
-	if created:
-		Notification.objects.create(
-			message=f'New result: {instance.branch.name}',
-			user=instance.hospital.created_by
-        )
 
 
 @receiver(post_save, sender=Branch)

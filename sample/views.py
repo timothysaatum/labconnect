@@ -51,33 +51,42 @@ class GetReferrals(generics.ListAPIView):
     def get_queryset(self):
         status = self.request.GET.get('status')
         from_date = self.request.GET.get('from_date')
+        search_term = self.request.GET.get("search_term")
+        received = self.request.GET.get("received")
+        sent = self.request.GET.get("sent")
         to_date = self.request.GET.get('to_date')
         pk = self.kwargs.get("facility_id")
 
-        try:
+        referral = Referral.objects.none()
+
+        if received == "true":
+            referral = Referral.objects.filter(
+                Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)
+            ).order_by("-date_referred")
+
+        if sent == "true":
+            referral = Referral.objects.filter(
+                Q(referring_facility=pk) | Q(referring_facility__branch__laboratory=pk)
+            ).order_by("-date_referred")
+
+        if referral.exists():
             if status:
-                return Referral.objects.filter(
-					Q(to_laboratory=pk) | 
-                    Q(to_laboratory__branch__laboratory=pk), 
-                    referral_status__icontains=status).order_by('-date_referred'
-                )
+                return referral.filter(referral_status__icontains=status)
 
             if from_date and to_date:
-                return Referral.objects.filter(
-					Q(to_laboratory=pk) | 
-                    Q(to_laboratory__branch__laboratory=pk), 
-                    date__range=(from_date, to_date)).order_by('-date_referred'
+                return referral.filter(
+                    date__range=(from_date, to_date),
                 )
 
-            return Referral.objects.filter(
-					Q(to_laboratory=pk) | 
-                    Q(to_laboratory__branch__laboratory=pk)).order_by('-date_referred')
+            if search_term:
+                return referral.filter(patient_name__icontains=search_term)
 
-        except Referral.DoesNotExist:
+        if not Referral.DoesNotExist():
             return Response(
-				{'error': 'No referral found.'},
-				status=status.HTTP_404_NOT_FOUND
+				{'error': 'No referral found.'}, status=status.HTTP_404_NOT_FOUND
 			)
+
+        return referral
 
 
 class UpdateSample(generics.UpdateAPIView):

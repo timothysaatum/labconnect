@@ -6,30 +6,22 @@ from rest_framework.parsers import MultiPartParser, FormParser # type: ignore
 from .serializers import (
 	LaboratorySerializer,
 	TestSerializer,
-	TestResultSerializer,
 	BranchSerializer,
 	BranchTestSerializer
 )
-from .models import Test, Branch, Laboratory, BranchTest, Result
+from .models import Test, Branch, Laboratory, BranchTest
 from modelmixins.models import SampleType
 from modelmixins.models import Facility
-from sample.models import Sample
-from sample.serializers import SampleSerializer
 from django.db.models import Q # type: ignore
-from sample.serializers import SampleSerializer
 from django.http import QueryDict # type: ignore
 from django.core.cache import cache # type: ignore
 from rest_framework.exceptions import ValidationError # type: ignore
-# from .filters import TestFilter
-# from django_filters.rest_framework import DjangoFilterBackend # type: ignore
-import json
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .tasks import copy_test_to_branch
 import logging
 from modelmixins.utils import ensure_uuid
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
-from rest_framework.views import APIView # type: ignore
 from .constants import LEVEL_ORDER
 from modelmixins.paginators import QueryPagination
 
@@ -358,112 +350,6 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 		return self.destroy(request, pk, format=None)
 
 
-class CreateTestResultView(PermissionMixin, generics.CreateAPIView):
-	serializer_class = TestResultSerializer
-	def post(self, request):
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'}, 
-				status=status.HTTP_401_UNAUTHORIZED
-			)
-		# print(request.data)
-		return self.create(request)
-	def perform_create(self, serializer):
-		serializer.save(send_by=self.request.user)
-
-
-class TestResultListView(BranchListView):
-    serializer_class = TestResultSerializer
-    pagination_class = QueryPagination
-
-    def get_queryset(self):
-
-        return Result.objects.filter(
-            Q(branch__branch_manager=self.request.user)
-            | Q(branch__laboratory__created=self.request.user)
-        ).order_by("-date_added")
-
-
-class TestResultUpdateView(PermissionMixin, generics.UpdateAPIView):
-	serializer_class = TestResultSerializer
-	def get_queryset(self):
-		return Result.objects.all()
-	def patch(self, request, pk):
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'}, 
-				status=status.HTTP_401_UNAUTHORIZED
-			)
-		return self.partial_update(request, pk)
-
-
-class TestResultDeleteView(PermissionMixin, generics.DestroyAPIView):
-	def get_queryset(self):
-		return Result.objects.all()
-	def delete(self, request, pk, format=None):
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'}, 
-				status=status.HTTP_401_UNAUTHORIZED
-			)
-		return self.destroy(request, pk, format=None)
-
-
-class LaboratorySampleSerializerView(PermissionMixin, generics.CreateAPIView):
-	queryset = Sample.objects.all()
-	serializer_class = SampleSerializer
-	parser_classes = (MultiPartParser, FormParser)
-
-	def post(self, request):
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-                {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
-            )
-		data = (
-            request.data.dict()
-            if isinstance(request.data, QueryDict)
-            else request.data.copy()
-        )
-		if "tests" in data:
-			tests = json.loads(data["tests"])
-			if isinstance(tests, list):
-				data["tests"] = tests
-			request._full_data = data
-		return self.create(request)
-	
-	def perform_create(self, serializer):
-		tests = self.request.data["tests"]
-		sample = serializer.save()
-		sample.tests.add(*tests)
-
-
-class LaboratorySampleUpdateView(PermissionMixin, generics.UpdateAPIView):
-	'''Update details of a specific sample.'''
-	serializer_class = SampleSerializer
-	queryset = Sample.objects.all()
-
-	def patch(self, request, pk):
-		return self.partial_update(request, pk)
-
-	def perform_update(self, serializer):
-		sample = serializer.save()
-		# sample.tests.clear()
-		query_dict.update(self.request.data)
-		# print(self.request.data)
-		#tests = self.request.data.getlist('tests')
-		if self.request.data.get('request_status') or self.request.data.get('sample_status'):
-			sample_status = self.request.data['sample_status']
-			sample.sample_status = sample_status
-			sample.save()
-		tests = query_dict.getlist('tests')
-		sample.tests.add(*tests)
-
-
-class LaboratorySampleDeleteView(PermissionMixin, generics.DestroyAPIView):
-	'''Deletes a specific sample.'''
-	def delete(self, request, pk, format=None):
-		return super().delete(request, pk, format=None)
-
 
 class AllLaboratories(generics.ListAPIView):
 	serializer_class = FacilitySerializer
@@ -487,49 +373,6 @@ class AllLaboratories(generics.ListAPIView):
 		return Facility.objects.filter(
 			Q(hospitallab__isnull=False) | Q(branch__isnull=False)
 			).select_related('branch', 'hospitallab')
-
-
-class LaboratorySampleList(PermissionMixin, generics.ListAPIView):
-	serializer_class = SampleSerializer
-	pagination_class = QueryPagination
-
-	def get_queryset(self):
-		status = self.request.GET.get('status')
-		from_date = self.request.GET.get('from_date')
-		to_date = self.request.GET.get('to_date')
-		pk = self.kwargs.get('pk')
-
-		try:
-			if status:
-				return Sample.objects.filter(
-					Q(referral__to_laboratory=pk) | Q(referral__to_laboratory__branch__laboratory=pk), sample_status__icontains=status).order_by('-date_added')
-			if from_date and to_date:
-				return Sample.objects.filter(
-					Q(referral__to_laboratory=pk) | Q(referral__to_laboratory__branch__laboratory=pk), date__range=(from_date, to_date)).order_by('-date_added')
-			return Sample.objects.filter(
-					Q(referral__to_laboratory=pk) | Q(referral__to_laboratory__branch__laboratory=pk)).order_by('-date_added')
-		except Sample.DoesNotExist:
-			return Response(
-				{'error': 'No sample sent.'},
-				status=status.HTTP_404_NOT_FOUND
-			)
-
-
-class LaboratorySampleRequests(PermissionMixin, generics.ListAPIView):
-	serializer_class = SampleSerializer
-	pagination_class = QueryPagination
-
-	def get_queryset(self):
-		status = self.request.GET.get('status')
-		from_date = self.request.GET.get('from_date')
-		to_date = self.request.GET.get('to_date')
-		if status:
-			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(sample_status__icontains=status).order_by('-date_added')
-		if from_date and to_date:
-			return Sample.objects.filter(referring_facility=self.kwargs.get('pk')).filter(date__range=(from_date, to_date)).order_by('-date_added')
-		return Sample.objects.filter(
-			referring_facility=self.kwargs.get('pk')
-		).order_by('-date_added')
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):

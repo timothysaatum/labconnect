@@ -2,8 +2,7 @@ from django.urls import path # type: ignore
 from .views import (
     CreateLaboratoryView,
     LaboratoryUserVIew,
-    CreateTestView, 
-    CreateTestResultView,
+    CreateTestView,
     TestUpdateView, 
     BranchListView, 
     BranchUpdateView, 
@@ -11,17 +10,9 @@ from .views import (
 	BranchDeleteView, 
     TestListView,
     TestDeleteView, 
-    TestResultListView, 
-	TestResultUpdateView,
-    TestResultDeleteView, 
-    LaboratorySampleList,
     AllLaboratories,
-    LaboratorySampleSerializerView,
-    LaboratorySampleUpdateView,
-    LaboratorySampleDeleteView,
     UpdateLaboratoryDetails,
     DeleteLaboratory,
-    LaboratorySampleRequests,
     SampleTypeView,
     SampleTypeUpdateView,
     SampleTypeDeleteView,
@@ -39,6 +30,7 @@ urlpatterns = [
 	path('user-laboratory/', LaboratoryUserVIew.as_view(), name='user-lab'),
 	path('update/<uuid:pk>/', UpdateLaboratoryDetails.as_view(), name='lab-update'),
 	path('delete/<uuid:pk>/', DeleteLaboratory.as_view(), name='lab-delete'),
+
 	#creating, reading, updating and deleting Branch
 	path('create-branch/', CreateBranchView.as_view(), name='create-branch'),
 	path('branch/list/', BranchListView.as_view(), name='laboratory-list'),
@@ -46,28 +38,20 @@ urlpatterns = [
 	path('branch/all/', AllLaboratories.as_view(), name='all-labs'),
 	path('branch/update/<uuid:pk>/', BranchUpdateView.as_view(), name='branch-update'),
 	path('branch/delete/<uuid:pk>/', BranchDeleteView.as_view(), name='branch-delete'),
+
 	#creating, reading, updating and deleting Test
 	path('test/add/', CreateTestView.as_view(), name='add-test'),
 	path('test/list/<uuid:pk>/', TestListView.as_view(), name='test-list'),
 	path('test/update/<uuid:pk>/', TestUpdateView.as_view(), name='test-update'),
 	path('test/delete/<uuid:pk>/', TestDeleteView.as_view(), name='test-delete'),
+
 	#sample type routes
 	path('sample-type/add/', SampleTypeView.as_view(), name='add-sample-type'),
     path('sample-type/update/<uuid:pk>/', SampleTypeUpdateView.as_view(), name='sample-type-update'),
     path('sample-type/delete/<uuid:pk>/', SampleTypeDeleteView.as_view(), name='sample-type-delete'),
     path('get-test/sample-type/<uuid:pk>/', GetTestSampleType.as_view(), name='test-sample-type'),
-	#creating, reading, updating and deleting results routes
-	path('test/result/add/', CreateTestResultView.as_view(), name='add-test-result'),
-	path('test/result/list/', TestResultListView.as_view(), name='results-list'),
-	path('test/result/update/<uuid:pk>/', TestResultUpdateView.as_view(), name='result-update'),
-	path('test/result/delete/<uuid:pk>/', TestResultDeleteView.as_view(), name='result-delete'),
-	#samples received by the laboratory routes
-	path('samples-list/<uuid:pk>/', LaboratorySampleList.as_view(), name='samples-list'),
-    path('lab-requests/<uuid:pk>/', LaboratorySampleRequests.as_view(), name='lab-requests'),
-	#url endpoints for creating, updating and deletion of laboratory samples
-	path('sample/add/', LaboratorySampleSerializerView.as_view(), name='add-sample'),
-    path('sample/update/<int:pk>/', LaboratorySampleUpdateView.as_view(), name='update-sample'),
-    path('sample/delete/<int:pk>/', LaboratorySampleDeleteView.as_view(), name='delete-sample'),
+
+	#utility endpoints
     path('update/test-for-branch/<uuid:branch_id>/<uuid:test_id>/', UpdateTestForSpecificBranch.as_view(), name='specific-update'),
     path('copy-tests-to-another-branch/<uuid:branch_to_copy_to_id>/', CopyTests.as_view(), name='copy-test')
 ]

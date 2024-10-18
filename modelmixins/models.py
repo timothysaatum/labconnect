@@ -2,8 +2,6 @@ from django.db import models
 import uuid
 
 
-
-
 class BaseModel(models.Model):
 
 	date_added = models.DateTimeField(auto_now_add=True)
@@ -11,7 +9,6 @@ class BaseModel(models.Model):
 
 	class Meta:
 		abstract = True
-		
 
 
 FACILITY_TYPE = [
@@ -49,17 +46,18 @@ class Facility(models.Model):
 
 class SampleType(models.Model):
 
-	'''
+    '''
 	Sample:Is the various medical samples that can be used to perform a particular test. 
 	This is require to avoid sample mismatched when a test is being requested.
 	'''
-	sample_name = models.CharField(max_length=100)
-	collection_procedure = models.TextField()
-	sample_tube = models.CharField(max_length=100)
-	collection_time = models.CharField(max_length=155)
+    sample_name = models.CharField(max_length=100)
+    collection_procedure = models.TextField()
+    sample_tube = models.CharField(max_length=100)
+    collection_time = models.CharField(max_length=155)
 
-	def __str__(self):
-		return self.sample_name
+    def __str__(self):
+        return f"{self.sample_tube} sample"
+
 
 class BasicTest(BaseModel):
 

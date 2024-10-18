@@ -7,6 +7,9 @@ from delivery.models import Delivery
 from django.contrib.auth import get_user_model
 # from django_cryptography.fields import encrypt
 import uuid
+import random, string
+# import datetime from datetime
+import datetime
 
 
 client = get_user_model()
@@ -51,6 +54,14 @@ REQUEST_STATUS = [
 	('Request Completed', 'Request Completed')
 ]
 
+def generate_referral_id():
+    date_part = datetime.datetime.now().strftime('%y-%m')
+
+    random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=3))
+
+    referral_id = f"SAM-{date_part}-{random_part}"
+
+    return referral_id
 
 class Patient(models.Model):
 
@@ -68,6 +79,7 @@ class Patient(models.Model):
 
 class Referral(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    referral_id = models.CharField(max_length=50, unique=True, editable=False, default=generate_referral_id)
     referring_facility = models.ForeignKey(
         Facility, on_delete=models.CASCADE, related_name="referrals", db_index=True
     )

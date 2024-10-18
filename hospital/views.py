@@ -7,8 +7,6 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Hospital, HospitalLab, HospitalLabTest
 from sample.models import Sample
-from labs.models import Result
-from labs.serializers import TestResultSerializer
 import json
 from django.http import QueryDict
 from modelmixins.paginators import QueryPagination
@@ -159,19 +157,6 @@ class SampleDeleteView(HospitalMixin, generics.DestroyAPIView):
 
 		return super().delete(request, pk, format=None)
 
-
-
-class SampleResultList(generics.ListAPIView):
-	'''List view for Test Results of samples created by the user'''
-
-	permission_classes = [permissions.IsAuthenticated]
-	serializer_class = TestResultSerializer
-	pagination_class = QueryPagination
-
-	def get_queryset(self):
-
-		facility_id = Hospital.objects.get(created_by=self.request.user).id
-		return Result.objects.filter(sample__referring_facility_id=facility_id)
 	
 
 class CreateHospitalLab(generics.CreateAPIView):
