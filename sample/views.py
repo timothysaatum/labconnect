@@ -17,7 +17,19 @@ class CreateReferral(generics.CreateAPIView):
     serializer_class = ReferralSerializer
 
     def perform_create(self, serializer):
-        serializer.save()
+        referral = serializer.save()
+        if self.request.user.account_type == 'Laboratory':
+            referral.facility_type = self.request.user.account_type
+            referral.sender_full_name = self.request.user.full_name
+            referral.sender_phone = self.request.user.phone_number
+            referral.sender_email = self.request.user.email
+
+        else:
+            referral.facility_type = self.request.user.account_type
+
+        referral.referral_status = 'Request Made'
+
+        referral.save()
 
 
 class UpdateReferral(generics.UpdateAPIView):

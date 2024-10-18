@@ -20,7 +20,6 @@ class SampleTestSerializer(serializers.ModelSerializer):
         queryset=Test.objects.all(), required=True
     )
     status = serializers.CharField(required=False)
-    # is_emmergency = serializers.BooleanField(default=False)
     result = serializers.URLField(required=False)
 
 
@@ -34,7 +33,6 @@ class SampleTestSerializer(serializers.ModelSerializer):
             "test",
             "status",
             'result',
-            # "is_emmergency",
             "date_completed",
         )
 
@@ -56,8 +54,9 @@ class SampleSerializer(serializers.ModelSerializer):
     )
     rejection_reason = serializers.CharField(required=False)
     sample_status = serializers.CharField(required=False)
-    sample_tests = serializers.PrimaryKeyRelatedField(
-        queryset=SampleTest.objects.all(), many=True, required=False
+    sample_tests = serializers.ListField(write_only=True)
+    sample_tests_data = serializers.PrimaryKeyRelatedField(
+        read_only=True, required=False
     )
 
     class Meta:
@@ -73,6 +72,7 @@ class SampleSerializer(serializers.ModelSerializer):
             "rejection_reason",
             "date_modified",
             "date_collected",
+            'sample_tests_data'
         )
 
     def create(self, validated_data):
@@ -81,7 +81,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
         # Creating SampleTest entries
         for sample_test_data in sample_tests_data:
-            SampleTest.objects.create(sample=sample, **sample_test_data)
+            SampleTest.objects.create(sample=sample, test_id=sample_test_data)
 
         return sample
 
@@ -123,7 +123,9 @@ class SampleSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["referral"] = str(instance.referral)
         data["sample_type"] = SampleTypeSerializer(instance.sample_type).data
-        data['sample_tests'] = SampleTestSerializer(instance.sample_tests.all(), many=True).data
+        data["sample_tests_data"] = SampleTestSerializer(
+            instance.sample_tests.all(), many=True
+        ).data
 
         return data
 
@@ -169,22 +171,23 @@ class ReferralSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        print(validated_data)
-        samples_data = validated_data.pop("sample")
+
+        samples_data = validated_data.pop("samples")
         referral = Referral.objects.create(**validated_data)
 
         # Creating Sample entries
         for sample_data in samples_data:
-            sample_tests_data = sample_data.pop("sample_tests")
 
-            sample = Sample.objects.create(referral=referral, **sample_data)
+            sample_tests_data = sample_data.pop("sample_tests")
+            sample = Sample.objects.create(
+                referral=referral, sample_type=sample_data.get("sample_type")
+            )
 
             # Creating SampleTest entries for each sample
             for sample_test_data in sample_tests_data:
-                SampleTest.objects.create(sample=sample, **sample_test_data)
+                SampleTest.objects.create(sample=sample, test_id=sample_test_data)
 
         return referral
-
 
     def update(self, instance, validated_data):
         samples_data = validated_data.pop("samples")
