@@ -6,6 +6,7 @@ from sample.models import (
       Referral,
       SampleTest
       )
+from django.db import transaction
 from labs.models import Test
 from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
@@ -179,93 +180,49 @@ class ReferralSerializer(serializers.ModelSerializer):
         for sample_data in samples_data:
 
             sample_tests_data = sample_data.pop("sample_tests")
-            sample = Sample.objects.create(
-                referral=referral, sample_type=sample_data.get("sample_type")
-            )
+            sample = Sample.objects.create(referral=referral, sample_type=sample_data.get("sample_type"))
 
             # Creating SampleTest entries for each sample
             for sample_test_data in sample_tests_data:
                 SampleTest.objects.create(sample=sample, test_id=sample_test_data)
 
         return referral
+    
 
     def update(self, instance, validated_data):
         samples_data = validated_data.pop("samples")
-        instance.referring_facility = validated_data.get(
-            "referring_facility", instance.referring_facility
-        )
-        instance.requires_phlebotomist = validated_data.get(
-            "requires_phlebotomist", instance.requires_phlebotomist
-        )
-        instance.sender_full_name = validated_data.get(
-            "sender_full_name", instance.sender_full_name
-        )
-        instance.sender_phone = validated_data.get(
-            "sender_phone", instance.sender_phone
-        )
-        instance.sender_email = validated_data.get(
-            "sender_email", instance.sender_email
-        )
-        instance.patient_name = validated_data.get(
-            "patient_name", instance.patient_name
-        )
-        instance.patient_age = validated_data.get(
-            "patient_age", instance.patient_age
-        )
-        instance.clinical_history = validated_data.get(
-            "clinical_history", instance.clinical_history
-        )
-        instance.referral_status = validated_data.get(
-            "referral_status", instance.referral_status
-        )
-        instance.attachment = validated_data.get(
-            "attachment", instance.attachment
-        )
-        instance.to_laboratory = validated_data.get(
-            "to_laboratory", instance.to_laboratory
-        )
+
+        # Update the instance with validated_data
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
         instance.save()
 
-        for sample_data in samples_data:
-            sample = Sample.objects.filter(
-                referral=instance, id=sample_data["id"]
-            ).first()
-            if sample:
-                sample.sample_type = sample_data.get(
-                    "sample_type", sample.sample_type
+        # Wrap the sample and sample_test updates in a transaction
+        with transaction.atomic():
+            # Update existing samples or create new ones
+            for sample_data in samples_data:
+                sample, created = Sample.objects.update_or_create(
+                    id=sample_data.get('id'),  # Find by ID if it exists
+                    referral=instance,  # Always associate it with the current referral
+                    defaults={
+                        "sample_type": sample_data.get("sample_type"),
+                        "sample_status": sample_data.get("sample_status"),
+                        "rejection_reason": sample_data.get("rejection_reason"),
+                    },
                 )
-                sample.sample_status = sample_data.get(
-                    "sample_status", sample.sample_status
-                )
-                sample.rejection_reason = sample_data.get(
-                    "rejection_reason", sample.rejection_reason
-                )
-                sample.save(referral=instance)
 
-                # Update sample tests
+                # Now update the sample tests for the sample
                 for sample_test_data in sample_data["sample_tests"]:
-                    sample_test = SampleTest.objects.filter(
-                        sample=sample, test=sample_test_data["test"]
-                    ).first()
-                    if sample_test:
-                        sample_test.status = sample_test_data.get(
-                            "status", sample_test.status
-                        )
-                        sample_test.sample_tests = sample_test_data.get(
-                            "sample_tests", sample_test.sample_tests
-                        )
-                        sample_test.sample_type = sample_test_data.get(
-                            "sample_type", sample_test.sample_type
-                        )
-                        sample_test.rejection_reason = sample_test_data.get(
-                            "rejection_reason", sample_test.rejection_reason
-                        )
-                        sample_test.save()
-            else:
-                # Create new sample and associated tests
-                new_sample = Sample.objects.create(referral=instance, **sample_data)
-                for sample_test_data in sample_data["sample_tests"]:
-                    SampleTest.objects.create(sample=new_sample, **sample_test_data)
+                    SampleTest.objects.update_or_create(
+                        sample=sample,  # Always associate with the current sample
+                        test_id=sample_test_data.get("test"),  # Use test ID to match
+                        defaults={
+                            "status": sample_test_data.get("status"),
+                            "sample_tests": sample_test_data.get("sample_tests"),
+                            "sample_type": sample_test_data.get("sample_type"),
+                        },
+                    )
 
         return instance
 
