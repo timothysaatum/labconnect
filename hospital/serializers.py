@@ -24,7 +24,7 @@ class HospitalSerializer(serializers.ModelSerializer):
 			'date_added'
 		)
 
-	pagination_class = QueryPagination
+	# pagination_class = QueryPagination
 
 
 class HospitalLabSerializer(serializers.ModelSerializer):

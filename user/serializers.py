@@ -12,10 +12,8 @@ from .utils import send_normal_email, send_code_to_user
 from labs.serializers import LaboratorySerializer, BranchSerializer
 from hospital.models import Hospital
 from hospital.serializers import HospitalSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import TokenError
-# from django.conf import settings
-# import jwt
+
+
 
 
 class UserCreationSerializer(serializers.ModelSerializer):
@@ -24,8 +22,6 @@ class UserCreationSerializer(serializers.ModelSerializer):
     password_confirmation = serializers.CharField(
         max_length=68, min_length=8, write_only=True
     )
-    # id_number = serializers.CharField(max_length=20, required=False)
-    # digital_address = serializers.CharField(max_length=20, required=False)
     is_admin = serializers.CharField(max_length=10, read_only=True)
     is_staff = serializers.CharField(max_length=10, read_only=True)
     is_active = serializers.CharField(max_length=10, read_only=True)
@@ -39,7 +35,6 @@ class UserCreationSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "phone_number",
-            # 'id_number', 'digital_address', 'emmergency_contact','bio',
             "account_type",
             "is_admin",
             "is_staff",
@@ -66,10 +61,6 @@ class UserCreationSerializer(serializers.ModelSerializer):
             first_name=validated_data.get("first_name"),
             last_name=validated_data.get("last_name"),
             phone_number=validated_data.get("phone_number"),
-            # id_number=validated_data.get('id_number'),
-            # digital_address=validated_data.get('digital_address'),
-            # emmergency_contact=validated_data.get('emmergency_contact'),
-            # bio=validated_data.get('bio'),
             account_type=validated_data.get("account_type"),
             password=validated_data.get("password"),
         )
@@ -90,9 +81,6 @@ class NaiveUserSerializer(serializers.ModelSerializer):
 					'last_name', 
 					'phone_number',
 					'account_type',
-					# 'id_number',
-					# 'emmergency_contact',
-					# 'digital_address',
 					'is_staff', 
 					'is_active', 
 					'is_admin',
@@ -101,7 +89,6 @@ class NaiveUserSerializer(serializers.ModelSerializer):
 					'is_verified', 
 					'date_joined', 
 					'last_login',
-					# 'access_token'
 				]
 
 
@@ -120,7 +107,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 		fields = [
 
-			'user', 'email', 'password','lab', 'branch', 'hospital'#, 'access_token'
+			'user', 'email', 'password','lab', 'branch', 'hospital'
 		]
 
 	def validate(self, attrs):

@@ -1,9 +1,8 @@
-from .utils import send_code_to_user, send_normal_email, run_async_function
+from .utils import send_code_to_user, send_normal_email
 from .models import Client
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from textwrap import dedent
-from threading import Thread
 
 
 
@@ -14,8 +13,6 @@ def email_user_on_creation(sender, instance, created, **kwargs):
 	if created:
 		email = instance.email
 		send_code_to_user(email)
-		# Thread(target=run_async_function, args=(email,)).start()
-		# ClientProfile.objects.create(client=instance)
 		if instance.account_type == 'Laboratory':
 
 			data = {
@@ -30,8 +27,4 @@ def email_user_on_creation(sender, instance, created, **kwargs):
 						 LabConnect Team.
 					''')
 			}
-			# print(email)
 			send_normal_email(data)
-
-		# if instance.account_type == 'Delivery':
-		# 	DeliveryUserProfile.objects.create(client=instance)

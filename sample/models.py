@@ -47,11 +47,12 @@ TEST_STATUS = [
 ]
 
 REQUEST_STATUS = [
-	('Request Made', 'Request Made'),
-    ('Request Accepted', 'Request Accepted'),
-	('Sample Received by Delivery', 'Sample Received by Delivery'),
-	('Sample Received by Lab', 'Sample Received by Lab'),
-	('Request Completed', 'Request Completed')
+    ("Request Made", "Request Made"),
+    ("Request Terminated", "Request Terminated"),
+    ("Request Accepted", "Request Accepted"),
+    ("Sample Received by Delivery", "Sample Received by Delivery"),
+    ("Sample Received by Lab", "Sample Received by Lab"),
+    ("Request Completed", "Request Completed"),
 ]
 
 def generate_referral_id():

@@ -30,7 +30,6 @@ class HospitalMixin(generics.GenericAPIView):
 
 	def get_queryset(self):
 		facility_id = self.request.user.hospital_set.first()
-		# facility_id = Hospital.objects.get(created_by=self.request.user)
 		return Sample.objects.filter(referring_facility_id=facility_id)
 
 
@@ -87,77 +86,6 @@ class UserHospital(generics.ListAPIView):
 		return Hospital.objects.filter(created_by=self.request.user)
 
 
-class SampleSerializerView(HospitalMixin, generics.CreateAPIView):
-	'''Create for creating a sample.'''
-
-	parser_classes = (MultiPartParser, FormParser)
-
-
-	def post(self, request):
-		data = request.data.dict() if isinstance(request.data, QueryDict) else request.data.copy()
-		# print(data)
-		if 'tests' in data:
-
-			tests = json.loads(data['tests'])
-			if isinstance(tests, list):
-				
-				data['tests'] = tests
-			
-		request._full_data = data
-		
-		return self.create(request)
-
-	def perform_create(self, serializer):
-
-		facility = Hospital.objects.get(created_by=self.request.user)
-		tests = self.request.data['tests']
-		sample = serializer.save(
-			referring_facility=facility,
-			sample_status='Pending',
-			facility_type='Hospital'
-			)
-
-		sample.tests.add(*tests)
-
-
-class SampleListView(HospitalMixin, generics.ListAPIView):
-	'''List view for samples created by the authenticated user.'''
-	pagination_class = QueryPagination
-	filter_backends = [filters.SearchFilter]
-
-
-
-class SampleUpdateView(HospitalMixin, generics.UpdateAPIView):
-	'''Update details of a specific sample.'''
-
-	def put(self, request, pk, format=None):
-		sample = self.get_queryset()
-		if sample.sample_status == 'Received':
-			return Response('Cannot update sample')
-		
-		return super().put(request, pk, format=None)
-
-	def perform_update(self, serializer):
-		sample = serializer.save()
-		sample.tests.clear()
-		tests = self.request.data.getlist('tests')
-		sample.tests.add(*tests)
-
-
-
-class SampleDeleteView(HospitalMixin, generics.DestroyAPIView):
-	'''Delete a specific sample.'''
-
-	def delete(self, request, pk, format=None):
-
-		sample = self.get_queryset()
-
-		if sample.sample_status == 'Received':
-			return Response('Cannot delete sample')
-
-		return super().delete(request, pk, format=None)
-
-	
 
 class CreateHospitalLab(generics.CreateAPIView):
 
@@ -169,9 +97,9 @@ class CreateHospitalLab(generics.CreateAPIView):
 		return self.create(request)
 	
 	def preform_create(self, serializer):
-		# hospital_ref = Hospital.objects.get(created_by=self.request.user)
+
 		hospital_ref = self.request.user.hospital_set.first()
-		# print(hospital_ref)
+
 		serializer.save(hospital_reference_id=hospital_ref)
 
 

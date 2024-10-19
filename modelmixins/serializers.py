@@ -19,6 +19,7 @@ class FacilitySerializer(serializers.ModelSerializer):
 class SampleTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
+
         model = SampleType
 
         fields = (
@@ -28,6 +29,11 @@ class SampleTypeSerializer(serializers.ModelSerializer):
             "collection_procedure",
             "collection_time",
         )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["sample_name"] = str(instance)
+        return data
 
 
 class FileUploadSerializer(serializers.Serializer):

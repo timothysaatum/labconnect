@@ -17,8 +17,11 @@ class CreateReferral(generics.CreateAPIView):
     serializer_class = ReferralSerializer
 
     def perform_create(self, serializer):
+
         referral = serializer.save()
+
         if self.request.user.account_type == 'Laboratory':
+
             referral.facility_type = self.request.user.account_type
             referral.sender_full_name = self.request.user.full_name
             referral.sender_phone = self.request.user.phone_number
@@ -27,7 +30,7 @@ class CreateReferral(generics.CreateAPIView):
         else:
             referral.facility_type = self.request.user.account_type
 
-        referral.referral_status = 'Request Made'
+        referral.referral_status = 'Pending Approval'
 
         referral.save()
 
@@ -61,12 +64,12 @@ class GetReferrals(generics.ListAPIView):
 
         if received == "true":
             referral = Referral.objects.filter(
-                Q(to_laboratory=pk) | Q(to_laboratory__branch__laboratory=pk)
+                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk)
             ).order_by("-date_referred")
 
         if sent == "true":
             referral = Referral.objects.filter(
-                Q(referring_facility=pk) | Q(referring_facility__branch__laboratory=pk)
+                Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk)
             ).order_by("-date_referred")
 
         if referral.exists():
@@ -90,6 +93,7 @@ class GetReferrals(generics.ListAPIView):
 
 
 class UpdateSample(generics.UpdateAPIView):
+
     permission_classes = [IsAuthenticated]
     serializer_class = SampleSerializer
     lookup_url_kwarg = "sample_id"
@@ -138,28 +142,26 @@ class CountObjects(generics.GenericAPIView):
         yesterday = today - timedelta(days=1)
 
         # Aggregate counts for today and yesterday in one query each
-        today_stats = Sample.objects.filter(
-            Q(referral__referring_facility=facility_id)
-            | Q(referral__to_laboratory=facility_id),
-            date_collected__date=today,
+        today_stats = Referral.objects.filter(
+            Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
+            date_referred__date=today,
         ).aggregate(
-            received=Count("id", filter=Q(sample_status="Request Accepted")),
-            processed=Count("id", filter=Q(sample_status="processed")),
-            pending=Count("id", filter=Q(sample_status="pending")),
-            rejected=Count("id", filter=Q(sample_status="rejected")),
+            received=Count("id", filter=Q(referral_status="Request Completed")),
+            processed=Count("id", filter=Q(referral_status="Sample Received by Lab")),
+            pending=Count("id", filter=Q(referral_status="Request Accepted")),
+            rejected=Count("id", filter=Q(referral_status="Request Terminated")),
         )
 
-        yesterday_stats = Sample.objects.filter(
-            Q(referral__referring_facility=facility_id)
-            | Q(referral__to_laboratory=facility_id),
-            date_collected__date=yesterday,
+        yesterday_stats = Referral.objects.filter(
+            Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
+            date_referred__date=yesterday,
         ).aggregate(
-            received=Count("id", filter=Q(sample_status="Request Accepted")),
-            processed=Count("id", filter=Q(sample_status="processed")),
-            pending=Count("id", filter=Q(sample_status="pending")),
-            rejected=Count("id", filter=Q(sample_status="rejected")),
+            received=Count("id", filter=Q(referral_status="Request Completed")),
+            processed=Count("id", filter=Q(referral_status="Sample Received by Lab")),
+            pending=Count("id", filter=Q(referral_status="Request Accepted")),
+            rejected=Count("id", filter=Q(referral_status="Request Terminated")),
         )
-        # print(Sample.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_added__date=today))
+        # print(Referral.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_referred__date=today))
         # print(yesterday_stats)
         # Calculate percentage changes
         def percentage_change(today_count, yesterday_count):
@@ -190,7 +192,7 @@ class CountObjects(generics.GenericAPIView):
 
 
 class TrackSampleState(generics.CreateAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     def post(self, request, format=None):
@@ -208,7 +210,7 @@ class TrackSampleState(generics.CreateAPIView):
 
 class GetTrackerDetails(generics.ListAPIView):
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):

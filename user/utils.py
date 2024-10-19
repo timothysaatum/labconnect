@@ -2,9 +2,8 @@ from django.core.mail import EmailMessage
 from .models import Client, OneTimePassword
 from django.conf import settings
 import pyotp
-from django.core.exceptions import ValidationError
 import asyncio
-from django.utils import timezone
+
 
 
 def generateotp():
@@ -16,10 +15,9 @@ def generateotp():
 	return otp
 
 
-# async def send_code_to_user(email):
+
 def send_code_to_user(email):
 
-    # loop = asyncio.get_event_loop()
     subject = 'Your one time verification code'
     otp_code = generateotp()
 
@@ -33,22 +31,19 @@ def send_code_to_user(email):
         user=user,
         defaults={
             "code": otp_code,
-            "secrete": pyotp.random_base32(),
-            # "expires_at": timezone.now() + timezone.timedelta(minutes=3),
+            "secrete": pyotp.random_base32()
         },
     )
-    # OneTimePassword.objects.create(user=user, code=otp_code, secrete=pyotp.random_base32())
     from_email = settings.EMAIL_HOST_USER
     message = EmailMessage(subject, html_message, from_email, [to_email])
 
     try:
 
-        # await loop.run_in_executor(None, message.send(fail_silently=False))
         message.send(fail_silently=False)
 
     except Exception as e:
         print(e)
-        # raise ValidationError(str(e))
+
 
 def run_async_function(email):
     asyncio.run(send_code_to_user(email))
@@ -67,5 +62,4 @@ def send_normal_email(data):
 		email.send()
 
 	except Exception as e:
-		#raise ValidationError(str(e))
 		print(e)		
