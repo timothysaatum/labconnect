@@ -86,29 +86,33 @@ class SampleSerializer(serializers.ModelSerializer):
 
         return sample
 
-
     def update(self, instance, validated_data):
-
-        sample_tests_data = validated_data.pop("sample_tests")
+        print(validated_data)
+        sample_tests_data = validated_data.pop("sample_tests", None)
 
         for attr, value in validated_data.items():
+            # print(instance)
             setattr(instance, attr, value)
+
+        print(instance.sample_status)
 
         instance.save()
 
         # Wrap the sample and sample_test updates in a transaction
-        with transaction.atomic():
-            # Update existing samples or create new ones
-            for sample_test in sample_tests_data:
-                _, created = SampleTest.objects.update_or_create(
-                    id=sample_test.get("id"),  # Find by ID if it exists
-                    sample=instance,  # Always associate it with the current referral
-                    defaults={
-                        "result": sample_test.get("result"),
-                        "status": sample_test.get("status"),
-                        "test": sample_test.get("test")
-                    },
-                )
+        if sample_tests_data is not None:
+
+            with transaction.atomic():
+                # Update existing samples or create new ones
+                for sample_test in sample_tests_data:
+                    _, created = SampleTest.objects.update_or_create(
+                        id=sample_test.get("id"),  # Find by ID if it exists
+                        sample=instance,  # Always associate it with the current referral
+                        defaults={
+                            "result": sample_test.get("result"),
+                            "status": sample_test.get("status"),
+                            "test": sample_test.get("test"),
+                        },
+                    )
 
         return instance
 
@@ -260,7 +264,6 @@ class NotificationSerializer(serializers.ModelSerializer):
         return data
 
 
-
 class SampleTrackingSerializer(serializers.ModelSerializer):
     
     sample = serializers.PrimaryKeyRelatedField(queryset=Sample.objects.all(), required=False)
@@ -285,7 +288,6 @@ class SampleTrackingSerializer(serializers.ModelSerializer):
         data['sample'] = str(instance.sample)
 
         return data
-     
 
 
 class CountObjectsSerializer(serializers.Serializer):
