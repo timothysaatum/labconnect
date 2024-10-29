@@ -15,7 +15,7 @@ app_name = 'sample'
 
 urlpatterns = [
     path(
-        "update-notification/<int:noti_id>",
+        "update-notification/<int:noti_id>/",
         UpdateNotification.as_view(),
         name="update-notification",
     ),
