@@ -4,7 +4,6 @@ from .models import (
 		Laboratory, 
 		Branch, 
 		BranchManagerInvitation,
-		# SampleType,
 		BranchTest
 	)
 import csv
