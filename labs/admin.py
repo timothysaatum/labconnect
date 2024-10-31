@@ -69,7 +69,7 @@ class BranchTestAdmin(admin.ModelAdmin):
 
 class LaboratoryAdmin(admin.ModelAdmin):
 
-	list_display = (
+    list_display = (
 		'id',
 		'created_by',
 		'name',
@@ -80,33 +80,35 @@ class LaboratoryAdmin(admin.ModelAdmin):
 		'date_added',
 		'date_modified'
 	)
-	list_display_links = (
+    list_display_links = (
 		'id',
 	)
-	ordering = ('id',)
-	list_per_page = 10
+    ordering = ('id',)
+    list_per_page = 10
 
-	def branches(self, obj):
-		return ", ".join([branch.town for branch in obj.branches.all()])
-
+    def branches(self, obj):
+        return ", ".join([branch.town for branch in obj.branches.all()])
 
 
 class BranchAdmin(admin.ModelAdmin):
-	list_display = (
-		'id',
-		'branch_name',
-		'branch_manager',
-		'town',
-		'region',
-		'laboratory',
-		'date_added',
-		'date_modified'
-	)
+
+    list_display = (
+        "id",
+        "branch_name",
+        "level",
+        "branch_manager",
+        "town",
+        "region",
+        "laboratory",
+        "date_added",
+        "date_modified",
+    )
+
+    list_editable = ("level",)
 
 
 class BranchManagerInvitationAdmin(admin.ModelAdmin):
     list_display = ('invitation_code', 'sender', 'receiver_email', 'branch', 'used')
-
 
 
 admin.site.register(Test, TestAdmin)

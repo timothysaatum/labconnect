@@ -15,6 +15,7 @@ import os
 from cryptography.fernet import Fernet
 from datetime import timedelta
 from decouple import config
+from redis.connection import ConnectionPool
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -155,11 +156,15 @@ CACHES = {
 }
 
 
-#dramatiq
+# dramatiq
+# REDIS_URL = "redis://default:AVWtAAIjcDE4M2E0MGI2MDcwYmE0MTgxOTFkOGM3OTU5ZDA1YzUyZnAxMA@open-hedgehog-21933.upstash.io:6379"
+REDIS_URL = "redis://localhost:6379"
+pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
-        "url": "redis://localhost:6379",
+        "url": REDIS_URL,
+        "connection_pool": pool
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.AgeLimit",
@@ -169,11 +174,11 @@ DRAMATIQ_BROKER = {
         "dramatiq.results.Results",
         "django_dramatiq.middleware.DbConnectionsMiddleware",
         "django_dramatiq.middleware.AdminMiddleware",
-    ]
+    ],
 }
 
 # Optional: configure the result backend
-#redis-cli -u redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681
+# redis-cli -u redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681
 # DRAMATIQ_BROKER = {
 #     "BROKER": "dramatiq.brokers.redis.RedisBroker",
 #     "OPTIONS": {
@@ -208,7 +213,6 @@ CELERY_RESULT_EXPIRES = 3600  # Optional: task results expire after 1 hour
 broker_connection_retry_on_startup = True
 
 
-
 # FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
 # DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
 # DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
@@ -232,7 +236,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
 CORS_ALLOW_ALL_ORIGINS = True
 # White listing the localhost:3000 port
 # for React
@@ -241,7 +244,6 @@ CORS_ORIGIN_WHITELIST = (
     # 'https://labconnect-eight.vercel.app'
 )
 CORS_ALLOW_CREDENTIALS = True
-
 
 
 LOGIN_URL = 'client:login'

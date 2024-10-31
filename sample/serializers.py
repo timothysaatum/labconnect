@@ -94,7 +94,7 @@ class SampleSerializer(serializers.ModelSerializer):
             # print(instance)
             setattr(instance, attr, value)
 
-        print(instance.sample_status)
+        # print(instance.sample_status)
 
         instance.save()
 

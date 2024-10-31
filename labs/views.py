@@ -443,7 +443,7 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CopyTests(PermissionMixin, generics.CreateAPIView):
+class CopyTests(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         test_ids = self.request.data.getlist('test_ids', [])
         target_branch_id = self.kwargs.get('branch_to_copy_to_id')
