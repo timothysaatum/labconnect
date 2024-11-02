@@ -157,8 +157,8 @@ CACHES = {
 
 
 # dramatiq
-# REDIS_URL = "redis://default:AVWtAAIjcDE4M2E0MGI2MDcwYmE0MTgxOTFkOGM3OTU5ZDA1YzUyZnAxMA@open-hedgehog-21933.upstash.io:6379"
-REDIS_URL = "redis://localhost:6379"
+REDIS_URL = "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
+# REDIS_URL = "redis://localhost:6379"
 pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
@@ -197,20 +197,12 @@ DRAMATIQ_BROKER = {
 DRAMATIQ_RESULT_BACKEND = {
     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
     "BACKEND_OPTIONS": {
-        "url": "redis://localhost:6379",
+        "url": REDIS_URL#"redis://localhost:6379",
     },
     "MIDDLEWARE_OPTIONS": {
         "result_ttl": 60000
     }
 }
-
-# Celery settings
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Using Redis as the message broker
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_RESULT_EXPIRES = 3600  # Optional: task results expire after 1 hour
-broker_connection_retry_on_startup = True
 
 
 # FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
