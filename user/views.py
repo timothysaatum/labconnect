@@ -43,7 +43,6 @@ import logging
 logger = logging.getLogger('labs')
 
 
-
 def generate_password(length=12):
 	"""Generates a random password of the given length.
 	Args:
@@ -88,6 +87,7 @@ def verify_token(refresh_token):
 	try:
 		payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
 		user = Client.objects.get(id=payload['user_id'])
+		logger.info(f'{user.full_name} verified successfully')
 
 	except jwt.ExpiredSignatureError:
 		return Response({'error': 'token has expired'}, status=status.HTTP_400_BAD_REQUEST)
@@ -111,10 +111,11 @@ class CheckRefreshToken(APIView):
 		
 		try:
 			user = verify_token(cookie_token)
+			logger.info(f'{user.full_name} token check sucessful')
 			refresh_token = RefreshToken.for_user(user)
 
 		except AttributeError:
-			
+			logger.warning('Token pass was not valid')
 			return Response({'error': 'Session expired'}, status=status.HTTP_403_FORBIDDEN)
 
 		access_token = str(refresh_token.access_token)
@@ -129,11 +130,13 @@ class CheckRefreshToken(APIView):
 
 class CreateUserView(CreateAPIView):
 
-	serializer_class = UserCreationSerializer
+    serializer_class = UserCreationSerializer
 
-	def post(self, request, format=None):
-		logger.info(f"Account created for {request.data['last_name']}")
-		return self.create(request)
+    def post(self, request, format=None):
+        logger.info(
+            f"Account created for {request.data['last_name']} {request.data['first_name']}"
+        )
+        return self.create(request)
 
 
 class UpdateUserAccount(UpdateAPIView):
@@ -142,6 +145,7 @@ class UpdateUserAccount(UpdateAPIView):
 	partial = True
 
 	def get_queryset(self):
+		logger.info(f'{self.request.user} requesting account update')
 		return Client.objects.filter(pk=self.kwargs.get('pk'))
 
 	def patch(self, request, pk):
@@ -149,14 +153,15 @@ class UpdateUserAccount(UpdateAPIView):
 
 
 class DeleteUserAccount(UpdateAPIView):
-	permission_classes = [IsAuthenticated]
-	serializer_class = UserCreationSerializer
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserCreationSerializer
 
-	def get_queryset(self):
-		return Client.objects.filter(id=self.request.user)
+    def get_queryset(self):
+        logger.info(f"{self.request.user} requesting account delete")
+        return Client.objects.filter(id=self.request.user)
 
-	def delete(self, request, pk):
-		return super().delete(request, pk)
+    def delete(self, request, pk):
+        return super().delete(request, pk)
 
 
 class VerifyUserEmail(GenericAPIView):
@@ -223,16 +228,15 @@ class LoginUserView(GenericAPIView):
 
 		if serializer.is_valid(raise_exception=True):
 			try:
-				# print(serializer.data['user'].get('email'))
+
 				user = Client.objects.get(id=serializer.data['user'].get('id'))
 
 			except Client.DoesNotExist:
 				return Response({'error': 'An error occured, try again.'}, status=status.HTTP_404_NOT_FOUND)
 
 			user_tokens = user.tokens()
-			logger.info(f'Logged in {user.last_name} {user.last_name}')
-			# serializer.data['user']['access_token'] = user_tokens.get('access')
-			# print(serializer.data['user'])
+			logger.info(f'Logged in {user.full_name}')
+			
 			response = Response({'data':serializer.data, 'access_token':user_tokens.get('access')}, status=status.HTTP_200_OK)
 
 			response.set_cookie(
@@ -279,7 +283,7 @@ class PasswordResetConfirm(GenericAPIView):
 
 			user_id = smart_str(urlsafe_base64_decode(uidb64))
 			user = Client.objects.get(id=user_id)
-
+			logger.warning(f'{user.full_name} confirming password reset request')
 			if not PasswordResetTokenGenerator().check_token(user, token):
 
 				return Response({
@@ -353,7 +357,7 @@ class FetchUserData(APIView):
 			try:
 
 				user = verify_token(user_cookie_token)
-
+				logger.warning(f'{user.full_name} accessed user dats')
 				serialized_data = UserSerializer(user)
 
 				return Response(serialized_data.data, status=status.HTTP_200_OK)
@@ -365,8 +369,6 @@ class FetchUserData(APIView):
 				return Response({'error': 'Argument provided does not make sense'}, status=status.HTTP_400_BAD_REQUEST)
 
 		return Response({'error': 'Token is invalid or you have been logged out.'}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 def create_branch_manager_user(invitation, user_data):
@@ -399,7 +401,6 @@ def create_branch_manager_user(invitation, user_data):
     invitation.save()
 
     return client
-
 
 
 class BranchManagerAcceptView(CreateAPIView):
@@ -461,7 +462,7 @@ class FetchLabManagers(ListAPIView):
 		managers = Branch.objects.filter(laboratory_id=self.kwargs.get('pk')).values('branch_manager').distinct()
 		branch_managers = Client.objects.filter(id__in=Subquery(managers))
 		return branch_managers
-	
+
 
 class RequestNewOTP(CreateAPIView):
 

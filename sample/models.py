@@ -133,7 +133,7 @@ class SampleTest(models.Model):
         primary_key=True, default=uuid.uuid4, editable=False, db_index=True
     )
     sample = models.ForeignKey(Sample, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
-    test = models.ForeignKey(Test, related_name='sample_tests', on_delete=models.CASCADE, db_index=True)
+    test = models.ForeignKey(Test, related_name='tests', on_delete=models.CASCADE, db_index=True)
     status = models.CharField(
         max_length=50, choices=TEST_STATUS, default="Pending", db_index=True
     )  # Status of the test

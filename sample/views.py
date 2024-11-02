@@ -7,8 +7,12 @@ from .models import Notification, Sample, SampleTrackingHistory, Referral
 from django.db.models import Count, Q # type: ignore
 from django.utils.timezone import now, timedelta # type: ignore
 from .paginators import QueryPagination
-
+import logging
 from datetime import timedelta
+
+
+logger = logging.getLogger('labs')
+
 
 
 class CreateReferral(generics.CreateAPIView):
@@ -33,6 +37,7 @@ class CreateReferral(generics.CreateAPIView):
         referral.referral_status = 'Pending Approval'
 
         referral.save()
+        logger.info(f'{self.request.user.full_name} added {referral.id}')
 
 
 class UpdateReferral(generics.UpdateAPIView):
