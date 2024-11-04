@@ -899,3 +899,48 @@ INFO 2024-11-04 01:23:49,407 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\l
 INFO 2024-11-04 01:24:25,418 autoreload Watching for file changes with StatReloader
 INFO 2024-11-04 01:24:30,801 basehttp "OPTIONS /api/laboratory/test/list/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?test_status=active&sample_type=1 HTTP/1.1" 200 0
 INFO 2024-11-04 01:24:31,309 basehttp "GET /api/laboratory/test/list/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?test_status=active&sample_type=1 HTTP/1.1" 200 1136
+INFO 2024-11-04 01:24:41,019 views User: <1> added <11ccb066-1af0-4373-a2e7-899ce11d1b9c>
+INFO 2024-11-04 01:24:41,158 basehttp "POST /api/sample/create-referral/ HTTP/1.1" 201 1194
+INFO 2024-11-04 01:24:46,791 views User: <1> added <97bfa3cb-6223-4214-98a3-8682cc425f50>
+INFO 2024-11-04 01:24:46,959 basehttp "POST /api/sample/create-referral/ HTTP/1.1" 201 1194
+INFO 2024-11-04 01:24:52,566 views User: <1> added <45d413bb-d9c1-4c05-b55a-1110c8124519>
+INFO 2024-11-04 01:24:52,680 basehttp "POST /api/sample/create-referral/ HTTP/1.1" 201 1194
+INFO 2024-11-04 01:25:31,269 basehttp "OPTIONS /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 0
+INFO 2024-11-04 01:25:31,374 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 01:25:31,497 basehttp "GET /api/laboratory/test/list/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?test_status=active&sample_type=1 HTTP/1.1" 200 1136
+INFO 2024-11-04 01:25:43,131 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 36350
+INFO 2024-11-04 01:25:43,712 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-04 01:26:24,443 basehttp "POST /admin/sample/referral/ HTTP/1.1" 302 0
+INFO 2024-11-04 01:26:25,978 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 36494
+INFO 2024-11-04 01:26:26,377 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-04 01:26:29,560 basehttp "GET /api/laboratory/test/list/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?test_status=active&sample_type=1 HTTP/1.1" 200 1136
+INFO 2024-11-04 01:26:35,786 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 01:26:35,855 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 01:26:35,868 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
+INFO 2024-11-04 01:28:21,486 basehttp "POST /admin/sample/referral/ HTTP/1.1" 302 0
+INFO 2024-11-04 01:28:23,448 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 36492
+INFO 2024-11-04 01:28:23,948 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-04 01:29:45,272 views Timothy Saatum verified successfully
+INFO 2024-11-04 01:29:45,276 views Timothy Saatum token check sucessful
+INFO 2024-11-04 01:29:45,303 views Timothy Saatum verified successfully
+INFO 2024-11-04 01:29:45,318 views Timothy Saatum token check sucessful
+INFO 2024-11-04 01:29:47,173 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 01:29:47,190 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 01:29:50,421 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 01:29:50,509 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 01:29:50,541 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
+INFO 2024-11-04 01:29:50,581 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 01:32:41,976 basehttp "POST /admin/sample/referral/ HTTP/1.1" 302 0
+INFO 2024-11-04 01:32:43,551 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 36492
+INFO 2024-11-04 01:32:44,011 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-04 01:33:11,694 views Timothy Saatum verified successfully
+INFO 2024-11-04 01:33:11,706 views Timothy Saatum token check sucessful
+INFO 2024-11-04 01:33:11,868 views Timothy Saatum verified successfully
+INFO 2024-11-04 01:33:12,127 views Timothy Saatum token check sucessful
+INFO 2024-11-04 01:33:13,211 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 01:33:13,524 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 01:33:16,576 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 01:33:16,654 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 01:33:16,682 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
+INFO 2024-11-04 01:33:16,737 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 01:38:17,130 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
