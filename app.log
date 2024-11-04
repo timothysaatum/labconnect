@@ -1111,3 +1111,84 @@ INFO 2024-11-04 02:47:52,470 views User: 1 attempted<> search on referrals<bfe91
 INFO 2024-11-04 02:47:52,579 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 42
 INFO 2024-11-04 02:48:41,064 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
 INFO 2024-11-04 02:49:28,011 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:50:07,028 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:50:07,042 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:50:07,077 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:50:07,111 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:50:09,440 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:50:09,459 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:50:13,659 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:50:13,702 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:50:14,080 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:50:14,754 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:50:28,549 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:50:29,735 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6223
+INFO 2024-11-04 02:50:55,592 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:50:55,674 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:51:01,626 basehttp "OPTIONS /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:01,653 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:51:01,997 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:51:13,528 basehttp "OPTIONS /api/sample/update-notification/4/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:13,945 basehttp "PATCH /api/sample/update-notification/4/ HTTP/1.1" 200 255
+INFO 2024-11-04 02:51:15,359 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2318
+INFO 2024-11-04 02:51:17,443 basehttp "OPTIONS /api/sample/update-notification/5/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:17,920 basehttp "PATCH /api/sample/update-notification/5/ HTTP/1.1" 200 255
+INFO 2024-11-04 02:51:18,518 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2061
+INFO 2024-11-04 02:51:20,411 basehttp "OPTIONS /api/sample/update-notification/6/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:20,901 basehttp "PATCH /api/sample/update-notification/6/ HTTP/1.1" 200 255
+INFO 2024-11-04 02:51:21,518 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 1804
+INFO 2024-11-04 02:51:23,084 basehttp "OPTIONS /api/sample/update-notification/7/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:23,405 basehttp "PATCH /api/sample/update-notification/7/ HTTP/1.1" 200 255
+INFO 2024-11-04 02:51:23,886 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 1547
+INFO 2024-11-04 02:51:25,106 basehttp "OPTIONS /api/sample/update-notification/8/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:25,618 basehttp "PATCH /api/sample/update-notification/8/ HTTP/1.1" 200 255
+INFO 2024-11-04 02:51:26,021 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 1290
+INFO 2024-11-04 02:51:27,028 basehttp "OPTIONS /api/sample/update-notification/9/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:27,420 basehttp "PATCH /api/sample/update-notification/9/ HTTP/1.1" 200 255
+INFO 2024-11-04 02:51:27,886 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 1033
+INFO 2024-11-04 02:51:34,343 basehttp "OPTIONS /api/sample/update-notification/10/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:34,682 basehttp "PATCH /api/sample/update-notification/10/ HTTP/1.1" 200 256
+INFO 2024-11-04 02:51:35,013 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 775
+INFO 2024-11-04 02:51:39,771 basehttp "OPTIONS /api/sample/update-notification/11/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:40,160 basehttp "PATCH /api/sample/update-notification/11/ HTTP/1.1" 200 256
+INFO 2024-11-04 02:51:40,485 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 517
+INFO 2024-11-04 02:51:47,502 basehttp "OPTIONS /api/sample/update-notification/12/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:47,898 basehttp "PATCH /api/sample/update-notification/12/ HTTP/1.1" 200 256
+INFO 2024-11-04 02:51:48,096 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 259
+INFO 2024-11-04 02:51:49,657 basehttp "OPTIONS /api/sample/update-notification/13/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:51:50,029 basehttp "PATCH /api/sample/update-notification/13/ HTTP/1.1" 200 256
+INFO 2024-11-04 02:51:50,145 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2
+INFO 2024-11-04 02:55:40,146 basehttp "OPTIONS /api/sample/update-sample/13/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:55:42,135 basehttp "PATCH /api/sample/update-sample/13/ HTTP/1.1" 200 639
+INFO 2024-11-04 02:55:42,243 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:55:43,606 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6224
+INFO 2024-11-04 02:56:15,081 basehttp "OPTIONS /api/sample/update-sample/12/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:56:15,429 basehttp "PATCH /api/sample/update-sample/12/ HTTP/1.1" 200 639
+INFO 2024-11-04 02:56:50,604 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2
+INFO 2024-11-04 02:58:27,220 basehttp "PATCH /api/sample/update-sample/12/ HTTP/1.1" 200 639
+INFO 2024-11-04 02:58:34,251 basehttp "PATCH /api/sample/update-sample/12/ HTTP/1.1" 200 639
+INFO 2024-11-04 02:58:34,363 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:58:35,365 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6225
+INFO 2024-11-04 02:59:00,792 basehttp "OPTIONS /api/sample/update-sample/11/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:59:01,276 basehttp "PATCH /api/sample/update-sample/11/ HTTP/1.1" 200 639
+INFO 2024-11-04 02:59:01,374 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:59:02,818 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6226
+INFO 2024-11-04 02:59:18,584 basehttp "OPTIONS /api/sample/update-sample/10/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:59:18,917 basehttp "PATCH /api/sample/update-sample/10/ HTTP/1.1" 200 638
+INFO 2024-11-04 02:59:19,016 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:59:20,084 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6227
+INFO 2024-11-04 03:01:50,923 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2
+INFO 2024-11-04 03:06:51,361 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2
+INFO 2024-11-04 03:10:25,979 basehttp "OPTIONS /api/sample/update-sample/9/ HTTP/1.1" 200 0
+INFO 2024-11-04 03:10:26,258 basehttp "PATCH /api/sample/update-sample/9/ HTTP/1.1" 200 634
+INFO 2024-11-04 03:10:26,379 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 03:10:27,901 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6228
+INFO 2024-11-04 03:11:20,491 basehttp "PATCH /api/sample/update-sample/13/ HTTP/1.1" 200 885
+INFO 2024-11-04 03:11:51,503 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2
+INFO 2024-11-04 03:11:52,435 basehttp "PATCH /api/sample/update-sample/13/ HTTP/1.1" 200 1131
+INFO 2024-11-04 03:27:03,849 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2
+INFO 2024-11-04 03:27:04,212 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 03:27:04,276 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 03:27:07,522 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6720
+INFO 2024-11-04 03:27:19,629 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 03:28:02,285 autoreload Watching for file changes with StatReloader
