@@ -944,3 +944,170 @@ INFO 2024-11-04 01:33:16,654 views User: 1 attempted<> search on referrals<a3117
 INFO 2024-11-04 01:33:16,682 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
 INFO 2024-11-04 01:33:16,737 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
 INFO 2024-11-04 01:38:17,130 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 01:59:19,235 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 01:59:19,341 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 01:59:19,372 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
+INFO 2024-11-04 01:59:19,377 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 01:59:35,410 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 01:59:35,447 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:00:05,137 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:00:05,203 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:00:05,210 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:00:05,250 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:00:07,902 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:00:07,944 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:00:15,287 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 02:00:15,436 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:00:15,600 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 02:00:15,830 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:02:27,120 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-04 02:03:14,947 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:03:50,049 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-04 02:04:37,846 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:07:31,972 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:08:28,545 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:09:20,134 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:10:16,727 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:10:59,187 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:11:43,107 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:11:52,541 basehttp "OPTIONS /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-04 02:11:52,550 basehttp "OPTIONS /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:11:52,576 basehttp "OPTIONS /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:11:53,006 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 02:11:53,030 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 02:11:53,216 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:11:53,302 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:12:16,738 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:12:16,741 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:12:16,745 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:12:16,772 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:12:17,865 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:12:17,877 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:12:20,944 views User: 1 attempted<> search on referrals<a3117172-44be-4c3e-a8af-ce2a8b421ce3>
+INFO 2024-11-04 02:12:20,964 basehttp "GET /api/sample/notifications/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 2
+INFO 2024-11-04 02:12:21,045 basehttp "GET /api/sample/get-referrals/a3117172-44be-4c3e-a8af-ce2a8b421ce3/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:12:21,110 basehttp "GET /api/sample/get-sample-counts-for-facility/a3117172-44be-4c3e-a8af-ce2a8b421ce3/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:12:52,078 basehttp "OPTIONS /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:12:52,133 basehttp "OPTIONS /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-04 02:12:52,141 basehttp "OPTIONS /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:12:52,259 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:12:52,460 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:12:52,529 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:12:53,306 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:12:58,146 basehttp "OPTIONS /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 0
+INFO 2024-11-04 02:12:58,194 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:12:58,257 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:13:48,436 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:13:48,452 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:13:48,483 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:13:48,504 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:13:50,717 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:13:51,043 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:13:57,692 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:13:57,969 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:13:58,221 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:13:58,940 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:14:14,757 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:14:40,582 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:15:03,128 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:15:27,422 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:29:54,173 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:30:41,265 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:31:39,028 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:31:39,550 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:31:39,628 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:31:40,296 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:31:55,805 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:31:55,810 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:31:55,817 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:31:55,871 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:31:57,373 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:31:57,626 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:32:00,686 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:32:00,936 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:32:00,949 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:32:01,862 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:35:18,661 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:35:46,310 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:37:09,205 basehttp - Broken pipe from ('127.0.0.1', 49899)
+INFO 2024-11-04 02:37:22,332 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:37:22,374 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:37:22,395 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:37:22,621 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:37:24,025 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:37:24,744 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:37:29,034 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:37:29,036 basehttp "OPTIONS /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 0
+INFO 2024-11-04 02:37:29,214 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:37:29,347 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:37:29,975 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:37:46,883 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:37:47,122 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:38:23,053 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:38:56,592 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:39:22,529 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:39:22,573 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:39:22,587 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:39:22,614 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:39:23,745 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:39:23,888 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:39:26,706 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:39:26,839 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:39:26,970 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:39:27,540 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:39:56,186 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:40:25,136 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:40:53,103 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:40:53,113 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:40:53,153 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:40:53,156 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:40:54,637 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:40:54,803 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:40:57,345 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:40:57,422 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:40:57,559 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:40:58,214 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:42:40,514 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:43:13,570 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:43:40,308 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:43:40,312 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:43:40,319 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:43:40,326 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:43:41,970 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:43:42,042 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:43:44,834 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:43:45,033 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:43:45,284 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:43:45,825 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:44:13,394 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:44:44,625 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:45:21,598 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:45:21,694 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:45:21,716 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:45:21,880 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:45:24,596 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:45:24,880 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:45:30,557 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:45:30,761 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:45:30,995 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:45:31,745 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:46:00,995 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:46:25,180 autoreload Watching for file changes with StatReloader
+INFO 2024-11-04 02:47:10,191 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:47:10,238 views Timothy Saatum verified successfully
+INFO 2024-11-04 02:47:10,326 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:47:10,348 views Timothy Saatum token check sucessful
+INFO 2024-11-04 02:47:12,551 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:47:15,946 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1996
+INFO 2024-11-04 02:47:21,230 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:47:21,381 basehttp "GET /api/sample/get-sample-counts-for-facility/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 171
+INFO 2024-11-04 02:47:21,797 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:47:22,437 basehttp "GET /api/sample/notifications/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/ HTTP/1.1" 200 2575
+INFO 2024-11-04 02:47:47,654 basehttp "OPTIONS /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Processed&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-04 02:47:47,702 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:47:47,794 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=Processed&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:47:52,421 basehttp "OPTIONS /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-04 02:47:52,470 views User: 1 attempted<> search on referrals<bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4>
+INFO 2024-11-04 02:47:52,579 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-04 02:48:41,064 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-04 02:49:28,011 autoreload Watching for file changes with StatReloader

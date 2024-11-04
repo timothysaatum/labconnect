@@ -79,20 +79,19 @@ class GetReferrals(generics.ListAPIView):
             referral = Referral.objects.filter(
                 Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk), #referral_status__in=statuses
             ).order_by("-date_referred")
-            print(referral)
+            
 
         if sent == "true":
             referral = Referral.objects.filter(
                 Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk), #referral_status__in=statuses
             ).order_by("-date_referred")
-            print(referral)
+            
 
         if referral.exists():
 
             if status:
                 if status == "All":
                     return referral
-                # print(referral.filter(referral_status__icontains=status))
                 return referral.filter(referral_status__icontains=status)
 
             if from_date and to_date:
