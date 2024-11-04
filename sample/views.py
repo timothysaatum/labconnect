@@ -9,10 +9,10 @@ from django.utils.timezone import now, timedelta # type: ignore
 from .paginators import QueryPagination
 import logging
 from datetime import timedelta
+from django.db import connection
 
 
 logger = logging.getLogger('labs')
-
 
 
 class CreateReferral(generics.CreateAPIView):
@@ -34,10 +34,10 @@ class CreateReferral(generics.CreateAPIView):
         else:
             referral.facility_type = self.request.user.account_type
 
-        referral.referral_status = 'Pending Approval'
+        referral.referral_status = "Request Made"
 
         referral.save()
-        logger.info(f'{self.request.user.full_name} added {referral.id}')
+        logger.info(f"User: <{self.request.user.id}> added <{referral.id}>")
 
 
 class UpdateReferral(generics.UpdateAPIView):
@@ -47,6 +47,7 @@ class UpdateReferral(generics.UpdateAPIView):
     serializer_class = ReferralSerializer
 
     def perform_update(self, serializer):
+        logger.info(f"{self.request.user.full_name} edited {self.lookup_url_kwarg}")
         serializer.save()
 
 
@@ -57,16 +58,19 @@ class GetReferrals(generics.ListAPIView):
     serializer_class = ReferralSerializer
 
     def get_queryset(self):
+
         status = self.request.GET.get('status')
         from_date = self.request.GET.get('from_date')
-        search_term = self.request.GET.get("search_term")
+        search_term = self.request.GET.get("search")
         received = self.request.GET.get("received")
         sent = self.request.GET.get("sent")
         to_date = self.request.GET.get('to_date')
         pk = self.kwargs.get("facility_id")
 
         referral = Referral.objects.none()
-
+        logger.info(
+            f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
+        )
         if received == "true":
             referral = Referral.objects.filter(
                 Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk)
@@ -87,6 +91,7 @@ class GetReferrals(generics.ListAPIView):
                 )
 
             if search_term:
+                print("hello")
                 return referral.filter(patient_name__icontains=search_term)
 
         if not Referral.DoesNotExist():
@@ -142,11 +147,11 @@ class CountObjects(generics.GenericAPIView):
     # serializer_class = CountObjectsSerializer
 
     def get(self, request, *args, **kwargs):
-        facility_id = self.kwargs.get('facility_id')
+        facility_id = self.kwargs.get("facility_id")
         today = now().date()
         yesterday = today - timedelta(days=1)
 
-        # Aggregate counts for today and yesterday in one query each
+        # Aggregate counts for today
         today_stats = Referral.objects.filter(
             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
             date_referred__date=today,
@@ -156,7 +161,9 @@ class CountObjects(generics.GenericAPIView):
             pending=Count("id", filter=Q(referral_status="Request Accepted")),
             rejected=Count("id", filter=Q(referral_status="Request Terminated")),
         )
+        
 
+        # Aggregate counts for yesterday
         yesterday_stats = Referral.objects.filter(
             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
             date_referred__date=yesterday,
@@ -166,33 +173,37 @@ class CountObjects(generics.GenericAPIView):
             pending=Count("id", filter=Q(referral_status="Request Accepted")),
             rejected=Count("id", filter=Q(referral_status="Request Terminated")),
         )
-        # print(Referral.objects.filter(Q(referring_facility=facility_id) | Q(to_laboratory=facility_id), date_referred__date=today))
-        # print(yesterday_stats)
+
         # Calculate percentage changes
         def percentage_change(today_count, yesterday_count):
             if yesterday_count == 0:
                 return 100 if today_count > 0 else 0
             return ((today_count - yesterday_count) / yesterday_count) * 100
 
-        change_received = percentage_change(today_stats['received'], yesterday_stats['received'])
-        change_processed = percentage_change(today_stats['processed'], yesterday_stats['processed'])
-        change_pending = percentage_change(today_stats['pending'], yesterday_stats['pending'])
-        change_rejected = percentage_change(today_stats['rejected'], yesterday_stats['rejected'])
+        change_received = percentage_change(
+            today_stats["received"], yesterday_stats["received"]
+        )
+        change_processed = percentage_change(
+            today_stats["processed"], yesterday_stats["processed"]
+        )
+        change_pending = percentage_change(
+            today_stats["pending"], yesterday_stats["pending"]
+        )
+        change_rejected = percentage_change(
+            today_stats["rejected"], yesterday_stats["rejected"]
+        )
 
         data = {
-            'samples_received': today_stats['received'],
-            'samples_processed': today_stats['processed'],
-            'samples_pending': today_stats['pending'],
-            'samples_rejected': today_stats['rejected'],
-            'change_received': change_received,
-            'change_processed': change_processed,
-            'change_pending': change_pending,
-            'change_rejected': change_rejected,
+            "samples_received": today_stats["received"],
+            "samples_processed": today_stats["processed"],
+            "samples_pending": today_stats["pending"],
+            "samples_rejected": today_stats["rejected"],
+            "change_received": change_received,
+            "change_processed": change_processed,
+            "change_pending": change_pending,
+            "change_rejected": change_rejected,
         }
-        # print(data)
-        # serializer = self.serializer_class(data=data)
-        # serializer.is_valid(raise_exception=True)
-        # print(serializer.data)
+
         return Response(data)
 
 

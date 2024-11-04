@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
-    # 'django_cryptography',
+    'analytics',
     'modelmixins',
     'django_dramatiq',
     'sample',
@@ -92,46 +92,56 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'labconnect.wsgi.application'
+ADMINS = [
+    ("Vermithor", "timothysaatumm@gmail.com"),
+]
 # Logging configuration
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'verbose': {
-#             'format': '{levelname} {asctime} {module} {message}',
-#             'style': '{',
-#         },
-#         'simple': {
-#             'format': '{levelname} {message}',
-#             'style': '{',
-#         },
-#     },
-#     'handlers': {
-#         'file': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'filename': os.path.join(BASE_DIR, 'app.log'),
-#             'formatter': 'verbose',
-#         },
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'simple',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['file', 'console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         'labs': {  # Replace with your app name
-#             'handlers': ['file', 'console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "app.log"),
+            "formatter": "verbose",
+        },
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        # "mail_admins": {
+        #     "class": "django.utils.log.AdminEmailHandler",
+        #     "level": "Error",
+        # },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file", "console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "django.request": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "labs": {  # Replace with your app name
+            "handlers": ["file", "console"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -157,8 +167,8 @@ CACHES = {
 
 
 # dramatiq
-REDIS_URL = "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
-# REDIS_URL = "redis://localhost:6379"
+# REDIS_URL = "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
+REDIS_URL = "redis://localhost:6379"
 pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
@@ -177,22 +187,6 @@ DRAMATIQ_BROKER = {
     ],
 }
 
-# Optional: configure the result backend
-# redis-cli -u redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681
-# DRAMATIQ_BROKER = {
-#     "BROKER": "dramatiq.brokers.redis.RedisBroker",
-#     "OPTIONS": {
-#         # "url": "redis://username:password@redis-server.com:6379/0"
-#         "url": "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
-#     },
-#     "MIDDLEWARE": [
-#         "dramatiq.middleware.AgeLimit",
-#         "dramatiq.middleware.TimeLimit",
-#         "dramatiq.middleware.Callbacks",
-#         "dramatiq.middleware.Pipelines",
-#         "dramatiq.middleware.Retries",
-#     ]
-# }
 
 DRAMATIQ_RESULT_BACKEND = {
     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
@@ -231,10 +225,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CORS_ALLOW_ALL_ORIGINS = True
 # White listing the localhost:3000 port
 # for React
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:5173',
-    # 'https://labconnect-eight.vercel.app'
-)
+CORS_ORIGIN_WHITELIST = ("http://localhost:5173", "https://labconnect-eight.vercel.app")
 CORS_ALLOW_CREDENTIALS = True
 
 
@@ -280,10 +271,10 @@ REST_FRAMEWORK = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": REDIS_URL,  # "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        },
     }
 }
 

@@ -44,6 +44,7 @@ class PermissionMixin(object):
 	it allows both the laboratory CEO and branch manager to edit the Branch details
 	"""
 	def has_permission_to_edit_branch(self, user, branch):
+
 		return (
 			user.is_authenticated and
 			(
@@ -72,8 +73,10 @@ class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
 	Inherits the custom permission class defined at the top of this model.
 	The sign in user is automatically assign as the CEO or General manager unless otherwise
 	"""
+
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = LaboratorySerializer
+
 	def post(self, request):
 		"""
 		Checks if the user has the appropriate permission
@@ -85,6 +88,7 @@ class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
 				status=status.HTTP_400_BAD_REQUEST
 			)
 		return self.create(request)
+
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
 
@@ -214,6 +218,7 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 	"""
 	def get_queryset(self):
 		return Branch.objects.filter(pk=self.kwargs.get('pk'))
+
 	def delete(self, request, pk, format=None):
 		"""
 		Checks the user roles and deletes the Branch.
@@ -232,6 +237,7 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 	It allows the user to add the test to multiple Branches at a go.
 	"""
 	serializer_class = TestSerializer
+
 	def post(self, request):
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
@@ -239,11 +245,11 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 				status=status.HTTP_400_BAD_REQUEST
 			)
 		return self.create(request)
+
 	def perform_create(self, serializer):
 		test = serializer.save()
-		#query_dict.update(self.request.data)
+		
 		branches = self.request.data.get('branch', [])
-		# branches = query_dict.getlist('branch')
 		test.branch.add(*branches)
 
 
@@ -253,15 +259,16 @@ class TestListView(generics.ListAPIView):
 	or its branch
 
 	It takes either the branch id or the Laboratory id"""
+
     serializer_class = TestSerializer
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_class = TestFilter
     pagination_class = QueryPagination
+
     # cache_timeout = 600
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context.update({'pk': self.kwargs.get('pk')})
         return context
+
     def list(self, request, *args, **kwargs):
         paginate = self.request.query_params.get('paginate', 'true').lower()
         # Disable pagination if ?paginate=false is in the query params
@@ -285,16 +292,16 @@ class TestListView(generics.ListAPIView):
         )
 
         if search_term:
-
             return tests.filter(name__icontains=search_term)
+
         if sample_type and test_status in ("active", "inactive", "Active", "Inactive"):
-            print("here")
+
             return tests.filter(
                 test_status__icontains=test_status, sample_type=sample_type
             )
 
         if test_status in ("active", "inactive", "Active", "Inactive"):
-            print("hello")
+
             return tests.filter(test_status__icontains=test_status)
 
         return tests
@@ -341,18 +348,22 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 	"""
 	def get_queryset(self):
 		return Test.objects.filter(pk=self.kwargs.get('pk'))
+
 	def delete(self, request, pk, format=None):
+
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
+
 		return self.destroy(request, pk, format=None)
 
 
 
 class AllLaboratories(generics.ListAPIView):
 	serializer_class = FacilitySerializer
+
 	def get_queryset(self):
         # Get the level from the request query parameters
 		facility_level = self.request.GET.get('facility_level')
@@ -363,12 +374,14 @@ class AllLaboratories(generics.ListAPIView):
             # Generate the levels to include (levels >= the current one)
 			valid_levels = [level for level, value in LEVEL_ORDER.items() if value >= level_value]
             # Build the query
+
 			return Facility.objects.filter(
                 Q(hospitallab__isnull=False) | Q(branch__isnull=False)
             ).filter(
                 Q(hospitallab__level__in=valid_levels) | 
                 Q(branch__level__in=valid_levels)
-            ).select_related('branch', 'hospitallab')#.order_by('?')
+            ).select_related('branch', 'hospitallab')
+
         # Return an all labs queryset if no valid level is provided
 		return Facility.objects.filter(
 			Q(hospitallab__isnull=False) | Q(branch__isnull=False)
@@ -377,7 +390,9 @@ class AllLaboratories(generics.ListAPIView):
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):
 	serializer_class = SampleTypeSerializer
+
 	def post(self, request):
+		#Checks if the use has the required permission
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
 				{'error': 'Invalid credentials'}, 
@@ -388,14 +403,19 @@ class SampleTypeView(PermissionMixin, generics.CreateAPIView):
 
 class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = SampleTypeSerializer
+
 	def get_queryset(self):
+
 		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
+
 	def patch(self, request, pk):
+
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_401_UNAUTHORIZED
 			)
+
 		return self.partial_update(request, pk)
 
 
@@ -406,6 +426,7 @@ class SampleTypeDeleteView(PermissionMixin, generics.DestroyAPIView):
 	'''
 	def get_queryset(self):
 		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
+
 	def delete(self, request, pk, format=None):
 		return super().delete(request, pk, format=None)
 
@@ -428,38 +449,51 @@ class GetTestSampleType(generics.ListAPIView):
 
 class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = BranchTestSerializer
+
 	def get_object(self):
+
 		queryset = BranchTest.objects.all()
 		test_id = self.kwargs.get('test_id')
 		branch_id = self.kwargs.get('branch_id')
 		obj = generics.get_object_or_404(queryset, test_id=test_id, branch_id=branch_id)
+
 		return obj
+	
 	def patch(self, request, *args, **kwargs):
+
 		partial = kwargs.pop('partial', False)
 		instance = self.get_object()
 		serializer = self.get_serializer(instance, data=request.data, partial=partial)
 		serializer.is_valid(raise_exception=True)
 		self.perform_update(serializer)
+
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CopyTests(generics.CreateAPIView):
+
     def post(self, request, *args, **kwargs):
+
         test_ids = self.request.data.getlist('test_ids', [])
         target_branch_id = self.kwargs.get('branch_to_copy_to_id')
 
         if not test_ids or not target_branch_id:
+
             return Response({'error': 'Test IDs and target branch ID are required'}, 
                             status=status.HTTP_400_BAD_REQUEST)
 
         test_ids = [ensure_uuid(test_id) for test_id in test_ids]
         target_branch_id = ensure_uuid(target_branch_id)
+
         # Remove any None values (invalid UUIDs)
         test_ids = [test_id for test_id in test_ids if test_id is not None]
+
         if not test_ids or target_branch_id is None:
             return Response({'error': 'Invalid UUID format'}, status=status.HTTP_400_BAD_REQUEST)
+
         # Call the Dramatiq task
         task = copy_test_to_branch.send(test_ids, target_branch_id)
+
         return Response({
             'message': f'Copying test to {target_branch_id}',
             'task_id': task.message_id
