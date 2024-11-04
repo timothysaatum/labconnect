@@ -9,7 +9,6 @@ from django.utils.timezone import now, timedelta # type: ignore
 from .paginators import QueryPagination
 import logging
 from datetime import timedelta
-from django.db import connection
 
 
 logger = logging.getLogger('labs')
@@ -71,18 +70,29 @@ class GetReferrals(generics.ListAPIView):
         logger.info(
             f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
         )
+        statuses = (
+            "Request Accepted",
+            "Sample Received by Delivery",
+            "Sample Received by Lab",
+        )
         if received == "true":
             referral = Referral.objects.filter(
-                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk)
+                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk), #referral_status__in=statuses
             ).order_by("-date_referred")
+            print(referral)
 
         if sent == "true":
             referral = Referral.objects.filter(
-                Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk)
+                Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk), #referral_status__in=statuses
             ).order_by("-date_referred")
+            print(referral)
 
         if referral.exists():
+
             if status:
+                if status == "All":
+                    return referral
+                # print(referral.filter(referral_status__icontains=status))
                 return referral.filter(referral_status__icontains=status)
 
             if from_date and to_date:
@@ -91,7 +101,7 @@ class GetReferrals(generics.ListAPIView):
                 )
 
             if search_term:
-                print("hello")
+
                 return referral.filter(patient_name__icontains=search_term)
 
         if not Referral.DoesNotExist():

@@ -209,7 +209,7 @@ class ReferralSerializer(serializers.ModelSerializer):
                     )
 
                     # Now update the sample tests for the sample
-                    if sample_data["sample_tests"]:
+                    if sample_data["sample_tests"] is not None:
                         for sample_test_data in sample_data["sample_tests"]:
                             SampleTest.objects.update_or_create(
                                 sample=sample,  # Always associate with the current sample
@@ -218,11 +218,8 @@ class ReferralSerializer(serializers.ModelSerializer):
                                 ),  # Use test ID to match
                                 defaults={
                                     "result": sample_test_data.get("result"),
-                                    "status": sample_test_data.get("status"),
-                                    "sample_tests": sample_test_data.get(
-                                        "sample_tests"
-                                    ),
-                                    "sample_type": sample_test_data.get("sample_type"),
+                                    "status": "Completed",
+                                    "date_completed": timezone.now(),
                                 },
                             )
 
