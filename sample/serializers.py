@@ -92,7 +92,7 @@ class SampleSerializer(serializers.ModelSerializer):
         sample_tests_data = validated_data.pop("sample_tests", None)
 
         for attr, value in validated_data.items():
-
+            
             setattr(instance, attr, value)
 
         instance.save()
@@ -292,28 +292,3 @@ class SampleTrackingSerializer(serializers.ModelSerializer):
         return data
 
 
-class CountObjectsSerializer(serializers.Serializer):
-
-	pending = serializers.IntegerField(read_only=True)
-	received = serializers.IntegerField(read_only=True)
-	rejected = serializers.IntegerField(read_only=True)
-	processed = serializers.IntegerField(read_only=True)
-	# growth = serializers.BooleanField(default=False)
-	change_received = serializers.FloatField(read_only=True)
-	change_processed = serializers.FloatField(read_only=True)
-	change_pending = serializers.FloatField(read_only=True)
-	change_rejected = serializers.FloatField(read_only=True)
-
-	class Meta:
-
-		fields = (
-			'pending',
-			'received',
-			'rejected',
-			'processed',
-			# 'growth',
-			'change_received',
-			'change_processed',
-			'change_pending',
-			'change_rejected'
-		)

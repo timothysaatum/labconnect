@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import urllib.parse
 import os
 from cryptography.fernet import Fernet
 from datetime import timedelta
@@ -95,6 +96,9 @@ WSGI_APPLICATION = 'labconnect.wsgi.application'
 ADMINS = [
     ("Vermithor", "timothysaatumm@gmail.com"),
 ]
+PAYSTACK_SECRET = config("PAYSTACK_SECRET_KEY")
+
+PAYSTACK_BASE_URL = "https://api.paystack.co"
 # Logging configuration
 LOGGING = {
     "version": 1,
@@ -165,10 +169,12 @@ CACHES = {
     }
 }
 
-
+encoded_password = urllib.parse.quote("=s_%wIe&l>d,\\3R}zbPlu*:VI[oEoMlz")
 # dramatiq
-# REDIS_URL = "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
-REDIS_URL = "redis://localhost:6379"
+# "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
+REDIS_URL = "redis://:UZhW0sImKKnn9EarRlwTReq9NXGVE65O@master.hermis.hz87gz.eun1.cache.amazonaws.com:6379"
+
+# REDIS_URL = "redis://localhost:6379"
 pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
@@ -236,7 +242,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_USER')
-EMAIL_HOST_PASSWORD = 'kscnzqcdtpmewpxz'
+EMAIL_HOST_PASSWORD = "kscnzqcdtpmewpxz"
+# "rsrquigyfrosjglo"  # "mvwywvxilyjylwzu"  #
+# rsrquigyfrosjglo
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 # ClientID = '1002265369673-b1i1p7c5kv7l9kejfmv1ej097cvk834n.apps.googleusercontent.com'

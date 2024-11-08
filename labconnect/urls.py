@@ -21,16 +21,15 @@ from django.conf.urls.static import static # type: ignore
 
 
 urlpatterns = [
-
-    path('admin/', admin.site.urls),
-    path('api/delivery/', include('delivery.urls')),
-    path('api/hospital/', include('hospital.urls')),
-    path('api/user/', include('user.urls')),
-    path('api/laboratory/', include('labs.urls')),
-    path('api/sample/', include('sample.urls')),
-    path('api/transactions/', include('transactions.urls')),
-    path('api/utils/', include('modelmixins.urls')),
-
+    path("admin/", admin.site.urls),
+    path("api/delivery/", include("delivery.urls")),
+    path("api/hospital/", include("hospital.urls")),
+    path("api/user/", include("user.urls")),
+    path("api/laboratory/", include("labs.urls")),
+    path("api/sample/", include("sample.urls")),
+    path("api/transactions/", include("transactions.urls")),
+    path("api/utils/", include("modelmixins.urls")),
+    path("api/analytics/", include("analytics.urls")),
 ]
 
 
