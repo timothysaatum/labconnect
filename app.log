@@ -1192,3 +1192,76 @@ INFO 2024-11-04 03:27:04,276 basehttp "GET /api/sample/get-sample-counts-for-fac
 INFO 2024-11-04 03:27:07,522 basehttp "GET /api/sample/get-referrals/bfe9199b-3eb6-40ad-bb90-e7f92a6d67f4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 6720
 INFO 2024-11-04 03:27:19,629 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
 INFO 2024-11-04 03:28:02,285 autoreload Watching for file changes with StatReloader
+INFO 2024-11-08 18:55:13,581 autoreload Watching for file changes with StatReloader
+INFO 2024-11-08 18:55:19,930 basehttp "OPTIONS /api/user/login/ HTTP/1.1" 200 0
+INFO 2024-11-08 18:55:22,483 views Logged in Conficius Adda
+INFO 2024-11-08 18:55:22,486 basehttp "POST /api/user/login/ HTTP/1.1" 200 1970
+INFO 2024-11-08 18:55:22,794 basehttp "OPTIONS /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 0
+INFO 2024-11-08 18:55:22,794 basehttp "OPTIONS /api/sample/get-sample-counts-for-facility/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 0
+INFO 2024-11-08 18:55:22,809 basehttp "OPTIONS /api/sample/get-referrals/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 0
+INFO 2024-11-08 18:55:22,860 basehttp "GET /api/sample/get-sample-counts-for-facility/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 165
+INFO 2024-11-08 18:55:22,894 views User: 2 attempted<> search on referrals<3b632de4-32d9-417d-a6d4-71a88b80ae2f>
+INFO 2024-11-08 18:55:23,018 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 18:55:23,278 basehttp "GET /api/sample/get-referrals/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 6614
+INFO 2024-11-08 18:55:29,004 basehttp "OPTIONS /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 0
+INFO 2024-11-08 18:55:29,070 basehttp "GET /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 1111
+INFO 2024-11-08 18:57:47,812 views Conficius Adda verified successfully
+INFO 2024-11-08 18:57:47,812 views Conficius Adda token check sucessful
+INFO 2024-11-08 18:57:47,867 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 18:57:47,884 views Conficius Adda verified successfully
+INFO 2024-11-08 18:57:47,890 views Conficius Adda token check sucessful
+INFO 2024-11-08 18:57:47,966 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 18:57:48,671 basehttp "GET /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 1111
+INFO 2024-11-08 18:57:48,723 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 19:00:45,657 views Conficius Adda verified successfully
+INFO 2024-11-08 19:00:45,660 views Conficius Adda token check sucessful
+INFO 2024-11-08 19:00:45,714 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 19:00:45,756 views Conficius Adda verified successfully
+INFO 2024-11-08 19:00:45,763 views Conficius Adda token check sucessful
+INFO 2024-11-08 19:00:45,807 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 19:00:46,881 basehttp "GET /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 1111
+INFO 2024-11-08 19:00:46,904 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 19:01:06,147 views Conficius Adda verified successfully
+INFO 2024-11-08 19:01:06,153 views Conficius Adda token check sucessful
+INFO 2024-11-08 19:01:06,209 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 19:01:06,224 views Conficius Adda verified successfully
+INFO 2024-11-08 19:01:06,225 views Conficius Adda token check sucessful
+INFO 2024-11-08 19:01:06,328 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 19:01:07,437 basehttp "GET /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 1111
+INFO 2024-11-08 19:01:07,518 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 19:05:40,599 views Conficius Adda verified successfully
+INFO 2024-11-08 19:05:40,600 views Conficius Adda token check sucessful
+INFO 2024-11-08 19:05:40,670 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 19:05:40,685 views Conficius Adda verified successfully
+INFO 2024-11-08 19:05:40,687 views Conficius Adda token check sucessful
+INFO 2024-11-08 19:05:40,729 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1970
+INFO 2024-11-08 19:05:41,539 basehttp "GET /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 1111
+INFO 2024-11-08 19:05:41,633 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 19:05:44,799 basehttp "OPTIONS /api/paystack/initialize HTTP/1.1" 200 0
+WARNING 2024-11-08 19:05:44,983 basehttp "POST /api/paystack/initialize HTTP/1.1" 404 3507
+INFO 2024-11-08 19:10:44,993 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 19:10:48,149 basehttp "OPTIONS /api/paystack/initialize/ HTTP/1.1" 200 0
+WARNING 2024-11-08 19:10:48,178 basehttp "POST /api/paystack/initialize/ HTTP/1.1" 404 3510
+INFO 2024-11-08 19:15:49,641 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 19:16:31,354 basehttp "OPTIONS /tansactions/pay/initialize/ HTTP/1.1" 200 0
+WARNING 2024-11-08 19:16:31,401 basehttp "POST /tansactions/pay/initialize/ HTTP/1.1" 404 3519
+INFO 2024-11-08 19:16:53,603 basehttp "OPTIONS /api/tansactions/pay/initialize/ HTTP/1.1" 200 0
+WARNING 2024-11-08 19:16:53,674 basehttp "POST /api/tansactions/pay/initialize/ HTTP/1.1" 404 3531
+INFO 2024-11-08 19:18:48,403 basehttp "GET /api/sample/get-sample-counts-for-facility/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 165
+INFO 2024-11-08 19:18:48,421 views User: 2 attempted<> search on referrals<3b632de4-32d9-417d-a6d4-71a88b80ae2f>
+INFO 2024-11-08 19:18:48,798 basehttp "GET /api/sample/get-referrals/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?status=Pending&search=&page_size=5&sent=true HTTP/1.1" 200 6614
+INFO 2024-11-08 19:18:56,849 basehttp "OPTIONS /api/sample/get-referrals/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-08 19:18:56,889 views User: 2 attempted<> search on referrals<3b632de4-32d9-417d-a6d4-71a88b80ae2f>
+INFO 2024-11-08 19:18:57,069 basehttp "GET /api/sample/get-referrals/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 6613
+INFO 2024-11-08 19:20:49,744 basehttp "GET /api/sample/notifications/3b632de4-32d9-417d-a6d4-71a88b80ae2f/ HTTP/1.1" 200 2356
+INFO 2024-11-08 19:21:48,854 basehttp "OPTIONS /api/sample/update-sample/12/ HTTP/1.1" 200 0
+INFO 2024-11-08 19:21:49,049 basehttp "PATCH /api/sample/update-sample/12/ HTTP/1.1" 200 498
+INFO 2024-11-08 19:21:49,094 views User: 2 attempted<> search on referrals<3b632de4-32d9-417d-a6d4-71a88b80ae2f>
+INFO 2024-11-08 19:21:49,488 basehttp "GET /api/sample/get-referrals/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 6631
+INFO 2024-11-08 19:22:17,323 basehttp "OPTIONS /api/sample/update-sample/15/ HTTP/1.1" 200 0
+INFO 2024-11-08 19:22:17,379 basehttp "PATCH /api/sample/update-sample/15/ HTTP/1.1" 200 479
+INFO 2024-11-08 19:22:17,402 views User: 2 attempted<> search on referrals<3b632de4-32d9-417d-a6d4-71a88b80ae2f>
+INFO 2024-11-08 19:22:17,534 basehttp "GET /api/sample/get-referrals/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 6632
+INFO 2024-11-08 19:22:36,792 basehttp "PATCH /api/sample/update-sample/15/ HTTP/1.1" 200 683
+INFO 2024-11-08 19:22:45,227 basehttp "OPTIONS /api/laboratory/test/list/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 0
+INFO 2024-11-08 19:22:45,283 basehttp "GET /api/laboratory/test/list/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 586
