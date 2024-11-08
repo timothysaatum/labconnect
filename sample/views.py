@@ -70,20 +70,16 @@ class GetReferrals(generics.ListAPIView):
         logger.info(
             f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
         )
-        statuses = (
-            "Request Accepted",
-            "Sample Received by Delivery",
-            "Sample Received by Lab",
-        )
+
         if received == "true":
             referral = Referral.objects.filter(
-                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk), #referral_status__in=statuses
+                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
             ).order_by("-date_referred")
             
 
         if sent == "true":
             referral = Referral.objects.filter(
-                Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk), #referral_status__in=statuses
+                Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk),
             ).order_by("-date_referred")
             
 
@@ -138,6 +134,7 @@ class UpdateNotification(generics.UpdateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
+
         self.perform_update(serializer)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -153,12 +150,11 @@ class GetNotifications(generics.ListAPIView):
 
 
 class CountObjects(generics.GenericAPIView):
-    # serializer_class = CountObjectsSerializer
 
     def get(self, request, *args, **kwargs):
         facility_id = self.kwargs.get("facility_id")
         today = now().date()
-        yesterday = today - timedelta(days=1)
+        last_month = today - timedelta(days=30)
 
         # Aggregate counts for today
         today_stats = Referral.objects.filter(
@@ -170,12 +166,11 @@ class CountObjects(generics.GenericAPIView):
             pending=Count("id", filter=Q(referral_status="Request Accepted")),
             rejected=Count("id", filter=Q(referral_status="Request Terminated")),
         )
-        
 
-        # Aggregate counts for yesterday
-        yesterday_stats = Referral.objects.filter(
+        # Aggregate counts for last month
+        last_month_stats = Referral.objects.filter(
             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
-            date_referred__date=yesterday,
+            date_referred__date=last_month,
         ).aggregate(
             received=Count("id", filter=Q(referral_status="Request Completed")),
             processed=Count("id", filter=Q(referral_status="Sample Received by Lab")),
@@ -184,22 +179,22 @@ class CountObjects(generics.GenericAPIView):
         )
 
         # Calculate percentage changes
-        def percentage_change(today_count, yesterday_count):
-            if yesterday_count == 0:
+        def percentage_change(today_count, last_month_count):
+            if last_month_count == 0:
                 return 100 if today_count > 0 else 0
-            return ((today_count - yesterday_count) / yesterday_count) * 100
+            return ((today_count - last_month_count) / last_month_count) * 100
 
         change_received = percentage_change(
-            today_stats["received"], yesterday_stats["received"]
+            today_stats["received"], last_month_stats["received"]
         )
         change_processed = percentage_change(
-            today_stats["processed"], yesterday_stats["processed"]
+            today_stats["processed"], last_month_stats["processed"]
         )
         change_pending = percentage_change(
-            today_stats["pending"], yesterday_stats["pending"]
+            today_stats["pending"], last_month_stats["pending"]
         )
         change_rejected = percentage_change(
-            today_stats["rejected"], yesterday_stats["rejected"]
+            today_stats["rejected"], last_month_stats["rejected"]
         )
 
         data = {

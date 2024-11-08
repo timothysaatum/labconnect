@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 user_account = get_user_model()
 
 
-
 class Plan(models.Model):
 
 	name = models.CharField(max_length=100, default='Free Plan')
@@ -14,7 +13,6 @@ class Plan(models.Model):
 
 	def __str__(self):
 		return self.name
-
 
 
 class Subscription(models.Model):
@@ -42,7 +40,6 @@ class Subscription(models.Model):
 		self.price = self.plan.price
 
 		super().save(*args, **kwargs)
-
 
 
 class Incentive(models.Model):
@@ -84,38 +81,29 @@ PAYMENT_MODE = [
 	('Insurance','Insurance')
 ]
 
-PAYMENT_STATUS = [
-	('Paid', 'Paid'),
-	('Pending', 'Pending')
-]
+PAYMENT_STATUS = [("Completed", "Completed"), ("Pending", "Pending")]
 class Transaction(models.Model):
-
-	client = models.ForeignKey(user_account, on_delete=models.SET_NULL, blank=True ,null=True, db_index=True)
+	client = models.ForeignKey(
+        user_account, on_delete=models.SET_NULL, blank=True, null=True, db_index=True
+    )
 	amount = models.DecimalField(max_digits=10, decimal_places=2)
-	account_number = models.CharField(max_length=100)
-	account_name = models.CharField(max_length=100)
-	bank = models.CharField(max_length=200)
+	email = models.EmailField()
 	payment_mode = models.CharField(choices=PAYMENT_MODE, max_length=50)
 	service_paid = models.CharField(max_length=100)
-	payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE)
 	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
+	reference = models.CharField(max_length=155, unique=True)
 	date_paid = models.DateTimeField(auto_now=True)
-
-
+	
 	class Meta:
 		db_table = 'Payments'
-
-
+		
+	def __str__(self):
+		return f'{str(self.client)} - {self.amount}'
+	
 	@property
 	def account_type(self):
 		return self.client.account_type
-
-
-	@property
-	def email(self):
-		return self.client.email
-
-
+	
 	@property
 	def tel(self):
 		return self.client.phone_number

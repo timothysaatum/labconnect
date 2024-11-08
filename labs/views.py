@@ -248,7 +248,7 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 
 	def perform_create(self, serializer):
 		test = serializer.save()
-		
+
 		branches = self.request.data.get('branch', [])
 		test.branch.add(*branches)
 
@@ -256,7 +256,7 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
 class TestListView(generics.ListAPIView):
     """
 	Api endpoint that allows the client to fetch tests for a particular laboratory
-	or its branch
+	or its branch.
 
 	It takes either the branch id or the Laboratory id"""
 

@@ -4,11 +4,11 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import filters
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+# from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Hospital, HospitalLab, HospitalLabTest
 from sample.models import Sample
-import json
-from django.http import QueryDict
+# import json
+# from django.http import QueryDict
 from modelmixins.paginators import QueryPagination
 
 

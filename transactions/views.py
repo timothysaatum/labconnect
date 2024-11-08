@@ -1,12 +1,16 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+import uuid
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from .serializers import SubscriptionSerializer, TransactionSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .models import Subscription
-from .process_payment import ProcessPayments
-#import json
+from .models import Subscription, Transaction
+from .process_payment import Paystack
+from django.db import IntegrityError
+from decimal import Decimal
+
+import json
 
 
 class SubscriptionCreationView(CreateAPIView):
@@ -49,33 +53,74 @@ class UpdateSubscriptionView(UpdateAPIView):
 
 
 class ProcessPaymentView(CreateAPIView):
-
-	permission_classes = [IsAuthenticated]
 	serializer_class = TransactionSerializer
-
 	def post(self, request):
 
 		serializer = self.serializer_class(data=request.data)
 		if serializer.is_valid(raise_exception=True):
+			
+			data = {
+                "client_id": 1,
+                "amount": Decimal(serializer.data["amount"]),
+                "email": serializer.data["email"],
+                "payment_mode": "Online",
+                "service_paid": "Referral of Sample",
+                "payment_status": "Pending",
+                "reference": str(uuid.uuid4()),
+            }
+			for _ in range(5):
+				try:
+					transaction = Transaction.objects.create(**data)
+				except IntegrityError:
+                	# Retry if UUID collision occurs (extremely rare)
+					continue
+				try:
+					pay = Paystack()
 
-			if serializer.data['payment_mode'] == 'Bank':
-				return Response({'data': 'bank'}, status=status.HTTP_200_OK)
+					response = pay.initialize_payment(
+                    transaction.email,
+                    transaction.amount,
+                    "https://labconnect.apis.call_url",
+                )
+					print(response.json())
 
-			try:
-				pay = ProcessPayments(50000, 'timothysaatum@gmail.com')
-				res = pay.initialize_transaction()
-				print(res)
+					return Response(response.json(), status=status.HTTP_201_CREATED)
 
-				return Response({'response': 'response'}, status=status.HTTP_200_OK)
+            # if response['status']:
+            # 	return Response(response, status=status.HTTP_200_OK)
+            # else:
+            # 	return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-			except ConnectionError:
-				return Response({'error': 'Connection lost'}, status=status.HTTP_400_BAD_REQUEST)
+				except Exception as e:
+					print(e)
+					return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-			except AssertionError:
-				return Response({'error': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
-			except AttributeError:
-				return Response({'error': 'Object not defined'}, status=status.HTTP_404_NOT_FOUND)
+class VerifyPaymentView(APIView):
+    def post(self, request, *args, **kwargs):
+        # Retrieve the reference from the request data
+        reference = self.kwargs.get("reference")
+        if not reference:
+            return Response(
+                {"error": "Reference is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
-			except TypeError:
-				return Response({'error': 'Object is not json serializeable'}, status=status.HTTP_400_BAD_REQUEST)
+        paystack = Paystack()
+        response = paystack.verify_payment(reference).json()
+        # print(response.json())
+        if response["status"]:
+            # If verification is successful, update payment status in the database
+            try:
+                payment = Transaction.objects.get(reference=reference)
+                payment.status = (
+                    "Completed" if response["data"]["status"] == "success" else "Pending"
+                )
+                payment.save()
+            except Transaction.DoesNotExist:
+                return Response(
+                    {"error": "Payment not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)

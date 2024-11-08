@@ -17,8 +17,7 @@ class IncentiveAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
-	list_display = ('client', 'amount', 'account_number', 'account_name', 'bank', 
-		'payment_mode', 'service_paid', 'account_type', 'email', 'tel', 'date_paid')
+	list_display = ('client', 'amount', 'payment_mode', 'service_paid', 'account_type', 'email', 'tel', 'date_paid')
 
 
 admin.site.register(Plan, PlanAdmin)
