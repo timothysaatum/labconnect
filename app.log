@@ -1265,3 +1265,5 @@ INFO 2024-11-08 19:22:17,534 basehttp "GET /api/sample/get-referrals/3b632de4-32
 INFO 2024-11-08 19:22:36,792 basehttp "PATCH /api/sample/update-sample/15/ HTTP/1.1" 200 683
 INFO 2024-11-08 19:22:45,227 basehttp "OPTIONS /api/laboratory/test/list/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 0
 INFO 2024-11-08 19:22:45,283 basehttp "GET /api/laboratory/test/list/3b632de4-32d9-417d-a6d4-71a88b80ae2f/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 586
+INFO 2024-11-08 19:24:22,717 autoreload C:\Users\DELL\Desktop\projects\labconnect\labs\views.py changed, reloading.
+INFO 2024-11-08 19:24:30,700 autoreload Watching for file changes with StatReloader
