@@ -33,9 +33,10 @@ class TransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = (
             "client",
+            "referral",
             "amount",
             "payment_mode",
             "email",
-            "service_paid",
-            "date_paid",
+            "date_created",
+            "updated_at",
         )

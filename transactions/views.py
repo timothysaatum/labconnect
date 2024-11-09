@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 import uuid
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView
 from .serializers import SubscriptionSerializer, TransactionSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -61,10 +61,10 @@ class ProcessPaymentView(CreateAPIView):
 
             data = {
                 "client_id": 1,
+                'referral_id': serializer.data["referral"],
                 "amount": Decimal(serializer.data["amount"]),
                 "email": serializer.data["email"],
                 "payment_mode": "Online",
-                "service_paid": "Referral of Sample",
                 "payment_status": "Pending",
                 "reference": str(uuid.uuid4()),
             }
@@ -83,18 +83,14 @@ class ProcessPaymentView(CreateAPIView):
                         "https://labconnect.apis.call_url",
                         transaction.reference,
                     )
-                    print(response.json())
 
                     return Response(response.json(), status=status.HTTP_201_CREATED)
 
-                    # if response['status']:
-                    # 	return Response(response, status=status.HTTP_200_OK)
-                    # else:
-                    # 	return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
                 except Exception as e:
-                    print(e)
+
                     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyPaymentView(APIView):
@@ -108,20 +104,23 @@ class VerifyPaymentView(APIView):
 
         paystack = Paystack()
         response = paystack.verify_payment(reference).json()
-        print(response)
+
         if response["status"]:
-            # If verification is successful, update payment status in the database
+            # If verification is successful, update transaction status in the database
             try:
-                payment = Transaction.objects.get(reference=reference)
-                payment.status = (
-                    "Completed" if response["data"]["status"] == "success" else "Pending"
+                transaction = Transaction.objects.get(reference=reference)
+                transaction.status = (
+                    "Completed"
+                    if response["data"]["status"] == "success"
+                    else "Pending"
                 )
-                payment.save()
+                transaction.is_verified = True
+                transaction.save()
             except Transaction.DoesNotExist:
                 return Response(
-                    {"error": "Payment not found"}, status=status.HTTP_404_NOT_FOUND
+                    {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND
                 )
 
-            return Response(response, status=status.HTTP_200_OK)
+            return Response({'status': response['status'], 'message': response['message']}, status=status.HTTP_200_OK)
         else:
             return Response(response, status=status.HTTP_400_BAD_REQUEST)

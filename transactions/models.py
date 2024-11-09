@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from sample.models import Referral
 user_account = get_user_model()
 
 
@@ -86,19 +87,21 @@ class Transaction(models.Model):
 	client = models.ForeignKey(
         user_account, on_delete=models.SET_NULL, blank=True, null=True, db_index=True
     )
+	referral = models.ForeignKey(Referral, on_delete=models.CASCADE)
 	amount = models.DecimalField(max_digits=10, decimal_places=2)
 	email = models.EmailField()
 	payment_mode = models.CharField(choices=PAYMENT_MODE, max_length=50)
-	service_paid = models.CharField(max_length=100)
 	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
+	is_verified = models.BooleanField(default=False)
 	reference = models.CharField(max_length=155, unique=True)
-	date_paid = models.DateTimeField(auto_now=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	date_created = models.DateTimeField(auto_now_add=True)
 	
 	class Meta:
-		db_table = 'Payments'
+		db_table = "Payments"
 		
 	def __str__(self):
-		return f'{str(self.client)} - {self.amount}'
+		return f"{str(self.client)} - {self.amount}"
 	
 	@property
 	def account_type(self):
