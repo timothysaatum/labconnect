@@ -53,13 +53,13 @@ class UpdateSubscriptionView(UpdateAPIView):
 
 
 class ProcessPaymentView(CreateAPIView):
-	serializer_class = TransactionSerializer
-	def post(self, request):
+    serializer_class = TransactionSerializer
+    def post(self, request):
 
-		serializer = self.serializer_class(data=request.data)
-		if serializer.is_valid(raise_exception=True):
-			
-			data = {
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+
+            data = {
                 "client_id": 1,
                 "amount": Decimal(serializer.data["amount"]),
                 "email": serializer.data["email"],
@@ -68,32 +68,33 @@ class ProcessPaymentView(CreateAPIView):
                 "payment_status": "Pending",
                 "reference": str(uuid.uuid4()),
             }
-			for _ in range(5):
-				try:
-					transaction = Transaction.objects.create(**data)
-				except IntegrityError:
-                	# Retry if UUID collision occurs (extremely rare)
-					continue
-				try:
-					pay = Paystack()
+            for _ in range(5):
+                try:
+                    transaction = Transaction.objects.create(**data)
+                except IntegrityError:
+                    # Retry if UUID collision occurs (extremely rare)
+                    continue
+                try:
+                    pay = Paystack()
 
-					response = pay.initialize_payment(
-                    transaction.email,
-                    transaction.amount,
-                    "https://labconnect.apis.call_url",
-                )
-					print(response.json())
+                    response = pay.initialize_payment(
+                        transaction.email,
+                        transaction.amount,
+                        "https://labconnect.apis.call_url",
+                        transaction.reference,
+                    )
+                    print(response.json())
 
-					return Response(response.json(), status=status.HTTP_201_CREATED)
+                    return Response(response.json(), status=status.HTTP_201_CREATED)
 
-            # if response['status']:
-            # 	return Response(response, status=status.HTTP_200_OK)
-            # else:
-            # 	return Response(response, status=status.HTTP_400_BAD_REQUEST)
+                    # if response['status']:
+                    # 	return Response(response, status=status.HTTP_200_OK)
+                    # else:
+                    # 	return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-				except Exception as e:
-					print(e)
-					return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                except Exception as e:
+                    print(e)
+                    return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyPaymentView(APIView):
@@ -107,7 +108,7 @@ class VerifyPaymentView(APIView):
 
         paystack = Paystack()
         response = paystack.verify_payment(reference).json()
-        # print(response.json())
+        print(response)
         if response["status"]:
             # If verification is successful, update payment status in the database
             try:

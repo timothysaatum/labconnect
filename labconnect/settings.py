@@ -172,9 +172,9 @@ CACHES = {
 encoded_password = urllib.parse.quote("=s_%wIe&l>d,\\3R}zbPlu*:VI[oEoMlz")
 # dramatiq
 # "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
-REDIS_URL = "redis://:UZhW0sImKKnn9EarRlwTReq9NXGVE65O@master.hermis.hz87gz.eun1.cache.amazonaws.com:6379"
+# REDIS_URL = "redis://:UZhW0sImKKnn9EarRlwTReq9NXGVE65O@master.hermis.hz87gz.eun1.cache.amazonaws.com:6379"
 
-# REDIS_URL = "redis://localhost:6379"
+REDIS_URL = "redis://localhost:6379"
 pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
