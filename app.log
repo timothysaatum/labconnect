@@ -5442,3 +5442,5 @@ INFO 2024-11-09 07:19:34,524 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\l
 INFO 2024-11-09 07:19:39,852 autoreload Watching for file changes with StatReloader
 INFO 2024-11-09 07:20:05,647 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\analytics\urls.py changed, reloading.
 INFO 2024-11-09 07:20:10,859 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 07:22:20,513 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\analytics\urls.py changed, reloading.
+INFO 2024-11-09 07:22:26,976 autoreload Watching for file changes with StatReloader
