@@ -627,3 +627,4 @@ INFO 2024-11-12 08:49:32,481 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\l
 INFO 2024-11-12 08:49:41,653 autoreload Watching for file changes with StatReloader
 INFO 2024-11-12 08:50:40,490 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
 INFO 2024-11-12 08:50:46,723 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:51:03,732 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 200 1058
