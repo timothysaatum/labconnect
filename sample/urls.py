@@ -9,6 +9,7 @@ from .views import (
     UpdateReferral,
     GetReferrals,
     UpdateSample,
+    ReferralDetailsView
 )
 
 app_name = 'sample'
@@ -31,7 +32,7 @@ urlpatterns = [
         name="counts",
     ),
     path(
-        "get-tracker-details/<int:sample_id>/",
+        "get-tracker-details/<uuid:referral_id>/",
         GetTrackerDetails.as_view(),
         name="tracker-details",
     ),
@@ -45,8 +46,13 @@ urlpatterns = [
         "get-referrals/<uuid:facility_id>/", GetReferrals.as_view(), name="get-referral"
     ),
     path(
+        "referral-details/<uuid:referral_id>/",
+        ReferralDetailsView.as_view(),
+        name="referral-details",
+    ),
+    path(
         "update-sample/<int:sample_id>/",
         UpdateSample.as_view(),
         name="update-sample",
-    )
+    ),
 ]

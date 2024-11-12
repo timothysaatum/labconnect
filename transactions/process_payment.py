@@ -7,7 +7,7 @@ class Paystack:
     BASE_URL = settings.PAYSTACK_BASE_URL
 
     @staticmethod
-    def initialize_payment(email, amount, callback_url, reference):
+    def initialize_payment(email, amount, callback_url, reference, channels):
         headers = {
             "Authorization": f"Bearer {Paystack.SECRET_KEY}",
             "Content-Type": "application/json",
@@ -19,6 +19,7 @@ class Paystack:
             ),  # Paystack expects amount in kobo (smallest currency unit)
             "callback_url": callback_url,
             "reference": reference,
+            "channels": channels
         }
 
         url = f"{Paystack.BASE_URL}/transaction/initialize"

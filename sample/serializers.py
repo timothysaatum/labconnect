@@ -130,6 +130,7 @@ class ReferralSerializer(serializers.ModelSerializer):
     to_laboratory = serializers.PrimaryKeyRelatedField(
         queryset=Facility.objects.all(), required=True
     )
+    laboratory_contact = serializers.CharField(read_only=True)
     clinical_history = serializers.CharField(required=False)
     requires_phlebotomist = serializers.BooleanField(required=False)
     sender_full_name = serializers.CharField(required=False)
@@ -148,9 +149,10 @@ class ReferralSerializer(serializers.ModelSerializer):
 
         fields = (
             "id",
-            'referral_id',
+            "referral_id",
             "referring_facility",
             "facility_type",
+            "laboratory_contact",
             "to_laboratory",
             "delivery",
             "patient_name",
@@ -164,7 +166,7 @@ class ReferralSerializer(serializers.ModelSerializer):
             "referral_status",
             "attachment",
             "date_referred",
-            "samples"
+            "samples",
         )
 
     def create(self, validated_data):
@@ -230,6 +232,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
 
         data["referring_facility"] = str(instance.referring_facility)
+        data["laboratory_contact"] = instance.to_laboratory.phone
         data["to_laboratory"] = str(instance.to_laboratory)
 
         return data
@@ -290,5 +293,3 @@ class SampleTrackingSerializer(serializers.ModelSerializer):
         data['sample'] = str(instance.sample)
 
         return data
-
-

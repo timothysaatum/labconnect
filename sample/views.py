@@ -9,6 +9,7 @@ from django.utils.timezone import now, timedelta # type: ignore
 from .paginators import QueryPagination
 import logging
 from datetime import timedelta
+from django.shortcuts import get_object_or_404
 
 
 logger = logging.getLogger('labs')
@@ -51,7 +52,7 @@ class UpdateReferral(generics.UpdateAPIView):
 
 
 class GetReferrals(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = QueryPagination
 
     serializer_class = ReferralSerializer
@@ -107,6 +108,20 @@ class GetReferrals(generics.ListAPIView):
         return referral
 
 
+class ReferralDetailsView(generics.RetrieveAPIView):
+    
+    serializer_class = ReferralSerializer
+    permission_classes = [IsAuthenticated]
+    
+
+    def get_object(self):
+        # Fetch referral_id from URL kwargs
+        referral_id = self.kwargs.get("referral_id")
+        
+        # Use get_object_or_404 to retrieve the object by referral_id
+        return get_object_or_404(Referral, id=referral_id)
+
+
 class UpdateSample(generics.UpdateAPIView):
 
     permission_classes = [IsAuthenticated]
@@ -145,8 +160,19 @@ class GetNotifications(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        request_status = (
+            "Request Completed",
+            "Request Accepted",
+            "Sample Received by Delivery",
+            "Sample Received by Lab",
+        )
+        notification = Notification.objects.filter(
+            facility=self.kwargs.get("branch_id"),
+            is_read=False,
+            facility__referral__referral_status__in=request_status,
+        )
 
-        return Notification.objects.filter(facility=self.kwargs.get('branch_id'), is_read=False)
+        return notification
 
 
 class CountObjects(generics.GenericAPIView):

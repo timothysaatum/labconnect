@@ -169,7 +169,7 @@ CACHES = {
     }
 }
 
-encoded_password = urllib.parse.quote("=s_%wIe&l>d,\\3R}zbPlu*:VI[oEoMlz")
+# encoded_password = urllib.parse.quote("=s_%wIe&l>d,\\3R}zbPlu*:VI[oEoMlz")
 # dramatiq
 # "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
 # REDIS_URL = "redis://:UZhW0sImKKnn9EarRlwTReq9NXGVE65O@master.hermis.hz87gz.eun1.cache.amazonaws.com:6379"
@@ -242,9 +242,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_USER')
-EMAIL_HOST_PASSWORD = "kscnzqcdtpmewpxz"
-# "rsrquigyfrosjglo"  # "mvwywvxilyjylwzu"  #
-# rsrquigyfrosjglo
+EMAIL_HOST_PASSWORD = "nkbdtufounzmcmxd"  # "pqqemvwafiddrzcc"
+# "kscnzqcdtpmewpxz"
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 # ClientID = '1002265369673-b1i1p7c5kv7l9kejfmv1ej097cvk834n.apps.googleusercontent.com'

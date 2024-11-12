@@ -89,6 +89,7 @@ class Transaction(models.Model):
     )
 	referral = models.ForeignKey(Referral, on_delete=models.CASCADE)
 	amount = models.DecimalField(max_digits=10, decimal_places=2)
+	channels = models.CharField(max_length=100)
 	email = models.EmailField()
 	payment_mode = models.CharField(choices=PAYMENT_MODE, max_length=50)
 	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
@@ -99,14 +100,14 @@ class Transaction(models.Model):
 	
 	class Meta:
 		db_table = "Payments"
-		
+
 	def __str__(self):
 		return f"{str(self.client)} - {self.amount}"
-	
+
 	@property
 	def account_type(self):
 		return self.client.account_type
-	
+
 	@property
 	def tel(self):
 		return self.client.phone_number

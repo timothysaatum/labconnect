@@ -28,6 +28,9 @@ class IncentiveSerializer(serializers.ModelSerializer):
 
 class TransactionSerializer(serializers.ModelSerializer):
 
+    channels = serializers.ListField()
+    metadata = serializers.DictField(write_only=True)
+
     class Meta:
 
         model = Transaction
@@ -35,6 +38,8 @@ class TransactionSerializer(serializers.ModelSerializer):
             "client",
             "referral",
             "amount",
+            "channels",
+            "metadata",
             "payment_mode",
             "email",
             "date_created",

@@ -1,0 +1,606 @@
+INFO 2024-11-09 19:26:54,324 views User: 1 attempted<> search on referrals<bace7206-bf47-46b7-b474-6c720935c3ca>
+INFO 2024-11-09 19:26:54,339 basehttp "GET /api/sample/get-referrals/bace7206-bf47-46b7-b474-6c720935c3ca/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-09 19:27:42,581 basehttp "OPTIONS /api/user/logout/ HTTP/1.1" 200 0
+INFO 2024-11-09 19:27:43,282 basehttp "POST /api/user/logout/ HTTP/1.1" 200 29
+INFO 2024-11-09 19:28:53,147 basehttp "OPTIONS /api/user/create-account/ HTTP/1.1" 200 0
+INFO 2024-11-09 19:28:53,147 views Account created for Taku Ella
+INFO 2024-11-09 19:29:03,950 basehttp "POST /api/user/create-account/ HTTP/1.1" 201 189
+INFO 2024-11-09 19:35:02,989 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:35:31,549 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:37:52,364 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:37:59,921 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:38:05,162 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:38:10,634 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:38:15,564 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:38:21,385 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:38:30,363 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:38:35,980 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:39:07,907 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:39:13,333 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:39:47,918 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26701
+INFO 2024-11-09 19:39:48,153 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:39:58,109 basehttp "POST /admin/user/client/ HTTP/1.1" 200 20810
+INFO 2024-11-09 19:40:00,078 basehttp - Broken pipe from ('127.0.0.1', 54778)
+INFO 2024-11-09 19:40:01,732 basehttp "POST /admin/user/client/ HTTP/1.1" 302 0
+INFO 2024-11-09 19:40:01,960 basehttp "GET /admin/user/client/ HTTP/1.1" 200 25912
+INFO 2024-11-09 19:40:02,082 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:40:06,681 basehttp "GET /admin/user/client/1/change/ HTTP/1.1" 200 43436
+INFO 2024-11-09 19:40:06,781 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:40:25,370 basehttp "POST /admin/user/client/1/change/ HTTP/1.1" 302 0
+INFO 2024-11-09 19:40:25,571 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26014
+INFO 2024-11-09 19:40:25,702 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:41:24,744 views Account created for Saatum Timothy
+INFO 2024-11-09 19:41:33,299 basehttp "POST /api/user/create-account/ HTTP/1.1" 201 194
+INFO 2024-11-09 19:42:10,035 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:42:16,974 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:43:32,011 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:43:54,782 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:44:49,162 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26743
+INFO 2024-11-09 19:44:49,454 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:45:05,377 basehttp "POST /admin/user/client/ HTTP/1.1" 200 20825
+INFO 2024-11-09 19:45:09,211 basehttp "POST /admin/user/client/ HTTP/1.1" 302 0
+INFO 2024-11-09 19:45:09,360 basehttp "GET /admin/user/client/ HTTP/1.1" 200 25944
+INFO 2024-11-09 19:45:10,045 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:46:00,088 views Account created for Saatum Timothy
+INFO 2024-11-09 19:46:13,097 basehttp "POST /api/user/create-account/ HTTP/1.1" 201 194
+INFO 2024-11-09 19:47:27,929 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:47:40,186 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:47:45,079 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-09 19:47:50,728 autoreload Watching for file changes with StatReloader
+INFO 2024-11-09 19:48:10,395 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26743
+INFO 2024-11-09 19:48:10,658 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:48:15,936 basehttp "POST /admin/user/client/ HTTP/1.1" 200 20825
+INFO 2024-11-09 19:48:19,343 basehttp "POST /admin/user/client/ HTTP/1.1" 302 0
+INFO 2024-11-09 19:48:19,444 basehttp "GET /admin/user/client/ HTTP/1.1" 200 25944
+INFO 2024-11-09 19:48:19,543 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-09 19:49:15,554 views Account created for Saatum Timothy
+INFO 2024-11-09 19:49:24,052 basehttp "POST /api/user/create-account/ HTTP/1.1" 201 194
+INFO 2024-11-11 11:27:03,551 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 11:27:46,081 views Token pass was not valid
+WARNING 2024-11-11 11:27:46,085 views Token pass was not valid
+WARNING 2024-11-11 11:27:46,125 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 403 27
+WARNING 2024-11-11 11:27:46,138 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 403 27
+INFO 2024-11-11 11:28:11,199 basehttp "OPTIONS /api/user/login/ HTTP/1.1" 200 0
+WARNING 2024-11-11 11:28:23,359 basehttp "POST /api/user/login/ HTTP/1.1" 401 33
+WARNING 2024-11-11 11:28:50,669 basehttp "POST /api/user/login/ HTTP/1.1" 401 33
+INFO 2024-11-11 11:29:08,328 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26743
+INFO 2024-11-11 11:29:09,559 basehttp "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+INFO 2024-11-11 11:29:09,640 basehttp "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+INFO 2024-11-11 11:29:10,777 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-11 11:29:11,953 basehttp "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2024-11-11 11:29:11,968 basehttp - Broken pipe from ('127.0.0.1', 51032)
+INFO 2024-11-11 11:29:11,974 basehttp - Broken pipe from ('127.0.0.1', 51033)
+INFO 2024-11-11 11:29:12,238 basehttp - Broken pipe from ('127.0.0.1', 51034)
+INFO 2024-11-11 11:29:12,498 basehttp "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2024-11-11 11:29:12,528 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2024-11-11 11:29:12,733 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2024-11-11 11:29:13,054 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2024-11-11 11:29:36,349 basehttp "POST /admin/user/client/ HTTP/1.1" 302 0
+INFO 2024-11-11 11:29:37,002 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26893
+INFO 2024-11-11 11:29:37,758 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-11 11:29:38,486 basehttp "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2024-11-11 11:29:45,573 basehttp "GET /admin/user/client/1/change/ HTTP/1.1" 200 43452
+INFO 2024-11-11 11:29:46,213 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-11 11:29:46,539 basehttp - Broken pipe from ('127.0.0.1', 51029)
+INFO 2024-11-11 11:29:46,784 basehttp - Broken pipe from ('127.0.0.1', 51041)
+INFO 2024-11-11 11:29:46,826 basehttp - Broken pipe from ('127.0.0.1', 51035)
+INFO 2024-11-11 11:29:47,067 basehttp - Broken pipe from ('127.0.0.1', 51056)
+INFO 2024-11-11 11:29:48,112 basehttp "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+INFO 2024-11-11 11:29:48,137 basehttp "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+INFO 2024-11-11 11:29:48,142 basehttp "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 200 655
+INFO 2024-11-11 11:29:48,146 basehttp "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+INFO 2024-11-11 11:29:48,154 basehttp "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+INFO 2024-11-11 11:29:59,972 basehttp "POST /admin/user/client/1/change/ HTTP/1.1" 302 0
+INFO 2024-11-11 11:30:00,660 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26929
+INFO 2024-11-11 11:30:01,377 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-11 11:30:23,082 basehttp "GET /admin/user/client/5/change/ HTTP/1.1" 200 43440
+INFO 2024-11-11 11:30:23,686 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-11 11:49:09,255 basehttp "POST /admin/user/client/5/change/ HTTP/1.1" 302 0
+INFO 2024-11-11 11:49:09,958 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26929
+INFO 2024-11-11 11:49:10,768 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-11 11:49:10,796 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2024-11-11 11:49:11,112 basehttp - Broken pipe from ('127.0.0.1', 51591)
+INFO 2024-11-11 11:49:43,191 views Logged in Timothy Saatum
+INFO 2024-11-11 11:49:43,207 basehttp "POST /api/user/login/ HTTP/1.1" 200 1975
+INFO 2024-11-11 11:49:44,924 basehttp "OPTIONS /api/sample/notifications/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 0
+INFO 2024-11-11 11:49:44,977 basehttp "OPTIONS /api/sample/get-sample-counts-for-facility/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 0
+INFO 2024-11-11 11:49:45,009 basehttp "OPTIONS /api/sample/get-referrals/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-11 11:49:45,109 views User: 1 attempted<> search on referrals<b432ffbf-a185-4ff3-9bd8-202010fe50a8>
+INFO 2024-11-11 11:49:45,225 basehttp "GET /api/sample/get-referrals/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-11 11:49:45,239 basehttp "GET /api/sample/get-sample-counts-for-facility/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 165
+INFO 2024-11-11 11:49:45,324 basehttp "GET /api/sample/notifications/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 240
+INFO 2024-11-11 11:50:00,817 basehttp "OPTIONS /api/sample/get-referrals/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-11 11:50:00,868 views User: 1 attempted<> search on referrals<b432ffbf-a185-4ff3-9bd8-202010fe50a8>
+INFO 2024-11-11 11:50:01,228 basehttp "GET /api/sample/get-referrals/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 1105
+INFO 2024-11-11 11:50:10,856 basehttp "OPTIONS /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 0
+INFO 2024-11-11 11:50:11,051 basehttp "GET /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 415
+INFO 2024-11-11 11:50:23,150 basehttp "OPTIONS /api/laboratory/get-test/sample-type/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 0
+INFO 2024-11-11 11:50:23,268 basehttp "GET /api/laboratory/get-test/sample-type/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 11:51:07,553 basehttp "OPTIONS /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 0
+INFO 2024-11-11 11:51:07,615 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 11:51:11,075 basehttp "OPTIONS /api/laboratory/get-test/sample-type/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 0
+INFO 2024-11-11 11:51:11,154 basehttp "GET /api/laboratory/get-test/sample-type/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 126
+INFO 2024-11-11 11:51:17,603 basehttp "OPTIONS /api/laboratory/test/list/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?test_status=active&sample_type=1 HTTP/1.1" 200 0
+INFO 2024-11-11 11:51:17,772 basehttp "GET /api/laboratory/test/list/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?test_status=active&sample_type=1 HTTP/1.1" 200 535
+INFO 2024-11-11 11:51:21,899 basehttp "OPTIONS /api/sample/create-referral/ HTTP/1.1" 200 0
+INFO 2024-11-11 11:51:25,382 views User: <1> added <27a0fdb0-8eda-42a4-8f64-c27c59c40955>
+INFO 2024-11-11 11:51:25,499 basehttp "POST /api/sample/create-referral/ HTTP/1.1" 201 1049
+INFO 2024-11-11 11:53:06,490 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 11:53:48,678 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 11:54:20,975 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 11:55:00,041 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 11:55:44,755 basehttp "OPTIONS /api/transactions/pay/initialize/ HTTP/1.1" 200 0
+WARNING 2024-11-11 11:55:44,971 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 11:56:07,950 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 11:56:26,537 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 12:01:28,019 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\models.py changed, reloading.
+INFO 2024-11-11 12:02:21,396 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:02:52,404 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\models.py changed, reloading.
+INFO 2024-11-11 12:03:38,874 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:04:06,630 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 12:04:44,365 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:05:33,186 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 12:06:29,749 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:08:09,134 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\process_payment.py changed, reloading.
+INFO 2024-11-11 12:08:53,395 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:09:32,014 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\process_payment.py changed, reloading.
+INFO 2024-11-11 12:09:58,806 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:17:23,290 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 12:17:28,069 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+WARNING 2024-11-11 12:19:49,012 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 12:22:50,753 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 12:23:17,742 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:24:35,396 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 12:27:49,326 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 12:28:15,259 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 12:28:25,804 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 12:28:54,600 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 12:29:22,895 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:29:56,397 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 12:30:50,804 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:31:32,103 basehttp "OPTIONS /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 0
+INFO 2024-11-11 12:31:32,263 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+ERROR 2024-11-11 12:31:42,647 log Internal Server Error: /api/transactions/pay/initialize/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py", line 60, in post
+    if serializer.is_valid(raise_exception=True):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\serializers.py", line 223, in is_valid
+    self._validated_data = self.run_validation(self.initial_data)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\serializers.py", line 442, in run_validation
+    value = self.to_internal_value(data)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\serializers.py", line 495, in to_internal_value
+    for field in fields:
+                 ^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\serializers.py", line 378, in _writable_fields
+    for field in self.fields.values():
+                 ^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\utils\functional.py", line 47, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+                                         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\serializers.py", line 372, in fields
+    for key, value in self.get_fields().items():
+                      ^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\serializers.py", line 1079, in get_fields
+    field_names = self.get_field_names(declared_fields, info)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\serializers.py", line 1175, in get_field_names
+    assert field_name in fields, (
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: The field 'metadata' was declared on serializer TransactionSerializer, but has not been included in the 'fields' option.
+ERROR 2024-11-11 12:31:42,716 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 500 144395
+INFO 2024-11-11 12:32:10,781 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 12:32:35,332 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 12:44:07,517 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 12:57:33,722 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 12:57:39,796 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 13:02:34,272 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 13:04:46,627 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 13:05:47,087 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 16:26:24,997 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 16:26:57,160 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 16:27:14,774 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 16:31:18,541 views Timothy Saatum verified successfully
+INFO 2024-11-11 16:31:18,552 views Timothy Saatum verified successfully
+INFO 2024-11-11 16:31:18,553 views Timothy Saatum token check sucessful
+INFO 2024-11-11 16:31:18,554 views Timothy Saatum token check sucessful
+INFO 2024-11-11 16:31:20,405 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1975
+INFO 2024-11-11 16:31:20,405 basehttp "GET /api/user/refresh/token/ HTTP/1.1" 200 1975
+INFO 2024-11-11 16:32:10,113 basehttp "OPTIONS /api/sample/get-sample-counts-for-facility/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 0
+INFO 2024-11-11 16:32:10,129 basehttp "OPTIONS /api/sample/get-referrals/bace7206-bf47-46b7-b474-6c720935c3ca/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2024-11-11 16:32:10,182 basehttp "OPTIONS /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 0
+INFO 2024-11-11 16:32:10,198 views User: 1 attempted<> search on referrals<bace7206-bf47-46b7-b474-6c720935c3ca>
+INFO 2024-11-11 16:32:10,213 basehttp "GET /api/sample/get-referrals/bace7206-bf47-46b7-b474-6c720935c3ca/?status=Pending&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2024-11-11 16:32:10,244 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 16:32:10,244 basehttp "GET /api/sample/get-sample-counts-for-facility/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 165
+INFO 2024-11-11 16:32:14,746 basehttp "OPTIONS /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 0
+INFO 2024-11-11 16:32:14,815 basehttp "GET /api/laboratory/branch/all/?level=Basic HTTP/1.1" 200 415
+INFO 2024-11-11 16:32:19,110 basehttp "OPTIONS /api/laboratory/get-test/sample-type/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 0
+INFO 2024-11-11 16:32:19,235 basehttp "GET /api/laboratory/get-test/sample-type/b432ffbf-a185-4ff3-9bd8-202010fe50a8/ HTTP/1.1" 200 126
+INFO 2024-11-11 16:32:50,480 basehttp "OPTIONS /api/laboratory/test/list/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?test_status=active&sample_type=1 HTTP/1.1" 200 0
+INFO 2024-11-11 16:32:50,696 basehttp "GET /api/laboratory/test/list/b432ffbf-a185-4ff3-9bd8-202010fe50a8/?test_status=active&sample_type=1 HTTP/1.1" 200 535
+INFO 2024-11-11 16:32:55,832 basehttp "OPTIONS /api/sample/create-referral/ HTTP/1.1" 200 0
+INFO 2024-11-11 16:32:59,750 views User: <1> added <e45399c5-ff60-495d-93a2-85e9cca27a8b>
+INFO 2024-11-11 16:32:59,818 basehttp "POST /api/sample/create-referral/ HTTP/1.1" 201 1045
+INFO 2024-11-11 16:33:26,119 basehttp "OPTIONS /api/transactions/pay/initialize/ HTTP/1.1" 200 0
+WARNING 2024-11-11 16:33:26,134 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+WARNING 2024-11-11 16:33:36,482 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+WARNING 2024-11-11 16:33:37,361 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+WARNING 2024-11-11 16:33:38,079 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+WARNING 2024-11-11 16:33:38,860 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+INFO 2024-11-11 16:37:10,382 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 16:42:10,605 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 16:47:10,847 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 16:52:11,064 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 16:54:36,132 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26723
+INFO 2024-11-11 16:54:36,669 basehttp "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2024-11-11 16:54:36,771 basehttp "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2024-11-11 16:54:36,774 basehttp - Broken pipe from ('127.0.0.1', 50526)
+INFO 2024-11-11 16:54:36,777 basehttp - Broken pipe from ('127.0.0.1', 50527)
+INFO 2024-11-11 16:54:36,814 basehttp - Broken pipe from ('127.0.0.1', 50525)
+INFO 2024-11-11 16:54:36,819 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2024-11-11 16:54:36,824 basehttp - Broken pipe from ('127.0.0.1', 50529)
+INFO 2024-11-11 16:54:36,827 basehttp - Broken pipe from ('127.0.0.1', 50524)
+INFO 2024-11-11 16:54:36,856 basehttp - Broken pipe from ('127.0.0.1', 50528)
+INFO 2024-11-11 16:54:36,864 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 200 17972
+INFO 2024-11-11 16:54:37,010 basehttp "GET /static/admin/css/widgets.css HTTP/1.1" 200 11564
+INFO 2024-11-11 16:54:37,527 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2024-11-11 16:54:37,527 basehttp "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2024-11-11 16:54:37,527 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2024-11-11 16:54:37,558 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2024-11-11 16:54:48,954 views Timothy Saatum verified successfully
+INFO 2024-11-11 16:54:48,956 views Timothy Saatum token check sucessful
+INFO 2024-11-11 16:54:48,957 views Timothy Saatum verified successfully
+INFO 2024-11-11 16:54:48,957 views Timothy Saatum token check sucessful
+INFO 2024-11-11 16:54:49,895 basehttp - Broken pipe from ('127.0.0.1', 50551)
+INFO 2024-11-11 16:54:49,899 basehttp - Broken pipe from ('127.0.0.1', 50552)
+INFO 2024-11-11 16:55:12,561 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 29294
+INFO 2024-11-11 16:55:12,862 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-11 16:56:43,444 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 16:56:57,718 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 16:57:33,192 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+INFO 2024-11-11 16:57:58,838 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 16:58:04,265 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 16:58:15,780 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 16:58:21,068 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 16:58:28,207 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+INFO 2024-11-11 16:59:04,616 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 16:59:10,081 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 16:59:24,844 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 65
+INFO 2024-11-11 16:59:51,042 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 17:01:35,511 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 17:01:40,939 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:01:55,351 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:02:50,367 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:02:58,547 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:03:08,790 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:03:19,147 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:03:31,529 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:03:37,709 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:03:50,138 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:03:55,603 autoreload Watching for file changes with StatReloader
+ERROR 2024-11-11 17:04:04,014 log Internal Server Error: /api/transactions/pay/initialize/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py", line 61, in post
+    print(Referral.objects.filte(id=self.request.data["referral"]))
+          ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'filte'. Did you mean: 'filter'?
+ERROR 2024-11-11 17:04:04,030 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 500 101740
+INFO 2024-11-11 17:04:21,585 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:04:26,658 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:04:31,643 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:06:55,033 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:07:00,946 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:07:06,241 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:07:11,569 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:07:12,581 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 17:07:16,540 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:08:02,910 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:08:08,100 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:08:19,473 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:08:24,712 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:08:32,117 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:09:36,554 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:09:42,764 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:09:47,239 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:09:52,957 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:09:57,480 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:10:03,675 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:10:10,585 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:10:16,610 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:10:24,066 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:10:29,082 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:10:37,196 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:12:12,731 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 17:14:33,801 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:18:40,689 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:18:46,558 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:18:53,365 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:19:00,115 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:19:08,034 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 17:19:09,385 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+WARNING 2024-11-11 17:21:34,663 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:22:15,837 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\process_payment.py changed, reloading.
+INFO 2024-11-11 17:22:22,284 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:22:28,786 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\process_payment.py changed, reloading.
+INFO 2024-11-11 17:22:35,176 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:22:48,501 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+WARNING 2024-11-11 17:22:58,198 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+WARNING 2024-11-11 17:23:02,085 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:23:35,161 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\serializers.py changed, reloading.
+INFO 2024-11-11 17:23:40,166 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:24:08,249 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 17:27:25,406 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:27:31,835 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:27:54,273 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:27:59,840 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:28:06,242 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:28:12,811 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:28:18,741 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:28:26,558 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:28:34,108 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:28:39,800 autoreload Watching for file changes with StatReloader
+ERROR 2024-11-11 17:28:47,450 log Internal Server Error: /api/transactions/pay/initialize/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py", line 59, in post
+    print(uuid.UUID(ref_id))
+          ^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\AppData\Local\Programs\Python\Python312\Lib\uuid.py", line 175, in __init__
+    hex = hex.replace('urn:', '').replace('uuid:', '')
+          ^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'replace'
+ERROR 2024-11-11 17:28:47,466 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 500 107466
+ERROR 2024-11-11 17:28:54,694 log Internal Server Error: /api/transactions/pay/initialize/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py", line 59, in post
+    print(uuid.UUID(ref_id))
+          ^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\AppData\Local\Programs\Python\Python312\Lib\uuid.py", line 175, in __init__
+    hex = hex.replace('urn:', '').replace('uuid:', '')
+          ^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'replace'
+ERROR 2024-11-11 17:28:54,716 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 500 107466
+INFO 2024-11-11 17:29:08,350 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 17:30:09,283 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:30:14,422 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:30:18,178 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:30:39,138 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:30:46,895 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:30:51,671 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:31:00,546 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:31:08,398 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:31:15,095 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:31:25,530 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:31:30,959 autoreload Watching for file changes with StatReloader
+ERROR 2024-11-11 17:31:39,613 log Internal Server Error: /api/transactions/pay/initialize/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py", line 62, in post
+    r = Referral.objects.filte(id=ref_id)
+        ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Manager' object has no attribute 'filte'. Did you mean: 'filter'?
+ERROR 2024-11-11 17:31:39,628 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 500 101857
+INFO 2024-11-11 17:31:56,596 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:32:02,138 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:32:08,967 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:32:33,798 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:32:40,645 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:32:48,066 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:33:21,805 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:33:27,430 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:33:32,291 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:34:13,986 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:34:19,158 autoreload Watching for file changes with StatReloader
+INFO 2024-11-11 17:34:23,508 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 17:34:25,113 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:39:23,664 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+WARNING 2024-11-11 17:43:23,424 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:44:33,442 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-11 17:44:55,057 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:45:12,495 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:45:21,472 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:45:34,804 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:45:43,181 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:45:48,052 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:46:43,467 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-11 17:46:49,216 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-11 17:46:52,815 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 93
+INFO 2024-11-11 17:52:17,996 basehttp "GET /api/sample/notifications/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 200 2
+INFO 2024-11-12 04:46:29,379 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 04:46:47,083 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 04:46:53,493 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 04:48:12,052 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26723
+INFO 2024-11-12 04:48:13,054 basehttp - Broken pipe from ('127.0.0.1', 62660)
+INFO 2024-11-12 04:48:13,054 basehttp - Broken pipe from ('127.0.0.1', 62659)
+INFO 2024-11-12 04:48:13,070 basehttp "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2024-11-12 04:48:13,165 basehttp - Broken pipe from ('127.0.0.1', 62662)
+INFO 2024-11-12 04:48:13,171 basehttp - Broken pipe from ('127.0.0.1', 62661)
+INFO 2024-11-12 04:48:13,246 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-12 04:48:13,302 basehttp - Broken pipe from ('127.0.0.1', 62664)
+INFO 2024-11-12 04:48:13,304 basehttp - Broken pipe from ('127.0.0.1', 62666)
+INFO 2024-11-12 04:48:13,304 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2024-11-12 04:48:13,324 basehttp - Broken pipe from ('127.0.0.1', 62658)
+INFO 2024-11-12 04:48:13,514 basehttp "GET /static/admin/css/widgets.css HTTP/1.1" 200 11564
+INFO 2024-11-12 04:48:13,845 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2024-11-12 04:48:13,845 basehttp "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2024-11-12 04:48:13,845 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2024-11-12 04:48:13,878 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+WARNING 2024-11-12 04:48:14,851 basehttp "GET /favicon.ico HTTP/1.1" 404 3627
+INFO 2024-11-12 04:48:21,304 basehttp "GET /admin/user/client/ HTTP/1.1" 200 26723
+INFO 2024-11-12 04:48:21,636 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-12 04:48:27,899 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 29294
+INFO 2024-11-12 04:48:28,099 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2024-11-12 04:48:48,743 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 404 49
+INFO 2024-11-12 04:49:36,083 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 04:49:53,979 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 04:50:12,576 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 04:50:18,598 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 04:51:32,766 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 404 49
+INFO 2024-11-12 04:57:24,994 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 04:57:45,365 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 04:57:52,806 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 401 35
+INFO 2024-11-12 04:58:02,720 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 04:58:07,872 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 04:58:14,000 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 404 49
+INFO 2024-11-12 04:58:33,685 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 29294
+INFO 2024-11-12 04:58:34,253 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2024-11-12 04:58:56,863 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+INFO 2024-11-12 04:59:24,186 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 04:59:30,478 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 04:59:35,594 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\urls.py changed, reloading.
+INFO 2024-11-12 04:59:40,978 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 04:59:45,946 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\urls.py changed, reloading.
+INFO 2024-11-12 04:59:51,158 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 04:59:55,991 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 200 1063
+INFO 2024-11-12 05:00:14,059 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:00:19,768 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 05:00:25,715 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\urls.py changed, reloading.
+INFO 2024-11-12 05:00:30,974 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 05:00:38,613 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+INFO 2024-11-12 05:02:24,784 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:02:30,211 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 05:02:56,303 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\urls.py changed, reloading.
+INFO 2024-11-12 05:03:02,100 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 05:03:14,673 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+INFO 2024-11-12 05:12:01,982 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:12:08,501 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 05:12:28,846 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:12:34,344 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 05:12:52,339 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:53,424 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:54,023 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:54,322 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:54,592 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:54,839 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:55,172 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:55,692 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:56,492 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:57,288 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:12:58,188 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+INFO 2024-11-12 05:13:08,891 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:13:16,098 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 05:13:27,747 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 404 49
+WARNING 2024-11-12 05:13:57,900 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 404 49
+INFO 2024-11-12 05:14:12,602 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:14:17,809 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 05:14:26,499 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 200 1045
+INFO 2024-11-12 05:14:42,449 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:14:48,029 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 05:14:53,114 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:14:59,108 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 05:15:12,131 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:15:17,558 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 05:15:21,934 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 200 1045
+INFO 2024-11-12 05:15:29,584 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 05:15:35,032 autoreload Watching for file changes with StatReloader

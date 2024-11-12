@@ -10,7 +10,7 @@ from .process_payment import Paystack
 from django.db import IntegrityError
 from decimal import Decimal
 
-import json
+import uuid
 
 
 class SubscriptionCreationView(CreateAPIView):
@@ -55,14 +55,16 @@ class UpdateSubscriptionView(UpdateAPIView):
 class ProcessPaymentView(CreateAPIView):
     serializer_class = TransactionSerializer
     def post(self, request):
+        from sample.models import Referral
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-
+            print(serializer.data["referral"])
             data = {
                 "client_id": 1,
-                'referral_id': serializer.data["referral"],
+                "referral_id": serializer.data["referral"],
                 "amount": Decimal(serializer.data["amount"]),
+                "channels": serializer.data["channels"],
                 "email": serializer.data["email"],
                 "payment_mode": "Online",
                 "payment_status": "Pending",
@@ -72,7 +74,7 @@ class ProcessPaymentView(CreateAPIView):
                 try:
                     transaction = Transaction.objects.create(**data)
                 except IntegrityError:
-                    # Retry if UUID collision occurs (extremely rare)
+                    # Retry if UUID collision occurs
                     continue
                 try:
                     pay = Paystack()
@@ -82,6 +84,7 @@ class ProcessPaymentView(CreateAPIView):
                         transaction.amount,
                         "https://labconnect.apis.call_url",
                         transaction.reference,
+                        [transaction.channels],
                     )
 
                     return Response(response.json(), status=status.HTTP_201_CREATED)
@@ -89,7 +92,7 @@ class ProcessPaymentView(CreateAPIView):
                 except Exception as e:
 
                     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-                
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -115,6 +118,7 @@ class VerifyPaymentView(APIView):
                     else "Pending"
                 )
                 transaction.is_verified = True
+                # Save the transaction changes to the database
                 transaction.save()
             except Transaction.DoesNotExist:
                 return Response(
