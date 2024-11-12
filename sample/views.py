@@ -111,7 +111,7 @@ class GetReferrals(generics.ListAPIView):
 class ReferralDetailsView(generics.RetrieveAPIView):
     
     serializer_class = ReferralSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
 
     def get_object(self):
