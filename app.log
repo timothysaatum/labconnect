@@ -604,3 +604,26 @@ INFO 2024-11-12 05:15:17,558 autoreload Watching for file changes with StatReloa
 INFO 2024-11-12 05:15:21,934 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 200 1045
 INFO 2024-11-12 05:15:29,584 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
 INFO 2024-11-12 05:15:35,032 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-12 05:15:38,897 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 401 35
+INFO 2024-11-12 08:26:36,911 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:44:30,100 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 08:44:45,338 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:44:53,443 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 200 1045
+INFO 2024-11-12 08:47:14,673 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:47:22,564 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:47:32,306 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:47:39,626 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:47:43,828 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:47:52,049 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:47:56,477 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:48:04,581 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:48:33,135 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:48:38,511 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:48:53,826 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:48:58,978 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:49:12,139 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:49:18,037 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:49:32,481 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:49:41,653 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 08:50:40,490 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\serializers.py changed, reloading.
+INFO 2024-11-12 08:50:46,723 autoreload Watching for file changes with StatReloader

@@ -21,9 +21,9 @@ class SampleTestSerializer(serializers.ModelSerializer):
     test = serializers.PrimaryKeyRelatedField(
         queryset=Test.objects.all(), required=True
     )
+    cost = serializers.DecimalField(decimal_places=2, max_digits=10,read_only=True)
     status = serializers.CharField(required=False)
     result = serializers.URLField(required=False)
-
 
     class Meta:
 
@@ -33,8 +33,9 @@ class SampleTestSerializer(serializers.ModelSerializer):
             "id",
             "sample",
             "test",
+            "cost",
             "status",
-            'result',
+            "result",
             "date_completed",
         )
 
@@ -42,6 +43,7 @@ class SampleTestSerializer(serializers.ModelSerializer):
 
         data = super().to_representation(instance)
         data["test"] = str(instance.test.name)
+        data['cost'] = instance.test.price
 
         return data
 
