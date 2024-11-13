@@ -1004,3 +1004,5 @@ INFO 2024-11-13 17:17:09,029 basehttp "POST /api/transactions/pay/initialize/ HT
 INFO 2024-11-13 17:17:48,691 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
 INFO 2024-11-13 17:17:54,721 autoreload Watching for file changes with StatReloader
 INFO 2024-11-13 17:18:06,565 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 213
+INFO 2024-11-13 17:24:01,430 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\process_payment.py changed, reloading.
+INFO 2024-11-13 17:24:08,299 autoreload Watching for file changes with StatReloader

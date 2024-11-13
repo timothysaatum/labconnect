@@ -70,7 +70,7 @@ class ProcessPaymentView(CreateAPIView):
                 "payment_status": "Pending",
                 "reference": str(uuid.uuid4()),
             }
-            print(data)
+            
             for _ in range(5):
                 try:
                     transaction = Transaction.objects.create(**data)
