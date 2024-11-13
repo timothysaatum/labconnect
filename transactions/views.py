@@ -53,15 +53,17 @@ class UpdateSubscriptionView(UpdateAPIView):
 
 
 class ProcessPaymentView(CreateAPIView):
+
+    # permission_classes = [IsAuthenticated]
     serializer_class = TransactionSerializer
 
     def post(self, request):
-        
+
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
 
             data = {
-                "client_id": 1,
+                "client_id": 1, #self.request.user.id,
                 "referral_id": serializer.data["referral"],
                 "amount": Decimal(serializer.data["amount"]),
                 "channels": serializer.data["channels"],
@@ -70,7 +72,7 @@ class ProcessPaymentView(CreateAPIView):
                 "payment_status": "Pending",
                 "reference": str(uuid.uuid4()),
             }
-            
+
             for _ in range(5):
                 try:
                     transaction = Transaction.objects.create(**data)

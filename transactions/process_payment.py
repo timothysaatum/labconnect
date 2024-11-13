@@ -24,7 +24,7 @@ class Paystack:
             "reference": reference,
             "channels": channels
         }
-        
+
         url = f"{Paystack.BASE_URL}/transaction/initialize"
 
         response = requests.post(url, json=data, headers=headers)
