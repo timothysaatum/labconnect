@@ -881,3 +881,125 @@ INFO 2024-11-13 08:19:42,048 autoreload Watching for file changes with StatReloa
 INFO 2024-11-13 08:23:21,459 autoreload Watching for file changes with StatReloader
 INFO 2024-11-13 08:23:37,165 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
 INFO 2024-11-13 08:23:42,745 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 14:12:48,201 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 14:14:53,306 basehttp "GET /admin/labs/test/ HTTP/1.1" 200 23886
+INFO 2024-11-13 14:14:54,923 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-13 14:14:55,346 basehttp - Broken pipe from ('127.0.0.1', 55055)
+INFO 2024-11-13 14:14:55,346 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2024-11-13 16:45:35,591 autoreload Watching for file changes with StatReloader
+WARNING 2024-11-13 16:46:48,627 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 132
+INFO 2024-11-13 16:47:22,674 basehttp "GET /admin/labs/test/ HTTP/1.1" 200 23886
+INFO 2024-11-13 16:47:23,198 basehttp - Broken pipe from ('127.0.0.1', 51376)
+INFO 2024-11-13 16:47:24,416 basehttp - Broken pipe from ('127.0.0.1', 51374)
+INFO 2024-11-13 16:47:24,462 basehttp - Broken pipe from ('127.0.0.1', 51373)
+INFO 2024-11-13 16:47:24,494 basehttp - Broken pipe from ('127.0.0.1', 51375)
+INFO 2024-11-13 16:47:24,494 basehttp - Broken pipe from ('127.0.0.1', 51377)
+INFO 2024-11-13 16:47:24,514 basehttp - Broken pipe from ('127.0.0.1', 51378)
+INFO 2024-11-13 16:47:24,538 basehttp "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2024-11-13 16:47:24,548 basehttp - Broken pipe from ('127.0.0.1', 51379)
+INFO 2024-11-13 16:47:24,555 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2024-11-13 16:47:24,713 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2024-11-13 16:47:49,874 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 29294
+INFO 2024-11-13 16:47:50,122 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-13 16:47:50,191 basehttp - Broken pipe from ('127.0.0.1', 51381)
+INFO 2024-11-13 16:47:50,291 basehttp - Broken pipe from ('127.0.0.1', 51382)
+INFO 2024-11-13 16:47:50,407 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+ERROR 2024-11-13 16:50:20,199 log Internal Server Error: /api/transactions/pay/initialize/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: table Payments has no column named channels
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py", line 75, in post
+    transaction = Transaction.objects.create(**data)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\query.py", line 679, in create
+    obj.save(force_insert=True, using=self.db)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\base.py", line 891, in save
+    self.save_base(
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\base.py", line 997, in save_base
+    updated = self._save_table(
+              ^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\base.py", line 1160, in _save_table
+    results = self._do_insert(
+              ^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\base.py", line 1201, in _do_insert
+    return manager._insert(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\query.py", line 1847, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\models\sql\compiler.py", line 1836, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: table Payments has no column named channels
+ERROR 2024-11-13 16:50:20,230 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 500 200357
+INFO 2024-11-13 16:52:21,369 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 16:59:45,375 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+INFO 2024-11-13 17:00:06,755 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+INFO 2024-11-13 17:01:59,280 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+INFO 2024-11-13 17:02:02,124 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+INFO 2024-11-13 17:02:35,037 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+INFO 2024-11-13 17:02:47,858 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+WARNING 2024-11-13 17:02:58,359 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 400 40
+INFO 2024-11-13 17:03:21,039 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-13 17:03:28,820 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 17:03:40,532 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+INFO 2024-11-13 17:16:51,974 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\process_payment.py changed, reloading.
+INFO 2024-11-13 17:16:57,872 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 17:17:09,029 basehttp "POST /api/transactions/pay/initialize/ HTTP/1.1" 201 175
+INFO 2024-11-13 17:17:48,691 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\transactions\views.py changed, reloading.
+INFO 2024-11-13 17:17:54,721 autoreload Watching for file changes with StatReloader

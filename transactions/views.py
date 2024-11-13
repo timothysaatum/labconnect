@@ -54,12 +54,12 @@ class UpdateSubscriptionView(UpdateAPIView):
 
 class ProcessPaymentView(CreateAPIView):
     serializer_class = TransactionSerializer
-    def post(self, request):
-        from sample.models import Referral
 
+    def post(self, request):
+        
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            print(serializer.data["referral"])
+
             data = {
                 "client_id": 1,
                 "referral_id": serializer.data["referral"],
@@ -70,6 +70,7 @@ class ProcessPaymentView(CreateAPIView):
                 "payment_status": "Pending",
                 "reference": str(uuid.uuid4()),
             }
+            print(data)
             for _ in range(5):
                 try:
                     transaction = Transaction.objects.create(**data)
@@ -84,7 +85,7 @@ class ProcessPaymentView(CreateAPIView):
                         transaction.amount,
                         "https://labconnect.apis.call_url",
                         transaction.reference,
-                        [transaction.channels],
+                        transaction.channels,
                     )
 
                     return Response(response.json(), status=status.HTTP_201_CREATED)

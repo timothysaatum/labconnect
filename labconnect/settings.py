@@ -174,8 +174,6 @@ CACHES = {
 # REDIS_URL = config(
 #     "REDIS_URL"
 # )
-# UPSTASH_URL = config("UPSTASH_URL")
-# UPSTASH_TOKEN = config("UPSTASH_TOKEN")
 
 # # REDIS_URL = "redis://localhost:6379"
 # pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
@@ -211,10 +209,6 @@ CACHES = {
 # }
 
 
-# FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
-# DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
-# DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
-# DATA_UPLOAD_MAX_NUMBER_FILES = 100
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
