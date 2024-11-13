@@ -865,3 +865,19 @@ INFO 2024-11-13 06:35:18,937 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\l
 INFO 2024-11-13 06:35:24,729 autoreload Watching for file changes with StatReloader
 INFO 2024-11-13 06:36:56,122 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
 INFO 2024-11-13 06:37:25,215 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:40:24,023 basehttp "POST /api/laboratory/copy-tests-to-another-branch/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 202 115
+DEBUG 2024-11-13 06:40:24,230 actor Received args=(['0680b956-c616-460e-8bb4-b3c5193b47fa'], 'bace7206-bf47-46b7-b474-6c720935c3ca') kwargs={}.
+DEBUG 2024-11-13 06:40:24,809 actor Completed after 578.85ms.
+INFO 2024-11-13 08:14:48,070 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labs\views.py changed, reloading.
+INFO 2024-11-13 08:14:54,698 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 08:15:06,934 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labs\views.py changed, reloading.
+INFO 2024-11-13 08:15:12,013 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 08:15:38,222 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 08:15:43,738 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 08:15:51,307 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 08:17:03,096 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 08:19:17,060 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 08:19:42,048 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 08:23:21,459 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 08:23:37,165 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 08:23:42,745 autoreload Watching for file changes with StatReloader

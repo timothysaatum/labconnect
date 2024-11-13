@@ -171,44 +171,44 @@ CACHES = {
 }
 
 
-REDIS_URL = config(
-    "REDIS_URL"
-)  # "rediss://:AVWtAAIjcDE4M2E0MGI2MDcwYmE0MTgxOTFkOGM3OTU5ZDA1YzUyZnAxMA@open-hedgehog-21933.upstash.io:6379"
-UPSTASH_URL = config("UPSTASH_URL")
-UPSTASH_TOKEN = config("UPSTASH_TOKEN")
+# REDIS_URL = config(
+#     "REDIS_URL"
+# )
+# UPSTASH_URL = config("UPSTASH_URL")
+# UPSTASH_TOKEN = config("UPSTASH_TOKEN")
 
-# REDIS_URL = "redis://localhost:6379"
-pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
-# dramatiq_broker = UpstashBroker(redis_url=UPSTASH_URL, redis_token=UPSTASH_TOKEN)
-DRAMATIQ_BROKER = {
-    "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",
-    "OPTIONS": {
-        "url": REDIS_URL,
-        "ssl": True,  # Enable SSL for secure connection to Upstash
-        "connection_pool": pool,
-        "ssl_cert_reqs": None,
-    },
-    "MIDDLEWARE": [
-        "dramatiq.middleware.AgeLimit",
-        "dramatiq.middleware.TimeLimit",
-        "dramatiq.middleware.Callbacks",
-        "dramatiq.middleware.Retries",
-        "dramatiq.results.Results",
-        "django_dramatiq.middleware.DbConnectionsMiddleware",
-        "django_dramatiq.middleware.AdminMiddleware",
-    ],
-}
+# # REDIS_URL = "redis://localhost:6379"
+# pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
+# # dramatiq_broker = UpstashBroker(redis_url=UPSTASH_URL, redis_token=UPSTASH_TOKEN)
+# DRAMATIQ_BROKER = {
+#     "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",
+#     "OPTIONS": {
+#         "url": REDIS_URL,
+#         "ssl": True,  # Enable SSL for secure connection to Upstash
+#         "connection_pool": pool,
+#         "ssl_cert_reqs": None,
+#     },
+#     "MIDDLEWARE": [
+#         "dramatiq.middleware.AgeLimit",
+#         "dramatiq.middleware.TimeLimit",
+#         "dramatiq.middleware.Callbacks",
+#         "dramatiq.middleware.Retries",
+#         "dramatiq.results.Results",
+#         "django_dramatiq.middleware.DbConnectionsMiddleware",
+#         "django_dramatiq.middleware.AdminMiddleware",
+#     ],
+# }
 
 
-DRAMATIQ_RESULT_BACKEND = {
-    "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
-    "BACKEND_OPTIONS": {
-        "url": REDIS_URL#"redis://localhost:6379",
-    },
-    "MIDDLEWARE_OPTIONS": {
-        "result_ttl": 60000
-    }
-}
+# DRAMATIQ_RESULT_BACKEND = {
+#     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
+#     "BACKEND_OPTIONS": {
+#         "url": REDIS_URL#"redis://localhost:6379",
+#     },
+#     "MIDDLEWARE_OPTIONS": {
+#         "result_ttl": 60000
+#     }
+# }
 
 
 # FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
@@ -248,7 +248,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_USER')
-EMAIL_HOST_PASSWORD = "nkbdtufounzmcmxd"  # "pqqemvwafiddrzcc"
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")  # "nkbdtufounzmcmxd"
+# "pqqemvwafiddrzcc"
 # "kscnzqcdtpmewpxz"
 
 # Static files (CSS, JavaScript, Images)
@@ -285,7 +286,7 @@ REST_FRAMEWORK = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,  # "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
