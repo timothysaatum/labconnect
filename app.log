@@ -630,3 +630,238 @@ INFO 2024-11-12 08:50:46,723 autoreload Watching for file changes with StatReloa
 INFO 2024-11-12 08:51:03,732 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 200 1058
 INFO 2024-11-12 09:01:33,273 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
 INFO 2024-11-12 09:01:43,615 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 22:14:29,857 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 22:15:07,560 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 22:17:12,548 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 22:17:18,878 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 22:18:19,529 basehttp "GET /admin/sample/referral/ HTTP/1.1" 200 29294
+INFO 2024-11-12 22:18:20,172 basehttp "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2024-11-12 22:18:20,184 basehttp "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2804
+INFO 2024-11-12 22:18:20,226 basehttp "GET /static/admin/css/forms.css HTTP/1.1" 200 8710
+INFO 2024-11-12 22:18:20,243 basehttp "GET /static/admin/css/changelists.css HTTP/1.1" 200 6878
+INFO 2024-11-12 22:18:20,244 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-12 22:18:20,274 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 200 17972
+INFO 2024-11-12 22:18:20,289 basehttp "GET /static/admin/css/base.css HTTP/1.1" 200 22092
+INFO 2024-11-12 22:18:20,374 basehttp "GET /static/admin/css/widgets.css HTTP/1.1" 200 11564
+INFO 2024-11-12 22:18:20,421 basehttp "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2024-11-12 22:18:20,437 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2024-11-12 22:18:21,262 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2024-11-12 22:18:21,378 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2024-11-12 22:18:21,378 basehttp "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2024-11-12 22:29:03,305 basehttp "GET /api/sample/referral-details/e45399c5-ff60-495d-93a2-85e9cca27a8b/ HTTP/1.1" 200 1058
+INFO 2024-11-12 22:34:14,992 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 200 1076
+INFO 2024-11-12 22:34:15,208 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 200 1076
+INFO 2024-11-12 22:50:20,892 basehttp "GET /api/sample/referral-details/d1f3b1ef-3fd4-4678-ae6a-c7e6d505cdc0/ HTTP/1.1" 200 1076
+INFO 2024-11-12 22:51:00,351 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 22:51:06,147 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 22:53:27,694 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 22:53:33,098 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 22:53:37,950 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 22:53:43,791 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 22:54:31,923 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 22:54:37,363 autoreload Watching for file changes with StatReloader
+INFO 2024-11-12 22:54:44,376 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\sample\views.py changed, reloading.
+INFO 2024-11-12 22:54:50,233 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:37:18,206 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:44:29,781 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:45:45,141 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:45:50,489 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:45:54,981 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:45:59,464 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:46:25,392 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:46:30,087 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:46:54,377 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:46:59,410 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:47:40,737 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:47:45,468 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:50:09,716 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:50:15,183 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:50:28,168 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:50:41,609 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:51:01,202 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:51:07,077 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:53:21,529 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 00:53:26,875 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 00:56:07,045 basehttp "GET /admin/ HTTP/1.1" 200 27337
+INFO 2024-11-13 00:56:07,715 basehttp "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:07,715 basehttp "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:08,679 basehttp "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2024-11-13 00:56:09,002 basehttp "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+INFO 2024-11-13 00:56:09,033 basehttp "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+WARNING 2024-11-13 00:56:09,218 basehttp "GET /favicon.ico HTTP/1.1" 404 3627
+INFO 2024-11-13 00:56:15,979 basehttp "GET /admin/labs/branch/ HTTP/1.1" 200 25497
+INFO 2024-11-13 00:56:16,080 basehttp "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2024-11-13 00:56:16,281 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-13 00:56:16,450 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2024-11-13 00:56:16,650 basehttp "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:16,650 basehttp "GET /static/admin/js/core.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:16,666 basehttp "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:16,681 basehttp "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:16,681 basehttp "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:16,681 basehttp "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+INFO 2024-11-13 00:56:16,681 basehttp "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+ERROR 2024-11-13 00:56:43,504 log Internal Server Error: /api/laboratory/copy-tests-to-another-branch/bace7206-bf47-46b7-b474-6c720935c3ca/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labs\views.py", line 477, in post
+    test_ids = self.request.data.getlist('test_ids', [])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'dict' object has no attribute 'getlist'
+ERROR 2024-11-13 00:56:43,520 basehttp "POST /api/laboratory/copy-tests-to-another-branch/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 500 103016
+INFO 2024-11-13 00:57:56,231 basehttp "GET /admin/labs/test/ HTTP/1.1" 200 23862
+INFO 2024-11-13 00:57:56,332 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2024-11-13 00:57:56,833 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+ERROR 2024-11-13 00:58:39,484 log Internal Server Error: /api/laboratory/copy-tests-to-another-branch/bace7206-bf47-46b7-b474-6c720935c3ca/
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\connection.py", line 277, in connect
+    sock = self.retry.call_with_retry(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\retry.py", line 67, in call_with_retry
+    raise error
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\retry.py", line 62, in call_with_retry
+    return do()
+           ^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\connection.py", line 278, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\connection.py", line 639, in _connect
+    raise err
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\connection.py", line 627, in _connect
+    sock.connect(socket_address)
+TimeoutError: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labs\views.py", line 495, in post
+    task = copy_test_to_branch.send(test_ids, target_branch_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\dramatiq\actor.py", line 139, in send
+    return self.send_with_options(args=args, kwargs=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\dramatiq\actor.py", line 167, in send_with_options
+    return self.broker.enqueue(message, delay=delay)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\dramatiq\brokers\redis.py", line 186, in enqueue
+    self.do_enqueue(queue_name, message.options["redis_message_id"], message.encode())
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\dramatiq\brokers\redis.py", line 278, in do_dispatch
+    self._max_unpack_size(),
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\dramatiq\brokers\redis.py", line 255, in _max_unpack_size
+    cls._max_unpack_size_val = DEFAULT_LUA_MAX_STACK or self.scripts["maxstack"]()
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\commands\core.py", line 6296, in __call__
+    return client.evalsha(self.sha, len(keys), *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\commands\core.py", line 5672, in evalsha
+    return self._evalsha("EVALSHA", sha, numkeys, *keys_and_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\commands\core.py", line 5656, in _evalsha
+    return self.execute_command(command, sha, numkeys, *keys_and_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\client.py", line 545, in execute_command
+    conn = self.connection or pool.get_connection(command_name, **options)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\connection.py", line 1074, in get_connection
+    connection.connect()
+  File "C:\Users\TIMOTHY\Desktop\Projects\labs\labsenv\Lib\site-packages\redis\connection.py", line 281, in connect
+    raise TimeoutError("Timeout connecting to server")
+redis.exceptions.TimeoutError: Timeout connecting to server
+ERROR 2024-11-13 00:58:39,500 basehttp "POST /api/laboratory/copy-tests-to-another-branch/bace7206-bf47-46b7-b474-6c720935c3ca/ HTTP/1.1" 500 182036
+INFO 2024-11-13 05:48:04,166 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:48:19,583 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:48:28,463 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:48:33,608 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:48:44,106 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:48:50,286 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:48:59,632 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:49:05,460 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:49:09,999 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:49:15,932 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:49:32,115 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:49:37,461 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:52:34,847 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:52:38,097 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:53:01,020 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:53:04,474 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:53:28,105 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:53:33,967 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 05:56:14,402 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 05:58:47,613 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:02:43,579 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:02:55,336 autoreload Watching for file changes with StatReloader
+DEBUG 2024-11-13 06:03:35,675 actor Received args=(['63d0db08-f7a5-434c-bbb5-15141bbfed6a'], 'a3117172-44be-4c3e-a8af-ce2a8b421ce3') kwargs={}.
+DEBUG 2024-11-13 06:03:35,695 actor Completed after 17.74ms.
+INFO 2024-11-13 06:08:09,898 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:08:15,505 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:09:42,497 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:09:48,125 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:14:17,695 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:14:23,169 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:16:52,144 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:16:58,077 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:17:22,965 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:17:45,605 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:19:54,513 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:20:00,122 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:21:51,726 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:21:56,954 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:22:21,313 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:22:26,923 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:24:15,789 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:24:21,635 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:32:41,548 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:32:46,982 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:32:53,896 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:32:59,395 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:34:36,958 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:34:44,574 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:35:06,656 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:35:12,661 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:35:18,937 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:35:24,729 autoreload Watching for file changes with StatReloader
+INFO 2024-11-13 06:36:56,122 autoreload C:\Users\TIMOTHY\Desktop\Projects\labs\labconnect\labconnect\settings.py changed, reloading.
+INFO 2024-11-13 06:37:25,215 autoreload Watching for file changes with StatReloader

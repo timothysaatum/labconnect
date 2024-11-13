@@ -11,12 +11,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import urllib.parse
 import os
 from cryptography.fernet import Fernet
 from datetime import timedelta
 from decouple import config
 from redis.connection import ConnectionPool
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,14 +27,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-CRYPTOGRAPHY_KEY = 'r04keof03gcc@FV$£F£$_TLFc430o5e@C:C$+£db_index=True$_£L£%LCL$W)%£I%KKODCK£O$RI$)IKGPGJM:EGKP%KJVrjeog90935535fmijcer@?:!":£{{}}'
+CRYPTOGRAPHY_KEY = config("CRYPTOGRAPHY_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 ALLOWED_HOSTS = []
 
 # vercel blob settings.py
-VERCEL_BLOB_BASE_URL = 'https://api.vercel.com/v2/blob/upload'
-VERCEL_BLOB_API_KEY = 'vercel_blob_rw_XgYZgqC7wzq7cyZ6_IF5b94QMHPJEY3hlAacS79LVJZKc52'
+VERCEL_BLOB_BASE_URL = config("VERCEL_BLOB_BASE_URL")
+VERCEL_BLOB_API_KEY = config("VERCEL_BLOB_API_KEY")
 # BLOB_READ_WRITE_TOKEN="vercel_blob_rw_XgYZgqC7wzq7cyZ6_IF5b94QMHPJEY3hlAacS79LVJZKc52"
 # Application definition
 
@@ -169,18 +170,23 @@ CACHES = {
     }
 }
 
-# encoded_password = urllib.parse.quote("=s_%wIe&l>d,\\3R}zbPlu*:VI[oEoMlz")
-# dramatiq
-# "redis://default:IrKvdyHGOTMXVipSK7Kzq9aIee2zcTWc@redis-19681.c83.us-east-1-2.ec2.redns.redis-cloud.com:19681"
-# REDIS_URL = "redis://:UZhW0sImKKnn9EarRlwTReq9NXGVE65O@master.hermis.hz87gz.eun1.cache.amazonaws.com:6379"
 
-REDIS_URL = "redis://localhost:6379"
+REDIS_URL = config(
+    "REDIS_URL"
+)  # "rediss://:AVWtAAIjcDE4M2E0MGI2MDcwYmE0MTgxOTFkOGM3OTU5ZDA1YzUyZnAxMA@open-hedgehog-21933.upstash.io:6379"
+UPSTASH_URL = config("UPSTASH_URL")
+UPSTASH_TOKEN = config("UPSTASH_TOKEN")
+
+# REDIS_URL = "redis://localhost:6379"
 pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
+# dramatiq_broker = UpstashBroker(redis_url=UPSTASH_URL, redis_token=UPSTASH_TOKEN)
 DRAMATIQ_BROKER = {
-    "BROKER": "dramatiq.brokers.redis.RedisBroker",
+    "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",
     "OPTIONS": {
         "url": REDIS_URL,
-        "connection_pool": pool
+        "ssl": True,  # Enable SSL for secure connection to Upstash
+        "connection_pool": pool,
+        "ssl_cert_reqs": None,
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.AgeLimit",

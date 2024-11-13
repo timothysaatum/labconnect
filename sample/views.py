@@ -41,6 +41,7 @@ class CreateReferral(generics.CreateAPIView):
 
 
 class UpdateReferral(generics.UpdateAPIView):
+
     permission_classes = [IsAuthenticated]
     queryset = Referral.objects.all()
     lookup_url_kwarg = 'referral_id'
@@ -52,9 +53,9 @@ class UpdateReferral(generics.UpdateAPIView):
 
 
 class GetReferrals(generics.ListAPIView):
-    # permission_classes = [IsAuthenticated]
-    pagination_class = QueryPagination
 
+    permission_classes = [IsAuthenticated]
+    pagination_class = QueryPagination
     serializer_class = ReferralSerializer
 
     def get_queryset(self):
@@ -109,15 +110,14 @@ class GetReferrals(generics.ListAPIView):
 
 
 class ReferralDetailsView(generics.RetrieveAPIView):
-    
+
     serializer_class = ReferralSerializer
     permission_classes = [IsAuthenticated]
-    
 
     def get_object(self):
         # Fetch referral_id from URL kwargs
         referral_id = self.kwargs.get("referral_id")
-        
+
         # Use get_object_or_404 to retrieve the object by referral_id
         return get_object_or_404(Referral, id=referral_id)
 
@@ -134,6 +134,7 @@ class UpdateSample(generics.UpdateAPIView):
 
 
 class UpdateNotification(generics.UpdateAPIView):
+
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer
 
@@ -145,6 +146,7 @@ class UpdateNotification(generics.UpdateAPIView):
         return obj
 
     def patch(self, request, *args, **kwargs):
+
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
