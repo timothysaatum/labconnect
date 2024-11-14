@@ -15,7 +15,7 @@ import os
 from cryptography.fernet import Fernet
 from datetime import timedelta
 from decouple import config
-from redis.connection import ConnectionPool
+# from redis.connection import ConnectionPool
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django_filters',
     'analytics',
     'modelmixins',
-    'django_dramatiq',
+    # 'django_dramatiq',
     'sample',
     'user',
     'hospital',
@@ -277,15 +277,15 @@ REST_FRAMEWORK = {
 }
 
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#     }
+# }
 
 SIMPLE_JWT = {
 

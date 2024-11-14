@@ -12,6 +12,9 @@ from datetime import timedelta
 from django.shortcuts import get_object_or_404
 
 
+
+
+
 logger = logging.getLogger('labs')
 
 
@@ -265,3 +268,4 @@ class GetTrackerDetails(generics.ListAPIView):
 
         sample_id = self.kwargs.get('sample_id')
         return SampleTrackingHistory.objects.filter(sample=sample_id)
+

@@ -33,7 +33,9 @@ class Paystack:
 
     @staticmethod
     def verify_payment(reference):
+
         headers = {"Authorization": f"Bearer {Paystack.SECRET_KEY}"}
         url = f"{Paystack.BASE_URL}/transaction/verify/{reference}"
         response = requests.get(url, headers=headers)
+
         return response

@@ -4,6 +4,7 @@ from .views import (
     UpdateSubscriptionView,
     ProcessPaymentView,
     VerifyPaymentView,
+    PaystackWebhookView,
 )
 
 
@@ -21,5 +22,10 @@ urlpatterns = [
         "verify-payment/<str:reference>/",
         VerifyPaymentView.as_view(),
         name="verify-payment",
+    ),
+    path(
+        "webhook/paystack/",
+        PaystackWebhookView.as_view(),
+        name="webhook",
     ),
 ]

@@ -9,7 +9,10 @@ from .models import Subscription, Transaction
 from .process_payment import Paystack
 from django.db import IntegrityError
 from decimal import Decimal
-
+import hashlib
+import hmac
+from django.conf import settings
+import json
 import uuid
 
 
@@ -131,3 +134,35 @@ class VerifyPaymentView(APIView):
             return Response({'status': response['status'], 'message': response['message']}, status=status.HTTP_200_OK)
         else:
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PaystackWebhookView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+
+        secrete_key = settings.PAYSTACK_SECRET
+
+        signature = request.headers.get("X-Paystack-Signature")
+
+        if not signature:
+            return Response(
+                {"error": "Missing signature"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        payload = request.body
+        print(payload)
+        expected_signature = hmac.new(
+            secrete_key.enode(), payload, hashlib.sha512
+        ).hexdigest()
+        if signature != expected_signature:
+            return Response(
+                {"error": "Invalid Signature"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        event = json.loads(payload)
+        if event["event"] == "charge.success":
+            print("correct")
+
+        return Response({"message": "success"}, status=status.HTTP_200_OK)
