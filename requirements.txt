@@ -15,6 +15,7 @@ Django==5.1.1
 django-appconf==1.0.6
 django-cors-headers==4.4.0
 django-dramatiq==0.11.6
+django-encrypted-model-fields==0.6.5
 django-extensions==3.2.3
 django-filter==24.3
 django-redis==5.4.0
@@ -35,6 +36,7 @@ pydotplus==2.0.2
 PyJWT==2.9.0
 pyotp==2.9.0
 pyparsing==3.1.4
+pyproj==3.7.0
 python-dateutil==2.9.0.post0
 python-decouple==3.8
 pytz==2024.2

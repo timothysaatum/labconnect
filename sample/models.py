@@ -1,11 +1,16 @@
 from django.db import models
-from labs.models import Branch, Test
+from labs.models import Test
 from modelmixins.models import Facility
 from modelmixins.models import SampleType
 # from modelmixins.encryption import AESEncryptedField, FernetEncryptedField
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
-# from django_cryptography.fields import encrypt
+from encrypted_model_fields.fields import (
+    EncryptedCharField,
+    EncryptedTextField,
+    EncryptedDateTimeField,
+    EncryptedBooleanField,
+)
 import uuid
 import random, string
 import datetime
@@ -67,6 +72,7 @@ def generate_referral_id():
 
     return referral_id
 
+
 class Patient(models.Model):
     '''
     This Table holds information about the patient including their insuarance
@@ -91,19 +97,19 @@ class Referral(models.Model):
         Facility, on_delete=models.CASCADE, related_name="referrals", db_index=True
     )
     facility_type = models.CharField(max_length=255, choices=REFERRING_FACILITY_TYPE)
-    patient_name = models.CharField(max_length=200)
-    patient_age = models.CharField(max_length=10)
-    patient_sex = models.CharField(max_length=20, choices=PATIENT_SEX)
-    clinical_history = models.TextField(null=True, blank=True)
+    patient_name = EncryptedCharField(max_length=200)
+    patient_age = EncryptedCharField(max_length=10)
+    patient_sex = EncryptedCharField(max_length=20, choices=PATIENT_SEX)
+    clinical_history = EncryptedTextField(null=True, blank=True)
     to_laboratory = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
     delivery = models.ForeignKey(
         Delivery, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-    attachment = models.URLField(null=True, blank=True)
-    requires_phlebotomist = models.BooleanField(default=False)
-    sender_full_name = models.CharField(max_length=200, null=True, blank=True)
-    sender_phone = models.CharField(max_length=20, null=True, blank=True)
-    sender_email = models.EmailField(null=True, blank=True)
+    attachment = EncryptedCharField(max_length=500, null=True, blank=True)
+    requires_phlebotomist = EncryptedBooleanField(default=False)
+    sender_full_name = EncryptedCharField(max_length=200, null=True, blank=True)
+    sender_phone = EncryptedCharField(max_length=20, null=True, blank=True)
+    sender_email = EncryptedCharField(max_length=100, null=True, blank=True)
     referral_status = models.CharField(max_length=100, choices=REQUEST_STATUS)
     date_referred = models.DateTimeField(auto_now_add=True)
 
@@ -137,7 +143,9 @@ class SampleTest(models.Model):
     status = models.CharField(
         max_length=50, choices=TEST_STATUS, default="Pending", db_index=True
     )  # Status of the test
-    result = models.URLField(blank=True, null=True)  # To store test result (optional)
+    result = EncryptedCharField(
+        max_length=500, null=True, blank=True
+    )  # To store test result (optional)
     date_completed = models.DateTimeField(null=True, blank=True)  # When the test was completed
 
     def __str__(self):
@@ -146,29 +154,33 @@ class SampleTest(models.Model):
 
 class SampleTrackingHistory(models.Model):
 
-	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, db_index=True)
-	sample = models.ForeignKey(Sample, related_name="tracking_history", on_delete=models.CASCADE, db_index=True)
-	status = models.CharField(max_length=50, choices=REQUEST_STATUS, db_index=True)
-	location = models.CharField(max_length=255, null=True, blank=True)
-	updated_at = models.DateTimeField(auto_now=True)
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
+    )
+    sample = models.ForeignKey(
+        Sample, related_name="tracking_history", on_delete=models.CASCADE, db_index=True
+    )
+    status = models.CharField(max_length=50, choices=REQUEST_STATUS, db_index=True)
+    location = EncryptedCharField(max_length=500, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-	class Meta:
-		verbose_name_plural = 'Sample Trackings'
+    class Meta:
+        verbose_name_plural = 'Sample Trackings'
 
-	def __str__(self) -> str:
-		return self.status
+    def __str__(self) -> str:
+        return self.status
 
 
 class Notification(models.Model):
 
-	facility = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
-	title = models.CharField(max_length=200)
-	message = models.CharField(max_length=150)
-	is_read = models.BooleanField(default=False)
-	is_hidden = models.BooleanField(default=False)
-	date_added = models.DateTimeField(auto_now_add=True)
-	date_modified = models.DateTimeField(auto_now=True)
+    facility = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
+    title = EncryptedCharField(max_length=200)
+    message = EncryptedCharField(max_length=150)
+    is_read = EncryptedBooleanField(default=False)
+    is_hidden = EncryptedBooleanField(default=False)
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
-	def __str__(self) -> str:
-		return (f'{self.facility.branch.town} - {self.facility.branch.laboratory.name}' if self.facility.branch 
+    def __str__(self) -> str:
+        return (f'{self.facility.branch.town} - {self.facility.branch.laboratory.name}' if self.facility.branch 
 		  else self.facility.hospital)

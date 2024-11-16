@@ -27,10 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-CRYPTOGRAPHY_KEY = config("CRYPTOGRAPHY_KEY")
+FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # vercel blob settings.py
 VERCEL_BLOB_BASE_URL = config("VERCEL_BLOB_BASE_URL")
@@ -163,12 +164,12 @@ DATABASES = {
 }
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'key_cache_table',
-    }
-}
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'key_cache_table',
+#     }
+# }
 
 
 # REDIS_URL = config(
