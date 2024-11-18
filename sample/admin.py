@@ -72,8 +72,8 @@ class SampleTrackingHistoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(ReferralTrackingHistory)
-class SampleTrackingHistoryAdmin(admin.ModelAdmin):
-    list_display = ("sample", "status", "location", "updated_at")
+class ReferralTrackingHistoryAdmin(admin.ModelAdmin):
+    list_display = ("referral", "status", "location", "updated_at")
 
 
 admin.site.register(Sample, SampleAdmin)
