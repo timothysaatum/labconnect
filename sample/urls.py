@@ -4,12 +4,14 @@ from .views import (
     GetNotifications,
     CountObjects,
     TrackSampleState,
-    GetTrackerDetails,
+    GetSampleTrackerDetails,
     CreateReferral,
     UpdateReferral,
     GetReferrals,
     UpdateSample,
-    ReferralDetailsView
+    ReferralDetailsView,
+    TrackReferralState,
+    GetReferralTrackerDetails,
 )
 
 app_name = 'sample'
@@ -25,6 +27,9 @@ urlpatterns = [
         GetNotifications.as_view(),
         name="notifications",
     ),
+    path(
+        "track-referral-state/", TrackReferralState.as_view(), name="tracking-referral"
+    ),
     path("track-sample-state/", TrackSampleState.as_view(), name="tracking-sample"),
     path(
         "get-sample-counts-for-facility/<uuid:facility_id>/",
@@ -32,9 +37,14 @@ urlpatterns = [
         name="counts",
     ),
     path(
-        "get-tracker-details/<uuid:referral_id>/",
-        GetTrackerDetails.as_view(),
+        "get-tracker-details/<uuid:sample_id>/",
+        GetSampleTrackerDetails.as_view(),
         name="tracker-details",
+    ),
+    path(
+        "get-referral-tracker-details/<uuid:referral_id>/",
+        GetReferralTrackerDetails.as_view(),
+        name="referral-tracker-details",
     ),
     path("create-referral/", CreateReferral.as_view(), name="create-referral"),
     path(

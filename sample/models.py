@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 from encrypted_model_fields.fields import (
     EncryptedCharField,
     EncryptedTextField,
-    EncryptedDateTimeField,
     EncryptedBooleanField,
 )
 import uuid
@@ -55,8 +54,7 @@ REQUEST_STATUS = [
     ("Request Made", "Request Made"),
     ("Request Terminated", "Request Terminated"),
     ("Request Accepted", "Request Accepted"),
-    ("Sample Received by Delivery", "Sample Received by Delivery"),
-    ("Sample Received by Lab", "Sample Received by Lab"),
+    ("Delivery Pick-up", "Delivery Pick-up"),
     ("Request Completed", "Request Completed"),
 ]
 
@@ -152,16 +150,34 @@ class SampleTest(models.Model):
         return f"{self.test.name} - Status: {self.status}"
 
 
+class ReferralTrackingHistory(models.Model):
+
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
+    )
+    referral = models.ForeignKey(
+        Referral, related_name="referral_history", on_delete=models.CASCADE, db_index=True
+    )
+    status = models.CharField(max_length=50, choices=REQUEST_STATUS, db_index=True)
+    location = EncryptedCharField(max_length=500, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'Referral Trackings'
+
+    def __str__(self) -> str:
+        return self.status
+
+
 class SampleTrackingHistory(models.Model):
 
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, db_index=True
     )
     sample = models.ForeignKey(
-        Sample, related_name="tracking_history", on_delete=models.CASCADE, db_index=True
+        Sample, related_name="sample_history", on_delete=models.CASCADE, db_index=True
     )
-    status = models.CharField(max_length=50, choices=REQUEST_STATUS, db_index=True)
-    location = EncryptedCharField(max_length=500, null=True, blank=True)
+    status = models.CharField(max_length=50, choices=SAMPLE_STATUS, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

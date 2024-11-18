@@ -1,5 +1,12 @@
 from django.contrib import admin # type: ignore
-from .models import Sample, Notification, SampleTrackingHistory, Referral, SampleTest
+from .models import (
+    Sample,
+    Notification,
+    SampleTrackingHistory,
+    Referral,
+    SampleTest,
+    ReferralTrackingHistory,
+)
 
 
 @admin.register(Referral)
@@ -61,7 +68,13 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(SampleTrackingHistory)
 class SampleTrackingHistoryAdmin(admin.ModelAdmin):
-    list_display = ('sample', 'status', 'location', 'updated_at')
+    list_display = ("sample", "status", "updated_at")
+
+
+@admin.register(ReferralTrackingHistory)
+class SampleTrackingHistoryAdmin(admin.ModelAdmin):
+    list_display = ("sample", "status", "location", "updated_at")
+
 
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(Notification, NotificationAdmin)

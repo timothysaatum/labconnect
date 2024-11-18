@@ -1,6 +1,14 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from sample.models import Referral
+from encrypted_model_fields.fields import (
+    EncryptedCharField,
+    # EncryptedTextField,
+    EncryptedBooleanField,
+    EncryptedEmailField,
+)
+from decimal import Decimal
+
 user_account = get_user_model()
 
 
@@ -88,21 +96,31 @@ class Transaction(models.Model):
         user_account, on_delete=models.SET_NULL, blank=True, null=True, db_index=True
     )
 	referral = models.ForeignKey(Referral, on_delete=models.CASCADE)
-	amount = models.DecimalField(max_digits=10, decimal_places=2)
-	channels = models.CharField(max_length=100)
-	email = models.EmailField()
-	payment_mode = models.CharField(choices=PAYMENT_MODE, max_length=50)
+	amount = EncryptedCharField(max_length=100)
+	channels = EncryptedCharField(max_length=100)
+	email = EncryptedEmailField()
+	payment_mode = EncryptedCharField(choices=PAYMENT_MODE, max_length=50)
 	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
-	is_verified = models.BooleanField(default=False)
-	reference = models.CharField(max_length=155, unique=True)
+	is_verified = EncryptedBooleanField(default=False)
+	reference = EncryptedCharField(max_length=155, unique=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	
 	class Meta:
 		db_table = "Payments"
-
+		
 	def __str__(self):
 		return f"{str(self.client)} - {self.amount}"
+	
+	@property
+	def amount_decimal(self):
+		# Convert the string back to a Decimal
+		return Decimal(self.amount)
+	
+	@amount_decimal.setter
+	def amount_decimal(self, value):
+		# Set the Decimal value as a string
+		self.amount = str(value)
 
 	@property
 	def account_type(self):
@@ -111,3 +129,4 @@ class Transaction(models.Model):
 	@property
 	def tel(self):
 		return self.client.phone_number
+	

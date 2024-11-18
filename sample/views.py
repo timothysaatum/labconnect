@@ -2,17 +2,26 @@ from rest_framework.permissions import IsAuthenticated # type: ignore
 from rest_framework.response import Response # type: ignore
 from rest_framework import generics # type: ignore
 from rest_framework import status # type: ignore
-from .serializers import NotificationSerializer, ReferralSerializer, SampleTrackingSerializer, SampleSerializer
-from .models import Notification, Sample, SampleTrackingHistory, Referral
+from .serializers import (
+    NotificationSerializer,
+    ReferralSerializer,
+    SampleTrackingSerializer,
+    SampleSerializer,
+    ReferralTrackingSerializer,
+)
+from .models import (
+    Notification,
+    Sample,
+    SampleTrackingHistory,
+    Referral,
+    ReferralTrackingHistory,
+)
 from django.db.models import Count, Q # type: ignore
 from django.utils.timezone import now, timedelta # type: ignore
 from .paginators import QueryPagination
 import logging
 from datetime import timedelta
 from django.shortcuts import get_object_or_404
-
-
-
 
 
 logger = logging.getLogger('labs')
@@ -242,6 +251,23 @@ class CountObjects(generics.GenericAPIView):
         return Response(data)
 
 
+class TrackReferralState(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ReferralTrackingSerializer
+
+    def post(self, request, format=None):
+
+        return self.create(request)
+
+    def perform_create(self, serializer):
+        referral_tracking_history = serializer.save()
+
+        referral = referral_tracking_history.referral
+        referral.referral_status = serializer.validated_data["status"]
+        referral.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class TrackSampleState(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
@@ -259,13 +285,23 @@ class TrackSampleState(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class GetTrackerDetails(generics.ListAPIView):
+class GetReferralTrackerDetails(generics.ListAPIView):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = ReferralTrackingSerializer
+
+    def get_queryset(self, *args, **kwargs):
+
+        referral_id = self.kwargs.get("referral_id")
+        return ReferralTrackingHistory.objects.filter(referral=referral_id)
+
+
+class GetSampleTrackerDetails(generics.ListAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):
 
-        sample_id = self.kwargs.get('sample_id')
+        sample_id = self.kwargs.get("sample_id")
         return SampleTrackingHistory.objects.filter(sample=sample_id)
-

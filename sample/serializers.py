@@ -4,7 +4,8 @@ from sample.models import (
       Notification, 
       SampleTrackingHistory, 
       Referral,
-      SampleTest
+      SampleTest,
+      ReferralTrackingHistory
       )
 from django.utils import timezone
 from django.db import transaction
@@ -272,26 +273,43 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class SampleTrackingSerializer(serializers.ModelSerializer):
-    
+
     sample = serializers.PrimaryKeyRelatedField(queryset=Sample.objects.all(), required=False)
-    location = serializers.CharField(required=False)
-    
+
     class Meta:
-        
+
         model = SampleTrackingHistory
-        
+
         fields = (
 			'id', 
 			'sample', 
 			'status',
-			'location',
 			'updated_at'
 		)
-
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
 
         data['sample'] = str(instance.sample)
+
+        return data
+
+
+class ReferralTrackingSerializer(serializers.ModelSerializer):
+
+    sample = serializers.PrimaryKeyRelatedField(
+        queryset=Referral.objects.all(), required=False
+    )
+    location = serializers.CharField(required=False)
+
+    class Meta:
+
+        model = ReferralTrackingHistory
+        fields = ("id", "referral", "status", "location", "updated_at")
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data["referral"] = str(instance.referral)
 
         return data
