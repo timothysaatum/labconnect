@@ -3,7 +3,7 @@ from .models import BranchManagerInvitation, Laboratory, Branch
 from django.db.models.signals import post_save # type: ignore
 from django.dispatch import receiver # type: ignore
 from textwrap import dedent
-from sample.models import Notification
+# from sample.models import Notification
 from labs.utils import get_gps_coords
 
 
@@ -148,8 +148,10 @@ def mail_lab_user(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Branch)
 def get_coords(sender, instance, created, **kwargs):
 
-	if created:
-		try:
-			get_gps_coords(instance.digital_address)
-		except Exception as e:
-			print(str(e))
+    if created:
+        try:
+            lat, long = get_gps_coords(instance.digital_address)
+            instance.gps_coordinates = f'{lat}, {long}'
+            instance.save()
+        except Exception as e:
+            print(str(e))

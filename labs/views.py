@@ -17,6 +17,8 @@ from django.http import QueryDict # type: ignore
 from django.core.cache import cache # type: ignore
 from rest_framework.exceptions import ValidationError # type: ignore
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
+from .utils import get_nearby_branches
+
 # from .tasks import copy_test_to_branch
 import logging
 from modelmixins.utils import ensure_uuid
@@ -360,32 +362,49 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 		return self.destroy(request, pk, format=None)
 
 
-
 class AllLaboratories(generics.ListAPIView):
-	serializer_class = FacilitySerializer
+    serializer_class = FacilitySerializer
 
-	def get_queryset(self):
+    def get_queryset(self):
+        max_dist = self.request.GET.get("max_distance", 100)
         # Get the level from the request query parameters
-		facility_level = self.request.GET.get('facility_level')
+        facility_level = self.request.GET.get("facility_level")
+        user_lat = self.request.GET.get("user_lat")
+        user_long = self.request.GET.get("user_long")
+
+        query = Facility.objects.filter(
+            Q(hospitallab__isnull=False) | Q(branch__isnull=False)
+        ).select_related(
+            "branch", "hospitallab"
+        )
         # Check if the level is valid
-		if facility_level in LEVEL_ORDER:
+        if facility_level in LEVEL_ORDER:
+			
             # Get the numeric value for the level
-			level_value = LEVEL_ORDER[facility_level]
+            level_value = LEVEL_ORDER[facility_level]
             # Generate the levels to include (levels >= the current one)
-			valid_levels = [level for level, value in LEVEL_ORDER.items() if value >= level_value]
-            # Build the query
+            valid_levels = [
+                level for level, value in LEVEL_ORDER.items() if value >= level_value
+            ]
+			
+            return query.filter(
+                Q(hospitallab__level__in=valid_levels)
+                | Q(branch__level__in=valid_levels))
 
-			return Facility.objects.filter(
-                Q(hospitallab__isnull=False) | Q(branch__isnull=False)
-            ).filter(
-                Q(hospitallab__level__in=valid_levels) | 
-                Q(branch__level__in=valid_levels)
-            ).select_related('branch', 'hospitallab')
+        if all([facility_level, user_lat, user_long, max_dist]):
+            nearby_labs = query.filter(
+                Q(hospitallab__level__in=valid_levels)
+                | Q(branch__level__in=valid_levels))
 
-        # Return an all labs queryset if no valid level is provided
-		return Facility.objects.filter(
-			Q(hospitallab__isnull=False) | Q(branch__isnull=False)
-			).select_related('branch', 'hospitallab')
+            return get_nearby_branches(
+                query=nearby_labs,
+                user_lat=user_lat,
+                user_long=user_long,
+                max_distance_km=max_dist,
+            )
+
+            # Return an all labs queryset if no valid level is provided
+        return query
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):
