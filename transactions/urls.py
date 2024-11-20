@@ -24,7 +24,7 @@ urlpatterns = [
         name="verify-payment",
     ),
     path(
-        "webhook/paystack/",
+        "paystack-webhook/",
         PaystackWebhookView.as_view(),
         name="webhook",
     ),

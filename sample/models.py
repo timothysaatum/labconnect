@@ -56,6 +56,8 @@ REQUEST_STATUS = [
     ("Request Accepted", "Request Accepted"),
     ("Delivery Pick-up", "Delivery Pick-up"),
     ("Request Completed", "Request Completed"),
+    ("Request Completed", "Request Completed"),
+    ("Sample Received", "Sample Received"),
 ]
 
 def generate_referral_id():
