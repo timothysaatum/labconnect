@@ -1,4 +1,4 @@
-from .models import Notification, Sample, SampleTrackingHistory
+from .models import Notification, Sample, SampleTrackingHistory, ReferralTrackingHistory
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from labs.models import Branch
@@ -14,7 +14,8 @@ def create_notification_for_lab(sender, instance, created, **kwargs):
             message=f"New sample from: {instance.referral.referring_facility}",
             facility=branch,
         )
-        SampleTrackingHistory.objects.create(sample=instance, status='Request Made')
+
+        SampleTrackingHistory.objects.create(sample=instance, sample_status="Pending")
         if instance.referral.delivery:
             Notification.objects.create(
                 message=f"New sample from: {instance.referral.referring_facility}",
