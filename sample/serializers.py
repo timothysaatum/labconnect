@@ -49,6 +49,26 @@ class SampleTestSerializer(serializers.ModelSerializer):
         return data
 
 
+class SampleTrackingSerializer(serializers.ModelSerializer):
+
+    sample = serializers.PrimaryKeyRelatedField(
+        queryset=Sample.objects.all(), required=False
+    )
+
+    class Meta:
+
+        model = SampleTrackingHistory
+
+        fields = ("id", "sample", "status", "updated_at")
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        data["sample"] = str(instance.sample)
+
+        return data
+
+
 class ReferralTrackingSerializer(serializers.ModelSerializer):
 
     referral = serializers.PrimaryKeyRelatedField(
@@ -83,6 +103,9 @@ class SampleSerializer(serializers.ModelSerializer):
     sample_tests_data = serializers.PrimaryKeyRelatedField(
         read_only=True, required=False
     )
+    sample_state = serializers.PrimaryKeyRelatedField(
+        read_only=True
+    )
 
     class Meta:
 
@@ -94,10 +117,11 @@ class SampleSerializer(serializers.ModelSerializer):
             "sample_tests",
             "referral",
             "sample_status",
+            "sample_state" ,
             "rejection_reason",
             "date_modified",
             "date_collected",
-            'sample_tests_data'
+            "sample_tests_data",
         )
 
     def create(self, validated_data):
@@ -127,7 +151,8 @@ class SampleSerializer(serializers.ModelSerializer):
                 # Update existing samples or create new ones
                 for sample_test in sample_tests_data:
 
-                    _, created = SampleTest.objects.update_or_create(
+                    # _, created =
+                    SampleTest.objects.update_or_create(
                         id=sample_test.get("test_id"),  # Find by ID if it exists
                         sample=instance,  # Always associate it with the current referral
                         defaults={
@@ -145,6 +170,9 @@ class SampleSerializer(serializers.ModelSerializer):
         data["referral"] = str(instance.referral)
         data["sample_type"] = SampleTypeSerializer(instance.sample_type).data
         data["sample_tests_data"] = SampleTestSerializer(instance.sample_tests.all(), many=True).data
+        data["sample_state"] = SampleTrackingSerializer(
+            instance.sample_history.all(), many=True
+        ).data
 
         return data
 
@@ -293,28 +321,5 @@ class NotificationSerializer(serializers.ModelSerializer):
 
         data = super().to_representation(instance)
         data['facility'] = str(instance.facility)
-
-        return data
-
-
-class SampleTrackingSerializer(serializers.ModelSerializer):
-
-    sample = serializers.PrimaryKeyRelatedField(queryset=Sample.objects.all(), required=False)
-
-    class Meta:
-
-        model = SampleTrackingHistory
-
-        fields = (
-			'id', 
-			'sample', 
-			'status',
-			'updated_at'
-		)
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        data['sample'] = str(instance.sample)
 
         return data

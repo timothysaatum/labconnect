@@ -265,6 +265,11 @@ class TrackReferralState(generics.CreateAPIView):
         referral = referral_tracking_history.referral
         referral.referral_status = serializer.validated_data["status"]
         referral.save()
+
+        if serializer.validated_data['status'] == 'Request Accepted':
+            Notification.objects.create()
+
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

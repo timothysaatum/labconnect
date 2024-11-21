@@ -37,7 +37,7 @@ urlpatterns = [
         name="counts",
     ),
     path(
-        "get-tracker-details/<uuid:sample_id>/",
+        "get-tracker-details/<int:sample_id>/",
         GetSampleTrackerDetails.as_view(),
         name="tracker-details",
     ),
