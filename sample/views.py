@@ -176,6 +176,7 @@ class GetNotifications(generics.ListAPIView):
     def get_queryset(self):
         request_status = (
             "Request Completed",
+            "Request Made",
             "Request Accepted",
             "Sample Received by Delivery",
             "Sample Received by Lab",

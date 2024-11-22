@@ -9,6 +9,8 @@ from .models import Subscription, Transaction
 from .process_payment import Paystack
 from django.db import IntegrityError
 from decimal import Decimal
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 import hashlib
 import hmac
 from django.conf import settings
@@ -136,6 +138,7 @@ class VerifyPaymentView(APIView):
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class PaystackWebhookView(APIView):
     authentication_classes = []
     permission_classes = []
@@ -167,6 +170,7 @@ class PaystackWebhookView(APIView):
         event = json.loads(payload)
         if event["event"] == "charge.success":
             try:
+                print('I am running')
                 # Extract transaction reference from the event data
                 reference = event["data"]["reference"]
 
