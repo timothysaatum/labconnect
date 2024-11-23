@@ -130,7 +130,7 @@ class Sample(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.sample_type} Sample: {self.referral.patient_name}"
+        return self.referral.referral_id
 
 
 class SampleTest(models.Model):

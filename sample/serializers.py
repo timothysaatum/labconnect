@@ -49,46 +49,6 @@ class SampleTestSerializer(serializers.ModelSerializer):
         return data
 
 
-class SampleTrackingSerializer(serializers.ModelSerializer):
-
-    sample = serializers.PrimaryKeyRelatedField(
-        queryset=Sample.objects.all(), required=False
-    )
-
-    class Meta:
-
-        model = SampleTrackingHistory
-
-        fields = ("id", "sample", "status", "updated_at")
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        data["sample"] = str(instance.sample)
-
-        return data
-
-
-class ReferralTrackingSerializer(serializers.ModelSerializer):
-
-    referral = serializers.PrimaryKeyRelatedField(
-        queryset=Referral.objects.all(), required=False
-    )
-    location = serializers.CharField(required=False)
-
-    class Meta:
-
-        model = ReferralTrackingHistory
-        fields = ("id", "referral", "status", "location", "updated_at")
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-
-        data["referral"] = str(instance.referral)
-
-        return data
-
-
 class SampleSerializer(serializers.ModelSerializer):
 
     referral = serializers.PrimaryKeyRelatedField(
@@ -103,9 +63,6 @@ class SampleSerializer(serializers.ModelSerializer):
     sample_tests_data = serializers.PrimaryKeyRelatedField(
         read_only=True, required=False
     )
-    sample_state = serializers.PrimaryKeyRelatedField(
-        read_only=True
-    )
 
     class Meta:
 
@@ -117,7 +74,6 @@ class SampleSerializer(serializers.ModelSerializer):
             "sample_tests",
             "referral",
             "sample_status",
-            "sample_state" ,
             "rejection_reason",
             "date_modified",
             "date_collected",
@@ -169,9 +125,8 @@ class SampleSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["referral"] = str(instance.referral)
         data["sample_type"] = SampleTypeSerializer(instance.sample_type).data
-        data["sample_tests_data"] = SampleTestSerializer(instance.sample_tests.all(), many=True).data
-        data["sample_state"] = SampleTrackingSerializer(
-            instance.sample_history.all(), many=True
+        data["sample_tests_data"] = SampleTestSerializer(
+            instance.sample_tests.all(), many=True
         ).data
 
         return data
@@ -194,7 +149,6 @@ class ReferralSerializer(serializers.ModelSerializer):
     samples = SampleSerializer(many=True, required=False)
     attachment = serializers.URLField(required=False)
     facility_type = serializers.CharField(read_only=True)
-    referral_state = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Referral
@@ -216,7 +170,6 @@ class ReferralSerializer(serializers.ModelSerializer):
             "sender_phone",
             "sender_email",
             "referral_status",
-            "referral_state",
             "attachment",
             "date_referred",
             "samples",
@@ -287,9 +240,6 @@ class ReferralSerializer(serializers.ModelSerializer):
         data["referring_facility"] = str(instance.referring_facility)
         data["laboratory_contact"] = instance.to_laboratory.phone
         data["to_laboratory"] = str(instance.to_laboratory)
-        data["referral_state"] = ReferralTrackingSerializer(
-            instance.referral_history.all(), many=True
-        ).data
 
         return data
 
@@ -303,7 +253,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     is_hidden = serializers.BooleanField(default=False)
 
     class Meta:
- 
+
         model = Notification
 
         fields = (
@@ -323,3 +273,57 @@ class NotificationSerializer(serializers.ModelSerializer):
         data['facility'] = str(instance.facility)
 
         return data
+
+
+class ReferralTrackDataSerializer(serializers.ModelSerializer):
+    samples = SampleSerializer(many=True, required=False)
+
+    class Meta:
+        model = Referral
+
+        fields = (
+            "id",
+            "referring_facility",
+            "date_referred",
+            "samples",
+        )
+
+
+class SampleTrackingSerializer(serializers.ModelSerializer):
+
+    sample = serializers.PrimaryKeyRelatedField(
+        queryset=Sample.objects.all(), required=False, write_only=True
+    )
+    sample_data = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+
+        model = SampleTrackingHistory
+
+        fields = ("id", "sample", "sample_data", "status", "updated_at")
+
+    def get_sample_data(self, obj):
+        # Serialize the related Sample object
+        if obj.sample:  # Ensure sample exists
+            return SampleSerializer(obj.sample).data
+        return None
+
+
+class ReferralTrackingSerializer(serializers.ModelSerializer):
+
+    referral = serializers.PrimaryKeyRelatedField(
+        queryset=Referral.objects.all(), required=False, write_only=True
+    )
+    location = serializers.CharField(required=False)
+    referral_data = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+
+        model = ReferralTrackingHistory
+        fields = ("id", "referral", "referral_data", "status", "location", "updated_at")
+
+    def get_referral_data(self, obj):
+        # Serialize the related referral object
+        if obj.referral:  # Ensure referral exists
+            return ReferralTrackDataSerializer(obj.referral).data
+        return None

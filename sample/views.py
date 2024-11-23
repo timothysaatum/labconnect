@@ -293,7 +293,7 @@ class TrackSampleState(generics.CreateAPIView):
 
 class GetReferralTrackerDetails(generics.ListAPIView):
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = ReferralTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):
@@ -304,10 +304,10 @@ class GetReferralTrackerDetails(generics.ListAPIView):
 
 class GetSampleTrackerDetails(generics.ListAPIView):
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):
 
         sample_id = self.kwargs.get("sample_id")
-        return SampleTrackingHistory.objects.filter(sample=sample_id)
+        return SampleTrackingHistory.objects.filter(sample=sample_id).select_related('sample')
