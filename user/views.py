@@ -33,6 +33,7 @@ from labs.models import (
 	BranchManagerInvitation, 
 	Branch
 )
+from rest_framework.throttling import UserRateThrottle
 from labs.serializers import BranchManagerInvitationSerializer
 import random
 from .utils import send_code_to_user
@@ -220,39 +221,48 @@ class VerifyUserEmail(GenericAPIView):
 
 class LoginUserView(GenericAPIView):
 
-	serializer_class = LoginSerializer
+    throttle_classes = [UserRateThrottle]
+    serializer_class = LoginSerializer
 
-	def post(self, request):
+    def post(self, request):
 
-		serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
 
-		if serializer.is_valid(raise_exception=True):
-			try:
+        if serializer.is_valid(raise_exception=True):
+            try:
 
-				user = Client.objects.get(id=serializer.data['user'].get('id'))
+                user = Client.objects.get(id=serializer.data["user"].get("id"))
 
-			except Client.DoesNotExist:
-				return Response({'error': 'An error occured, try again.'}, status=status.HTTP_404_NOT_FOUND)
+            except Client.DoesNotExist:
+                return Response(
+                    {"error": "An error occured, try again."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
 
-			user_tokens = user.tokens()
-			logger.info(f'Logged in {user.full_name}')
-			
-			response = Response({'data':serializer.data, 'access_token':user_tokens.get('access')}, status=status.HTTP_200_OK)
+            user_tokens = user.tokens()
+            logger.info(f"Logged in {user.full_name}")
 
-			response.set_cookie(
-					key=settings.SIMPLE_JWT['AUTH_COOKIE'],
-					value=user_tokens.get('refresh'),
-					domain=settings.SIMPLE_JWT['AUTH_COOKIE_DOMAIN'],
-					path=settings.SIMPLE_JWT['AUTH_COOKIE_PATH'],
-					expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'],
-					httponly=True,
-					secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
-					samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
-				)
+            response = Response(
+                {"data": serializer.data, "access_token": user_tokens.get("access")},
+                status=status.HTTP_200_OK,
+            )
 
-			csrf.get_token(request)
+            response.set_cookie(
+                key=settings.SIMPLE_JWT["AUTH_COOKIE"],
+                value=user_tokens.get("refresh"),
+                domain=settings.SIMPLE_JWT["AUTH_COOKIE_DOMAIN"],
+                path=settings.SIMPLE_JWT["AUTH_COOKIE_PATH"],
+                expires=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"],
+                httponly=True,
+                secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+                samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
+            )
 
-			return response
+            csrf.get_token(request)
+
+            return response
 
 
 class PasswordResetView(GenericAPIView):

@@ -15,7 +15,7 @@ import hashlib
 import hmac
 from django.conf import settings
 import json
-import uuid
+
 
 
 class SubscriptionCreationView(CreateAPIView):
@@ -144,11 +144,12 @@ class PaystackWebhookView(APIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
-        # Retrieve the Paystack secret key
+    
         secret_key = settings.PAYSTACK_SECRET
-
+        
         # Get the signature from headers
         signature = request.headers.get("X-Paystack-Signature")
+
         if not signature:
             return Response(
                 {"error": "Missing signature"}, status=status.HTTP_400_BAD_REQUEST
@@ -168,15 +169,17 @@ class PaystackWebhookView(APIView):
 
         # Parse the webhook payload
         event = json.loads(payload)
+        print(event)
         if event["event"] == "charge.success":
             try:
                 print('I am running')
                 # Extract transaction reference from the event data
                 reference = event["data"]["reference"]
-
+                print("ref=", reference)
                 # Find the transaction in the database
-                transaction = Transaction.objects.get(reference=reference)
-
+                transaction = Transaction.objects.filter(reference=reference).first()
+                print("Hello trying")
+                print("transaction==", transaction)
                 # Update the transaction status
                 transaction.payment_status = "Completed"
                 transaction.is_verified = True
@@ -185,7 +188,9 @@ class PaystackWebhookView(APIView):
                 # Optional: Log the successful update
                 print(f"Transaction {reference} updated to Payment Successful.")
 
+
             except Transaction.DoesNotExist:
+                print("ref does not exist")
                 # Handle cases where the transaction does not exist
                 return Response(
                     {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND
@@ -195,13 +200,3 @@ class PaystackWebhookView(APIView):
         return Response(
             {"message": "Webhook received and processed"}, status=status.HTTP_200_OK
         )
-# # %%
-# import hmac
-# import hashlib
-
-# secret_key = "sk_live_2939eaaa95dbc1f8b5daa4e2e5fcc1c6e54a537d"  # Replace with your Paystack secret key
-# payload = '{"event": "charge.success", "data": {}}'  # Replace with the actual request body
-
-# signature = hmac.new(secret_key.encode(), payload.encode(), hashlib.sha256).hexdigest()
-# print(signature)
-# # %%

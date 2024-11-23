@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from cryptography.fernet import Fernet
 from datetime import timedelta
 from decouple import config
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 # from redis.connection import ConnectionPool
 
 
@@ -36,7 +38,7 @@ ALLOWED_HOSTS = ["*"]
 # vercel blob settings.py
 VERCEL_BLOB_BASE_URL = config("VERCEL_BLOB_BASE_URL")
 VERCEL_BLOB_API_KEY = config("VERCEL_BLOB_API_KEY")
-# BLOB_READ_WRITE_TOKEN="vercel_blob_rw_XgYZgqC7wzq7cyZ6_IF5b94QMHPJEY3hlAacS79LVJZKc52"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -61,19 +63,29 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+INSTALLED_APPS += ["django_prometheus"]
+
 
 MIDDLEWARE = [
     #'user.middleware.IpAdressMiddleWare.FindUserIpAddress',
-    'corsheaders.middleware.CorsMiddleware',
-    'user.middleware.validator.PermissionMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "user.middleware.validator.PermissionMiddleware",
+    "user.middleware.prometheus.MetricsAccessMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+MIDDLEWARE = (
+    ["django_prometheus.middleware.PrometheusBeforeMiddleware"]
+    + MIDDLEWARE
+    + ["django_prometheus.middleware.PrometheusAfterMiddleware"]
+)
+
 
 INTERNAL_IPS = '127.0.0.1'
 ROOT_URLCONF = 'labconnect.urls'
@@ -153,16 +165,21 @@ PAYSTACK_BASE_URL = "https://api.paystack.co"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-ENCRYPTION_KEY = os.environ.get('ENCRYPTION_KEY', 'f08c63883828ff694c54e78eefa646dc37bed17e90f5fc030b3031a453d9da0d')  # 32 bytes for AES-256
-FERNET_KEY = os.environ.get('FERNET_KEY', Fernet.generate_key())
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django_prometheus.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
+sentry_sdk.init(
+    dsn=config("SENTRY_DSN"),
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    _experiments={
+        "continuous_profiling_auto_start": True,
+    },
+)
 
 # CACHES = {
 #     'default': {
@@ -264,17 +281,23 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'user.Client'
 REST_FRAMEWORK = {
-
-    'DEFAULT_AUTHENTICATION_CLASSES':(
-            'rest_framework_simplejwt.authentication.JWTAuthentication',
-        ),
-
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
-        'rest_framework.parsers.FormParser',
-        'rest_framework.parsers.MultiPartParser'
-    ]
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.FormParser",
+        "rest_framework.parsers.MultiPartParser",
+    ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "10/minute",
+        "user": "1000/day",
+    },
 }
 
 
@@ -322,3 +345,7 @@ PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 # SESSION_COOKIE_SECURE = True
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# SECURE_HSTS_SECONDS = 31536000
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
