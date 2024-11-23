@@ -300,7 +300,13 @@ class SampleTrackingSerializer(serializers.ModelSerializer):
 
         model = SampleTrackingHistory
 
-        fields = ("id", "sample", "sample_data", "status", "updated_at")
+        fields = (
+            "id",
+            "sample",
+            "status",
+            "updated_at",
+            "sample_data",
+        )
 
     def get_sample_data(self, obj):
         # Serialize the related Sample object
@@ -320,7 +326,7 @@ class ReferralTrackingSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = ReferralTrackingHistory
-        fields = ("id", "referral", "referral_data", "status", "location", "updated_at")
+        fields = ("id", "referral", "status", "location", "updated_at", "referral_data")
 
     def get_referral_data(self, obj):
         # Serialize the related referral object
