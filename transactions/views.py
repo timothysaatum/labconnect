@@ -9,8 +9,6 @@ from .models import Subscription, Transaction
 from .process_payment import Paystack
 from django.db import IntegrityError
 from decimal import Decimal
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 import hashlib
 import hmac
 from django.conf import settings
@@ -138,7 +136,7 @@ class VerifyPaymentView(APIView):
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
+
 class PaystackWebhookView(APIView):
     authentication_classes = []
     permission_classes = []
@@ -169,17 +167,14 @@ class PaystackWebhookView(APIView):
 
         # Parse the webhook payload
         event = json.loads(payload)
-        print(event)
+
         if event["event"] == "charge.success":
             try:
-                print('I am running')
                 # Extract transaction reference from the event data
                 reference = event["data"]["reference"]
-                print("ref=", reference)
                 # Find the transaction in the database
                 transaction = Transaction.objects.filter(reference=reference).first()
-                print("Hello trying")
-                print("transaction==", transaction)
+
                 # Update the transaction status
                 transaction.payment_status = "Completed"
                 transaction.is_verified = True
@@ -190,7 +185,6 @@ class PaystackWebhookView(APIView):
 
 
             except Transaction.DoesNotExist:
-                print("ref does not exist")
                 # Handle cases where the transaction does not exist
                 return Response(
                     {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND

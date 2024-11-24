@@ -102,7 +102,7 @@ class Transaction(models.Model):
 	payment_mode = EncryptedCharField(choices=PAYMENT_MODE, max_length=50)
 	payment_status = models.CharField(max_length=50, choices=PAYMENT_STATUS)
 	is_verified = EncryptedBooleanField(default=False)
-	reference = EncryptedCharField(max_length=155, unique=True)
+	reference = models.CharField(max_length=155, unique=True)
 	updated_at = models.DateTimeField(auto_now=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	

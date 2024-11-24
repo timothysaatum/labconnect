@@ -185,7 +185,7 @@ class GetNotifications(generics.ListAPIView):
             facility=self.kwargs.get("branch_id"),
             is_read=False,
             facility__referral__referral_status__in=request_status,
-        )
+        ).order_by("-date_added")
 
         return notification
 
