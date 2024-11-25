@@ -14,7 +14,7 @@ class HospitalSerializer(serializers.ModelSerializer):
 			'id', 
 			'name', 
 			'region',
-			'postal_address',
+			# 'postal_address',
 			'hospital_type',
 		 	'digital_address',
 		 	'phone',
