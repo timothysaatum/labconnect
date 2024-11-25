@@ -182,7 +182,7 @@ class GetNotifications(generics.ListAPIView):
             "Sample Received by Lab",
         )
         notification = Notification.objects.filter(
-            facility=self.kwargs.get("branch_id"),
+            facility_id=self.kwargs.get("branch_id"),
             is_read=False,
             facility__referral__referral_status__in=request_status,
         ).order_by("-date_added")
@@ -293,7 +293,7 @@ class TrackSampleState(generics.CreateAPIView):
 
 class GetReferralTrackerDetails(generics.ListAPIView):
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = ReferralTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):
@@ -304,7 +304,7 @@ class GetReferralTrackerDetails(generics.ListAPIView):
 
 class GetSampleTrackerDetails(generics.ListAPIView):
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = SampleTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):

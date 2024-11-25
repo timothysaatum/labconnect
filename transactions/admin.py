@@ -38,6 +38,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = (
         "client",
         "amount",
+        "is_verified",
         "payment_mode",
         "referral",
         "account_type",

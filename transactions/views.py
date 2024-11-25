@@ -66,7 +66,7 @@ class ProcessPaymentView(CreateAPIView):
         if serializer.is_valid(raise_exception=True):
 
             data = {
-                "client_id": 1, #self.request.user.id,
+                "client_id": self.request.user.id,
                 "referral_id": serializer.data["referral"],
                 "amount": Decimal(serializer.data["amount"]),
                 "channels": serializer.data["channels"],
@@ -180,7 +180,7 @@ class PaystackWebhookView(APIView):
                 transaction.is_verified = True
                 transaction.save()
 
-                # Optional: Log the successful update
+                # Log the successful update
                 print(f"Transaction {reference} updated to Payment Successful.")
 
 

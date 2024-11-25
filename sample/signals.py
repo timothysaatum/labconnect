@@ -15,7 +15,11 @@ def create_notification_for_lab(sender, instance, created, **kwargs):
             facility=branch,
         )
 
-        ReferralTrackingHistory.objects.create(referral=instance, status="Request Made", location=str(instance.referring_facility))
+        ReferralTrackingHistory.objects.create(
+            referral=instance,
+            status="Request Accepted",
+            location=str(instance.referring_facility),
+        )
 
 
 @receiver(post_save, sender=Sample)

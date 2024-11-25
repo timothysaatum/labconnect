@@ -2,7 +2,6 @@ from django.db import models
 from labs.models import Test
 from modelmixins.models import Facility
 from modelmixins.models import SampleType
-# from modelmixins.encryption import AESEncryptedField, FernetEncryptedField
 from delivery.models import Delivery
 from django.contrib.auth import get_user_model
 from encrypted_model_fields.fields import (
@@ -13,6 +12,7 @@ from encrypted_model_fields.fields import (
 import uuid
 import random, string
 import datetime
+from django.core.exceptions import ObjectDoesNotExist
 
 
 client = get_user_model()
@@ -199,5 +199,5 @@ class Notification(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return (f'{self.facility.branch.town} - {self.facility.branch.laboratory.name}' if self.facility.branch 
-		  else self.facility.hospital)
+        return str(self.facility)
+        
