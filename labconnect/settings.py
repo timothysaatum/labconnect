@@ -95,6 +95,7 @@ ADMINS = [
 PAYSTACK_SECRET = config("PAYSTACK_SECRET_KEY")
 
 PAYSTACK_BASE_URL = "https://api.paystack.co"
+
 # Logging configuration
 # LOGGING = {
 #     "version": 1,
@@ -250,6 +251,8 @@ USE_I18N = True
 USE_TZ = True
 
 AUTH_USER_MODEL = 'user.Client'
+
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -281,6 +284,7 @@ REST_FRAMEWORK = {
 #     }
 # }
 
+
 SIMPLE_JWT = {
 
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=100),
@@ -304,6 +308,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')

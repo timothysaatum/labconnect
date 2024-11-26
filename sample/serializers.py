@@ -178,6 +178,7 @@ class ReferralSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         samples_data = validated_data.pop("samples")
+        print(validated_data)
         referral = Referral.objects.create(**validated_data)
 
         # Creating Sample entries

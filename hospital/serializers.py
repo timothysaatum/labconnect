@@ -1,39 +1,37 @@
 from rest_framework import serializers
 from .models import Hospital, HospitalLab, HospitalLabTest
-from modelmixins.paginators import QueryPagination
 
 
 
 class HospitalSerializer(serializers.ModelSerializer):
+    facility_type = serializers.CharField(max_length=100,required=False)
 
-	class Meta:
+    class Meta:
 
-		model = Hospital
+        model = Hospital
 
-		fields = (
-			'id', 
-			'name', 
-			'region',
-			# 'postal_address',
-			'hospital_type',
-		 	'digital_address',
-		 	'phone',
-			'email',
-			'website',
-			'date_modified',
-			'date_added'
-		)
-
-	# pagination_class = QueryPagination
+        fields = (
+            "id",
+            "name",
+            "region",
+            "facility_type",
+            "hospital_type",
+            "digital_address",
+            "phone",
+            "email",
+            "website",
+            "date_modified",
+            "date_added",
+        )
 
 
 class HospitalLabSerializer(serializers.ModelSerializer):
-	hospital_reference = serializers.PrimaryKeyRelatedField(queryset=Hospital.objects.all(), required=False)
-	class Meta:
+    hospital_reference = serializers.PrimaryKeyRelatedField(queryset=Hospital.objects.all(), required=False)
+    class Meta:
 
-		model = HospitalLab
+        model = HospitalLab
 
-		fields = (
+        fields = (
 			'id', 
 			'name',
 			'accreditation_number',
@@ -46,40 +44,39 @@ class HospitalLabSerializer(serializers.ModelSerializer):
 			'date_added'
 		)
 
-	def to_representation(self, instance):
+    def to_representation(self, instance):
 
-		data = super().to_representation(instance)
-		data['hospital_reference'] = instance.hospital_reference.name
+        data = super().to_representation(instance)
+        data['hospital_reference'] = instance.hospital_reference.name
 
-		return data
-
+        return data
 
 
 class HospitalLabTestSerializer(serializers.ModelSerializer):
 
-	hospital_lab = serializers.PrimaryKeyRelatedField(queryset=HospitalLab.objects.all(), required=False)
+    hospital_lab = serializers.PrimaryKeyRelatedField(queryset=HospitalLab.objects.all(), required=False)
 
-	class Meta:
+    class Meta:
 
-		model = HospitalLabTest
+        model = HospitalLabTest
 
-		fields = (
-			'id',
-			'test_code',
-			'name',
-			'turn_around_time',
-			'price',
-			'patient_preparation',
-			'sample_type',
-			'hospital_lab',
-			'test_status',
-			'date_modified',
-			'date_added'
-		)
+        fields = (
+            "id",
+            "test_code",
+            "name",
+            "turn_around_time",
+            "price",
+            "patient_preparation",
+            "sample_type",
+            "hospital_type" "hospital_lab",
+            "test_status",
+            "date_modified",
+            "date_added",
+        )
 
-	def to_representation(self, instance):
+    def to_representation(self, instance):
 
-		data = super().to_representation(instance)
-		data['hospital_lab'] = instance.hospital_lab.name
+        data = super().to_representation(instance)
+        data['hospital_lab'] = instance.hospital_lab.name
 
-		return data
+        return data

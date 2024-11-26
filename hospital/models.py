@@ -31,6 +31,7 @@ HOSPITAL_TYPES = [
 
 	('Public', 'Public'),
 	('Private', 'Private')
+
 ]
 
 class Hospital(Facility):
