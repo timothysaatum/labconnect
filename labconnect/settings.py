@@ -90,7 +90,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'labconnect.wsgi.application'
 ADMINS = [
-    ("Vermithor", "timothysaatumm@gmail.com"),
+    ("Vermithor", "timothysaatum@gmail.com"),
 ]
 PAYSTACK_SECRET = config("PAYSTACK_SECRET_KEY")
 

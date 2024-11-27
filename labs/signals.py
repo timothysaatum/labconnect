@@ -128,7 +128,7 @@ def mail_lab_user(sender, instance, created, **kwargs):
                 <div class="content">
                     <h1>Hello {instance.created_by.full_name},</h1>
                     <p>Congratulations! You have successfully added your laboratory, <strong>{instance.name}</strong>, to your account.</p>
-                    <p>You are this close {close_icon} to finishing your setup.</p>
+                    <p>You are {close_icon} close to finishing your setup.</p>
                     <p>Use the links below to set up your branches and tests, if you haven’t done so already:</p>
                     <p>
                         <a href="http://127.0.0.1:8000/api/laboratory/create-branch/" class="button">Create Branches for Laboratory</a><br>
