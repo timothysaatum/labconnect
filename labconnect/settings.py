@@ -2,8 +2,8 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from decouple import config
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
+# import sentry_sdk
+# from sentry_sdk.integrations.django import DjangoIntegration
 
 # from redis.connection import ConnectionPool
 
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
-INSTALLED_APPS += ["django_prometheus"]
+# INSTALLED_APPS += ["django_prometheus"]
 
 
 MIDDLEWARE = [
@@ -62,11 +62,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-MIDDLEWARE = (
-    ["django_prometheus.middleware.PrometheusBeforeMiddleware"]
-    + MIDDLEWARE
-    + ["django_prometheus.middleware.PrometheusAfterMiddleware"]
-)
+# MIDDLEWARE = (
+#     ["django_prometheus.middleware.PrometheusBeforeMiddleware"]
+#     + MIDDLEWARE
+#     + ["django_prometheus.middleware.PrometheusAfterMiddleware"]
+# )
 
 
 INTERNAL_IPS = '127.0.0.1'
@@ -152,14 +152,14 @@ DATABASES = {
     }
 }
 
-sentry_sdk.init(
-    dsn=config("SENTRY_DSN"),
-    integrations=[DjangoIntegration()],
-    traces_sample_rate=1.0,
-    _experiments={
-        "continuous_profiling_auto_start": True,
-    },
-)
+# sentry_sdk.init(
+#     dsn=config("SENTRY_DSN"),
+#     integrations=[DjangoIntegration()],
+#     traces_sample_rate=1.0,
+#     _experiments={
+#         "continuous_profiling_auto_start": True,
+#     },
+# )
 
 # CACHES = {
 #     'default': {
@@ -263,14 +263,14 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
     ],
-    "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.AnonRateThrottle",
-        "rest_framework.throttling.UserRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {
-        "anon": "10/minute",
-        "user": "1000/day",
-    },
+    # "DEFAULT_THROTTLE_CLASSES": [
+    #     "rest_framework.throttling.AnonRateThrottle",
+    #     "rest_framework.throttling.UserRateThrottle",
+    # ],
+    # "DEFAULT_THROTTLE_RATES": {
+    #     "anon": "10/minute",
+    #     "user": "1000/day",
+    # },
 }
 
 

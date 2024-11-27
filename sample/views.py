@@ -34,6 +34,8 @@ class CreateReferral(generics.CreateAPIView):
 
     def perform_create(self, serializer):
 
+        print(self.request.data)
+
         referral = serializer.save()
 
         if self.request.user.account_type == 'Laboratory':
@@ -64,61 +66,108 @@ class UpdateReferral(generics.UpdateAPIView):
         serializer.save()
 
 
-class GetReferrals(generics.ListAPIView):
+# class GetReferrals(generics.ListAPIView):
 
-    # permission_classes = [IsAuthenticated]
+#     permission_classes = [IsAuthenticated]
+#     pagination_class = QueryPagination
+#     serializer_class = ReferralSerializer
+
+#     def get_queryset(self):
+
+#         status = self.request.GET.get('status')
+#         from_date = self.request.GET.get('from_date')
+#         search_term = self.request.GET.get("search")
+#         received = self.request.GET.get("received")
+#         sent = self.request.GET.get("sent")
+#         to_date = self.request.GET.get('to_date')
+#         pk = self.kwargs.get("facility_id")
+
+#         referral = Referral.objects.none()
+#         logger.info(
+#             f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
+#         )
+
+#         if received == "true":
+#             referral = Referral.objects.filter(
+#                 Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
+#             ).order_by("-date_referred")
+
+#         if sent == "true":
+#             referral = Referral.objects.filter(
+#                 Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk),
+#             ).order_by("-date_referred")
+
+#         if referral.exists():
+
+#             if status:
+#                 if status == "All":
+#                     return referral.order_by("date_referred")
+#                 return referral.filter(referral_status__icontains=status).order_by(
+#                     "date_referred"
+#                 )
+
+#             if from_date and to_date:
+#                 return referral.filter(
+#                     date__range=(from_date, to_date),
+#                 ).order_by("date_referred")
+
+#             if search_term:
+
+#                 return referral.filter(patient_name__icontains=search_term).order_by(
+#                     "date_referred"
+#                 )
+
+#         if not Referral.DoesNotExist():
+#             return Response(
+# 				{'error': 'No referral found.'}, status=status.HTTP_404_NOT_FOUND
+# 			)
+
+#         return referral
+
+
+class GetReferrals(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
     pagination_class = QueryPagination
     serializer_class = ReferralSerializer
 
     def get_queryset(self):
-
-        status = self.request.GET.get('status')
-        from_date = self.request.GET.get('from_date')
+        pk = self.kwargs.get("facility_id")
+        status = self.request.GET.get("status")
+        from_date = self.request.GET.get("from_date")
+        to_date = self.request.GET.get("to_date")
         search_term = self.request.GET.get("search")
         received = self.request.GET.get("received")
         sent = self.request.GET.get("sent")
-        to_date = self.request.GET.get('to_date')
-        pk = self.kwargs.get("facility_id")
 
-        referral = Referral.objects.none()
+        queryset = Referral.objects.none()  # Default to an empty queryset
         logger.info(
             f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
         )
 
+        # Filter for received referrals
         if received == "true":
-            referral = Referral.objects.filter(
-                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
-            ).order_by("-date_referred")
-            
+            queryset = Referral.objects.filter(
+                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk)
+            )
 
+        # Filter for sent referrals
         if sent == "true":
-            referral = Referral.objects.filter(
-                Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk),
-            ).order_by("-date_referred")
-            
+            queryset = Referral.objects.filter(
+                Q(referring_facility_id=pk)
+                | Q(referring_facility__branch__laboratory_id=pk)
+            )
 
-        if referral.exists():
+        # Apply additional filters
+        if status and status != "All":
+            queryset = queryset.filter(referral_status__icontains=status)
 
-            if status:
-                if status == "All":
-                    return referral
-                return referral.filter(referral_status__icontains=status)
+        if from_date and to_date:
+            queryset = queryset.filter(date__range=(from_date, to_date))
 
-            if from_date and to_date:
-                return referral.filter(
-                    date__range=(from_date, to_date),
-                )
+        if search_term:
+            queryset = queryset.filter(patient_name__icontains=search_term)
 
-            if search_term:
-
-                return referral.filter(patient_name__icontains=search_term)
-
-        if not Referral.DoesNotExist():
-            return Response(
-				{'error': 'No referral found.'}, status=status.HTTP_404_NOT_FOUND
-			)
-
-        return referral
+        return queryset.order_by("-date_referred")
 
 
 class ReferralDetailsView(generics.RetrieveAPIView):
@@ -206,6 +255,7 @@ class CountObjects(generics.GenericAPIView):
             processed=Count("id", filter=Q(referral_status="Sample Received by Lab")),
             pending=Count("id", filter=Q(referral_status="Request Accepted")),
             rejected=Count("id", filter=Q(referral_status="Request Terminated")),
+            sent=Count('id', referring_facility=facility_id)
         )
 
         # Aggregate counts for last month
@@ -217,6 +267,7 @@ class CountObjects(generics.GenericAPIView):
             processed=Count("id", filter=Q(referral_status="Sample Received by Lab")),
             pending=Count("id", filter=Q(referral_status="Request Accepted")),
             rejected=Count("id", filter=Q(referral_status="Request Terminated")),
+            sent=Count("id", referring_facility=facility_id),
         )
 
         # Calculate percentage changes
@@ -247,6 +298,7 @@ class CountObjects(generics.GenericAPIView):
             "change_processed": change_processed,
             "change_pending": change_pending,
             "change_rejected": change_rejected,
+            "samples_sent": today_stats["sent"] + last_month_stats['sent']
         }
 
         return Response(data)

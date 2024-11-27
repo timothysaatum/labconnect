@@ -7,6 +7,7 @@ from .models import (
     SampleTest,
     ReferralTrackingHistory,
 )
+from django.db.models import Q
 
 
 @admin.register(Referral)
@@ -73,6 +74,23 @@ class SampleTrackingHistoryAdmin(admin.ModelAdmin):
 
 @admin.register(ReferralTrackingHistory)
 class ReferralTrackingHistoryAdmin(admin.ModelAdmin):
+
+    def get_queryset(self, request):
+        # Get the base queryset
+        queryset = super().get_queryset(request)
+
+        # If the user is a superuser, return all records
+        if request.user.is_superuser:
+            return queryset
+
+        # If the user is not a superuser, filter the samples by the user's associated Branch or Lab
+        # Assuming `branch` is related to `Sample` and `branch.laboratory` is related to `Lab`, which is linked to `User`.
+
+        return queryset.filter(
+            Q(branch__laboratory__user=request.user)  # Branch linked to the user's Lab
+            | Q(branch__laboratory__user__branch=request.user)  # User's own branch
+        )
+
     list_display = ("referral", "status", "location", "updated_at")
 
 

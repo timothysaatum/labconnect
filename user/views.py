@@ -33,7 +33,7 @@ from labs.models import (
 	BranchManagerInvitation, 
 	Branch
 )
-from rest_framework.throttling import UserRateThrottle
+# from rest_framework.throttling import UserRateThrottle
 from labs.serializers import BranchManagerInvitationSerializer
 import random
 from .utils import send_code_to_user
@@ -221,7 +221,7 @@ class VerifyUserEmail(GenericAPIView):
 
 class LoginUserView(GenericAPIView):
 
-    throttle_classes = [UserRateThrottle]
+    # throttle_classes = [UserRateThrottle]
     serializer_class = LoginSerializer
 
     def post(self, request):

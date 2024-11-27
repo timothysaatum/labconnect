@@ -9,6 +9,7 @@ from sample.models import (
       )
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Q
 from labs.models import Test
 from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
@@ -134,7 +135,10 @@ class SampleSerializer(serializers.ModelSerializer):
 
 class ReferralSerializer(serializers.ModelSerializer):
     to_laboratory = serializers.PrimaryKeyRelatedField(
-        queryset=Facility.objects.all(), required=True
+        queryset=Facility.objects.filter(
+            Q(branch__isnull=False) | Q(hospitallab__isnull=False)
+        ),
+        required=True,
     )
     laboratory_contact = serializers.CharField(read_only=True)
     clinical_history = serializers.CharField(required=False)
@@ -178,7 +182,7 @@ class ReferralSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         samples_data = validated_data.pop("samples")
-        print(validated_data)
+
         referral = Referral.objects.create(**validated_data)
 
         # Creating Sample entries
