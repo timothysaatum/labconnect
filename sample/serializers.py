@@ -179,6 +179,16 @@ class ReferralSerializer(serializers.ModelSerializer):
             "samples",
         )
 
+    def validate(self, data):
+        # Check if referring_facility and to_laboratory are the same
+        if data.get("referring_facility") == data.get("to_laboratory"):
+            raise serializers.ValidationError(
+                {
+                    "to_laboratory": "The referring facility and the laboratory cannot be the same."
+                }
+            )
+        return data
+
     def create(self, validated_data):
 
         samples_data = validated_data.pop("samples")
