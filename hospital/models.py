@@ -3,8 +3,6 @@ from django.contrib.auth import get_user_model
 from modelmixins.models import BasicTest, Facility
 
 
-
-
 user = get_user_model()
 
 
@@ -36,24 +34,24 @@ HOSPITAL_TYPES = [
 
 class Hospital(Facility):
 
-	'''
+    '''
 	Model: Representing a hospital
 	'''
-	created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_index=True)
-	name = models.CharField(max_length=200)
-	region = models.CharField(choices=REGIONS, max_length=100)
-	town = models.CharField(max_length=200)
-	hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
-	account_number = models.CharField(max_length=100)
-	website = models.URLField(blank=True, null=True)
-	digital_address = models.CharField(max_length=15)
-	referral_percent_discount = models.CharField(max_length=5)
+    created_by = models.ForeignKey(user, on_delete=models.CASCADE, db_index=True)
+    name = models.CharField(max_length=200)
+    region = models.CharField(choices=REGIONS, max_length=100)
+    town = models.CharField(max_length=200)
+    hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
+    account_number = models.CharField(max_length=100, blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+    digital_address = models.CharField(max_length=15)
+    referral_percent_discount = models.CharField(max_length=5)
 
-	def __str__(self) -> str:
-		return self.name
+    def __str__(self) -> str:
+        return self.name
 
-	class Meta:
-		unique_together = ('account_number', )
+    class Meta:
+        unique_together = ('account_number', )
 
 
 class HospitalLab(Facility):
@@ -68,7 +66,6 @@ class HospitalLab(Facility):
 	
 	def __str__(self) -> str:
 		return str(self.hospital_reference.name)
-    
 
 
 class HospitalLabTest(BasicTest):

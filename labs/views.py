@@ -104,6 +104,7 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = LaboratorySerializer
 	def get_queryset(self):
 		return Laboratory.objects.filter(created_by=self.request.user)
+	
 	def patch(self, request, pk):
 		"""
 		Permission check to ensure the right user is interracting with right model.

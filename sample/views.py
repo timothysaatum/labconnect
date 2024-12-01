@@ -20,8 +20,8 @@ from django.db.models import Count, Q # type: ignore
 from django.utils.timezone import now, timedelta # type: ignore
 from .paginators import QueryPagination
 import logging
-from datetime import timedelta
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
 
 
 logger = logging.getLogger('labs')
@@ -34,7 +34,13 @@ class CreateReferral(generics.CreateAPIView):
 
     def perform_create(self, serializer):
 
-        print(self.request.data)
+        referring_facility = self.request.data.get('referring_facility')
+        to_laboratory = self.request.data.get('to_laboratory')
+
+        if referring_facility == to_laboratory:
+            raise serializers.ValidationError({
+                'to_laboratory': "The referring facility and the laboratory cannot be the same."
+            })
 
         referral = serializer.save()
 

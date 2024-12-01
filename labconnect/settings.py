@@ -286,18 +286,17 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=100),
-    'REFRESH_TOKEN_LIFETIME': timedelta(hours=100),
-    'AUTH_HEADER_TYPES': ('Bearer', ),
-    'AUTH_COOKIE': 'refresh_token',
-    'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_COOKIE_DOMAIN': None,
-    'AUTH_COOKIE_PATH': '/',
-    'AUTH_COOKIE_SECURE': True,
-    'AUTH_COOKIE_HTTP_ONLY': True,
-    'AUTH_COOKIE_SAMESITE': 'None',
-    'USER_ID_CLAIM': 'user_id'
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=100),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=100),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_COOKIE": "refresh_token",
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_COOKIE_DOMAIN": None,
+    "AUTH_COOKIE_PATH": "/",
+    "AUTH_COOKIE_SECURE": True,
+    "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_SAMESITE": "None",
+    "USER_ID_CLAIM": "user_id",
 }
 
 
