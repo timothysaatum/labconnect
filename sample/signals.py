@@ -8,6 +8,7 @@ from labs.models import Branch
 def create_notification_for_lab(sender, instance, created, **kwargs):
 
     if created:
+        print("hello")
         branch = Branch.objects.get(id=instance.to_laboratory.id)
         Notification.objects.create(
             title="New Sample",
@@ -23,7 +24,7 @@ def create_notification_for_lab(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Sample)
-def create_notification_for_lab(sender, instance, created, **kwargs):
+def create_notification_for_sample(sender, instance, created, **kwargs):
 
     if created:
         # branch = Branch.objects.get(id=instance.referral.to_laboratory.id)

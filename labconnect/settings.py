@@ -151,6 +151,19 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'labconnect$default',
+#         'USER': 'labconnect',
+#         'PASSWORD': '9sg6b4z5hz5',
+#         'HOST': 'labconnect.mysql.pythonanywhere-services.com',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
+#         },
+#     }
+# }
 
 # sentry_sdk.init(
 #     dsn=config("SENTRY_DSN"),

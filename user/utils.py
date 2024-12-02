@@ -67,7 +67,7 @@ def send_code_to_user(email):
                 <p>Please use the following code to verify your email:</p>
                 <h2>{otp_code}</h2>
                 <p>If you have any issues, visit <a href="{verification_url}">this link</a> to verify manually.</p>
-                <p>Best Regards,<br>Your Company Team</p>
+                <p>Best Regards,<br>LabConnect Team</p>
             </div>
         </div>
     </body>

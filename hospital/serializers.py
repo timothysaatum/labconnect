@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Hospital, HospitalLab, HospitalLabTest
 
 
-
 class HospitalSerializer(serializers.ModelSerializer):
     facility_type = serializers.CharField(max_length=100,required=False)
 
@@ -14,6 +13,7 @@ class HospitalSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "region",
+            "town",
             "facility_type",
             "hospital_type",
             "digital_address",
