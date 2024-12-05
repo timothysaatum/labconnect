@@ -2,10 +2,11 @@ from django.contrib import admin # type: ignore
 from django.urls import path, include # type: ignore
 from django.conf import settings # type: ignore
 from django.conf.urls.static import static # type: ignore
-from django_prometheus import exports
+# from django_prometheus import exports
 
 
 urlpatterns = [
+    path("grappelli/", include("grappelli.urls")),
     path("admin/", admin.site.urls),
     path("api/delivery/", include("delivery.urls")),
     path("api/hospital/", include("hospital.urls")),
@@ -15,7 +16,7 @@ urlpatterns = [
     path("api/transactions/", include("transactions.urls")),
     path("api/utils/", include("modelmixins.urls")),
     path("api/analytics/", include("analytics.urls")),
-    path("metrics/", exports.ExportToDjangoView, name="metrics"),
+    # path("metrics/", exports.ExportToDjangoView, name="metrics"),
 ]
 
 

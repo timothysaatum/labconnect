@@ -3,7 +3,11 @@ from django.contrib.auth import get_user_model # type: ignore
 from django.core.validators import validate_email# type: ignore # MinLengthValidator, MaxLengthValidator, 
 import uuid
 from modelmixins.models import Facility, BasicTest, BaseModel
-
+# from encrypted_model_fields.fields import (
+#     EncryptedCharField,
+#     EncryptedTextField,
+#     EncryptedBooleanField,
+# )
 
 user = get_user_model()
 
@@ -105,6 +109,12 @@ class Test(BasicTest):
 	discount_percent = models.CharField(max_length=10, blank=True, null=True)
 	branch = models.ManyToManyField(Branch, related_name='tests', db_index=True, through='BranchTest')
 
+	def active_tests(self):
+		"""
+        Returns all active tests for this branch.
+        """
+		return self.tests.filter(branch_test__test_status='active').distinct()
+
 
 	def __str__(self) -> str:
 
@@ -130,6 +140,21 @@ class BranchTest(models.Model):
 	discount_percent = models.CharField(max_length=10, blank=True, null=True)
 	turn_around_time = models.CharField(max_length=200, blank=True, null=True)
 
+
+	@staticmethod
+	def get_active_tests_for_branch(branch_id):
+		"""
+        Returns active tests for a given branch ID.
+        """
+		return BranchTest.objects.filter(branch_id=branch_id, test_status='active')
+	
+	@staticmethod
+	def get_discounted_tests_for_branch(branch_id):
+		"""
+        Returns tests with discounts for a given branch ID.
+        """
+		return BranchTest.objects.filter(branch_id=branch_id).exclude(discount_price__isnull=True)
+
 	class Meta:
 		verbose_name_plural = 'Branch Tests'
 
@@ -145,6 +170,12 @@ class BranchManagerInvitation(BaseModel):
 	branch = models.ForeignKey(Branch, on_delete=models.CASCADE, db_index=True)
 	used = models.BooleanField(default=False)
 
+	def mark_as_used(self):
+		"""
+        Marks the invitation as used.
+        """
+		self.used = True
+		self.save(update_fields=['used'])
+
 	def __str__(self):
 		return str(self.sender)
-

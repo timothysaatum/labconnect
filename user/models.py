@@ -17,62 +17,62 @@ USER_TYPE = [
 
 class Client(AbstractBaseUser, PermissionsMixin):
 
-	first_name = models.CharField(max_length=50)
-	last_name = models.CharField(max_length=50)
-	phone_number = models.CharField(max_length=13)
-	email = models.EmailField(unique=True, db_index=True)
-	id_number = models.CharField(max_length=50, null=True, blank=True)
-	digital_address = models.CharField(max_length=12, null=True, blank=True)
-	emmergency_contact = models.CharField(max_length=20, null=True, blank=True)
-	bio = models.TextField(null=True, blank=True)
-	account_type = models.CharField(max_length=100, choices=USER_TYPE, db_index=True)
-	is_admin = models.BooleanField(default=False)
-	is_staff = models.BooleanField(default=False)
-	is_active = models.BooleanField(default=True)
-	is_verified = models.BooleanField(default=False)
-	is_branch_manager = models.BooleanField(default=False)
-	is_an_individual = models.BooleanField(default=False)
-	date_joined = models.DateTimeField(default=timezone.now)
-	last_login = models.DateTimeField(auto_now=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=13)
+    email = models.EmailField(unique=True, db_index=True)
+    id_number = models.CharField(max_length=50, null=True, blank=True)
+    digital_address = models.CharField(max_length=12, null=True, blank=True)
+    emmergency_contact = models.CharField(max_length=20, null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+    account_type = models.CharField(max_length=100, choices=USER_TYPE, db_index=True)
+    is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
+    is_branch_manager = models.BooleanField(default=False)
+    is_an_individual = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
+    last_login = models.DateTimeField(auto_now=True)
 
-	USERNAME_FIELD = 'email'
-	REQUIRED_FIELDS = 	['phone_number']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["phone_number"]
 
-	#mapping object manager
-	objects = ClientManager()
+    # mapping object manager
+    objects = ClientManager()
 
-	def save(self, *args, **kwargs):
-		super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
-		if self.account_type == 'Laboratory':
+        if self.account_type == 'Laboratory':
 
-			permission = Permission.objects.get(codename='add_client')
+            permission = Permission.objects.get(codename='add_client')
 
-			self.user_permissions.add(permission)
+            self.user_permissions.add(permission)
 
-	def __str__(self):
-		return f'{self.last_name} {self.first_name}'
+    def __str__(self):
+        return f'{self.last_name} {self.first_name}'
 
-	def has_perm(self, perm, obj=None):
-		return True
+    def has_perm(self, perm, obj=None):
+        return True
 
-	def has_module_perms(self, app_label):
-		return True
+    def has_module_perms(self, app_label):
+        return True
 
-	def tokens(self):
+    def tokens(self):
 
-		refresh = RefreshToken.for_user(self)
+        refresh = RefreshToken.for_user(self)
 
-		return {
+        return {
 
 			'refresh': str(refresh),
 			'access': str(refresh.access_token)
 		}
 
-	@property
-	def full_name(self):
+    @property
+    def full_name(self):
 
-		return f'{self.first_name} {self.last_name}'
+        return f'{self.first_name} {self.last_name}'
 
 
 class OneTimePassword(models.Model):

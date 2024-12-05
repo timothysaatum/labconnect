@@ -235,79 +235,149 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 
 class CreateTestView(PermissionMixin, generics.CreateAPIView):
-	"""
+    """
 	API endpoint to allow the user to add a test to their Branch,
 	It allows the user to add the test to multiple Branches at a go.
 	"""
-	serializer_class = TestSerializer
+    serializer_class = TestSerializer
 
-	def post(self, request):
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
+    def post(self, request):
+        if not self.has_laboratory_permission(self.request.user):
+            return Response(
 				{'error': 'Invalid credentials'}, 
 				status=status.HTTP_400_BAD_REQUEST
 			)
-		return self.create(request)
+        return self.create(request)
 
-	def perform_create(self, serializer):
-		test = serializer.save()
+    def perform_create(self, serializer):
+        test = serializer.save()
 
-		branches = self.request.data.get('branch', [])
-		test.branch.add(*branches)
+        branches = self.request.data.get('branch', [])
+        test.branch.add(*branches)
 
 
 class TestListView(generics.ListAPIView):
     """
-	Api endpoint that allows the client to fetch tests for a particular laboratory
-	or its branch.
-
-	It takes either the branch id or the Laboratory id"""
+    API endpoint to fetch tests for a specific laboratory or its branch.
+    Accepts either a branch ID or a laboratory ID as input.
+    """
 
     serializer_class = TestSerializer
     pagination_class = QueryPagination
 
-    # cache_timeout = 600
     def get_serializer_context(self):
+        """
+        Adds the primary key (pk) to the serializer context.
+        """
         context = super().get_serializer_context()
-        context.update({'pk': self.kwargs.get('pk')})
+        context.update({"pk": self.kwargs.get("pk")})
         return context
 
     def list(self, request, *args, **kwargs):
-        paginate = self.request.query_params.get('paginate', 'true').lower()
-        # Disable pagination if ?paginate=false is in the query params
-        if paginate == 'false':
-            queryset = self.get_queryset()
+        """
+        Overrides the default list method to support optional pagination.
+        If ?paginate=false is passed in the query parameters, pagination is disabled.
+        """
+        paginate = self.request.query_params.get("paginate", "true").lower()
+        queryset = self.get_queryset()
+
+        if paginate == "false":
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
-        else:
-            # Apply pagination normally
-            return super().list(request, *args, **kwargs)
+
+        return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
-        status = self.request.GET.get("status")
-        test_status = self.request.GET.get("test_status")
+        """
+        Returns a queryset of tests filtered by:
+        - Branch ID or Laboratory ID (based on the URL parameter `pk`)
+        - Test status (active/inactive)
+        - Sample type
+        - Search term
+        """
+        pk = self.kwargs.get("pk")
         search_term = self.request.query_params.get("search")
-        sample_type = self.request.GET.get('sample_type')
-        test_status = status or test_status or ""
+        test_status = self.request.query_params.get(
+            "status"
+        ) or self.request.query_params.get("test_status", "")
+        sample_type = self.request.query_params.get("sample_type")
+
+        # Base queryset filtered by branch or laboratory ID
         tests = Test.objects.filter(
-            Q(branch__id=self.kwargs.get("pk"))
-            | Q(branch__laboratory__id=self.kwargs.get("pk"))
+            Q(branch__id=pk) | Q(branch__laboratory__id=pk)
+        ).prefetch_related(
+            "branch",
+            "branch_test__branch",
         )
 
+        # Add filtering conditions
+        filter_conditions = Q()
         if search_term:
-            return tests.filter(name__icontains=search_term)
+            filter_conditions &= Q(name__icontains=search_term)
+        if test_status.lower() in ("active", "inactive"):
+            filter_conditions &= Q(test_status__icontains=test_status)
+        if sample_type:
+            filter_conditions &= Q(sample_type=sample_type)
 
-        if sample_type and test_status in ("active", "inactive", "Active", "Inactive"):
-
-            return tests.filter(
-                test_status__icontains=test_status, sample_type=sample_type
-            )
-
-        if test_status in ("active", "inactive", "Active", "Inactive"):
-
-            return tests.filter(test_status__icontains=test_status)
+        # Apply additional filters, if any
+        if filter_conditions:
+            tests = tests.filter(filter_conditions)
 
         return tests
+
+
+# class TestListView(generics.ListAPIView):
+#     """
+# 	Api endpoint that allows the client to fetch tests for a particular laboratory
+# 	or its branch.
+
+# 	It takes either the branch id or the Laboratory id"""
+
+#     serializer_class = TestSerializer
+#     pagination_class = QueryPagination
+
+#     # cache_timeout = 600
+#     def get_serializer_context(self):
+#         context = super().get_serializer_context()
+#         context.update({'pk': self.kwargs.get('pk')})
+#         return context
+
+#     def list(self, request, *args, **kwargs):
+#         paginate = self.request.query_params.get('paginate', 'true').lower()
+#         # Disable pagination if ?paginate=false is in the query params
+#         if paginate == 'false':
+#             queryset = self.get_queryset()
+#             serializer = self.get_serializer(queryset, many=True)
+#             return Response(serializer.data)
+#         else:
+#             # Apply pagination normally
+#             return super().list(request, *args, **kwargs)
+
+#     def get_queryset(self):
+#         status = self.request.GET.get("status")
+#         test_status = self.request.GET.get("test_status")
+#         search_term = self.request.query_params.get("search")
+#         sample_type = self.request.GET.get('sample_type')
+#         test_status = status or test_status or ""
+#         tests = Test.objects.filter(
+#             Q(branch__id=self.kwargs.get("pk"))
+#             | Q(branch__laboratory__id=self.kwargs.get("pk"))
+#         )
+
+#         if search_term:
+#             return tests.filter(name__icontains=search_term)
+
+#         if sample_type and test_status in ("active", "inactive", "Active", "Inactive"):
+
+#             return tests.filter(
+#                 test_status__icontains=test_status, sample_type=sample_type
+#             )
+
+#         if test_status in ("active", "inactive", "Active", "Inactive"):
+
+#             return tests.filter(test_status__icontains=test_status)
+
+#         return tests
 
 
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
@@ -394,15 +464,8 @@ class AllLaboratories(generics.ListAPIView):
                 | Q(branch__level__in=valid_levels))
 
 		if all([facility_level, user_lat, user_long, max_dist]):
-			nearby_labs = query.filter(
-                Q(hospitallab__level__in=valid_levels)
-                | Q(branch__level__in=valid_levels))
-
 			return get_nearby_branches(
-                query=nearby_labs,
-                user_lat=user_lat,
-                user_long=user_long,
-                max_distance_km=max_dist,
+                query=query, user_lat=user_lat, user_long=user_long, max_distance_km=max_dist
             )
 
             # Return an all labs queryset if no valid param is provided

@@ -12,7 +12,7 @@ from encrypted_model_fields.fields import (
 import uuid
 import random, string
 import datetime
-from django.core.exceptions import ObjectDoesNotExist
+# from django.core.exceptions import ObjectDoesNotExist
 
 
 client = get_user_model()
@@ -193,8 +193,8 @@ class Notification(models.Model):
     facility = models.ForeignKey(Facility, on_delete=models.CASCADE, db_index=True)
     title = EncryptedCharField(max_length=200)
     message = EncryptedCharField(max_length=150)
-    is_read = EncryptedBooleanField(default=False)
-    is_hidden = EncryptedBooleanField(default=False)
+    is_read = models.BooleanField(default=False)
+    is_hidden = models.BooleanField(default=False)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 

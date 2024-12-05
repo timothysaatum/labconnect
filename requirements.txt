@@ -19,6 +19,7 @@ django-dramatiq==0.11.6
 django-encrypted-model-fields==0.6.5
 django-extensions==3.2.3
 django-filter==24.3
+django-grappelli==4.0.1
 django-prometheus==2.3.1
 django-redis==5.4.0
 djangorestframework==3.15.2

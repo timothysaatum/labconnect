@@ -26,6 +26,14 @@ from rest_framework import serializers
 
 logger = logging.getLogger('labs')
 
+def filter_referrals(referrals, from_date=None, to_date=None, search_term=None, status=None):
+    if from_date and to_date:
+        referrals = referrals.filter(date__range=(from_date, to_date))
+    if search_term:
+        referrals = referrals.filter(patient_name__icontains=search_term)
+    if status and status != "All":
+        referrals = referrals.filter(referral_status__icontains=status)
+    return referrals
 
 class CreateReferral(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -42,22 +50,26 @@ class CreateReferral(generics.CreateAPIView):
                 'to_laboratory': "The referring facility and the laboratory cannot be the same."
             })
 
-        referral = serializer.save()
+        referral_data = {
+            "facility_type": self.request.user.account_type,
+            "referral_status": "Request Made",
+        }
 
-        if self.request.user.account_type == 'Laboratory':
-
-            referral.facility_type = self.request.user.account_type
-            referral.sender_full_name = self.request.user.full_name
-            referral.sender_phone = self.request.user.phone_number
-            referral.sender_email = self.request.user.email
-
-        else:
-            referral.facility_type = self.request.user.account_type
-
-        referral.referral_status = "Request Made"
-
-        referral.save()
-        logger.info(f"User: <{self.request.user.id}> added <{referral.id}>")
+        # Handle details based on account type
+        if self.request.user.account_type == "Laboratory":
+            referral_data.update({
+                "sender_full_name": self.request.user.full_name,
+                "sender_phone": self.request.user.phone_number,
+                "sender_email": self.request.user.email,
+            })
+        elif self.request.user.account_type == "Individual":
+            referral_data.update({
+                "sender_full_name": self.request.user.full_name,
+                "sender_phone": self.request.user.phone_number,
+                "sender_email": self.request.user.email,
+            })
+        referral = serializer.save(**referral_data)
+        logger.info(f"User: <{self.request.user.id}> inserted <{referral.id}>")
 
 
 class UpdateReferral(generics.UpdateAPIView):
@@ -68,67 +80,10 @@ class UpdateReferral(generics.UpdateAPIView):
     serializer_class = ReferralSerializer
 
     def perform_update(self, serializer):
-        logger.info(f"{self.request.user.full_name} edited {self.lookup_url_kwarg}")
+        logger.info(
+            f"User {self.request.user.id} updated referral {self.lookup_url_kwarg}: {self.request.data}"
+        )
         serializer.save()
-
-
-# class GetReferrals(generics.ListAPIView):
-
-#     permission_classes = [IsAuthenticated]
-#     pagination_class = QueryPagination
-#     serializer_class = ReferralSerializer
-
-#     def get_queryset(self):
-
-#         status = self.request.GET.get('status')
-#         from_date = self.request.GET.get('from_date')
-#         search_term = self.request.GET.get("search")
-#         received = self.request.GET.get("received")
-#         sent = self.request.GET.get("sent")
-#         to_date = self.request.GET.get('to_date')
-#         pk = self.kwargs.get("facility_id")
-
-#         referral = Referral.objects.none()
-#         logger.info(
-#             f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
-#         )
-
-#         if received == "true":
-#             referral = Referral.objects.filter(
-#                 Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
-#             ).order_by("-date_referred")
-
-#         if sent == "true":
-#             referral = Referral.objects.filter(
-#                 Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk),
-#             ).order_by("-date_referred")
-
-#         if referral.exists():
-
-#             if status:
-#                 if status == "All":
-#                     return referral.order_by("date_referred")
-#                 return referral.filter(referral_status__icontains=status).order_by(
-#                     "date_referred"
-#                 )
-
-#             if from_date and to_date:
-#                 return referral.filter(
-#                     date__range=(from_date, to_date),
-#                 ).order_by("date_referred")
-
-#             if search_term:
-
-#                 return referral.filter(patient_name__icontains=search_term).order_by(
-#                     "date_referred"
-#                 )
-
-#         if not Referral.DoesNotExist():
-#             return Response(
-# 				{'error': 'No referral found.'}, status=status.HTTP_404_NOT_FOUND
-# 			)
-
-#         return referral
 
 
 class GetReferrals(generics.ListAPIView):
@@ -163,16 +118,7 @@ class GetReferrals(generics.ListAPIView):
                 | Q(referring_facility__branch__laboratory_id=pk)
             )
 
-        # Apply additional filters
-        if status and status != "All":
-            queryset = queryset.filter(referral_status__icontains=status)
-
-        if from_date and to_date:
-            queryset = queryset.filter(date__range=(from_date, to_date))
-
-        if search_term:
-            queryset = queryset.filter(patient_name__icontains=search_term)
-
+        queryset = filter_referrals(queryset, from_date, to_date, search_term, status)
         return queryset.order_by("-date_referred")
 
 
@@ -351,7 +297,7 @@ class TrackSampleState(generics.CreateAPIView):
 
 class GetReferralTrackerDetails(generics.ListAPIView):
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = ReferralTrackingSerializer
 
     def get_queryset(self, *args, **kwargs):

@@ -45,13 +45,13 @@ class Hospital(Facility):
     account_number = models.CharField(max_length=100, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     digital_address = models.CharField(max_length=15)
-    referral_percent_discount = models.CharField(max_length=5)
+    referral_percent_discount = models.CharField(max_length=5, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
 
     class Meta:
-        unique_together = ('account_number', )
+        unique_together = ("account_number", "name")
 
 
 class HospitalLab(Facility):

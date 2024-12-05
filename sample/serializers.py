@@ -188,22 +188,20 @@ class ReferralSerializer(serializers.ModelSerializer):
                 }
             )
         return data
-
+    
     def create(self, validated_data):
+        samples_data = validated_data.pop("samples", [])
+        with transaction.atomic():
+            # Create Referral instance
+            referral = Referral.objects.create(**validated_data)
 
-        samples_data = validated_data.pop("samples")
-
-        referral = Referral.objects.create(**validated_data)
-
-        # Creating Sample entries
-        for sample_data in samples_data:
-
-            sample_tests_data = sample_data.pop("sample_tests")
-            sample = Sample.objects.create(referral=referral, sample_type=sample_data.get("sample_type"))
-
-            # Creating SampleTest entries for each sample
-            for sample_test_data in sample_tests_data:
-                SampleTest.objects.create(sample=sample, test_id=sample_test_data)
+            # Create Samples and associated SampleTests in bulk
+            for sample_data in samples_data:
+                sample_tests_data = sample_data.pop("sample_tests", [])
+                sample = Sample.objects.create(referral=referral, **sample_data)
+                SampleTest.objects.bulk_create([
+                    SampleTest(sample=sample, test_id=test_id) for test_id in sample_tests_data
+                ])
 
         return referral
 

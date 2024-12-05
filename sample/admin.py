@@ -26,6 +26,7 @@ class ReferralAdmin(admin.ModelAdmin):
     list_editable = (
         "referral_status",
     )
+    ordering = ["-date_referred"]
 
 
 @admin.register(SampleTest)
@@ -78,18 +79,21 @@ class ReferralTrackingHistoryAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         # Get the base queryset
         queryset = super().get_queryset(request)
+        print(queryset)
+        return queryset
+    #     # If the user is a superuser, return all records
+    #     if request.user.is_superuser:
+    #         return queryset
 
-        # If the user is a superuser, return all records
-        if request.user.is_superuser:
-            return queryset
+    #     # If the user is not a superuser, filter the samples by the user's associated Branch or Lab
+    #     # Assuming `branch` is related to `Sample` and `branch.laboratory` is related to `Lab`, which is linked to `User`.
 
-        # If the user is not a superuser, filter the samples by the user's associated Branch or Lab
-        # Assuming `branch` is related to `Sample` and `branch.laboratory` is related to `Lab`, which is linked to `User`.
-
-        return queryset.filter(
-            Q(branch__laboratory__user=request.user)  # Branch linked to the user's Lab
-            | Q(branch__laboratory__user__branch=request.user)  # User's own branch
-        )
+    #     return queryset.filter(
+    #         Q(
+    #             referral__to_laboratory__created_by_id=request.user
+    #         )  # Branch linked to the user's Lab
+    #         | Q(referral__to_laboratory__created_by_id=request.user)  # User's own branch
+    #     )
 
     list_display = ("referral", "status", "location", "updated_at")
 

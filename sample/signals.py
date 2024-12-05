@@ -8,8 +8,9 @@ from labs.models import Branch
 def create_notification_for_lab(sender, instance, created, **kwargs):
 
     if created:
-        print("hello")
+
         branch = Branch.objects.get(id=instance.to_laboratory.id)
+
         Notification.objects.create(
             title="New Sample",
             message=f"New sample from: {instance.referring_facility}",
@@ -27,16 +28,5 @@ def create_notification_for_lab(sender, instance, created, **kwargs):
 def create_notification_for_sample(sender, instance, created, **kwargs):
 
     if created:
-        # branch = Branch.objects.get(id=instance.referral.to_laboratory.id)
-        # Notification.objects.create(
-        #     title="New Sample",
-        #     message=f"New sample from: {instance.referral.referring_facility}",
-        #     facility=branch,
-        # )
 
         SampleTrackingHistory.objects.create(sample=instance, status="Pending")
-        # if instance.referral.delivery:
-        #     Notification.objects.create(
-        #         message=f"New sample from: {instance.referral.referring_facility}",
-        #         user=instance.delivery.created_by,
-        #     )

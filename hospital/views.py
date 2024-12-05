@@ -42,7 +42,7 @@ class AddHospitalView(HospitalMixin, generics.CreateAPIView):
 
 	def perform_create(self, serializer):
 
-		serializer.save(created_by=self.request.user)
+		serializer.save(created_by=self.request.user, facility_type=self.request.user.account_type)
 
 
 class UpdateHospitalView(HospitalMixin, generics.UpdateAPIView):
