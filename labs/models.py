@@ -3,16 +3,14 @@ from django.contrib.auth import get_user_model # type: ignore
 from django.core.validators import validate_email# type: ignore # MinLengthValidator, MaxLengthValidator, 
 import uuid
 from modelmixins.models import Facility, BasicTest, BaseModel
-# from encrypted_model_fields.fields import (
-#     EncryptedCharField,
-#     EncryptedTextField,
-#     EncryptedBooleanField,
-# )
+
+
 
 user = get_user_model()
 
 
 class Laboratory(BaseModel):
+	
 	'''
 	A laboratory where tests are conducted.
 

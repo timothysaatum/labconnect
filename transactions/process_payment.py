@@ -1,41 +1,52 @@
+from decimal import Decimal
 import requests
 from django.conf import settings
+import logging
 
+logger = logging.getLogger("labs")
 
 
 class Paystack:
-    SECRET_KEY = settings.PAYSTACK_SECRET_KEY
-    BASE_URL = settings.PAYSTACK_BASE_URL
 
-    @staticmethod
-    def initialize_payment(email, amount, callback_url, reference, channels):
+    def __init__(self):
+        self.secret_key = settings.PAYSTACK_SECRET_KEY
+        self.base_url = settings.PAYSTACK_BASE_URL
 
-        headers = {
-            "Authorization": f"Bearer {Paystack.SECRET_KEY}",
-            "Content-Type": "application/json",
-        }
+    def initialize_payment(self, email, amount, callback_url, reference, channels):
+        if not isinstance(amount, Decimal):
+            raise ValueError("Amount must be a Decimal value")
 
-        data = {
-            "email": email,
-            "amount": int(
-                amount * 100
-            ),  # Paystack expects amount in kobo (smallest currency unit)
-            "callback_url": callback_url,
-            "reference": reference,
-            "channels": channels
-        }
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.secret_key}",
+                "Content-Type": "application/json",
+            }
 
-        url = f"{Paystack.BASE_URL}/transaction/initialize"
+            data = {
+                "email": email,
+                "amount": int(
+                    amount * 100
+                ),  # Paystack expects amount in kobo (smallest currency unit)
+                "callback_url": callback_url,
+                "reference": reference,
+                "channels": channels,
+            }
 
-        response = requests.post(url, json=data, headers=headers)
+            url = f"{self.base_url}/transaction/initialize"
 
-        return response
+            response = requests.post(url, json=data, headers=headers)
 
-    @staticmethod
-    def verify_payment(reference):
+            response.raise_for_status()
 
-        headers = {"Authorization": f"Bearer {Paystack.SECRET_KEY}"}
-        url = f"{Paystack.BASE_URL}/transaction/verify/{reference}"
+            return response
+
+        except requests.exceptions.RequestException as e:
+            return {"error": str(e)}
+
+    def verify_payment(self, reference):
+
+        headers = {"Authorization": f"Bearer {self.secret_key}"}
+        url = f"{self.base_url}/transaction/verify/{reference}"
         response = requests.get(url, headers=headers)
 
         return response

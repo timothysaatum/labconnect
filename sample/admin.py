@@ -19,6 +19,7 @@ class ReferralAdmin(admin.ModelAdmin):
         "to_laboratory",
         "delivery",
         "patient_name",
+        "is_completed",
         "referral_status",
         "date_referred",
     )

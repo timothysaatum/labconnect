@@ -26,13 +26,19 @@ from rest_framework import serializers
 
 logger = logging.getLogger('labs')
 
-def filter_referrals(referrals, from_date=None, to_date=None, search_term=None, status=None):
+def filter_referrals(referrals, from_date=None, to_date=None, search_term=None, status=None, drafts=None):
     if from_date and to_date:
         referrals = referrals.filter(date__range=(from_date, to_date))
+
     if search_term:
         referrals = referrals.filter(patient_name__icontains=search_term)
+
     if status and status != "All":
         referrals = referrals.filter(referral_status__icontains=status)
+
+    if drafts:
+        referrals = referrals.filter(is_completed=False)
+
     return referrals
 
 class CreateReferral(generics.CreateAPIView):
@@ -99,6 +105,7 @@ class GetReferrals(generics.ListAPIView):
         search_term = self.request.GET.get("search")
         received = self.request.GET.get("received")
         sent = self.request.GET.get("sent")
+        drafts = self.request.GET.get('drafts')
 
         queryset = Referral.objects.none()  # Default to an empty queryset
         logger.info(
@@ -108,7 +115,7 @@ class GetReferrals(generics.ListAPIView):
         # Filter for received referrals
         if received == "true":
             queryset = Referral.objects.filter(
-                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk)
+                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk), is_completed=True
             )
 
         # Filter for sent referrals
@@ -118,7 +125,9 @@ class GetReferrals(generics.ListAPIView):
                 | Q(referring_facility__branch__laboratory_id=pk)
             )
 
-        queryset = filter_referrals(queryset, from_date, to_date, search_term, status)
+        queryset = filter_referrals(
+            queryset, from_date, to_date, search_term, status, drafts
+        )
         return queryset.order_by("-date_referred")
 
 
@@ -182,10 +191,12 @@ class GetNotifications(generics.ListAPIView):
             "Sample Received by Delivery",
             "Sample Received by Lab",
         )
+
         notification = Notification.objects.filter(
             facility_id=self.kwargs.get("branch_id"),
             is_read=False,
             facility__referral__referral_status__in=request_status,
+            facility__referral__is_completed=True
         ).order_by("-date_added")
 
         return notification

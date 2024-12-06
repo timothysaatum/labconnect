@@ -73,6 +73,7 @@ def generate_referral_id():
 
 
 class Patient(models.Model):
+    
     '''
     This Table holds information about the patient including their insuarance
     '''
@@ -111,6 +112,7 @@ class Referral(models.Model):
     sender_email = EncryptedCharField(max_length=100, null=True, blank=True)
     referral_status = models.CharField(max_length=100, choices=REQUEST_STATUS)
     date_referred = models.DateTimeField(auto_now_add=True, db_index=True)
+    is_completed = models.BooleanField(default=False, db_index=True)
 
     def __str__(self):
         return self.patient_name

@@ -15,44 +15,46 @@ from django.conf import settings
 import json
 
 
-
 class SubscriptionCreationView(CreateAPIView):
 
-	permission_classes = [IsAuthenticated]
-	serializer_class = SubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+    serializer_class = SubscriptionSerializer
 
-	def post(self, request):
+    def post(self, request):
 
-		serializer = self.serializer_class(data=request.data)
-		if serializer.is_valid(raise_exception=True):
-			
-			serializer.save(subscriber=self.request.user)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
 
-		return Response(
-					{'message': 'Subscription successful.'},
-					status=status.HTTP_200_OK)
+            serializer.save(subscriber=self.request.user)
+
+        return Response(
+            {"message": "Subscription successful."}, status=status.HTTP_200_OK
+        )
 
 
 class UpdateSubscriptionView(UpdateAPIView):
 
-	permission_classes = [IsAuthenticated]
-	serializer_class = SubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+    serializer_class = SubscriptionSerializer
 
-	def put(self, request, format=None):
+    def put(self, request, format=None):
 
-		subscription = Subscription.objects.get(subscriber=self.request.user)
-		serializer = SubscriptionSerializer(subscription, data=request.data)
+        subscription = Subscription.objects.get(subscriber=self.request.user)
+        serializer = SubscriptionSerializer(subscription, data=request.data)
 
-		if serializer.is_valid():
-			if self.request.user.is_admin:
+        if serializer.is_valid():
+            if self.request.user.is_admin:
 
-				serializer.save()
-				return Response({'message': 'Subscription Updated'},status=status.HTTP_201_CREATED)
+                serializer.save()
+                return Response(
+                    {"message": "Subscription Updated"}, status=status.HTTP_201_CREATED
+                )
 
-			return Response({'error': 'Unauthorized action.'},
-							status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"error": "Unauthorized action."}, status=status.HTTP_401_UNAUTHORIZED
+            )
 
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProcessPaymentView(CreateAPIView):
@@ -97,7 +99,9 @@ class ProcessPaymentView(CreateAPIView):
 
                 except Exception as e:
 
-                    return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        {"error": str(e)}, status=status.HTTP_400_BAD_REQUEST
+                    )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -126,15 +130,22 @@ class VerifyPaymentView(APIView):
                 transaction.is_verified = True
                 # Save the transaction changes to the database
                 transaction.save()
+            
+                referral = transaction.referral
+                referral.is_completed = True
+                referral.save()
+
             except Transaction.DoesNotExist:
                 return Response(
                     {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND
                 )
 
-            return Response({'status': response['status'], 'message': response['message']}, status=status.HTTP_200_OK)
+            return Response(
+                {"status": response["status"], "message": response["message"]},
+                status=status.HTTP_200_OK,
+            )
         else:
             return Response(response, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class PaystackWebhookView(APIView):
@@ -142,9 +153,9 @@ class PaystackWebhookView(APIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
-    
+
         secret_key = settings.PAYSTACK_SECRET
-        
+
         # Get the signature from headers
         signature = request.headers.get("X-Paystack-Signature")
 
@@ -180,9 +191,12 @@ class PaystackWebhookView(APIView):
                 transaction.is_verified = True
                 transaction.save()
 
+                referral = transaction.referral
+                referral.is_completed = True
+                referral.save()
+
                 # Log the successful update
                 print(f"Transaction {reference} updated to Payment Successful.")
-
 
             except Transaction.DoesNotExist:
                 # Handle cases where the transaction does not exist
