@@ -237,7 +237,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # React dev server
+    "http://127.0.0.1:5173",  # Alternate localhost
+    "https://your-production-react-url.com",  # React production URL if needed
+]
+
+
 # White listing the localhost:3000 port
 # for React
 CORS_ORIGIN_WHITELIST = ("http://localhost:5173", "https://labconnect-eight.vercel.app")
@@ -326,7 +333,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 
-
+# SECURE_CONTENT_TYPE_NOSNIFF = True
 # SESSION_COOKIE_SECURE = True
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SECURE_SSL_REDIRECT = True
