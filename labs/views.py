@@ -326,60 +326,6 @@ class TestListView(generics.ListAPIView):
         return tests
 
 
-# class TestListView(generics.ListAPIView):
-#     """
-# 	Api endpoint that allows the client to fetch tests for a particular laboratory
-# 	or its branch.
-
-# 	It takes either the branch id or the Laboratory id"""
-
-#     serializer_class = TestSerializer
-#     pagination_class = QueryPagination
-
-#     # cache_timeout = 600
-#     def get_serializer_context(self):
-#         context = super().get_serializer_context()
-#         context.update({'pk': self.kwargs.get('pk')})
-#         return context
-
-#     def list(self, request, *args, **kwargs):
-#         paginate = self.request.query_params.get('paginate', 'true').lower()
-#         # Disable pagination if ?paginate=false is in the query params
-#         if paginate == 'false':
-#             queryset = self.get_queryset()
-#             serializer = self.get_serializer(queryset, many=True)
-#             return Response(serializer.data)
-#         else:
-#             # Apply pagination normally
-#             return super().list(request, *args, **kwargs)
-
-#     def get_queryset(self):
-#         status = self.request.GET.get("status")
-#         test_status = self.request.GET.get("test_status")
-#         search_term = self.request.query_params.get("search")
-#         sample_type = self.request.GET.get('sample_type')
-#         test_status = status or test_status or ""
-#         tests = Test.objects.filter(
-#             Q(branch__id=self.kwargs.get("pk"))
-#             | Q(branch__laboratory__id=self.kwargs.get("pk"))
-#         )
-
-#         if search_term:
-#             return tests.filter(name__icontains=search_term)
-
-#         if sample_type and test_status in ("active", "inactive", "Active", "Inactive"):
-
-#             return tests.filter(
-#                 test_status__icontains=test_status, sample_type=sample_type
-#             )
-
-#         if test_status in ("active", "inactive", "Active", "Inactive"):
-
-#             return tests.filter(test_status__icontains=test_status)
-
-#         return tests
-
-
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 	"""
 	Api end point for updating test for a laboratory.
@@ -467,7 +413,7 @@ class AllLaboratories(generics.ListAPIView):
 			return get_nearby_branches(
                 query=query, user_lat=user_lat, user_long=user_long, max_distance_km=max_dist
             )
-
+		print(query)
             # Return an all labs queryset if no valid param is provided
 		return query
 

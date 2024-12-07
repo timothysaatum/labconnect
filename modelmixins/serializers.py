@@ -1,12 +1,14 @@
 from rest_framework import serializers
 from modelmixins.models import Facility, SampleType
+from labs.models import Branch
 
 
 class FacilitySerializer(serializers.ModelSerializer):
-	name = serializers.StringRelatedField(read_only=True, source='__str__')
-	class Meta:
-		model = Facility
-		fields = (
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Facility
+        fields = (
 			'id',
 			'name',
 			'phone',
@@ -14,6 +16,20 @@ class FacilitySerializer(serializers.ModelSerializer):
 			'facility_type',
 			'date_added'
 		)
+    
+    def get_name(self, instance):
+        """
+        Dynamically return the name of the facility:
+        - If the facility is related to a Branch, return branch_name (if available).
+        - Otherwise, use the __str__ representation.
+        """
+        # Check if this Facility has a related Branch
+        if hasattr(instance, "branch"):  
+            branch = instance.branch  # Get related Branch instance
+            return branch.branch_name if branch.branch_name else str(instance)
+
+        # For other cases, fall back to __str__ of Facility
+        return str(instance)
 
 
 class SampleTypeSerializer(serializers.ModelSerializer):

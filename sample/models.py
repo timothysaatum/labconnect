@@ -60,6 +60,7 @@ REQUEST_STATUS = [
 ]
 
 def generate_referral_id():
+
     '''
     Generates a unique id that comprises: SAM-24-10-2V5
     '''
@@ -73,7 +74,7 @@ def generate_referral_id():
 
 
 class Patient(models.Model):
-    
+
     '''
     This Table holds information about the patient including their insuarance
     '''
