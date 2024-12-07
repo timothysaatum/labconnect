@@ -55,7 +55,7 @@ class SampleType(models.Model):
     collection_time = models.CharField(max_length=155)
 
     def __str__(self):
-        return f"{self.sample_tube} sample"
+        return f"{self.sample_name} sample"
 
 
 class BasicTest(BaseModel):

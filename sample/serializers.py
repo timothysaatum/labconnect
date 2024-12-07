@@ -101,6 +101,17 @@ class SampleSerializer(serializers.ModelSerializer):
 
         instance.save()
 
+        if instance.sample_status == "Received" or instance.sample_status == "Rejected":
+            referral = instance.referral
+            ReferralTrackingHistory.objects.create(
+                referral=referral,
+                status="Request Completed",
+                location=instance.referral.to_laboratory,
+            )
+
+            referral.referral_status = "Request Completed"
+            referral.save()
+
         # Wrap the sample and sample_test updates in a transaction
         if sample_tests_data is not None:
 

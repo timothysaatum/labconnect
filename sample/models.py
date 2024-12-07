@@ -114,6 +114,7 @@ class Referral(models.Model):
     referral_status = models.CharField(max_length=100, choices=REQUEST_STATUS)
     date_referred = models.DateTimeField(auto_now_add=True, db_index=True)
     is_completed = models.BooleanField(default=False, db_index=True)
+    is_archived = models.BooleanField(default=False, db_index=True)
 
     def __str__(self):
         return self.patient_name

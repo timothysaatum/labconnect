@@ -26,7 +26,16 @@ from rest_framework import serializers
 
 logger = logging.getLogger('labs')
 
-def filter_referrals(referrals, from_date=None, to_date=None, search_term=None, status=None, drafts=None):
+
+def filter_referrals(
+    referrals,
+    from_date=None,
+    to_date=None,
+    search_term=None,
+    status=None,
+    drafts=None,
+    is_archived=None,
+):
     if from_date and to_date:
         referrals = referrals.filter(date__range=(from_date, to_date))
 
@@ -39,7 +48,11 @@ def filter_referrals(referrals, from_date=None, to_date=None, search_term=None, 
     if drafts:
         referrals = referrals.filter(is_completed=False)
 
+    if is_archived:
+        referrals = referrals.filter(is_archived=True)
+
     return referrals
+
 
 class CreateReferral(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -98,6 +111,7 @@ class GetReferrals(generics.ListAPIView):
     serializer_class = ReferralSerializer
 
     def get_queryset(self):
+
         pk = self.kwargs.get("facility_id")
         status = self.request.GET.get("status")
         from_date = self.request.GET.get("from_date")
@@ -106,6 +120,9 @@ class GetReferrals(generics.ListAPIView):
         received = self.request.GET.get("received")
         sent = self.request.GET.get("sent")
         drafts = self.request.GET.get('drafts')
+        is_archived = self.request.GET.get("is_archived")
+
+        cutoff_date = now() - timedelta(days=30)
 
         queryset = Referral.objects.none()  # Default to an empty queryset
         logger.info(
@@ -115,19 +132,23 @@ class GetReferrals(generics.ListAPIView):
         # Filter for received referrals
         if received == "true":
             queryset = Referral.objects.filter(
-                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk), is_completed=True
+                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
+                is_completed=True,
+                date_referred__gte=cutoff_date,
             )
 
         # Filter for sent referrals
         if sent == "true":
             queryset = Referral.objects.filter(
                 Q(referring_facility_id=pk)
-                | Q(referring_facility__branch__laboratory_id=pk)
+                | Q(referring_facility__branch__laboratory_id=pk),
+                date_referred__gte=cutoff_date,
             )
 
         queryset = filter_referrals(
-            queryset, from_date, to_date, search_term, status, drafts
+            queryset, from_date, to_date, search_term, status, drafts, is_archived
         )
+
         return queryset.order_by("-date_referred")
 
 
@@ -214,11 +235,11 @@ class CountObjects(generics.GenericAPIView):
             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
             date_referred__date=today,
         ).aggregate(
-            received=Count("id", filter=Q(referral_status="Request Completed")),
-            processed=Count("id", filter=Q(referral_status="Sample Received by Lab")),
-            pending=Count("id", filter=Q(referral_status="Request Accepted")),
-            rejected=Count("id", filter=Q(referral_status="Request Terminated")),
-            sent=Count('id', referring_facility=facility_id)
+            received=Count("id", filter=Q(samples__sample_status="Received")),
+            processed=Count("id", filter=Q(samples__sample_status="Received")),
+            pending=Count("id", filter=Q(samples__sample_status="Pending")),
+            rejected=Count("id", filter=Q(samples__sample_status="Rejected")),
+            sent=Count("id", referring_facility=facility_id),
         )
 
         # Aggregate counts for last month
@@ -226,10 +247,10 @@ class CountObjects(generics.GenericAPIView):
             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
             date_referred__date=last_month,
         ).aggregate(
-            received=Count("id", filter=Q(referral_status="Request Completed")),
-            processed=Count("id", filter=Q(referral_status="Sample Received by Lab")),
-            pending=Count("id", filter=Q(referral_status="Request Accepted")),
-            rejected=Count("id", filter=Q(referral_status="Request Terminated")),
+            received=Count("id", filter=Q(samples__sample_status="Received")),
+            processed=Count("id", filter=Q(samples__sample_status="Received")),
+            pending=Count("id", filter=Q(samples__sample_status="Pending")),
+            rejected=Count("id", filter=Q(samples__sample_status="Rejected")),
             sent=Count("id", referring_facility=facility_id),
         )
 
