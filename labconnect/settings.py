@@ -162,7 +162,11 @@ DATABASES = {
 #         'PORT': '3306',
 #         'OPTIONS': {
 #             'init_command': "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
+#             'pool_name': 'mypool',
+#             'pool_size': 5,
+#             'charset': 'utf8mb4',
 #         },
+#         'CONN_MAX_AGE': 600,
 #     }
 # }
 
@@ -261,7 +265,6 @@ EMAIL_HOST_USER = config('EMAIL_USER')
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")  # "nkbdtufounzmcmxd"
 
 
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -324,11 +327,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 

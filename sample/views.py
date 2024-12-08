@@ -226,10 +226,10 @@ class GetNotifications(generics.ListAPIView):
 
 
 class CountObjects(generics.GenericAPIView):
+
     def get(self, request, facility_id, *args, **kwargs):
         today = now().date()
         thirty_days_ago = today - timedelta(days=30)
-
         # Aggregated query for both today and last month stats
         stats = Referral.objects.filter(
             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
@@ -355,71 +355,6 @@ class CountObjects(generics.GenericAPIView):
         }
 
         return Response(data)
-
-
-# class CountObjects(generics.GenericAPIView):
-
-#     def get(self, request, *args, **kwargs):
-#         facility_id = self.kwargs.get("facility_id")
-#         today = now().date()
-#         last_month = today - timedelta(days=30)
-
-#         # Aggregate counts for today
-#         today_stats = Referral.objects.filter(
-#             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
-#             date_referred__date=today,
-#         ).aggregate(
-#             received=Count("id", filter=Q(samples__sample_status="Received")),
-#             processed=Count("id", filter=Q(samples__sample_status="Received")),
-#             pending=Count("id", filter=Q(samples__sample_status="Pending")),
-#             rejected=Count("id", filter=Q(samples__sample_status="Rejected")),
-#             sent=Count("id", referring_facility=facility_id),
-#         )
-
-#         # Aggregate counts for last month
-#         last_month_stats = Referral.objects.filter(
-#             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
-#             date_referred__date=last_month,
-#         ).aggregate(
-#             received=Count("id", filter=Q(samples__sample_status="Received")),
-#             processed=Count("id", filter=Q(samples__sample_status="Received")),
-#             pending=Count("id", filter=Q(samples__sample_status="Pending")),
-#             rejected=Count("id", filter=Q(samples__sample_status="Rejected")),
-#             sent=Count("id", referring_facility=facility_id),
-#         )
-
-#         # Calculate percentage changes
-#         def percentage_change(today_count, last_month_count):
-#             if last_month_count == 0:
-#                 return 100 if today_count > 0 else 0
-#             return ((today_count - last_month_count) / last_month_count) * 100
-
-#         change_received = percentage_change(
-#             today_stats["received"], last_month_stats["received"]
-#         )
-#         change_processed = percentage_change(
-#             today_stats["processed"], last_month_stats["processed"]
-#         )
-#         change_pending = percentage_change(
-#             today_stats["pending"], last_month_stats["pending"]
-#         )
-#         change_rejected = percentage_change(
-#             today_stats["rejected"], last_month_stats["rejected"]
-#         )
-
-#         data = {
-#             "samples_received": today_stats["received"],
-#             "samples_processed": today_stats["processed"],
-#             "samples_pending": today_stats["pending"],
-#             "samples_rejected": today_stats["rejected"],
-#             "change_received": change_received,
-#             "change_processed": change_processed,
-#             "change_pending": change_pending,
-#             "change_rejected": change_rejected,
-#             "samples_sent": today_stats["sent"] + last_month_stats["sent"],
-#         }
-
-#         return Response(data)
 
 
 class TrackReferralState(generics.CreateAPIView):
