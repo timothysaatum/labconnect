@@ -33,7 +33,7 @@ from labs.models import (
 	BranchManagerInvitation, 
 	Branch
 )
-# from rest_framework.throttling import UserRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from labs.serializers import BranchManagerInvitationSerializer
 import random
 from .utils import send_code_to_user
@@ -103,34 +103,35 @@ def verify_token(refresh_token):
 
 
 class CheckRefreshToken(APIView):
+    throttle_classes = [UserRateThrottle]
+    serializer_class = UserSerializer
 
-	serializer_class = UserSerializer
+    def get(self, request):
 
-	def get(self, request):
-		
-		cookie_token = request.COOKIES.get('refresh_token')
-		
-		try:
-			user = verify_token(cookie_token)
-			logger.info(f'{user.full_name} token check sucessful')
-			refresh_token = RefreshToken.for_user(user)
+        cookie_token = request.COOKIES.get("refresh_token")
 
-		except AttributeError:
-			logger.warning('Token pass was not valid')
-			return Response({'error': 'Session expired'}, status=status.HTTP_403_FORBIDDEN)
+        try:
+            user = verify_token(cookie_token)
+            logger.info(f"{user.full_name} token check sucessful")
+            refresh_token = RefreshToken.for_user(user)
 
-		access_token = str(refresh_token.access_token)
-		serialized_data = UserSerializer(user)
-		
-		return Response({
-			'access_token': access_token,
-			'data': serialized_data.data
+        except AttributeError:
+            logger.warning("Token pass was not valid")
+            return Response(
+                {"error": "Session expired"}, status=status.HTTP_403_FORBIDDEN
+            )
 
-			}, status=status.HTTP_200_OK)
+        access_token = str(refresh_token.access_token)
+        serialized_data = UserSerializer(user)
+
+        return Response(
+            {"access_token": access_token, "data": serialized_data.data},
+            status=status.HTTP_200_OK,
+        )
 
 
 class CreateUserView(CreateAPIView):
-
+    throttle_classes = [UserRateThrottle]
     serializer_class = UserCreationSerializer
 
     def post(self, request, format=None):
@@ -141,21 +142,23 @@ class CreateUserView(CreateAPIView):
 
 
 class UpdateUserAccount(UpdateAPIView):
-	permission_classes = [IsAuthenticated]
-	serializer_class = UserCreationSerializer
-	partial = True
+    throttle_classes = [UserRateThrottle]
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserCreationSerializer
+    partial = True
 
-	def get_queryset(self):
-		logger.info(f'{self.request.user} requesting account update')
-		return Client.objects.filter(pk=self.kwargs.get('pk'))
+    def get_queryset(self):
+        logger.info(f"{self.request.user} requesting account update")
+        return Client.objects.filter(pk=self.kwargs.get("pk"))
 
-	def patch(self, request, pk):
-		return super().partial_update(request, pk)
+    def patch(self, request, pk):
+        return super().partial_update(request, pk)
 
 
 class DeleteUserAccount(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserCreationSerializer
+    throttle_classes = [UserRateThrottle]
 
     def get_queryset(self):
         logger.info(f"{self.request.user} requesting account delete")
@@ -166,50 +169,54 @@ class DeleteUserAccount(UpdateAPIView):
 
 
 class VerifyUserEmail(GenericAPIView):
+    throttle_classes = [UserRateThrottle]
+    serializer_class = VerifyEmailSerializer
 
-	serializer_class = VerifyEmailSerializer
+    def post(self, request):
 
-	def post(self, request):
+        code = request.data.get("code")
 
-		code = request.data.get('code')
-		
-		try:
-			user_code_obj = OneTimePassword.objects.get(code=code)
-			secret_key = user_code_obj.secrete
-			totp = pyotp.TOTP(secret_key, interval=180, digits=10)
+        try:
+            user_code_obj = OneTimePassword.objects.get(code=code)
+            secret_key = user_code_obj.secrete
+            totp = pyotp.TOTP(secret_key, interval=180, digits=10)
 
-			if user_code_obj.is_expired():
-				return Response({'message': 'Code has expired code'}, status=status.HTTP_400_BAD_REQUEST)
+            if user_code_obj.is_expired():
+                return Response(
+                    {"message": "Code has expired code"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-			if not totp.verify(totp.now()):
+            if not totp.verify(totp.now()):
 
-				return Response({'message': 'Invalid or expired code'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"message": "Invalid or expired code"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-			user = user_code_obj.user
+            user = user_code_obj.user
 
-			if not user.is_verified:
+            if not user.is_verified:
 
-				user.is_verified = True
-				user.is_admin = True
-				user.save()
+                user.is_verified = True
+                user.is_admin = True
+                user.save()
 
-				return Response(
+                return Response(
+                    {"message": "Email successfully verified"},
+                    status=status.HTTP_200_OK,
+                )
 
-						{'message': 'Email successfully verified'},
-						status=status.HTTP_200_OK
-
-					)
-
-			return Response(
+            return Response(
 
 						{'message': 'Email is already verified.'}, 
 						status = status.HTTP_204_NO_CONTENT
 
 					)
 
-		except OneTimePassword.DoesNotExist:
+        except OneTimePassword.DoesNotExist:
 
-			return Response(
+            return Response(
 
 				{
 					'message': 'Passcode not provided or is inaccurate'
@@ -221,7 +228,7 @@ class VerifyUserEmail(GenericAPIView):
 
 class LoginUserView(GenericAPIView):
 
-    # throttle_classes = [UserRateThrottle]
+    throttle_classes = [UserRateThrottle]
     serializer_class = LoginSerializer
 
     def post(self, request):
@@ -266,95 +273,106 @@ class LoginUserView(GenericAPIView):
 
 
 class PasswordResetView(GenericAPIView):
+    throttle_classes = [UserRateThrottle]
+    serializer_class = PasswordResetViewSerializer
 
-	serializer_class = PasswordResetViewSerializer
+    def post(self, request):
 
-	def post(self, request):
+        try:
+            serializer = self.serializer_class(
+                data=request.data, context={"request": request}
+            )
+            serializer.is_valid(raise_exception=True)
 
-		try:
-			serializer = self.serializer_class(data=request.data, context={'request': request})
-			serializer.is_valid(raise_exception=True)
+        except AssertionError:
 
-		except AssertionError:
+            return Response(
+                {"error": "You cannot request password reset with a different email"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-			return Response({'error': 'You cannot request password reset with a different email'}, 
-				status=status.HTTP_400_BAD_REQUEST)
-
-		return Response({
+        return Response({
 					'message': 'A link has been sent to your email to reset your password'},
 					status=status.HTTP_200_OK)
 
 
 class PasswordResetConfirm(GenericAPIView):
+    throttle_classes = [UserRateThrottle]
 
-	def get(self, request, uidb64, token):
+    def get(self, request, uidb64, token):
 
-		try:
+        try:
 
-			user_id = smart_str(urlsafe_base64_decode(uidb64))
-			user = Client.objects.get(id=user_id)
-			logger.warning(f'{user.full_name} confirming password reset request')
-			if not PasswordResetTokenGenerator().check_token(user, token):
+            user_id = smart_str(urlsafe_base64_decode(uidb64))
+            user = Client.objects.get(id=user_id)
+            logger.warning(f"{user.full_name} confirming password reset request")
+            if not PasswordResetTokenGenerator().check_token(user, token):
 
-				return Response({
-						'message': 'Token is invalid',
-					},status=status.HTTP_401_UNAUTHORIZED)
+                return Response(
+                    {
+                        "message": "Token is invalid",
+                    },
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
 
-			return Response({
+            return Response({
 						'success': True,
 						'message': 'Valid credentials',
 						'uidb64': uidb64,
 						'token': token
 					},status=status.HTTP_200_OK)
 
-		except DjangoUnicodeDecodeError:
+        except DjangoUnicodeDecodeError:
 
-			return Response(
+            return Response(
 					{'message': 'Decode Error'},
 					status=status.HTTP_401_UNAUTHORIZED)
 
 
 class SetNewPassword(GenericAPIView):
+    throttle_classes = [UserRateThrottle]
+    serializer_class = SetNewPasswordSerializer
 
-	serializer_class = SetNewPasswordSerializer
+    def patch(self, request):
 
-	def patch(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
 
-		serializer = self.serializer_class(data=request.data)
-		if serializer.is_valid(raise_exception=True):
-
-			return Response({
-					'message': 'Password reset successful'
-				}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Password reset successful"}, status=status.HTTP_200_OK
+            )
 
 
 class LogoutView(APIView):
+    throttle_classes = [UserRateThrottle]
+    permission_classes = [IsAuthenticated]
 
-	permission_classes = [IsAuthenticated]
+    def post(self, request):
 
-	def post(self, request):
-		
-		user_cookie_token = request.COOKIES.get('refresh_token')
-		if user_cookie_token:
+        user_cookie_token = request.COOKIES.get("refresh_token")
+        if user_cookie_token:
 
-			try:
-				token = RefreshToken(user_cookie_token)
-				token.blacklist()
+            try:
+                token = RefreshToken(user_cookie_token)
+                token.blacklist()
 
-			except TokenError as e:
+            except TokenError as e:
 
-				raise InvalidToken('An error occured')
+                raise InvalidToken("An error occured")
 
-			response = Response({'message': 'Log out success'},status=status.HTTP_200_OK)
-			response.delete_cookie('refresh_token')
-			response.delete_cookie('csrftoken')
-			return response
+            response = Response(
+                {"message": "Log out success"}, status=status.HTTP_200_OK
+            )
+            response.delete_cookie("refresh_token")
+            response.delete_cookie("csrftoken")
+            return response
 
-		return Response({'message': 'Already logged out'})
+        return Response({"message": "Already logged out"})
 
 
 class FetchUserData(APIView):
 
+	throttle_classes = [UserRateThrottle]
 	permission_classes = [IsAuthenticated]
 	serializer_class = UserSerializer
 
@@ -414,6 +432,8 @@ def create_branch_manager_user(invitation, user_data):
 
 
 class BranchManagerAcceptView(CreateAPIView):
+
+	throttle_classes = [UserRateThrottle]
 	
 	def get_queryset(self):
 		"""
@@ -456,38 +476,50 @@ class BranchManagerAcceptView(CreateAPIView):
 
 
 class InviteBranchManagerView(CreateAPIView):
-	permission_classes = [IsAuthenticated]
-	serializer_class = BranchManagerInvitationSerializer
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
+    serializer_class = BranchManagerInvitationSerializer
 
-	def perform_create(self, serializer):
+    def perform_create(self, serializer):
 
-		serializer.save(sender=self.request.user)
+        serializer.save(sender=self.request.user)
 
 
 class FetchLabManagers(ListAPIView):
-	permission_classes = [IsAuthenticated]
-	serializer_class = UserSerializer
+    throttle_classes = [UserRateThrottle]
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
 
-	def get_queryset(self):
-		managers = Branch.objects.filter(laboratory_id=self.kwargs.get('pk')).values('branch_manager').distinct()
-		branch_managers = Client.objects.filter(id__in=Subquery(managers))
-		return branch_managers
+    def get_queryset(self):
+        managers = (
+            Branch.objects.filter(laboratory_id=self.kwargs.get("pk"))
+            .values("branch_manager")
+            .distinct()
+        )
+        branch_managers = Client.objects.filter(id__in=Subquery(managers))
+        return branch_managers
 
 
 class RequestNewOTP(CreateAPIView):
 
-	def post(self, request, *args, **kwargs):
+    throttle_classes = [UserRateThrottle]
 
-		user_email = request.data['email']
+    def post(self, request, *args, **kwargs):
 
-		try:
-			c = Client.objects.get(email=user_email)
+        user_email = request.data["email"]
 
-		except Client.DoesNotExist:
-			return Response({'error': f'An error occured'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            c = Client.objects.get(email=user_email)
 
-		if c.is_verified:
-			return Response({'error': f'An error occured'}, status=status.HTTP_400_BAD_REQUEST)
+        except Client.DoesNotExist:
+            return Response(
+                {"error": f"An error occured"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
-		send_code_to_user(user_email)
-		return Response({'message': f'Code sent'}, status=status.HTTP_200_OK)
+        if c.is_verified:
+            return Response(
+                {"error": f"An error occured"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        send_code_to_user(user_email)
+        return Response({"message": f"Code sent"}, status=status.HTTP_200_OK)
