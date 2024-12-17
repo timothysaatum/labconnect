@@ -330,16 +330,17 @@ class CountObjects(generics.GenericAPIView):
 
         # Calculate percentage changes with safe handling for None
         def percentage_change(today_count, last_month_count):
+            print('Last month count',last_month_count, 'Today count', today_count)
             if not last_month_count:  # Handle division by zero and None
                 return 100 if today_count else 0
             return ((today_count - last_month_count) / last_month_count) * 100
 
         # Prepare data
         data = {
-            "samples_received": stats["today_received"],
+            "samples_received": stats["today_received"] + stats["last_month_received"],
             "samples_processed": stats["today_processed"],
-            "samples_pending": stats["today_pending"],
-            "samples_rejected": stats["today_rejected"],
+            "samples_pending": stats["today_pending"] + stats["last_month_pending"],
+            "samples_rejected": stats["today_rejected"] + stats["last_month_rejected"],
             "change_received": percentage_change(
                 stats["today_received"], stats["last_month_received"]
             ),

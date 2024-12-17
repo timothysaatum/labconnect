@@ -12,7 +12,7 @@ user = get_user_model()
 class Laboratory(BaseModel):
 	
 	'''
-	A laboratory where tests are conducted.
+	An institution where tests are conducted. A laboratory can have multiple branches
 
 	Attrs:
 	name(str): the name of the laboratory
@@ -96,7 +96,7 @@ class Branch(Facility):
 class Test(BasicTest):
 
 	'''
-	A test than can be conducted in a branch.
+	A test that can be conducted in a branch of a laboratory.
 	Attrs:
 	branch(Branch): The branch that this test belongs to.
 	name(str): The name of the test.

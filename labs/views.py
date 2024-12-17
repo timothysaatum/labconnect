@@ -419,7 +419,7 @@ class AllLaboratories(generics.ListAPIView):
                 max_distance_km=max_dist,
             )
 
-        print(query)
+        # print(query)
         # Return an all labs queryset if no valid param is provided
         return query
 

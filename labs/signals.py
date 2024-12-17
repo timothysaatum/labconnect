@@ -150,8 +150,8 @@ def get_coords(sender, instance, created, **kwargs):
 
     if created:
         try:
-            lat, long = get_gps_coords(instance.digital_address)
-            instance.gps_coordinates = f'{lat}, {long}'
+            latitude, longitude = get_gps_coords(instance.digital_address)
+            instance.gps_coordinates = f'{latitude}, {longitude}'
             instance.save()
         except Exception as e:
             print(str(e))

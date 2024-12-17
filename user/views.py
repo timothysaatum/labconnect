@@ -17,8 +17,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
-# from .models import OneTimePassword
-# from .utils import send_normal_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -287,7 +285,7 @@ class PasswordResetView(GenericAPIView):
         except AssertionError:
 
             return Response(
-                {"error": "You cannot request password reset with a different email"},
+                {"error": "Invalid email"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -404,7 +402,7 @@ def create_branch_manager_user(invitation, user_data):
     Creates a new user with the provided data and sets the account type and staff status.
     """
     branch = Branch.objects.select_related('branch_manager').get(id=invitation.branch_id)
-    
+
     try:
         client = Client.objects.get(email=invitation.receiver_email)
         if not client.is_branch_manager:
@@ -419,14 +417,15 @@ def create_branch_manager_user(invitation, user_data):
             client.account_type = 'Laboratory'
             client.is_staff = True
             client.is_branch_manager = True
-			# client.is_admin = False
+            # client.is_admin = False
             client.save()
 
         branch.branch_manager = client
 
     branch.save()
-    invitation.used = True
-    invitation.save()
+    invitation.mark_as_used()
+    # invitation.used = True
+    # invitation.save()
 
     return client
 

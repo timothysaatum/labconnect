@@ -13,7 +13,6 @@ from django.db.models import TextChoices
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 user_account = get_user_model()
-from django.core.exceptions import ValidationError
 import re
 
 

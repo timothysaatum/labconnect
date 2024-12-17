@@ -104,7 +104,7 @@ class BranchAdmin(admin.ModelAdmin):
         "date_modified",
     )
 
-    list_editable = ("level",)
+    list_editable = ("level", "region")
 
 
 class BranchManagerInvitationAdmin(admin.ModelAdmin):

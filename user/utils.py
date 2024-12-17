@@ -2,7 +2,7 @@ from django.core.mail import EmailMessage
 from .models import Client, OneTimePassword
 from django.conf import settings
 import pyotp
-import asyncio
+# import asyncio
 
 
 def generateotp():
@@ -94,8 +94,8 @@ def send_code_to_user(email):
         print(f"An error occurred: {e}")
 
 
-def run_async_function(email):
-    asyncio.run(send_code_to_user(email))
+# def run_async_function(email):
+#     asyncio.run(send_code_to_user(email))
 
 
 def send_normal_email(data):

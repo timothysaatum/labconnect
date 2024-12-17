@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework_simplejwt.token_blacklist",
     "django_filters",
+    # "django_multidb_router",
     "analytics",
     "modelmixins",
     # 'django_dramatiq',
@@ -153,22 +154,30 @@ DATABASES = {
     }
 }
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'labconnect$default',
-#         'USER': 'labconnect',
-#         'PASSWORD': '9sg6b4z5hz5',
-#         'HOST': 'labconnect.mysql.pythonanywhere-services.com',
-#         'PORT': '3306',
-#         'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
-#             'pool_name': 'mypool',
-#             'pool_size': 5,
-#             'charset': 'utf8mb4',
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "labconnect$default",
+#         "USER": "labconnect",
+#         "PASSWORD": "9sg6b4z5hz5",
+#         "HOST": "labconnect.mysql.pythonanywhere-services.com",
+#         "PORT": "3306",
+#         "OPTIONS": {
+#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
+#             "charset": "utf8mb4",
 #         },
-#         'CONN_MAX_AGE': 600,
-#     }
+#         "CONN_MAX_AGE": 600,
+#     },
+#     "honourgh_read_replica": {
+#         "ENGINE": "mysql.connector.django",
+#         "NAME": "honourgh_read_replica",
+#         "USER": "honourgh_vermithor",
+#         "PASSWORD": "v?$9Zr!?@Vh_",
+#         "HOST": "127.0.0.1",  # IP or hostname of the replica database
+#         "PORT": "3306",  # Default MySQL port
+#     },
 # }
+
+# DATABASE_ROUTERS = ["labconnect.database_router.PrimaryReplicaRouter"]
 
 # sentry_sdk.init(
 #     dsn=config("SENTRY_DSN"),
@@ -291,7 +300,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "10/minute",
+        "anon": "100/day",
         "user": "1000/day",
     },
 }

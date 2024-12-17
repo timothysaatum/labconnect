@@ -30,7 +30,7 @@ def get_gps_coords(digital_address):
     }
 
     response = requests.request("POST", url, headers=headers, data = payload)
-    print(response)
+    # print(response)
 
     res = response.json()
     table_data = res.get("data", {}).get("Table", [{}])[0]
@@ -44,14 +44,16 @@ def get_gps_coords(digital_address):
 def calculate_distance(lat1, lon1, lat2, lon2):
     geod = Geodesic.WGS84
     result = geod.Inverse(lat1, lon1, lat2, lon2)
-    print(int(result["s12"] / 1000))
+    # print(int(result["s12"] / 1000))
     return result["s12"] / 1000  # Distance in kilometers
 
 
 def filter_by_facility_level(query, facility_level):
+
     """
     Filter facilities by their level.
     """
+
     if facility_level not in LEVEL_ORDER:
         return query  # Return unfiltered query if the level is invalid
 
