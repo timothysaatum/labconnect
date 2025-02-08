@@ -49,7 +49,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(Bank)
 class BankAdmin(admin.ModelAdmin):
-    list_display = ("bank_name", "code")
+    list_display = ("bank_name", "code", "updated_at")
 
 admin.site.register(Plan, PlanAdmin)
 admin.site.register(Subscription, SubscriptionAdmin)

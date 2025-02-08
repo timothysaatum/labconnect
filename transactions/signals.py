@@ -13,58 +13,55 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=Hospital)
 @receiver(post_save, sender=HospitalLab)
 def create_subaccount(sender, instance, created, **kwargs):
-    if not created:  # Only create subaccount when a new instance is created or updated
+    print("I am here")
+    
+    # Ensure the function runs for new entries or if account_number has changed
+    if created or instance.account_number_has_changed():
+        print("Hello")
+        PAYSTACK_SECRET = settings.PAYSTACK_SECRET
+        url = "https://api.paystack.co/subaccount"
+
+        headers = {
+            "Authorization": f"Bearer {PAYSTACK_SECRET}",
+            "Content-Type": "application/json"
+        }
+
         try:
-            # Retrieve the old account number if available (from instance's previous state)
-            old_account_number = instance.__class__.objects.get(pk=instance.pk).account_number
-        except instance.__class__.DoesNotExist:
-            old_account_number = None
+            account = instance.account_number
+            bank_code = instance.bank_code  # Ensure 'code' refers to the correct bank code
+            business_name = str(instance)  # Use the __str__ method of the instance
 
-        # If account number has changed, create a new subaccount
-        if old_account_number != instance.account_number:
-            PAYSTACK_SECRET = settings.PAYSTACK_SECRET
-            url = "https://api.paystack.co/subaccount"
+            if account and bank_code and business_name:
+                data = {
+                    "business_name": business_name,
+                    "settlement_bank": bank_code,
+                    "account_number": account,
+                    "percentage_charge": 100
+                }
 
-            headers = {
-                "Authorization": f"Bearer {PAYSTACK_SECRET}",
-                "Content-Type": "application/json"
-            }
+                try:
+                    response = requests.post(url, json=data, headers=headers)
+                    print(response.json())
+                    response.raise_for_status()  # Raises an HTTPError for bad responses
 
-            try:
-                account = instance.account_number
-                bank_code = instance.code  # Ensure 'code' refers to the correct bank code
-                business_name = str(instance)  # Use the __str__ method of the instance
+                    if response.status_code in [200, 201]:
+                        subaccount_data = response.json().get("data", {})
+                        subaccount_id = subaccount_data.get("subaccount_code")
 
-                if account and bank_code and business_name:
-                    data = {
-                        "business_name": business_name,
-                        "settlement_bank": bank_code,
-                        "account_number": account,
-                        "percentage_charge": 100
-                    }
+                        if subaccount_id:
+                            # Update without triggering post_save again
+                            instance.subaccount_id = subaccount_id
+                            instance.save(update_fields=['subaccount_id'])
 
-                    try:
-                        response = requests.post(url, json=data, headers=headers)
-                        response.raise_for_status()  # Raises an HTTPError for bad responses
+                    else:
+                        logger.error(f"Failed to create subaccount for {instance}: Status code {response.status_code}, Response: {response.text}")
 
-                        if response.status_code in [200, 201]:
-                            subaccount_data = response.json().get("data", {})
-                            subaccount_id = subaccount_data.get("subaccount_code")
+                except RequestException as e:
+                    # Handle network or other request-related errors
+                    logger.error(f"Network error while creating subaccount for {instance}: {str(e)}")
 
-                            if subaccount_id:
-                                # Update without triggering post_save again
-                                instance.subaccount_id = subaccount_id
-                                instance.save(update_fields=['subaccount_id'])
+            else:
+                logger.warning(f"Missing required fields for creating subaccount: {instance}")
 
-                        else:
-                            logger.error(f"Failed to create subaccount for {instance}: Status code {response.status_code}, Response: {response.text}")
-
-                    except RequestException as e:
-                        # Handle network or other request-related errors
-                        logger.error(f"Network error while creating subaccount for {instance}: {str(e)}")
-
-                else:
-                    logger.warning(f"Missing required fields for creating subaccount: {instance}")
-
-            except Exception as e:
-                logger.error(f"Unexpected error occurred while updating subaccount ID for {instance}: {str(e)}")
+        except Exception as e:
+            logger.error(f"Unexpected error occurred while updating subaccount ID for {instance}: {str(e)}")

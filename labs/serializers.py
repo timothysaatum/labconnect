@@ -40,7 +40,7 @@ class LaboratorySerializer(serializers.ModelSerializer):
 
 class BranchSerializer(serializers.ModelSerializer):
 
-	account = serializers.CharField(required=False)
+	# account = serializers.CharField(required=False)
 	laboratory = serializers.PrimaryKeyRelatedField(read_only=True)
 	manager_id = serializers.CharField(read_only=True)
 	branch_name = serializers.CharField(required=False, allow_null=True, allow_blank=True)
@@ -67,7 +67,7 @@ class BranchSerializer(serializers.ModelSerializer):
 			'name',
 			'phone',
 			'email',
-			'account',
+			# 'account',
 			'town',
 			'digital_address',
 			'region',

@@ -68,41 +68,46 @@ LEVEL_CHOICES = [
 ]
 
 class Branch(Facility):
-    """
+	"""
     A brach: is a local set up of a particular laboratory that carries out test within that enclave.
     Branch_name: refers to the name of a branch.
     """
-    accreditation_number = models.CharField(max_length=100)
-    level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
-    account = models.CharField(max_length=255, blank=True, null=True)
-    branch_name = models.CharField(max_length=155, null=True, blank=True)
-    region = models.CharField(choices=REGIONS, max_length=100)
-    town = models.CharField(max_length=200)
-    digital_address = models.CharField(max_length=15)
-    gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
-    branch_manager = models.ForeignKey(
+	accreditation_number = models.CharField(max_length=155, unique=True)
+	level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
+	branch_name = models.CharField(max_length=155, null=True, blank=True, unique=True)
+	region = models.CharField(choices=REGIONS, max_length=100)
+	town = models.CharField(max_length=200)
+	digital_address = models.CharField(max_length=15, unique=True)
+	gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
+	branch_manager = models.ForeignKey(
         user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-    laboratory = models.ForeignKey(
+	laboratory = models.ForeignKey(
         Laboratory, on_delete=models.CASCADE, related_name="branches"
     )
 
-    class Meta:
-        verbose_name_plural = "Branches"
-        unique_together = ("accreditation_number", "branch_name", "digital_address")
+	class Meta:
+		verbose_name_plural = "Branches"
+		unique_together = ("accreditation_number", "branch_name", "digital_address")
 
-    def get_branch_distance(self, user_lat, user_lon):
+	def get_branch_distance(self, user_lat, user_lon):
 
-        if self.gps_coordinates:
+		if self.gps_coordinates:
 
-            branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
-            d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
+			branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
+			d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
 			
-        return d
+		return d
+	
+	def account_number_has_changed(self):
+		if not self.pk:
+			return False  # New instance
+		old_account_number = Branch.objects.filter(pk=self.pk).values_list('account_number', flat=True).first()
+		return old_account_number != self.account_number
 
-    def __str__(self) -> str:
+	def __str__(self) -> str:
 
-        return f"{self.laboratory.name} - {self.town}"
+		return f"{self.laboratory.name} - {self.town}"
 
 
 class Test(BasicTest):

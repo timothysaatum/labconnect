@@ -133,7 +133,7 @@ class Transaction(models.Model):
     reference = models.CharField(
         max_length=36,
         unique=True,
-        default=str(uuid.uuid4),
+        default=uuid.uuid4,
         validators=[validate_reference],
     )
     updated_at = models.DateTimeField(auto_now=True)
@@ -167,6 +167,7 @@ class Transaction(models.Model):
 class Bank(models.Model):
     bank_name = models.CharField(max_length=255)
     code = models.CharField(max_length=155)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.bank_name
