@@ -100,9 +100,13 @@ class Branch(Facility):
 		return d
 	
 	def account_number_has_changed(self):
+		print(self.pk)
 		if not self.pk:
+			print("executing")
 			return False  # New instance
 		old_account_number = Branch.objects.filter(pk=self.pk).values_list('account_number', flat=True).first()
+		print(old_account_number)
+		print(old_account_number != self.account_number)
 		return old_account_number != self.account_number
 
 	def __str__(self) -> str:
