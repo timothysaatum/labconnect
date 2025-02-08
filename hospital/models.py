@@ -42,7 +42,7 @@ class Hospital(Facility):
     region = models.CharField(choices=REGIONS, max_length=100)
     town = models.CharField(max_length=200)
     hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
-    account_number = models.CharField(max_length=100, blank=True, null=True)
+    # account_number = models.CharField(max_length=100, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     digital_address = models.CharField(max_length=15)
     # referral_percent_discount = models.CharField(max_length=5, blank=True, null=True)
@@ -51,7 +51,7 @@ class Hospital(Facility):
         return self.name
 
     class Meta:
-        unique_together = ("account_number", "name")
+        unique_together = ("name", )
 
 
 class HospitalLab(Facility):
