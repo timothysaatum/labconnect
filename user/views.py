@@ -13,6 +13,7 @@ from rest_framework.generics import (
 	UpdateAPIView,
 	ListAPIView
 )
+from axes.decorators import axes_dispatch
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
@@ -229,6 +230,11 @@ class LoginUserView(GenericAPIView):
     throttle_classes = [UserRateThrottle]
     serializer_class = LoginSerializer
 
+    @axes_dispatch
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    
     def post(self, request):
 
         serializer = self.serializer_class(

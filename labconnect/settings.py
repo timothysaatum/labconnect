@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
 ]
-
+INSTALLED_APPS += ["axes"]
 # INSTALLED_APPS += ["django_prometheus"]
 
 
@@ -64,6 +64,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+MIDDLEWARE += ["axes.middleware.AxesMiddleware"]
 # MIDDLEWARE = (
 #     ["django_prometheus.middleware.PrometheusBeforeMiddleware"]
 #     + MIDDLEWARE
@@ -355,4 +356,7 @@ PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 # SESSION_COOKIE_AGE = 1800  # Auto logout users after 30 minutes
 # AUTHENTICATION_LOGGING = True
 # AXES_FAILURE_LIMIT = 5  # Block users after 5 failed logins
-# AXES_COOLOFF_TIME = 2  
+# AXES_FAILURE_LIMIT = 5  # Lock account after 5 failed attempts
+# AXES_COOLOFF_TIME = 1  # Lockout time in hours
+# AXES_RESET_ON_SUCCESS = True
+# AXES_LOCKOUT_PARAMETERS = ["username", "ip_address"]

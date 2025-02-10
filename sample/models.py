@@ -12,7 +12,8 @@ from encrypted_model_fields.fields import (
 import uuid
 import random, string
 import datetime
-# from django.core.exceptions import ObjectDoesNotExist
+from simple_history.models import HistoricalRecords
+
 
 
 client = get_user_model()
@@ -115,6 +116,7 @@ class Referral(models.Model):
     date_referred = models.DateTimeField(auto_now_add=True, db_index=True)
     is_completed = models.BooleanField(default=False, db_index=True)
     is_archived = models.BooleanField(default=False, db_index=True)
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.patient_name
