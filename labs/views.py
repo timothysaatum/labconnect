@@ -86,7 +86,7 @@ class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
 		"""
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid user.'}, 
+				{'error': 'Invalid user.'},
 				status=status.HTTP_400_BAD_REQUEST
 			)
 		return self.create(request)
@@ -98,7 +98,7 @@ class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
 class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 
 	"""
-	The API endpoint that allows the user to update their lab, 
+	The API endpoint that allows the user to update their lab,
 	Inherits the custom PermissionMixin class defined at the top of this model.
 	Checks if the user is associated with the lab.
 	"""
@@ -106,16 +106,16 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 	serializer_class = LaboratorySerializer
 	def get_queryset(self):
 		return Laboratory.objects.filter(created_by=self.request.user)
-	
+
 	def patch(self, request, pk):
-	
+
 		"""
 		Permission check to ensure the right user is interracting with right model.
 		"""
 
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid user'}, 
+				{'error': 'Invalid user'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.partial_update(request, pk)
@@ -124,23 +124,23 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 class DeleteLaboratory(PermissionMixin, generics.DestroyAPIView):
 	"""
 	The API endpoint that allows users to delete the lab instance they have created.
-	Inherits from the custom PermissionMixin class defined at the begiining of this 
+	Inherits from the custom PermissionMixin class defined at the begiining of this
 	model.
 	"""
 	def get_queryset(self):
 		"""
-		Returns a queryset of the Lab created by the user using the created_by field in the 
+		Returns a queryset of the Lab created by the user using the created_by field in the
 		Lab table
 		"""
 		return Laboratory.objects.filter(created_by=self.request.user)
-	
+
 	def delete(self, request, pk):
 		"""
 		Permission check to ensure the right user is the deleting the appropriate object.
 		"""
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.destroy(request, pk)
@@ -166,7 +166,7 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 	def post(self, request):
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid user.'}, 
+				{'error': 'Invalid user.'},
 				status=status.HTTP_400_BAD_REQUEST
 			)
 		return self.create(request)
@@ -174,7 +174,7 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 		"""
 		A data base query to get the laboratory the branch is being added to
 		"""
-		lab = self.request.user.laboratory_set.first()
+		lab = self.request.user.laboratory
 		# print(lab)
 		serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
 
@@ -199,7 +199,7 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 	"""
 	API end point that allows the user to update their facility.
-	This allows both the Branch manager or Laboratory CEO to update 
+	This allows both the Branch manager or Laboratory CEO to update
 	The Branch
 	"""
 	serializer_class = BranchSerializer
@@ -214,7 +214,7 @@ class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
 		"""
 		if not self.has_permission_to_edit_branch(request.user, branch):
 			return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.partial_update(request, pk, format=None)
@@ -234,7 +234,7 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 		"""
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.destroy(request, pk, format=None)
@@ -250,7 +250,7 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
     def post(self, request):
         if not self.has_laboratory_permission(self.request.user):
             return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_400_BAD_REQUEST
 			)
         return self.create(request)
@@ -344,13 +344,13 @@ class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
 	def patch(self, request, pk):
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.partial_update(request, pk)
 
 	def perform_update(self, serializer):
-		
+
 		query_dict.update(self.request.data)
 		branches = query_dict.get('branch')
 		#Updates the test with the new branches if there is any.
@@ -381,7 +381,7 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 
@@ -440,7 +440,7 @@ class SampleTypeView(PermissionMixin, generics.CreateAPIView):
 		#Checks if the use has the required permission
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 		return self.create(request)
@@ -457,7 +457,7 @@ class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 		if not self.has_laboratory_permission(self.request.user):
 			return Response(
-				{'error': 'Invalid credentials'}, 
+				{'error': 'Invalid credentials'},
 				status=status.HTTP_401_UNAUTHORIZED
 			)
 
@@ -503,7 +503,7 @@ class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
 		obj = generics.get_object_or_404(queryset, test_id=test_id, branch_id=branch_id)
 
 		return obj
-	
+
 	def patch(self, request, *args, **kwargs):
 
 		partial = kwargs.pop('partial', False)
@@ -524,7 +524,7 @@ class CopyTests(generics.CreateAPIView):
 
         if not test_ids or not target_branch_id:
 
-            return Response({'error': 'Test IDs and target branch ID are required'}, 
+            return Response({'error': 'Test IDs and target branch ID are required'},
                             status=status.HTTP_400_BAD_REQUEST)
 
         test_ids = [ensure_uuid(test_id) for test_id in test_ids]

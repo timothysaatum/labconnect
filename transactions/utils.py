@@ -53,6 +53,7 @@ def create_customer_subaccount(instance, max_retries=3, retry_delay=2):
     """
 
     def task():
+        print(str(instance), instance.bank_code, instance.account_number)
         """Runs the actual request in a background thread."""
         if not all([instance.account_number, instance.bank_code, str(instance)]):
             logger.warning(f"Missing required fields for creating subaccount: {instance}")
@@ -123,7 +124,7 @@ def commandline_utility(data):
 def transfer_funds_to_lab(lab_subaccount_id, amount, reason, max_retries=-1, retry_delay=5):
     """
     Transfers funds to the lab's Paystack subaccount with idempotency to prevent duplicates.
-    
+
     :param lab_subaccount_id: The Paystack subaccount ID of the lab.
     :param amount: The amount to transfer (in kobo).
     :param reason: Reason for the transfer.
@@ -160,7 +161,7 @@ def transfer_funds_to_lab(lab_subaccount_id, amount, reason, max_retries=-1, ret
                 if transfer_data.get("status"):
                     logger.info(f"Transfer successful: {amount / 100:.2f} to {lab_subaccount_id}")
                     return  # Exit loop on success
-                
+
                 logger.warning(f"Transfer response failed: {transfer_data}")
 
             except (RequestException, Timeout) as e:

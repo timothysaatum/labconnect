@@ -29,8 +29,8 @@ class Command(BaseCommand):
                 }
                 # Calculate GPS coordinates using the utility function
                 commandline_utility(data)
-                
+
             except Exception as e:
                 self.stderr.write(f"Error processing lab: {lab.id}: {e} :")
 
-        self.stdout.write("GPS recalculation process completed.")
+        self.stdout.write("Subaccount process completed.")

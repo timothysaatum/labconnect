@@ -1,14 +1,14 @@
 from .serializers import (
-	UserCreationSerializer, 
-	LoginSerializer, 
+	UserCreationSerializer,
+	LoginSerializer,
 	VerifyEmailSerializer,
-	PasswordResetViewSerializer, 
-	SetNewPasswordSerializer, 
+	PasswordResetViewSerializer,
+	SetNewPasswordSerializer,
 	UserSerializer
 )
 from django.db import transaction
 from rest_framework.generics import (
-	GenericAPIView, 
+	GenericAPIView,
 	CreateAPIView,
 	UpdateAPIView,
 	ListAPIView
@@ -29,7 +29,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.views import APIView
 import jwt
 from labs.models import (
-	BranchManagerInvitation, 
+	BranchManagerInvitation,
 	Branch
 )
 from rest_framework.throttling import UserRateThrottle
@@ -55,26 +55,26 @@ def generate_password(length=12):
 	uppercase = string.ascii_uppercase
 	digits = string.digits
 	symbols = string.punctuation
-	
+
 	# Combine all character sets
 	char_sets = [lowercase, uppercase, digits, symbols]
-	
+
 	# Shuffle the character sets for more randomness
 	random.shuffle(char_sets)
-	
+
 	# Create a password by selecting characters from each set
 	password = []
 	for char_set in char_sets:
 		password.append(random.choice(char_set))
-		
+
 		# Ensure the password meets the minimum length requirement
 	while len(password) < length:
 		password.append(random.choice(random.choice(char_sets)))
-		
+
 	# Shuffle the password characters for additional security
 	random.shuffle(password)
 	# Return the generated password as a string
-	
+
 	return ''.join(password)
 
 
@@ -208,7 +208,7 @@ class VerifyUserEmail(GenericAPIView):
 
             return Response(
 
-						{'message': 'Email is already verified.'}, 
+						{'message': 'Email is already verified.'},
 						status = status.HTTP_204_NO_CONTENT
 
 					)
@@ -219,7 +219,7 @@ class VerifyUserEmail(GenericAPIView):
 
 				{
 					'message': 'Passcode not provided or is inaccurate'
-					}, 
+					},
 					status=status.HTTP_404_NOT_FOUND
 
 				)
@@ -230,11 +230,11 @@ class LoginUserView(GenericAPIView):
     throttle_classes = [UserRateThrottle]
     serializer_class = LoginSerializer
 
-    @axes_dispatch
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    # @axes_dispatch
+    # def dispatch(self, *args, **kwargs):
+    #     return super().dispatch(*args, **kwargs)
 
-    
+
     def post(self, request):
 
         serializer = self.serializer_class(
@@ -439,7 +439,7 @@ def create_branch_manager_user(invitation, user_data):
 class BranchManagerAcceptView(CreateAPIView):
 
 	throttle_classes = [UserRateThrottle]
-	
+
 	def get_queryset(self):
 		"""
 		Retrieves the BranchManagerInvitation object based on pk and invitation_code.
@@ -449,13 +449,13 @@ class BranchManagerAcceptView(CreateAPIView):
 		try:
 			return BranchManagerInvitation.objects.get(pk=pk, invitation_code=invitation_code)
 		except BranchManagerInvitation.DoesNotExist:
-			
+
 			return Response({'error': 'Invitation does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-			
+
 	def post(self, request, *args, **kwargs):
 		invitation = self.get_queryset()
-		
+
 		if invitation.used:
 			return Response({'error': 'Invitation already used'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -475,7 +475,7 @@ class BranchManagerAcceptView(CreateAPIView):
 
 		create_branch_manager_user(invitation, data)
 		return Response(
-			{'message': f'Invitation accepted, you are now a branch manager at {invitation.branch}'}, 
+			{'message': f'Invitation accepted, you are now a branch manager at {invitation.branch}'},
       		status=status.HTTP_200_OK
     	)
 

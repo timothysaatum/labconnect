@@ -16,7 +16,7 @@ code_validator = RegexValidator(
 )
 
 class Laboratory(BaseModel):
-	
+
 	'''
 	An institution where tests are conducted. A laboratory can have multiple branches
 
@@ -41,7 +41,7 @@ class Laboratory(BaseModel):
 	class Meta:
 		verbose_name_plural = 'Laboratories'
 		unique_together = ('created_by', 'name', 'website')
-	
+
 	def account_number_has_changed(self):
 		if not self.pk:
 			return False  # New instance
@@ -109,7 +109,7 @@ class Branch(Facility):
 
 			branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
 			d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
-			
+
 		return d
 
 	def __str__(self) -> str:
@@ -169,7 +169,7 @@ class BranchTest(models.Model):
         Returns active tests for a given branch ID.
         """
 		return BranchTest.objects.filter(branch_id=branch_id, test_status='active')
-	
+
 	@staticmethod
 	def get_discounted_tests_for_branch(branch_id):
 		"""

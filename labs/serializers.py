@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from .models import (
-		Laboratory, 
-		Test, Branch,  
+		Laboratory,
+		Test, Branch,
 		BranchManagerInvitation,
 		BranchTest
 	)
+from django.core.validators import RegexValidator
 from modelmixins.models import SampleType, FacilityWorkingHours
 from modelmixins.serializers import SampleTypeSerializer
 
@@ -27,13 +28,13 @@ class LaboratorySerializer(serializers.ModelSerializer):
 			"account_number",
             "bank_name",
             "bank_code",
-			'main_phone', 
+			'main_phone',
 			'main_email',
-			'account', 
+# 			'account',
 			'website',
 			'description',
-			'logo', 
-			'date_modified', 
+			'logo',
+			'date_modified',
 			'date_added'
 		)
 
@@ -45,7 +46,7 @@ class BranchSerializer(serializers.ModelSerializer):
 	branch_name = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 	name = serializers.CharField(read_only=True)
 	digital_address = serializers.CharField(validators=[
-            serializers.RegexValidator(
+            RegexValidator(
                 regex=r"^[A-Z]{2}-\d{4}-\d{4}$",
                 message="Format must be AA-XXXX-XXXX (e.g., XL-0745-0849)"
             )
@@ -78,7 +79,7 @@ class BranchSerializer(serializers.ModelSerializer):
 			'date_added',
 			'date_modified'
 		)
-		
+
 
 	def to_representation(self, instance):
 
@@ -88,7 +89,7 @@ class BranchSerializer(serializers.ModelSerializer):
 		data['name'] = instance.branch_name if instance.branch_name else f'{instance.laboratory.name} - {instance.town}'
 
 		return data
-	
+
 	def create(self, validated_data):
 		working_hours_data = validated_data.pop('working_hours', None)
 		branch = super().create(validated_data)
@@ -99,9 +100,9 @@ class BranchSerializer(serializers.ModelSerializer):
 		return branch
 
 	def update(self, instance, validated_data):
-		
+
 		working_hours_data = validated_data.pop('working_hours', None)
-		
+
 		instance = super().update(instance, validated_data)
 
 		if working_hours_data:
@@ -115,7 +116,7 @@ class TestSerializer(serializers.ModelSerializer):
 	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
 	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
 	discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
-	
+
 	class Meta:
 
 		model = Test
@@ -178,9 +179,9 @@ class BranchTestSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = BranchTest
 		fields = [
-			'price', 
-			'discount_price', 
-			'test_status', 
+			'price',
+			'discount_price',
+			'test_status',
 			'discount_percent',
 			'turn_around_time'
 		]
