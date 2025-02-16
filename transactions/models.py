@@ -172,3 +172,26 @@ class Bank(models.Model):
 
     def __str__(self):
         return self.bank_name
+ 
+ 
+ 
+class BackgroundTask(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("processing", "Processing"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    task_type = models.CharField(max_length=50)  # "create_subaccount" or "transfer_funds"
+    payload = models.JSONField()  # Store request data
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    parent = models.UUIDField(null=True, blank=True)
+    retries = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    idempotency_key = models.CharField(max_length=100, unique=True, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.task_type} - {self.status}"

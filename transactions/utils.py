@@ -6,6 +6,7 @@ import threading
 import time
 from modelmixins.models import Facility
 import uuid
+from .process_task import enqueue_task
 
 
 logger = logging.getLogger(__name__)
@@ -46,55 +47,74 @@ def create_subaccount_request(data):
 
     return None
 
-def create_customer_subaccount(instance, max_retries=3, retry_delay=2):
-    """
-    Creates a customer Paystack subaccount asynchronously in a separate thread.
-    Uses retries with exponential backoff and waits for internet restoration.
-    """
+#def create_customer_subaccount(instance, max_retries=3, retry_delay=2):
+#    """
+#    Creates a customer Paystack subaccount asynchronously in a separate thread.
+#    Uses retries with exponential backoff and waits for internet restoration.
+#    """
 
-    def task():
-        print(str(instance), instance.bank_code, instance.account_number)
-        """Runs the actual request in a background thread."""
-        if not all([instance.account_number, instance.bank_code, str(instance)]):
-            logger.warning(f"Missing required fields for creating subaccount: {instance}")
-            return
+#    def task():
+#        print(str(instance), instance.bank_code, instance.account_number)
+#        """Runs the actual request in a background thread."""
+#        if not all([instance.account_number, instance.bank_code, str(instance)]):
+#            logger.warning(f"Missing required fields for creating subaccount: {instance}")
+#            return
 
-        data = {
-            "business_name": str(instance),
-            "settlement_bank": instance.bank_code,
-            "account_number": instance.account_number,
-            "percentage_charge": 100
-        }
+#        data = {
+#            "business_name": str(instance),
+#            "settlement_bank": instance.bank_code,
+#            "account_number": instance.account_number,
+#            "percentage_charge": 100
+#        }
 
-        for attempt in range(1, max_retries + 1):
-            if not is_internet_available():
-                wait_for_internet()
+#        for attempt in range(1, max_retries + 1):
+#            if not is_internet_available():
+#                wait_for_internet()
 
-            try:
-                subaccount_id = create_subaccount_request(data)
+#            try:
+#                subaccount_id = create_subaccount_request(data)
 
-                if subaccount_id:
-                    instance.subaccount_id = subaccount_id
-                    instance.save(update_fields=['subaccount_id'])
-                    logger.info(f"Subaccount successfully created for {instance} with ID {subaccount_id}")
-                    return  # Exit loop if successful
+#                if subaccount_id:
+#                    instance.subaccount_id = subaccount_id
+#                    instance.save(update_fields=['subaccount_id'])
+#                    logger.info(f"Subaccount successfully created for {instance} with ID {subaccount_id}")
+#                    return  # Exit loop if successful
 
-                logger.warning(f"Subaccount creation response missing ID for {instance}")
+#                logger.warning(f"Subaccount creation response missing ID for {instance}")
 
-            except (RequestException, Timeout) as e:
-                logger.error(f"Attempt {attempt}: Error creating subaccount for {instance}: {str(e)}")
+#            except (RequestException, Timeout) as e:
+#                logger.error(f"Attempt {attempt}: Error creating subaccount for {instance}: {str(e)}")
 
-            if attempt < max_retries:
-                sleep_time = retry_delay * (2 ** (attempt - 1))  # Exponential backoff
-                logger.info(f"Retrying in {sleep_time} seconds...")
-                time.sleep(sleep_time)
-            else:
-                logger.error(f"Failed to create subaccount for {instance} after {max_retries} attempts.")
+#            if attempt < max_retries:
+#                sleep_time = retry_delay * (2 ** (attempt - 1))  # Exponential backoff
+#                logger.info(f"Retrying in {sleep_time} seconds...")
+#                time.sleep(sleep_time)
+#            else:
+#                logger.error(f"Failed to create subaccount for {instance} after {max_retries} attempts.")
 
-    # Run the task in a separate background thread
-    thread = threading.Thread(target=task, daemon=True, name=f"SubaccountThread-{instance.id}")
-    thread.start()
-    logger.info(f"Thread {thread.name} started for {instance}")
+#    # Run the task in a separate background thread
+#    thread = threading.Thread(target=task, daemon=True, name=f"SubaccountThread-{instance.id}")
+#    thread.start()
+#    logger.info(f"Thread {thread.name} started for {instance}")
+
+def create_customer_subaccount(instance):
+    """Enqueue task to create a Paystack subaccount."""
+    print(f"I am executing {instance.id}")
+    if not all([instance.account_number, instance.bank_code, str(instance)]):
+        logger.warning(f"Missing required fields for {instance}")
+        return None
+
+    data = {
+        "business_name": str(instance),
+        "settlement_bank": instance.bank_code,
+        "account_number": instance.account_number,
+        "percentage_charge": 100,
+        "parent": str(instance.id)
+    }
+
+    return enqueue_task("create_subaccount", data)
+
+
 
 def commandline_utility(data):
     """Handles subaccount creation from CLI input."""
@@ -121,62 +141,71 @@ def commandline_utility(data):
         logger.error(f"Failed to create subaccount for {facility}")
 
 
-def transfer_funds_to_lab(lab_subaccount_id, amount, reason, max_retries=-1, retry_delay=5):
-    """
-    Transfers funds to the lab's Paystack subaccount with idempotency to prevent duplicates.
+#def transfer_funds_to_lab(lab_subaccount_id, amount, reason, max_retries=-1, retry_delay=5):
+#    """
+#    Transfers funds to the lab's Paystack subaccount with idempotency to prevent duplicates.
 
-    :param lab_subaccount_id: The Paystack subaccount ID of the lab.
-    :param amount: The amount to transfer (in kobo).
-    :param reason: Reason for the transfer.
-    :param max_retries: Maximum retry attempts (-1 for infinite retries).
-    :param retry_delay: Delay in seconds before retrying.
-    """
+#    :param lab_subaccount_id: The Paystack subaccount ID of the lab.
+#    :param amount: The amount to transfer (in kobo).
+#    :param reason: Reason for the transfer.
+#    :param max_retries: Maximum retry attempts (-1 for infinite retries).
+#    :param retry_delay: Delay in seconds before retrying.
+#    """
 
-    def task():
-        attempt = 0
-        idempotency_key = str(uuid.uuid4())  # Generate a unique request ID
+#    def task():
+#        attempt = 0
+#        idempotency_key = str(uuid.uuid4())  # Generate a unique request ID
 
-        while True:
-            if not is_internet_available():
-                wait_for_internet()
+#        while True:
+#            if not is_internet_available():
+#                wait_for_internet()
 
-            try:
-                url = settings.PAYSTACK_TRANSFER_URL
-                headers = {
-                    "Authorization": f"Bearer {settings.PAYSTACK_SECRET}",
-                    "Content-Type": "application/json",
-                    "Idempotency-Key": idempotency_key  # Prevent duplicate transfers
-                }
-                data = {
-                    "source": "balance",
-                    "amount": amount,
-                    "recipient": lab_subaccount_id,
-                    "reason": reason
-                }
+#            try:
+#                url = settings.PAYSTACK_TRANSFER_URL
+#                headers = {
+#                    "Authorization": f"Bearer {settings.PAYSTACK_SECRET}",
+#                    "Content-Type": "application/json",
+#                    "Idempotency-Key": idempotency_key  # Prevent duplicate transfers
+#                }
+#                data = {
+#                    "source": "balance",
+#                    "amount": amount,
+#                    "recipient": lab_subaccount_id,
+#                    "reason": reason
+#                }
 
-                response = requests.post(url, json=data, headers=headers, timeout=10)
-                response.raise_for_status()
+#                response = requests.post(url, json=data, headers=headers, timeout=10)
+#                response.raise_for_status()
 
-                transfer_data = response.json()
-                if transfer_data.get("status"):
-                    logger.info(f"Transfer successful: {amount / 100:.2f} to {lab_subaccount_id}")
-                    return  # Exit loop on success
+#                transfer_data = response.json()
+#                if transfer_data.get("status"):
+#                    logger.info(f"Transfer successful: {amount / 100:.2f} to {lab_subaccount_id}")
+#                    return  # Exit loop on success
 
-                logger.warning(f"Transfer response failed: {transfer_data}")
+#                logger.warning(f"Transfer response failed: {transfer_data}")
 
-            except (RequestException, Timeout) as e:
-                logger.error(f"Error transferring funds to {lab_subaccount_id}: {str(e)}")
+#            except (RequestException, Timeout) as e:
+#                logger.error(f"Error transferring funds to {lab_subaccount_id}: {str(e)}")
 
-            attempt += 1
-            if max_retries != -1 and attempt >= max_retries:
-                logger.error(f"Max retries reached. Transfer failed for {lab_subaccount_id}.")
-                break
+#            attempt += 1
+#            if max_retries != -1 and attempt >= max_retries:
+#                logger.error(f"Max retries reached. Transfer failed for {lab_subaccount_id}.")
+#                break
 
-            sleep_time = retry_delay * (2 ** (attempt - 1))  # Exponential backoff
-            logger.info(f"Retrying transfer in {sleep_time} seconds...")
-            time.sleep(sleep_time)
+#            sleep_time = retry_delay * (2 ** (attempt - 1))  # Exponential backoff
+#            logger.info(f"Retrying transfer in {sleep_time} seconds...")
+#            time.sleep(sleep_time)
 
-    # Run transfer in a background thread
-    thread = threading.Thread(target=task, daemon=True, name=f"TransferThread-{lab_subaccount_id}")
-    thread.start()
-    logger.info(f"Thread {thread.name} started for lab {lab_subaccount_id}")
+#    # Run transfer in a background thread
+#    thread = threading.Thread(target=task, daemon=True, name=f"TransferThread-{lab_subaccount_id}")
+#    thread.start()
+#    logger.info(f"Thread {thread.name} started for lab {lab_subaccount_id}")
+def transfer_funds_to_lab(lab_subaccount_id, amount, reason):
+    """Enqueue fund transfer task."""
+    data = {
+        "source": "balance",
+        "amount": amount,
+        "recipient": lab_subaccount_id,
+        "reason": reason
+    }
+    return enqueue_task("transfer_funds", data)

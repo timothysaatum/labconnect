@@ -9,10 +9,9 @@ from .utils import create_customer_subaccount
 @receiver(post_save, sender=Laboratory)
 @receiver(post_save, sender=Hospital)
 @receiver(post_save, sender=HospitalLab)
-def create_subaccount(sender, instance, created, **kwargs):
-
-    # Ensure the function runs for new entries or if account_number has changed
-    if (created and instance.account_number) or instance.account_number_has_changed():
-
-        print('Executing')
+def create_subaccount(sender, instance, created, update_fields=None, **kwargs):
+    """Trigger subaccount creation when account number is set or updated."""
+    
+    if created or (update_fields and "account_number" in update_fields):
+        print("Executing subaccount creation task")
         create_customer_subaccount(instance)

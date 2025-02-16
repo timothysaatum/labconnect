@@ -54,6 +54,7 @@ class BranchSerializer(serializers.ModelSerializer):
 	account_number = serializers.CharField(write_only=True, required=False)
 	bank_name = serializers.CharField(write_only=True, required=False)
 	bank_code = serializers.CharField(write_only=True, required=False)
+	gps_coordinates = serializers.CharField(read_only=True)
 
 	class Meta:
 
@@ -75,6 +76,7 @@ class BranchSerializer(serializers.ModelSerializer):
 			'email',
 			'town',
 			'digital_address',
+			'gps_coordinates',
 			'region',
 			'date_added',
 			'date_modified'

@@ -15,8 +15,8 @@ SECRET_KEY = config('SECRET_KEY')
 FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 
 
-DEBUG = False
-ALLOWED_HOSTS = ["api.labconnekt.com"]
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
 
 # vercel blob settings.py
 VERCEL_BLOB_BASE_URL = config("VERCEL_BLOB_BASE_URL")
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "axes",
+    "simple_history",
 ]
 
 # INSTALLED_APPS += ["django_prometheus"]
@@ -55,12 +56,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "user.middleware.validator.PermissionMiddleware",
+    "axes.middleware.AxesMiddleware",
     # "user.middleware.prometheus.MetricsAccessMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "axes.middleware.AxesMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -157,35 +158,35 @@ PAYSTACK_SUBACCOUNT_URL = "https://api.paystack.co/subaccount"
 # }
 
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "labconnect$default",
-        "USER": "labconnect",
-        "PASSWORD": "9sg6b4z5hz5",
-        "HOST": "labconnect.mysql.pythonanywhere-services.com",
-        "PORT": "3306",
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
-            "charset": "utf8mb4",
-        },
-        "CONN_MAX_AGE": 600,
-    },
-#     "honourgh_read_replica": {
-#         "ENGINE": "mysql.connector.django",
-#         "NAME": "honourgh_read_replica",
-#         "USER": "honourgh_vermithor",
-#         "PASSWORD": "v?$9Zr!?@Vh_",
-#         "HOST": "127.0.0.1",  # IP or hostname of the replica database
-#         "PORT": "3306",  # Default MySQL port
-#     },
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "labconnect$default",
+#         "USER": "labconnect",
+#         "PASSWORD": "9sg6b4z5hz5",
+#         "HOST": "labconnect.mysql.pythonanywhere-services.com",
+#         "PORT": "3306",
+#         "OPTIONS": {
+#             "init_command": "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
+#             "charset": "utf8mb4",
+#         },
+#         "CONN_MAX_AGE": 600,
+#     },
+# #     "honourgh_read_replica": {
+# #         "ENGINE": "mysql.connector.django",
+# #         "NAME": "honourgh_read_replica",
+# #         "USER": "honourgh_vermithor",
+# #         "PASSWORD": "v?$9Zr!?@Vh_",
+# #         "HOST": "127.0.0.1",  # IP or hostname of the replica database
+# #         "PORT": "3306",  # Default MySQL port
+# #     },
+# }
 
 # DATABASE_ROUTERS = ["labconnect.database_router.PrimaryReplicaRouter"]
 
@@ -260,13 +261,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173",  # React dev server
-#     "http://127.0.0.1:5173",  # Alternate localhost
-#     "https://labconnect-eight.vercel.app",  # React production URL if needed
-#     "https://labconnekt.com",
-# ]
+# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # React dev server
+    "http://127.0.0.1:5173",  # Alternate localhost
+    "https://labconnect-eight.vercel.app",  # React production URL if needed
+    "https://labconnekt.com",
+]
 
 
 # White listing the localhost:3000 port
@@ -351,19 +352,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SESSION_COOKIE_SECURE = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_HSTS_SECONDS = 31536000
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_PRELOAD = True
-SESSION_COOKIE_AGE = 1800  # Auto logout users after 30 minutes
-AUTHENTICATION_LOGGING = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# SESSION_COOKIE_SECURE = True
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# SECURE_HSTS_SECONDS = 31536000
+# SECURE_BROWSER_XSS_FILTER = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_HSTS_PRELOAD = True
+# SESSION_COOKIE_AGE = 1800  # Auto logout users after 30 minutes
+# AUTHENTICATION_LOGGING = True
 AXES_FAILURE_LIMIT = 5  # Block users after 5 failed logins
 AXES_FAILURE_LIMIT = 5  # Lock account after 5 failed attempts
 AXES_COOLOFF_TIME = 1  # Lockout time in hours

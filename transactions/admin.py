@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Plan, Subscription, Incentive, Transaction, Bank
+from .models import Plan, Subscription, Incentive, Transaction, Bank, BackgroundTask
 
 
 class PlanAdmin(admin.ModelAdmin):
@@ -50,6 +50,13 @@ class TransactionAdmin(admin.ModelAdmin):
 @admin.register(Bank)
 class BankAdmin(admin.ModelAdmin):
     list_display = ("bank_name", "code", "updated_at")
+
+
+@admin.register(BackgroundTask)
+class BackgroundTaskAdmin(admin.ModelAdmin):
+    list_display = ("task_type", "payload", "status", "updated_at")
+
+
 
 admin.site.register(Plan, PlanAdmin)
 admin.site.register(Subscription, SubscriptionAdmin)

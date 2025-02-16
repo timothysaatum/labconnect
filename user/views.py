@@ -13,7 +13,7 @@ from rest_framework.generics import (
 	UpdateAPIView,
 	ListAPIView
 )
-from axes.decorators import axes_dispatch
+# from axes.decorators import axes_dispatch
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
