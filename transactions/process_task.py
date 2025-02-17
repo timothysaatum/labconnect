@@ -14,7 +14,8 @@ def enqueue_task(task_type, payload):
         task_type=task_type,
         payload=payload,
         idempotency_key=idempotency_key,
-        status="pending"
+        status="pending",
+        parent=payload.pop("parent")
     )
     executor.submit(process_task, task)  # Run in background
     logger.info(f"Task {task.id} submitted for processing.")

@@ -54,7 +54,7 @@ class BankAdmin(admin.ModelAdmin):
 
 @admin.register(BackgroundTask)
 class BackgroundTaskAdmin(admin.ModelAdmin):
-    list_display = ("task_type", "payload", "status", "updated_at")
+    list_display = ("task_type", "payload", "status", "created_at", "updated_at")
 
 
 

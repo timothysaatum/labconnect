@@ -3,7 +3,6 @@ import logging
 import time
 from django.conf import settings
 from concurrent.futures import ThreadPoolExecutor
-from .models import BackgroundTask
 from modelmixins.models import Facility
 import uuid
 
@@ -45,11 +44,12 @@ def process_task(task):
             response_data = response.json()
 
             if response_data.get("status"):
-                facility = Facility.objects.get(id=uuid.UUID(task.parent))
-                print("Updating facility with subaccount")
-                subaccount_id = response_data.get("data", {})
-                facility.subaccount_id = subaccount_id
-                facility.save(update_fields=['subaccount_id'])
+                # facility = Facility.objects.get(id=uuid.UUID(task.parent))
+
+                subaccount_id = response_data.get("data", {}).get("subaccount_code")
+                Facility.objects.filter(id=uuid.UUID(task.parent)).update(subaccount_id=subaccount_id)
+                # facility.subaccount_id = subaccount_id
+                # facility.save(update_fields=['subaccount_id'])
                 task.status = "completed"
                 task.save(update_fields=["status"])
                 logger.info(f"Task {task.id} completed successfully.")

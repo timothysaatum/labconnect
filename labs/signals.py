@@ -147,16 +147,21 @@ def mail_lab_user(sender, instance, created, **kwargs):
         send_normal_email(data)
 
 
-@receiver(post_save, sender=Branch)
+# @receiver(post_save, sender=Branch)
 # def get_coords(sender, instance, created, **kwargs):
-
+#     """Trigger GPS fetching after a new Branch is created."""
 #     if created:
-#         try:
-#             latitude, longitude = get_gps_coords(instance.digital_address)
-#             instance.gps_coordinates = f'{latitude}, {longitude}'
-#             instance.save()
-#         except Exception as e:
-#             print(str(e))
+#         def update_instance(coords):
+#             latitude, longitude = coords
+#             if latitude is not None and longitude is not None:
+#                 instance.gps_coordinates = f"{latitude}, {longitude}"
+#                 instance.save(update_fields=['gps_coordinates'])
+#                 logger.info(f"Updated GPS coordinates for {instance}: {instance.gps_coordinates}")
+#             else:
+#                 logger.error(f"Failed to fetch GPS coordinates for {instance}")
+
+#         get_gps_coords(instance.digital_address, callback=update_instance)
+@receiver(post_save, sender=Branch)
 def get_coords(sender, instance, created, **kwargs):
     """Trigger GPS fetching after a new Branch is created."""
     if created:

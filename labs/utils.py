@@ -4,7 +4,7 @@ from uuid import UUID
 from geographiclib.geodesic import Geodesic
 from django.db.models import Q
 from .constants import LEVEL_ORDER
-import threading
+from concurrent.futures import ThreadPoolExecutor
 import logging
 import socket
 import time
@@ -12,21 +12,19 @@ import time
 logger = logging.getLogger(__name__)
 
 
+# Use a thread pool for better async handling
+executor = ThreadPoolExecutor(max_workers=5)
+
 def is_internet_available(host="8.8.8.8", port=53, timeout=3):
     """
-    Checks if the internet connection is available by attempting to reach a known DNS server (Google's 8.8.8.8).
-    
-    :param host: Host to ping (default is Google's DNS).
-    :param port: Port to use (default is 53).
-    :param timeout: Timeout in seconds.
-    :return: True if internet is available, False otherwise.
+    Checks if the internet connection is available by attempting to reach a known DNS server.
     """
     try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        socket.create_connection((host, port), timeout=timeout)
         return True
-    except socket.error:
+    except OSError:
         return False
+
 
 def get_gps_coords(digital_address, max_retries=5, retry_delay=2, callback=None, sync=False):
     """
@@ -34,53 +32,40 @@ def get_gps_coords(digital_address, max_retries=5, retry_delay=2, callback=None,
 
     :param digital_address: The digital address to lookup.
     :param max_retries: Maximum retry attempts in case of failure.
-    :param retry_delay: Delay (seconds) before retrying (exponential backoff).
+    :param retry_delay: Initial delay (seconds) before retrying (exponential backoff).
     :param callback: Function to execute with the result (for async mode).
     :param sync: If True, runs synchronously and returns coordinates.
     :return: (latitude, longitude) if sync=True, else None (async mode).
     """
+    url = "https://ghanapostgps.sperixlabs.org/get-location"
+    payload = f'address={digital_address}'
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+    session = requests.Session()  # Reuse session to optimize connections
 
     def fetch_coordinates():
         """Handles the API request and retries, with automatic retry on internet restoration."""
-        url = "https://ghanapostgps.sperixlabs.org/get-location"
-        payload = f'address={digital_address}'
-        headers = {"Content-Type": "application/x-www-form-urlencoded"}
-
         for attempt in range(1, max_retries + 1):
+            if not is_internet_available():
+                logger.warning("No internet connection. Retrying in 30 seconds...")
+                time.sleep(30)
+                continue  # Wait for internet restoration
+
             try:
-                response = requests.post(url, headers=headers, data=payload, timeout=10)
+                response = session.post(url, headers=headers, data=payload, timeout=10)
                 response.raise_for_status()  # Raise error for non-200 responses
 
-                try:
-                    res = response.json()
-                except json.JSONDecodeError as e:
-                    logger.error(f"JSON decode error for {digital_address}: {e}")
-                    return None, None
-
+                res = response.json()
                 table_data = res.get("data", {}).get("Table", [{}])
-                if not isinstance(table_data, list) or not table_data:
-                    logger.warning(f"Unexpected API response format for {digital_address}: {res}")
-                    return None, None
 
-                table_entry = table_data[0]
-                lat = table_entry.get("CenterLatitude")
-                long = table_entry.get("CenterLongitude")
+                if isinstance(table_data, list) and table_data:
+                    lat, long = table_data[0].get("CenterLatitude"), table_data[0].get("CenterLongitude")
 
-                if lat is not None and long is not None:
-                    logger.info(f"GPS Coordinates for {digital_address}: {lat}, {long}")
-                    return lat, long
+                    if lat is not None and long is not None:
+                        logger.info(f"GPS Coordinates for {digital_address}: {lat}, {long}")
+                        return lat, long
 
-                logger.warning(f"No coordinates found for {digital_address}")
-
-            except requests.exceptions.ConnectionError:
-                logger.error(f"Internet connection lost while fetching GPS for {digital_address}. Waiting for restoration...")
-                wait_for_internet()  # Wait until internet is back
-                continue  # Retry immediately after restoration
-
-            except requests.exceptions.Timeout:
-                logger.error(f"Timeout while fetching GPS for {digital_address}. Retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-                continue
+                logger.warning(f"No valid coordinates found for {digital_address}")
 
             except requests.exceptions.RequestException as e:
                 logger.error(f"Attempt {attempt}: Error fetching GPS for {digital_address}: {e}")
@@ -88,34 +73,23 @@ def get_gps_coords(digital_address, max_retries=5, retry_delay=2, callback=None,
             if attempt < max_retries:
                 sleep_time = retry_delay * (2 ** (attempt - 1))  # Exponential backoff
                 logger.info(f"Retrying in {sleep_time} seconds...")
-                time.sleep(sleep_time)
+                time.sleep(min(sleep_time, 60))  # Cap backoff at 60 seconds
             else:
                 logger.error(f"Failed after {max_retries} attempts.")
 
         return None, None
 
-    def wait_for_internet():
-        """Waits until an internet connection is available before proceeding."""
-        while not is_internet_available():
-            logger.info("No internet connection. Retrying in 30 seconds...")
-            time.sleep(30)
-        logger.info("Internet connection restored. Resuming GPS fetch.")
-
     if sync:
-        return fetch_coordinates()  # Runs synchronously for CLI usage
+        return fetch_coordinates()
 
-    # Run asynchronously with threading, catching errors inside the thread
+    # Run asynchronously with a thread pool
     def async_task():
-        try:
-            coords = fetch_coordinates()
-            if callback:
-                callback(coords)
-        except Exception as e:
-            logger.error(f"Unhandled exception in thread for {digital_address}: {e}")
+        coords = fetch_coordinates()
+        if callback:
+            callback(coords)
 
-    thread = threading.Thread(target=async_task, daemon=True, name=f"GPSFetcher-{digital_address}")
-    thread.start()
-    logger.info(f"Thread {thread.name} started for {digital_address}")
+    executor.submit(async_task)
+    logger.info(f"Task submitted for {digital_address}")
 
 
 
