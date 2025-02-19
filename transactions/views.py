@@ -13,6 +13,7 @@ import hashlib
 import hmac
 from django.conf import settings
 import json
+from .utils import transfer_funds_to_lab
 
 
 class SubscriptionCreationView(CreateAPIView):
@@ -134,6 +135,8 @@ class VerifyPaymentView(APIView):
                 referral = transaction.referral
                 referral.is_completed = True
                 referral.save()
+                
+                transfer_funds_to_lab(referral.to_laboratory.subaccount_id, transaction.amount, f"Being Payment of Referral {str(referral)}")
 
             except Transaction.DoesNotExist:
                 return Response(
@@ -194,7 +197,9 @@ class PaystackWebhookView(APIView):
                 referral = transaction.referral
                 referral.is_completed = True
                 referral.save()
-
+                
+                transfer_funds_to_lab(referral.to_laboratory.subaccount_id, transaction.amount, f"Being Payment of Referral {str(referral)}")
+                
                 # Log the successful update
                 print(f"Transaction {reference} updated to Payment Successful.")
 

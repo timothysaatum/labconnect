@@ -94,7 +94,7 @@ def transfer_funds_to_lab(lab_subaccount_id, amount, reason):
     """Enqueue fund transfer task."""
     data = {
         "source": "balance",
-        "amount": amount,
+        "amount": amount * 100,
         "recipient": lab_subaccount_id,
         "reason": reason
     }
