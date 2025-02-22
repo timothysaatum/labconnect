@@ -60,6 +60,8 @@ REQUEST_STATUS = [
     ("Sample Received", "Sample Received"),
 ]
 
+
+
 def generate_referral_id():
 
     '''
@@ -123,6 +125,24 @@ class Referral(models.Model):
 
 
 class Sample(models.Model):
+    REJECTION_REASONS = [
+        (1, "Incorrect Patient Identification"),
+        (2, "Improper Labeling"),
+        (3, "Hemolysis"),
+        (4, "Clotted Samples"),
+        (5, "Insufficient Sample Volume"),
+        (6, "Contaminated Samples"),
+        (7, "Improper Storage and Transport"),
+        (8, "Wrong Collection Tube or Container"),
+        (9, "Lipemia"),
+        (10, "Delayed Processing"),
+        (11, "Improper pH or Dilution"),
+        (12, "Microbial Contamination"),
+        (13, "Leaking or Damaged Containers"),
+        (14, "Mismatched Test Request and Sample Type"),
+        (15, "Coagulated CSF or Synovial Fluid"),
+    ]
+
     referral = models.ForeignKey(
         Referral, related_name="samples", on_delete=models.CASCADE, db_index=True
     )
@@ -131,11 +151,18 @@ class Sample(models.Model):
         max_length=50, choices=SAMPLE_STATUS, default="Pending", db_index=True
     )
     rejection_reason = models.TextField(blank=True, null=True)
+    rejection_reason_code = models.IntegerField(choices=REJECTION_REASONS, null=True, blank=True)
     date_collected = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.referral.referral_id
+    
+    def get_rejection_reason(self):
+        """Returns human-readable rejection reason."""
+        if self.rejection_reason_code:
+            return dict(self.REJECTION_REASONS).get(self.rejection_reason_code)
+        return self.custom_rejection_reason
 
 
 class SampleTest(models.Model):

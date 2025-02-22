@@ -276,33 +276,163 @@ class GetNotifications(generics.ListAPIView):
         return notification
 
 
-class CountObjects(generics.GenericAPIView):
+# class CountObjects(generics.GenericAPIView):
 
+#     def get(self, request, facility_id, *args, **kwargs):
+#         today = now().date()
+#         thirty_days_ago = today - timedelta(days=30)
+        
+#         # Aggregated query for both today and last month stats
+#         stats = Referral.objects.filter(
+#             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
+#             date_referred__date__gte=thirty_days_ago,  # Limits the scope to the last 30 days
+#         ).aggregate(
+#             today_received=Count(
+#                 Case(
+#                     When(
+#                         Q(date_referred__date=today, samples__sample_status="Received"),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#             today_processed=Count(
+#                 Case(
+#                     When(
+#                         Q(
+#                             date_referred__date=today,
+#                             samples__sample_status="Received",
+#                         ),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#             today_pending=Count(
+#                 Case(
+#                     When(
+#                         Q(date_referred__date=today, samples__sample_status="Pending"),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#             today_rejected=Count(
+#                 Case(
+#                     When(
+#                         Q(date_referred__date=today, samples__sample_status="Rejected"),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#             last_month_received=Count(
+#                 Case(
+#                     When(
+#                         Q(
+#                             date_referred__date__lt=today,
+#                             date_referred__date__gte=thirty_days_ago,
+#                             samples__sample_status="Received",
+#                         ),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#             last_month_processed=Count(
+#                 Case(
+#                     When(
+#                         Q(
+#                             date_referred__date__lt=today,
+#                             date_referred__date__gte=thirty_days_ago,
+#                             samples__sample_status="Received",
+#                         ),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#             last_month_pending=Count(
+#                 Case(
+#                     When(
+#                         Q(
+#                             date_referred__date__lt=today,
+#                             date_referred__date__gte=thirty_days_ago,
+#                             samples__sample_status="Pending",
+#                         ),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#             last_month_rejected=Count(
+#                 Case(
+#                     When(
+#                         Q(
+#                             date_referred__date__lt=today,
+#                             date_referred__date__gte=thirty_days_ago,
+#                             samples__sample_status="Rejected",
+#                         ),
+#                         then=1,
+#                     ),
+#                     output_field=IntegerField(),
+#                 )
+#             ),
+#         )
+
+#         # Calculate percentage changes with safe handling for None
+#         def percentage_change(today_count, last_month_count):
+#             print('Last month count',last_month_count, 'Today count', today_count)
+#             if not last_month_count:  # Handle division by zero and None
+#                 return "0" if today_count else 0
+#             return int(abs((today_count - last_month_count) / last_month_count) * 100)
+
+#         # Prepare data
+#         data = {
+#             "samples_received": stats["today_received"] + stats["last_month_received"],
+#             "samples_processed": stats["today_processed"],
+#             "samples_pending": stats["today_pending"] + stats["last_month_pending"],
+#             "samples_rejected": stats["today_rejected"] + stats["last_month_rejected"],
+#             "change_received": percentage_change(
+#                 stats["today_received"], stats["last_month_received"]
+#             ),
+#             "change_processed": percentage_change(
+#                 stats["today_processed"], stats["last_month_processed"]
+#             ),
+#             "change_pending": percentage_change(
+#                 stats["today_pending"], stats["last_month_pending"]
+#             ),
+#             "change_rejected": percentage_change(
+#                 stats["today_rejected"], stats["last_month_rejected"]
+#             ),
+#         }
+
+#         return Response(data)
+
+
+
+class CountObjects(generics.GenericAPIView):
     def get(self, request, facility_id, *args, **kwargs):
         today = now().date()
         thirty_days_ago = today - timedelta(days=30)
-        
-        # Aggregated query for both today and last month stats
+
+        # Aggregated queries for stats
         stats = Referral.objects.filter(
-            Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
-            date_referred__date__gte=thirty_days_ago,  # Limits the scope to the last 30 days
+            Q(referring_facility=facility_id) | Q(to_laboratory=facility_id)
         ).aggregate(
-            today_received=Count(
+            today_sent=Count(
                 Case(
                     When(
-                        Q(date_referred__date=today, samples__sample_status="Received"),
+                        Q(referring_facility=facility_id, date_referred__date=today),
                         then=1,
                     ),
                     output_field=IntegerField(),
                 )
             ),
-            today_processed=Count(
+            today_received=Count(
                 Case(
                     When(
-                        Q(
-                            date_referred__date=today,
-                            samples__sample_status="Received",
-                        ),
+                        Q(to_laboratory=facility_id, samples__sample_status="Received"),
                         then=1,
                     ),
                     output_field=IntegerField(),
@@ -311,7 +441,7 @@ class CountObjects(generics.GenericAPIView):
             today_pending=Count(
                 Case(
                     When(
-                        Q(date_referred__date=today, samples__sample_status="Pending"),
+                        Q(to_laboratory=facility_id, samples__sample_status="Pending"),
                         then=1,
                     ),
                     output_field=IntegerField(),
@@ -320,7 +450,16 @@ class CountObjects(generics.GenericAPIView):
             today_rejected=Count(
                 Case(
                     When(
-                        Q(date_referred__date=today, samples__sample_status="Rejected"),
+                        Q(to_laboratory=facility_id, samples__sample_status="Rejected"),
+                        then=1,
+                    ),
+                    output_field=IntegerField(),
+                )
+            ),
+            last_month_sent=Count(
+                Case(
+                    When(
+                        Q(referring_facility=facility_id, date_referred__date__gte=thirty_days_ago, date_referred__date__lt=today),
                         then=1,
                     ),
                     output_field=IntegerField(),
@@ -329,24 +468,7 @@ class CountObjects(generics.GenericAPIView):
             last_month_received=Count(
                 Case(
                     When(
-                        Q(
-                            date_referred__date__lt=today,
-                            date_referred__date__gte=thirty_days_ago,
-                            samples__sample_status="Received",
-                        ),
-                        then=1,
-                    ),
-                    output_field=IntegerField(),
-                )
-            ),
-            last_month_processed=Count(
-                Case(
-                    When(
-                        Q(
-                            date_referred__date__lt=today,
-                            date_referred__date__gte=thirty_days_ago,
-                            samples__sample_status="Received",
-                        ),
+                        Q(to_laboratory=facility_id, samples__sample_status="Received", date_referred__date__gte=thirty_days_ago),
                         then=1,
                     ),
                     output_field=IntegerField(),
@@ -355,11 +477,7 @@ class CountObjects(generics.GenericAPIView):
             last_month_pending=Count(
                 Case(
                     When(
-                        Q(
-                            date_referred__date__lt=today,
-                            date_referred__date__gte=thirty_days_ago,
-                            samples__sample_status="Pending",
-                        ),
+                        Q(to_laboratory=facility_id, samples__sample_status="Pending", date_referred__date__gte=thirty_days_ago),
                         then=1,
                     ),
                     output_field=IntegerField(),
@@ -368,11 +486,7 @@ class CountObjects(generics.GenericAPIView):
             last_month_rejected=Count(
                 Case(
                     When(
-                        Q(
-                            date_referred__date__lt=today,
-                            date_referred__date__gte=thirty_days_ago,
-                            samples__sample_status="Rejected",
-                        ),
+                        Q(to_laboratory=facility_id, samples__sample_status="Rejected", date_referred__date__gte=thirty_days_ago),
                         then=1,
                     ),
                     output_field=IntegerField(),
@@ -380,31 +494,22 @@ class CountObjects(generics.GenericAPIView):
             ),
         )
 
-        # Calculate percentage changes with safe handling for None
+        # Function to calculate percentage change
         def percentage_change(today_count, last_month_count):
-            print('Last month count',last_month_count, 'Today count', today_count)
-            if not last_month_count:  # Handle division by zero and None
-                return "0" if today_count else 0
-            return int(abs((today_count - last_month_count) / last_month_count) * 100)
+            if last_month_count == 0:  # Avoid division by zero
+                return "0%" if today_count == 0 else "100%"
+            return f"{int(abs((today_count - last_month_count) / last_month_count) * 100)}%"
 
-        # Prepare data
+        # Prepare the response data
         data = {
-            "samples_received": stats["today_received"] + stats["last_month_received"],
-            "samples_processed": stats["today_processed"],
-            "samples_pending": stats["today_pending"] + stats["last_month_pending"],
-            "samples_rejected": stats["today_rejected"] + stats["last_month_rejected"],
-            "change_received": percentage_change(
-                stats["today_received"], stats["last_month_received"]
-            ),
-            "change_processed": percentage_change(
-                stats["today_processed"], stats["last_month_processed"]
-            ),
-            "change_pending": percentage_change(
-                stats["today_pending"], stats["last_month_pending"]
-            ),
-            "change_rejected": percentage_change(
-                stats["today_rejected"], stats["last_month_rejected"]
-            ),
+            "samples_sent": stats["today_sent"],
+            "samples_received": stats["today_received"],
+            "samples_pending": stats["today_pending"],
+            "samples_rejected": stats["today_rejected"],
+            "change_sent": percentage_change(stats["today_sent"], stats["last_month_sent"]),
+            "change_received": percentage_change(stats["today_received"], stats["last_month_received"]),
+            "change_pending": percentage_change(stats["today_pending"], stats["last_month_pending"]),
+            "change_rejected": percentage_change(stats["today_rejected"], stats["last_month_rejected"]),
         }
 
         return Response(data)
