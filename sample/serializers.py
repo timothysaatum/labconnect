@@ -1,4 +1,4 @@
-from rest_framework import serializers # type: ignore
+from rest_framework import serializers
 from sample.models import (
       Sample, 
       Notification, 
@@ -13,6 +13,8 @@ from django.db.models import Q
 from labs.models import Test
 from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
+from transactions.utils import transfer_funds_to_lab
+from decimal import Decimal
 
 
 class SampleTestSerializer(serializers.ModelSerializer):
@@ -105,6 +107,14 @@ class SampleSerializer(serializers.ModelSerializer):
         if instance.sample_status == "Received" or instance.sample_status == "Rejected":
 
             referral = instance.referral
+            total_amount = float(sum(sample_test.test.price for sample_test in instance.sample_tests.all()))
+            print(total_amount)
+            transfer_funds_to_lab(
+                    referral.to_laboratory.subaccount_id, 
+                    total_amount, 
+                    f"Being Payment for : {str(referral)} lab works", 
+                    parent=referral.to_laboratory.id
+                )
             ReferralTrackingHistory.objects.create(
                 referral=referral,
                 status="Request Completed",
@@ -113,7 +123,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
             referral.referral_status = "Request Completed"
             referral.save()
-
+            
         # Wrap the sample and sample_test updates in a transaction
         if sample_tests_data is not None:
 
@@ -154,7 +164,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         required=True,
     )
     laboratory_contact = serializers.CharField(read_only=True)
-    clinical_history = serializers.CharField(required=False)
+    clinical_history = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     requires_phlebotomist = serializers.BooleanField(required=False)
     sender_full_name = serializers.CharField(required=False)
     sender_phone = serializers.CharField(required=False)
@@ -206,7 +216,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         samples_data = validated_data.pop("samples", [])
         with transaction.atomic():
             # Create Referral instance
-            print(validated_data)
+            # print(validated_data)
             referral = Referral.objects.create(**validated_data)
 
             # Create Samples and associated SampleTests in bulk

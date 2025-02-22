@@ -4,7 +4,8 @@ from .serializers import (
 	VerifyEmailSerializer,
 	PasswordResetViewSerializer,
 	SetNewPasswordSerializer,
-	UserSerializer
+	UserSerializer,
+	ComplaintSerializer
 )
 from django.db import transaction
 from rest_framework.generics import (
@@ -15,13 +16,17 @@ from rest_framework.generics import (
 )
 # from axes.decorators import axes_dispatch
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from .models import Client, OneTimePassword
+from .models import (
+    Client, 
+    Complaint, 
+    OneTimePassword
+)
 import pyotp
 from django.middleware import csrf
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -528,3 +533,27 @@ class RequestNewOTP(CreateAPIView):
 
         send_code_to_user(user_email)
         return Response({"message": f"Code sent"}, status=status.HTTP_200_OK)
+
+
+class ComplaintViewSet(viewsets.ModelViewSet):
+    serializer_class = ComplaintSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Customers can only see their own complaints
+        return Complaint.objects.filter(customer=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(customer=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        complaint = self.get_object()
+        if complaint.status != 'pending':
+            return Response({"error": "You can only update complaints that are pending."}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        complaint = self.get_object()
+        if complaint.status != 'pending':
+            return Response({"error": "You can only delete complaints that are pending."}, status=status.HTTP_400_BAD_REQUEST)
+        return super().destroy(request, *args, **kwargs)

@@ -124,7 +124,7 @@ class Transaction(models.Model):
         user_account, on_delete=models.SET_NULL, blank=True, null=True, db_index=True
     )
     referral = models.ForeignKey(Referral, on_delete=models.CASCADE)
-    amount = EncryptedCharField(max_length=100)
+    amount = models.CharField(max_length=100)
     channels = EncryptedCharField(max_length=100)
     email = EncryptedEmailField()
     payee_account = models.CharField(max_length=155, blank=True, null=True, db_index=True)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Client, OneTimePassword
+from .models import Client, OneTimePassword, Complaint
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -280,3 +280,12 @@ class NewOPTSerializer(serializers.Serializer):
 		fields = [
 			'email'
 		]
+
+
+class ComplaintSerializer(serializers.ModelSerializer):
+    customer = serializers.ReadOnlyField(source='client.username')
+
+    class Meta:
+        model = Complaint
+        fields = ['id', 'customer', 'subject', 'description', 'status', 'created_at', 'updated_at']
+        read_only_fields = ['status', 'created_at', 'updated_at']

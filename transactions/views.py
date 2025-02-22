@@ -131,13 +131,11 @@ class VerifyPaymentView(APIView):
                 transaction.is_verified = True
                 # Save the transaction changes to the database
                 transaction.save()
-            
                 referral = transaction.referral
                 referral.is_completed = True
                 referral.save()
+                #transfer_funds_to_lab(referral.to_laboratory.subaccount_id, transaction.amount, f"Being Payment for {str(referral)}")
                 
-                transfer_funds_to_lab(referral.to_laboratory.subaccount_id, transaction.amount, f"Being Payment of Referral {str(referral)}")
-
             except Transaction.DoesNotExist:
                 return Response(
                     {"error": "Transaction not found"}, status=status.HTTP_404_NOT_FOUND
@@ -197,9 +195,7 @@ class PaystackWebhookView(APIView):
                 referral = transaction.referral
                 referral.is_completed = True
                 referral.save()
-                
-                transfer_funds_to_lab(referral.to_laboratory.subaccount_id, transaction.amount, f"Being Payment of Referral {str(referral)}")
-                
+                #transfer_funds_to_lab(referral.to_laboratory.subaccount_id, transaction.amount, f"Being Payment for {str(referral)}")
                 # Log the successful update
                 print(f"Transaction {reference} updated to Payment Successful.")
 

@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from requests.exceptions import RequestException
 import time
+from decimal import Decimal
 from modelmixins.models import Facility
 from .process_task import enqueue_task
 
@@ -90,12 +91,13 @@ def commandline_utility(data):
         logger.error(f"Failed to create subaccount for {facility}")
 
 
-def transfer_funds_to_lab(lab_subaccount_id, amount, reason):
+def transfer_funds_to_lab(lab_subaccount_id, amount, reason, parent):
     """Enqueue fund transfer task."""
     data = {
         "source": "balance",
-        "amount": amount * 100,
+        "amount": Decimal(amount) * 100,
         "recipient": lab_subaccount_id,
-        "reason": reason
+        "reason": reason,
+        "parent": parent
     }
     return enqueue_task("transfer_funds", data)

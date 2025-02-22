@@ -59,15 +59,16 @@ class Facility(models.Model):
 
 class FacilityWorkingHours(models.Model):
     WEEKDAYS = [
-        ("monday", "Monday"),
-        ("tuesday", "Tuesday"),
-        ("wednesday", "Wednesday"),
-        ("thursday", "Thursday"),
-        ("friday", "Friday"),
-        ("saturday", "Saturday"),
-        ("sunday", "Sunday"),
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+        ("Sunday", "Sunday"),
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     facility = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="working_hours")
     day = models.CharField(max_length=10, choices=WEEKDAYS)
     start_time = models.TimeField()
@@ -75,6 +76,7 @@ class FacilityWorkingHours(models.Model):
 
     class Meta:
         unique_together = ("facility", "day")  # Ensures only one schedule per day per facility
+        verbose_name_plural = "Working Hours"
 
     def __str__(self):
         return f"{self.facility} - {self.day}: {self.start_time} to {self.end_time}"

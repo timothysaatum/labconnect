@@ -82,7 +82,7 @@ LEVEL_CHOICES = [
 
 class Branch(Facility):
 	"""
-    A brach: is a local set up of a particular laboratory that carries out test within that enclave.
+    A branch: is a local set up of a particular laboratory that carries out test within that enclave.
     Branch_name: refers to the name of a branch.
     """
 	accreditation_number = models.CharField(max_length=155, unique=True)
@@ -109,6 +109,7 @@ class Branch(Facility):
 
 			branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
 			d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
+			print(d)
 
 		return d
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Permission
-from .models import Client, OneTimePassword
+from .models import Client, OneTimePassword, Complaint
 from .forms import ClientCreationForm, ClientChangeForm
 
 
@@ -49,6 +49,17 @@ class ClientAdmin(UserAdmin):
 class OneTimePasswordAdmin(admin.ModelAdmin):
     list_display = ('code', 'user', 'email_for')
 
+
+@admin.register(Complaint)
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'subject', 'status', 'created_at', 'updated_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('user__email', 'subject', 'message')
+    ordering = ('-created_at',)
+    readonly_fields = ('created_at', 'updated_at')
+
+    # Optionally allow inline editing of status
+    list_editable = ('status',)
 
 # Now register the new UserAdmin...
 admin.site.register(Client, ClientAdmin)

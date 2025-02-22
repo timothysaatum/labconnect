@@ -397,10 +397,11 @@ class AllLaboratories(generics.ListAPIView):
             self.request.GET.get("max_distance", self.DEFAULT_MAX_DISTANCE)
         )
 
-        # Building the request query parameters
         facility_level = self.request.GET.get("level")
-        user_lat = self.request.GET.get("user_lat")
-        user_long = self.request.GET.get("user_long")
+        gps_coordinates = self.request.GET.get("gps_coordinates")
+        user_lat, user_long = map(float, gps_coordinates.split(","))
+		
+        # print(user_lat, user_long)
 
         query = Facility.objects.filter(
             Q(hospitallab__isnull=False) | Q(branch__isnull=False)
