@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand
 from modelmixins.models import Facility
-from labs.models import Laboratory
-from django.db.models import Q
+# from labs.models import Laboratory
+# from django.db.models import Q
 from transactions.utils import commandline_utility
 
 class Command(BaseCommand):
-    help = "Recalculate subaccount ids"
+    help = "Create subaccount ids"
 
     def handle(self, *args, **kwargs):
-        # Query labs with missing GPS coordinates
+        
         labs_with_missing_subaccount_id = Facility.objects.filter(subaccount_id__isnull=True)
         total_labs = labs_with_missing_subaccount_id.count()
 
@@ -21,13 +21,14 @@ class Command(BaseCommand):
 
             try:
                 data = {
-                    "id": lab.id,
                     "business_name": str(lab),
                     "settlement_bank": lab.bank_code,
                     "account_number": lab.account_number,
-                    "percentage_charge": 100
+                    "percentage_charge": 100,
+                    "id": lab.id
                 }
-                # Calculate GPS coordinates using the utility function
+                print(data)
+
                 commandline_utility(data)
 
             except Exception as e:

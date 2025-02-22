@@ -6,6 +6,8 @@ import time
 from decimal import Decimal
 from modelmixins.models import Facility
 from .process_task import enqueue_task
+from django.db import transaction
+import sys
 
 
 logger = logging.getLogger(__name__)
@@ -25,7 +27,30 @@ def wait_for_internet():
         time.sleep(5)  # Check every 5 seconds
     logger.info("Internet restored. Resuming operations.")
 
+# def create_subaccount_request(data):
+#     """Handles the API request for creating a subaccount."""
+#     url = settings.PAYSTACK_SUBACCOUNT_URL
+#     headers = {
+#         "Authorization": f"Bearer {settings.PAYSTACK_SECRET}",
+#         "Content-Type": "application/json"
+#     }
+#     print("Running with executor")
+#     try:
+#         response = requests.post(url, json=data, headers=headers, timeout=10)
+#         print(response)
+#         response.raise_for_status()
+#         subaccount_data = response.json().get("data", {})
+#         return subaccount_data.get("subaccount_code")
+
+#     except RequestException as e:
+#         logger.error(f"Request error while creating subaccount: {str(e)}")
+#     except Exception as e:
+#         logger.error(f"Unexpected error while creating subaccount: {str(e)}")
+
+#     return None
 def create_subaccount_request(data):
+    print('executing')
+    sys.stdout.flush()
     """Handles the API request for creating a subaccount."""
     url = settings.PAYSTACK_SUBACCOUNT_URL
     headers = {
@@ -36,15 +61,16 @@ def create_subaccount_request(data):
     try:
         response = requests.post(url, json=data, headers=headers, timeout=10)
         response.raise_for_status()
-        subaccount_data = response.json().get("data", {})
-        return subaccount_data.get("subaccount_code")
+        subaccount_data = response.json()
+        logger.info(f"Paystack Response: {subaccount_data}")  # Log full response
+        return subaccount_data.get("data", {}).get("subaccount_code")
 
     except RequestException as e:
         logger.error(f"Request error while creating subaccount: {str(e)}")
     except Exception as e:
         logger.error(f"Unexpected error while creating subaccount: {str(e)}")
 
-    return None
+    return None  # Ensure None is returned if API fails
 
 
 def create_customer_subaccount(instance):
@@ -66,11 +92,34 @@ def create_customer_subaccount(instance):
 
 
 
+# def commandline_utility(data):
+#     """Handles subaccount creation from CLI input."""
+
+#     try:
+#         facility = Facility.objects.get(pk=data["id"])
+#     except Facility.DoesNotExist:
+#         logger.error(f"Facility with id: {data['id']} -- not found")
+#         return
+
+#     if not all([data.get("account_number"), data.get("bank_code"), data.get("business_name")]):
+#         logger.warning(f"Missing required fields for creating subaccount: {facility}")
+#         return
+
+#     if not is_internet_available():
+#         wait_for_internet()
+
+#     subaccount_id = create_subaccount_request(data)
+#     print(subaccount_id)
+#     if subaccount_id:
+#         facility.subaccount_id = subaccount_id
+#         facility.save(update_fields=['subaccount_id'])
+#     else:
+#         logger.error(f"Failed to create subaccount for {facility}")
+
 def commandline_utility(data):
     """Handles subaccount creation from CLI input."""
-
     try:
-        facility = Facility.objects.get(pk=data["id"])
+        facility = Facility.objects.get(pk=data.pop("id"))
     except Facility.DoesNotExist:
         logger.error(f"Facility with id: {data['id']} -- not found")
         return
@@ -78,15 +127,15 @@ def commandline_utility(data):
     if not all([data.get("account_number"), data.get("bank_code"), data.get("business_name")]):
         logger.warning(f"Missing required fields for creating subaccount: {facility}")
         return
-
-    if not is_internet_available():
-        wait_for_internet()
-
+    print('Running')
     subaccount_id = create_subaccount_request(data)
-
+    
+    print(subaccount_id)
     if subaccount_id:
-        facility.subaccount_id = subaccount_id
-        facility.save(update_fields=['subaccount_id'])
+        with transaction.atomic():  # Ensure it's an atomic update
+            Facility.objects.filter(id=facility.id).update(subaccount_id=subaccount_id)
+        logger.info(f"Updated subaccount_id for {facility}")
+
     else:
         logger.error(f"Failed to create subaccount for {facility}")
 

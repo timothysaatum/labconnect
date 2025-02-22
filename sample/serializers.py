@@ -61,9 +61,9 @@ class SampleSerializer(serializers.ModelSerializer):
         queryset=SampleType.objects.all(), required=False
     )
     rejection_reason_code = serializers.ChoiceField(
-        choices=Sample.REJECTION_REASONS, required=False, allow_null=True
+        choices=Sample.REJECTION_REASONS, required=False, allow_null=True, allow_blank=True
     )
-    rejection_reason = serializers.CharField(required=False)
+    rejection_reason = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     sample_status = serializers.CharField(required=False)
     sample_tests = serializers.ListField(write_only=True)
     sample_tests_data = serializers.PrimaryKeyRelatedField(
