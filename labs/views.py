@@ -390,7 +390,7 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 class AllLaboratories(generics.ListAPIView):
     serializer_class = FacilitySerializer
-    DEFAULT_MAX_DISTANCE = 15000
+    DEFAULT_MAX_DISTANCE = 25000
 
     def get_queryset(self):
         max_dist = float(
@@ -398,8 +398,8 @@ class AllLaboratories(generics.ListAPIView):
         )
 
         facility_level = self.request.GET.get("level")
-        gps_coordinates = self.request.GET.get("gps_coordinates")
-        user_lat, user_long = map(float, gps_coordinates.split(","))
+        user_lat, user_long = self.request.GET.get("gps_coordinates").split(",")
+        # user_lat, user_long = gps_coordinates.split(",")
 		
         # print(user_lat, user_long)
 

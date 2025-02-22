@@ -5,7 +5,8 @@ from .views import (
     ProcessPaymentView,
     VerifyPaymentView,
     PaystackWebhookView,
-    FetchBanks
+    FetchBanks,
+    VerifyAccountView
 )
 
 
@@ -30,4 +31,5 @@ urlpatterns = [
         name="webhook",
     ),
     path("fetch-banks-list/", FetchBanks.as_view(), name="fetch-banks"),
+    path('verify-account/', VerifyAccountView.as_view(), name='verify-account'),
 ]

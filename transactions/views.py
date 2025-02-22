@@ -10,6 +10,7 @@ from .process_payment import Paystack
 from django.db import IntegrityError
 from decimal import Decimal
 import hashlib
+from rest_framework.throttling import UserRateThrottle
 import hmac
 from django.conf import settings
 import json
@@ -214,3 +215,58 @@ class PaystackWebhookView(APIView):
 class FetchBanks(ListAPIView):
     serializer_class = BankSerializer
     queryset = Bank.objects.all()
+
+
+# class VerifyAccountView(APIView):
+#     throttle_classes = [UserRateThrottle]
+#     def post(self, request):
+#         account_number = request.data.get("account_number")
+#         bank_code = request.data.get("bank_code")
+
+#         paystack = Paystack()  # Initialize Paystack instance
+#         result = paystack.verify_account(account_number, bank_code)
+
+#         if "error" in result:
+#             return Response({"success": False, "error": result["error"]}, status=status.HTTP_400_BAD_REQUEST)
+
+#         if result.get("status"):
+#             return Response({
+#                 "success": True,
+#                 "account_name": result["data"]["account_name"],
+#                 "account_number": result["data"]["account_number"],
+#                 "bank_code": bank_code
+#             })
+
+#         return Response({"success": False, "error": "Invalid account details"}, status=status.HTTP_400_BAD_REQUEST)
+
+class VerifyAccountView(APIView):
+    """
+    View to verify a bank account number using Paystack.
+    """
+
+    def get(self, request):
+        """
+        Handle GET requests for account verification.
+        Expects 'account_number' and 'bank_code' as query parameters.
+        """
+        account_number = request.query_params.get("account_number")
+        bank_code = request.query_params.get("bank_code")
+
+        if not account_number or not bank_code:
+            return Response({"error": "Account number and bank code are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        paystack = Paystack()  # Initialize Paystack instance
+        result = paystack.verify_account(account_number, bank_code)
+
+        if "error" in result:
+            return Response({"success": False, "error": result["error"]}, status=status.HTTP_400_BAD_REQUEST)
+
+        if result.get("status"):
+            return Response({
+                "success": True,
+                "account_name": result["data"]["account_name"],
+                "account_number": result["data"]["account_number"],
+                "bank_code": bank_code
+            })
+
+        return Response({"success": False, "error": "Invalid account details"}, status=status.HTTP_400_BAD_REQUEST)

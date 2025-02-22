@@ -108,51 +108,102 @@ class UpdateReferral(generics.UpdateAPIView):
         serializer.save()
 
 
+# class GetReferrals(generics.ListAPIView):
+#     permission_classes = [IsAuthenticated]
+#     pagination_class = QueryPagination
+#     serializer_class = ReferralSerializer
+
+#     def get_queryset(self):
+
+#         pk = self.kwargs.get("facility_id")
+#         status = self.request.GET.get("status")
+#         from_date = self.request.GET.get("from_date")
+#         to_date = self.request.GET.get("to_date")
+#         search_term = self.request.GET.get("search")
+#         received = self.request.GET.get("received")
+#         sent = self.request.GET.get("sent")
+#         drafts = self.request.GET.get('drafts')
+#         is_archived = self.request.GET.get("is_archived")
+#         cutoff_date = now() - timedelta(days=30)
+
+#         queryset = Referral.objects.none()  # Default to an empty queryset
+#         logger.info(
+#             f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
+#         )
+
+#         # Filter for received referrals
+#         if received == "true":
+#             queryset = Referral.objects.filter(
+#                 Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
+#                 is_completed=True,
+#                 date_referred__gte=cutoff_date,
+#             )
+
+#         # Filter for sent referrals
+#         if sent == "true":
+#             queryset = Referral.objects.filter(
+#                 Q(referring_facility_id=pk)
+#                 | Q(referring_facility__branch__laboratory_id=pk),
+#                 date_referred__gte=cutoff_date,
+#             )
+
+#         queryset = filter_referrals(
+#             queryset, from_date, to_date, search_term, status, drafts, is_archived
+#         )
+
+#         if sent == "true" and is_archived == "true":
+#             queryset = Referral.objects.filter(
+#                 Q(referring_facility_id=pk)
+#                 | Q(referring_facility__branch__laboratory_id=pk),
+#                 is_archived=True,
+#             )
+        
+#         if received == "true" and is_archived == "true":
+#             queryset = Referral.objects.filter(
+#                 Q(referring_facility_id=pk)
+#                 | Q(referring_facility__branch__laboratory_id=pk),
+#                 is_archived=True,
+#             )
+
+#         return queryset.order_by("-date_referred")
 class GetReferrals(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = QueryPagination
     serializer_class = ReferralSerializer
 
     def get_queryset(self):
-
         pk = self.kwargs.get("facility_id")
         status = self.request.GET.get("status")
         from_date = self.request.GET.get("from_date")
         to_date = self.request.GET.get("to_date")
         search_term = self.request.GET.get("search")
-        received = self.request.GET.get("received")
-        sent = self.request.GET.get("sent")
-        drafts = self.request.GET.get('drafts')
-        is_archived = self.request.GET.get("is_archived")
+        received = self.request.GET.get("received") == "true"
+        sent = self.request.GET.get("sent") == "true"
+        drafts = self.request.GET.get("drafts")
+        is_archived = self.request.GET.get("is_archived") == "true"
         cutoff_date = now() - timedelta(days=30)
 
-        queryset = Referral.objects.none()  # Default to an empty queryset
-        logger.info(
-            f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
-        )
+        logger.info(f"User: {self.request.user.id} searched referrals<{pk}> with term: {search_term}")
 
-        # Filter for received referrals
-        if received == "true":
-            queryset = Referral.objects.filter(
-                Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
-                is_completed=True,
-                date_referred__gte=cutoff_date,
-            )
+        filters = Q()
+        
+        if received:
+            filters &= Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk)
+            filters &= Q(is_completed=True, date_referred__gte=cutoff_date)
+        
+        if sent:
+            filters &= Q(referring_facility_id=pk) | Q(referring_facility__branch__laboratory_id=pk)
+            filters &= Q(date_referred__gte=cutoff_date)
 
-        # Filter for sent referrals
-        if sent == "true":
-            queryset = Referral.objects.filter(
-                Q(referring_facility_id=pk)
-                | Q(referring_facility__branch__laboratory_id=pk),
-                date_referred__gte=cutoff_date,
-            )
+        if is_archived:
+            filters &= Q(is_archived=True)
 
-        queryset = filter_referrals(
-            queryset, from_date, to_date, search_term, status, drafts, is_archived
-        )
+        queryset = Referral.objects.filter(filters)
+
+        # Apply additional filtering
+        queryset = filter_referrals(queryset, from_date, to_date, search_term, status, drafts, is_archived)
 
         return queryset.order_by("-date_referred")
-
 
 class ReferralDetailsView(generics.RetrieveAPIView):
 

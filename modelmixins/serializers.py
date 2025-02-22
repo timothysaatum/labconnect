@@ -60,14 +60,13 @@ class FacilitySerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
 
         request = self.context.get("request")
-        user_lat = request.GET.get("user_lat")
-        user_long = request.GET.get("user_long")
-
+        user_lat, user_long = request.GET.get("gps_coordinates").split(",")
+        
         data = super().to_representation(instance)
 
         data["town"] = instance.branch.town
         data["distance"] = (
-            instance.branch.get_branch_distance(float(user_lat), float(user_long))
+            f"{instance.branch.get_branch_distance(float(user_lat), float(user_long))}km"
             if user_lat and user_long
             else "Null"
         )
