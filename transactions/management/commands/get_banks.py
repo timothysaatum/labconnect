@@ -57,5 +57,5 @@ class Command(BaseCommand):
                 )
                 total_banks += 1
             except IntegrityError:
-                self.stdout.write(self.style.WARNING(f"Skipping duplicated Bank {bank["name"]}"))
+                self.stdout.write(self.style.WARNING(f'Skipping duplicated Bank {bank["name"]}'))
             self.stdout.write(self.style.SUCCESS(f"Successfully updated {total_banks} Ghanain Banks"))
