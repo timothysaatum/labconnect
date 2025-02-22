@@ -162,7 +162,7 @@ class Sample(models.Model):
         """Returns human-readable rejection reason."""
         if self.rejection_reason_code:
             return dict(self.REJECTION_REASONS).get(self.rejection_reason_code)
-        return self.custom_rejection_reason
+        return self.rejection_reason
 
 
 class SampleTest(models.Model):

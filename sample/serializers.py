@@ -90,7 +90,7 @@ class SampleSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """Ensure either predefined or custom reason is provided when rejecting a sample."""
         if data.get("sample_status") == "Rejected":
-            if not data.get("rejection_reason_code") and not data.get("custom_rejection_reason"):
+            if not data.get("rejection_reason_code") and not data.get("rejection_reason"):
                 raise serializers.ValidationError("A rejection reason must be provided.")
 
         return data
