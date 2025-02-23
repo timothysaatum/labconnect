@@ -268,7 +268,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # React dev server
     "http://127.0.0.1:5173",  # Alternate localhost
     "https://labconnect-eight.vercel.app",  # React production URL if needed
-    "https://labconnekt.com",
+    "https://labconnekt.com",  # Correct frontend URL
+    "https://api.labconnekt.com",
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/.*\.labconnekt\.com$",  # Allows any subdomain (e.g., app.labconnekt.com)
 ]
 
 
