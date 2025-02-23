@@ -140,7 +140,7 @@ class Sample(models.Model):
         (12, "Microbial Contamination"),
         (13, "Leaking or Damaged Containers"),
         (14, "Mismatched Test Request and Sample Type"),
-        (15, "Coagulated CSF or Synovial Fluid"),
+        (15, "Coagulated CSF or Synovial Fluid")
     ]
 
     referral = models.ForeignKey(
@@ -151,17 +151,19 @@ class Sample(models.Model):
         max_length=50, choices=SAMPLE_STATUS, default="Pending", db_index=True
     )
     rejection_reason = models.TextField(blank=True, null=True)
-    rejection_reason_code = models.IntegerField(choices=REJECTION_REASONS, null=True, blank=True)
+    rejection_reason_code = models.JSONField(default=list, blank=True, null=True)
     date_collected = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.referral.referral_id
-    
+   
+
     def get_rejection_reason(self):
-        """Returns human-readable rejection reason."""
+        """Returns human-readable rejection reasons."""
         if self.rejection_reason_code:
-            return dict(self.REJECTION_REASONS).get(self.rejection_reason_code)
+            reasons = [dict(self.REJECTION_REASONS).get(code, f"Unknown ({code})") for code in self.rejection_reason_code]
+            return ", ".join(reasons)
         return self.rejection_reason
 
 

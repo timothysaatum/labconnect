@@ -60,8 +60,9 @@ class SampleSerializer(serializers.ModelSerializer):
     sample_type = serializers.PrimaryKeyRelatedField(
         queryset=SampleType.objects.all(), required=False
     )
-    rejection_reason_code = serializers.ChoiceField(
-        choices=Sample.REJECTION_REASONS, required=False, allow_null=True, allow_blank=True
+    rejection_reason_code = serializers.ListField(
+        child=serializers.ChoiceField(choices=Sample.REJECTION_REASONS),
+        write_only=True
     )
     rejection_reason = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     sample_status = serializers.CharField(required=False)
@@ -86,9 +87,10 @@ class SampleSerializer(serializers.ModelSerializer):
             "date_collected",
             "sample_tests_data",
         )
-    
+ 
+
     def validate(self, data):
-        """Ensure either predefined or custom reason is provided when rejecting a sample."""
+        """Ensure at least one rejection reason is provided when rejecting a sample."""
         if data.get("sample_status") == "Rejected":
             if not data.get("rejection_reason_code") and not data.get("rejection_reason"):
                 raise serializers.ValidationError("A rejection reason must be provided.")

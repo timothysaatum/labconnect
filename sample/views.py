@@ -497,8 +497,8 @@ class CountObjects(generics.GenericAPIView):
         # Function to calculate percentage change
         def percentage_change(today_count, last_month_count):
             if last_month_count == 0:  # Avoid division by zero
-                return "0%" if today_count == 0 else "100%"
-            return f"{int(abs((today_count - last_month_count) / last_month_count) * 100)}%"
+                return "0" if today_count == 0 else "100"
+            return f"{int(abs((today_count - last_month_count) / last_month_count) * 100)}"
 
         # Prepare the response data
         data = {

@@ -17,7 +17,8 @@ FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
-
+# cash.ns.cloudflare.com
+# chelsea.ns.cloudflare.com
 # vercel blob settings.py
 VERCEL_BLOB_BASE_URL = config("VERCEL_BLOB_BASE_URL")
 VERCEL_BLOB_API_KEY = config("VERCEL_BLOB_API_KEY")
