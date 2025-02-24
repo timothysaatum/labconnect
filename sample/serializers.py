@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from sample.models import (
-      Sample, 
-      Notification, 
-      SampleTrackingHistory, 
+      Sample,
+      Notification,
+      SampleTrackingHistory,
       Referral,
       SampleTest,
       ReferralTrackingHistory
@@ -14,7 +14,7 @@ from labs.models import Test
 from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
 from transactions.utils import transfer_funds_to_lab
-from decimal import Decimal
+# from decimal import Decimal
 
 
 class SampleTestSerializer(serializers.ModelSerializer):
@@ -62,7 +62,7 @@ class SampleSerializer(serializers.ModelSerializer):
     )
     rejection_reason_code = serializers.ListField(
         child=serializers.ChoiceField(choices=Sample.REJECTION_REASONS),
-        write_only=True
+        write_only=True, required=False, allow_null=True
     )
     rejection_reason = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     sample_status = serializers.CharField(required=False)
@@ -87,7 +87,7 @@ class SampleSerializer(serializers.ModelSerializer):
             "date_collected",
             "sample_tests_data",
         )
- 
+
 
     def validate(self, data):
         """Ensure at least one rejection reason is provided when rejecting a sample."""
@@ -124,9 +124,9 @@ class SampleSerializer(serializers.ModelSerializer):
             total_amount = float(sum(sample_test.test.price for sample_test in instance.sample_tests.all()))
             print(total_amount)
             transfer_funds_to_lab(
-                    referral.to_laboratory.subaccount_id, 
-                    total_amount, 
-                    f"Being Payment for : {str(referral)} lab works", 
+                    referral.to_laboratory.subaccount_id,
+                    total_amount,
+                    f"Being Payment for : {str(referral)} lab works",
                     parent=referral.to_laboratory.id
                 )
             ReferralTrackingHistory.objects.create(
@@ -137,7 +137,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
             referral.referral_status = "Request Completed"
             referral.save()
-            
+
         # Wrap the sample and sample_test updates in a transaction
         if sample_tests_data is not None:
 
@@ -166,7 +166,7 @@ class SampleSerializer(serializers.ModelSerializer):
         data["sample_tests_data"] = SampleTestSerializer(
             instance.sample_tests.all(), many=True
         ).data
-        data["rejection_reason"] = instance.get_rejection_reason() 
+        data["rejection_reason"] = instance.get_rejection_reason()
 
         return data
 
@@ -226,7 +226,7 @@ class ReferralSerializer(serializers.ModelSerializer):
                 }
             )
         return data
-    
+
     def create(self, validated_data):
         samples_data = validated_data.pop("samples", [])
         with transaction.atomic():
@@ -309,7 +309,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
 
         fields = (
-			'id', 
+			'id',
 			'facility',
 			'title',
 			'message',
