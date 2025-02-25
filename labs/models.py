@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import validate_email
 import uuid
 from modelmixins.models import Facility, BasicTest, BaseModel
-from .utils import calculate_distance
+from modelmixins.utils import calculate_distance
 from django.core.validators import RegexValidator
 
 
@@ -90,8 +90,8 @@ class Branch(Facility):
 	branch_name = models.CharField(max_length=155, null=True, blank=True, unique=True)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	town = models.CharField(max_length=200)
-	digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
-	gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
+	# digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
+	# gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
 	branch_manager = models.ForeignKey(
         user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
@@ -101,7 +101,7 @@ class Branch(Facility):
 
 	class Meta:
 		verbose_name_plural = "Branches"
-		unique_together = ("accreditation_number", "branch_name", "digital_address")
+		unique_together = ("accreditation_number", "branch_name")
 
 	def get_branch_distance(self, user_lat, user_lon):
 

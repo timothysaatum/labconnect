@@ -10,7 +10,7 @@ from django.core.validators import RegexValidator
 from modelmixins.models import SampleType, FacilityWorkingHours
 from modelmixins.serializers import SampleTypeSerializer, FacilityWorkingHoursSerializer
 from django.db import transaction
-from labs.utils import get_gps_coords
+from modelmixins.utils import get_gps_coords
 from transactions.utils import create_customer_subaccount
 
 class LaboratorySerializer(serializers.ModelSerializer):
@@ -112,13 +112,13 @@ class BranchSerializer(serializers.ModelSerializer):
 		working_hours_data = validated_data.pop('working_hours', None)
 		instance = super().update(instance, validated_data)
 
-		if "digital_address" in validated_data and validated_data["digital_address"]:
-			print("Running")
-			get_gps_coords(validated_data["digital_address"])
+		# if "digital_address" in validated_data and validated_data["digital_address"]:
+		# 	print("Running")
+		# 	get_gps_coords(validated_data["digital_address"])
 
-		if "account_number" in validated_data and validated_data["account_number"]:
-			print("Running")
-			create_customer_subaccount(instance)
+		# if "account_number" in validated_data and validated_data["account_number"]:
+		# 	print("Running")
+		# 	create_customer_subaccount(instance)
 			
 		
 		if working_hours_data:

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from modelmixins.models import Facility, SampleType, FacilityWorkingHours
-
+from labs.models import Branch
+from hospital.models import HospitalLab
 
 class FacilityWorkingHoursSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,28 +57,45 @@ class FacilitySerializer(serializers.ModelSerializer):
 
         # For other cases, fall back to __str__ of Facility
         return str(instance)
-
+    
     def to_representation(self, instance):
+        """
+        Ensure correct subclass (Branch or HospitalLab) is used before serialization.
+        """
+
+        # Check if instance is a Branch or HospitalLab before accessing attributes
+        is_branch = hasattr(instance, "branch")
+        is_hospital_lab = hasattr(instance, "hospitallab")
 
         request = self.context.get("request")
-        user_lat, user_long = request.GET.get("gps_coordinates").split(",")
-        
+        gps_coord = request.GET.get("gps_coordinates") if request else None
+
         data = super().to_representation(instance)
 
-        data["town"] = instance.branch.town
-        data["distance"] = (
-            f"{instance.branch.get_branch_distance(float(user_lat), float(user_long))}km"
-            if user_lat and user_long
-            else "Null"
-        )
-        data["logo"] = (
-            instance.branch.laboratory.logo if instance.branch.laboratory else "None"
-        )
+        # Ensure correct town value
+        if is_branch:
+            data["town"] = instance.branch.town
+            data["logo"] = instance.branch.laboratory.logo if instance.branch.laboratory else None
+        elif is_hospital_lab:
+            data["town"] = instance.hospitallab.hospital_reference.town
+
+        # Ensure correct distance calculation
+        if gps_coord and instance.gps_coordinates:
+            try:
+                user_lat, user_long = map(float, gps_coord.split(","))
+                data["distance"] = f"{instance.get_branch_distance(user_lat, user_long)} km"
+            except ValueError:
+                data["distance"] = "Invalid GPS coordinates"
+        else:
+         data["distance"] = "Null"
+
+        # Ensure working hours serialization
         data["working_hours"] = FacilityWorkingHoursSerializer(
             instance.working_hours.all(), many=True
         ).data
 
         return data
+
 
 
 class SampleTypeSerializer(serializers.ModelSerializer):

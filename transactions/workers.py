@@ -4,6 +4,7 @@ import time
 from django.conf import settings
 from concurrent.futures import ThreadPoolExecutor
 from modelmixins.models import Facility
+from labs.models import Laboratory
 import uuid
 from django.db import transaction
 
@@ -49,8 +50,21 @@ def process_task(task):
                 if subaccount_id:  # Ensure subaccount_code exists before updating
                     # Use transaction.atomic to avoid race conditions
                     with transaction.atomic():
-                        # Update Facility's subaccount_id within a transaction
-                        Facility.objects.filter(id=uuid.UUID(task.parent)).update(subaccount_id=subaccount_id)
+                        # Check if task.parent belongs to Facility or Laboratory
+                        if Facility.objects.filter(id=uuid.UUID(task.parent)).exists():
+                            facility = Facility.objects.get(id=uuid.UUID(task.parent))
+                            facility.subaccount_id = subaccount_id
+                            facility.save(update_fields=["subaccount_id"])
+                            logger.info(f"Facility {facility.id} updated successfully.")
+
+                        elif Laboratory.objects.filter(id=uuid.UUID(task.parent)).exists():
+                            laboratory = Laboratory.objects.get(id=uuid.UUID(task.parent))
+                            laboratory.subaccount_id = subaccount_id
+                            laboratory.save(update_fields=["subaccount_id"])
+                            logger.info(f"Laboratory {laboratory.id} updated successfully.")
+
+                        else:
+                            logger.error(f"No matching Facility or Laboratory found for task {task.id}")
                         
                 task.status = "completed"
                 task.save(update_fields=["status"])

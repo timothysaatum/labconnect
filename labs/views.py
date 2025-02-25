@@ -388,50 +388,84 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 		return self.destroy(request, pk, format=None)
 
 
+# class AllLaboratories(generics.ListAPIView):
+#     serializer_class = FacilitySerializer
+#     DEFAULT_MAX_DISTANCE = 25000
+
+#     def get_queryset(self):
+#         max_dist = float(
+#             self.request.GET.get("max_distance", self.DEFAULT_MAX_DISTANCE)
+#         )
+
+#         facility_level = self.request.GET.get("level")
+#         user_lat, user_long = self.request.GET.get("gps_coordinates").split(",")
+#         # user_lat, user_long = gps_coordinates.split(",")
+		
+#         # print(user_lat, user_long)
+
+#         query = Facility.objects.filter(
+#             Q(hospitallab__isnull=False) | Q(branch__isnull=False)
+#         ).select_related("branch", "hospitallab")
+
+#         if facility_level and not (user_lat and user_long):
+#             return filter_by_facility_level(query, facility_level)
+
+#         # If only location is provided
+#         if (user_lat and user_long) and not facility_level:
+#             return get_nearby_branches(
+#                 query=query,
+#                 user_lat=user_lat,
+#                 user_long=user_long,
+#                 max_distance_km=max_dist,
+#             )
+
+#         # If both facility_level and location are provided
+#         if facility_level and (user_lat and user_long):
+#             query = filter_by_facility_level(query, facility_level)
+#             return get_nearby_branches(
+#                 query=query,
+#                 user_lat=user_lat,
+#                 user_long=user_long,
+#                 max_distance_km=max_dist,
+#             )
+
+#         # print(query)
+#         # Return an all labs queryset if no valid param is provided
+#         return query
+
 class AllLaboratories(generics.ListAPIView):
     serializer_class = FacilitySerializer
     DEFAULT_MAX_DISTANCE = 25000
 
     def get_queryset(self):
-        max_dist = float(
-            self.request.GET.get("max_distance", self.DEFAULT_MAX_DISTANCE)
-        )
+        request = self.request
+        max_dist = float(request.GET.get("max_distance", self.DEFAULT_MAX_DISTANCE))
+        facility_level = request.GET.get("level")
+        gps_coordinates = request.GET.get("gps_coordinates")
 
-        facility_level = self.request.GET.get("level")
-        user_lat, user_long = self.request.GET.get("gps_coordinates").split(",")
-        # user_lat, user_long = gps_coordinates.split(",")
-		
-        # print(user_lat, user_long)
+        # Handle missing or invalid GPS coordinates safely
+        user_lat, user_long = None, None
+        if gps_coordinates:
+            try:
+                user_lat, user_long = map(float, gps_coordinates.split(","))
+            except ValueError:
+                pass  # Keep user_lat, user_long as None
 
+        # Base query: Fetch facilities that are either Hospital Labs or Branches
         query = Facility.objects.filter(
             Q(hospitallab__isnull=False) | Q(branch__isnull=False)
         ).select_related("branch", "hospitallab")
 
-        if facility_level and not (user_lat and user_long):
-            return filter_by_facility_level(query, facility_level)
-
-        # If only location is provided
-        if (user_lat and user_long) and not facility_level:
-            return get_nearby_branches(
-                query=query,
-                user_lat=user_lat,
-                user_long=user_long,
-                max_distance_km=max_dist,
-            )
-
-        # If both facility_level and location are provided
-        if facility_level and (user_lat and user_long):
+        # If `facility_level` is provided, filter facilities accordingly
+        if facility_level:
             query = filter_by_facility_level(query, facility_level)
-            return get_nearby_branches(
-                query=query,
-                user_lat=user_lat,
-                user_long=user_long,
-                max_distance_km=max_dist,
-            )
 
-        # print(query)
-        # Return an all labs queryset if no valid param is provided
+        # If valid GPS coordinates are provided, apply location-based filtering
+        if user_lat is not None and user_long is not None:
+            query = get_nearby_branches(query, user_lat, user_long, max_dist)
+
         return query
+
 
 
 class SampleTypeView(PermissionMixin, generics.CreateAPIView):

@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Hospital, HospitalLab, HospitalLabTest
+from modelmixins.utils import get_gps_coords
+from transactions.utils import create_customer_subaccount
 
 
 class HospitalSerializer(serializers.ModelSerializer):
@@ -7,6 +9,7 @@ class HospitalSerializer(serializers.ModelSerializer):
     account_number = serializers.CharField(write_only=True, required=False)
     bank_name = serializers.CharField(write_only=True, required=False)
     bank_code = serializers.CharField(write_only=True, required=False)
+    gps_coordinates = serializers.CharField(read_only=True)
 
     class Meta:
 
@@ -20,6 +23,7 @@ class HospitalSerializer(serializers.ModelSerializer):
             "facility_type",
             "hospital_type",
             "digital_address",
+            'gps_coordinates',
             "phone",
             "email",
             "account_number",
@@ -30,12 +34,25 @@ class HospitalSerializer(serializers.ModelSerializer):
             "date_added",
         )
 
+    # def update(self, instance, validated_data):
+        
+    #     instance = super().update(instance, validated_data)
+    #     if "digital_address" in validated_data and validated_data["digital_address"]:
+    #         print("Running")
+    #         get_gps_coords(validated_data["digital_address"])
+        
+    #     if "account_number" in validated_data and validated_data["account_number"]:
+    #         print("Running")
+    #         create_customer_subaccount(instance)
+
 
 class HospitalLabSerializer(serializers.ModelSerializer):
     hospital_reference = serializers.PrimaryKeyRelatedField(queryset=Hospital.objects.all(), required=False)
     account_number = serializers.CharField(write_only=True, required=False)
     bank_name = serializers.CharField(write_only=True, required=False)
     bank_code = serializers.CharField(write_only=True, required=False)
+    gps_coordinates = serializers.CharField(read_only=True)
+
 
 
     class Meta:
@@ -51,12 +68,25 @@ class HospitalLabSerializer(serializers.ModelSerializer):
 			'accreditation_number',
 			'level',
 			'postal_address',
+            'gps_coordinates',
 			'phone',
 			'email',
 			'hospital_reference',
 			'date_modified',
 			'date_added'
 		)
+    
+    # def update(self, instance, validated_data):
+        
+    #     instance = super().update(instance, validated_data)
+    #     if "digital_address" in validated_data and validated_data["digital_address"]:
+    #         print("Running")
+    #         get_gps_coords(validated_data["digital_address"])
+        
+    #     if "account_number" in validated_data and validated_data["account_number"]:
+    #         print("Running")
+    #         create_customer_subaccount(instance)
+
 
     def to_representation(self, instance):
 

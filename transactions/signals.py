@@ -29,8 +29,11 @@ from .utils import create_customer_subaccount
 def track_original_account_number(sender, instance, **kwargs):
     """ Store the original account number before saving, to detect changes. """
     if instance.pk:  # Ensure it's an update, not a new creation
-        original = sender.objects.get(pk=instance.pk)
-        instance._original_account_number = original.account_number
+        try:
+            original = sender.objects.get(pk=instance.pk)
+            instance._original_account_number = original.account_number
+        except sender.DoesNotExist:
+            instance._original_account_number = None  # Set default if it doesn't exist
 
 @receiver(post_save, sender=Branch)
 @receiver(post_save, sender=Laboratory)

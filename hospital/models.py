@@ -24,6 +24,12 @@ REGIONS = [
 
 ]
 
+LEVEL_CHOICES = [
+    ("Basic", "Basic"),
+    ("Primary", "Primary"),
+    ("Secondary", "Secondary"),
+    ("Tertiary", "Tertiary"),
+]
 
 HOSPITAL_TYPES = [
 
@@ -44,7 +50,7 @@ class Hospital(Facility):
     hospital_type = models.CharField(max_length=10, choices=HOSPITAL_TYPES)
     # account_number = models.CharField(max_length=100, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
-    digital_address = models.CharField(max_length=15)
+    # digital_address = models.CharField(max_length=15)
     # referral_percent_discount = models.CharField(max_length=5, blank=True, null=True)
 
     def __str__(self) -> str:
@@ -61,7 +67,7 @@ class HospitalLab(Facility):
     """
 	name = models.CharField(max_length=155)
 	accreditation_number = models.CharField(max_length=100)
-	level = models.CharField(max_length=100)
+	level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
 	hospital_reference  = models.OneToOneField(Hospital, on_delete=models.CASCADE, related_name='hospital_lab', db_index=True)
 	
 	def __str__(self) -> str:

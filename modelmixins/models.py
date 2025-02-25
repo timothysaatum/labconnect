@@ -1,5 +1,11 @@
 from django.db import models
 import uuid
+from django.core.validators import RegexValidator
+code_validator = RegexValidator(
+    regex=r"^[A-Z]{2}-\d{4}-\d{4}$",
+    message="Format must be AA-XXXX-XXXX (e.g., XL-0745-0849)"
+)
+from .utils import calculate_distance
 
 
 class BaseModel(models.Model):
@@ -16,12 +22,13 @@ FACILITY_TYPE = [
       ('Hospital', 'Hospital')
 ]
 class Facility(models.Model):
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone = models.CharField(max_length=15)
     # calendar = models.DurationField(blank=True, null=True)
     email = models.EmailField()
     facility_type = models.CharField(max_length=155, choices=FACILITY_TYPE)
+    digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
+    gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
     account_number = models.CharField(max_length=255, blank=True, null=True)
     bank_name = models.CharField(max_length=255, blank=True, null=True)
     bank_code = models.CharField(max_length=155, blank=True, null=True)
@@ -29,6 +36,23 @@ class Facility(models.Model):
     deleted_at = models.DateTimeField(auto_now=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+         unique_together = ("digital_address",)
+    
+    def get_branch_distance(self, user_lat, user_lon):
+        """
+        Calculate distance only if the instance has `gps_coordinates`.
+        Works for both Branch and HospitalLab.
+        """
+        if not self.gps_coordinates:
+            return None  # No coordinates, return None
+
+        try:
+            lat, lon = map(float, self.gps_coordinates.split(","))
+            return int(calculate_distance(user_lat, user_lon, lat, lon))  # Convert to int
+        except ValueError:
+            return None  # Invalid GPS format
     
     def account_number_has_changed(self):
         if not self.pk:

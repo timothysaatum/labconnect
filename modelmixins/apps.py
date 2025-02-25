@@ -6,6 +6,9 @@ class ModelmixinsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'modelmixins'
 
+    def ready(self):
+        import modelmixins.signals
+
     # def ready(self):
     #     from sample.models import Sample  # import your model
     #     pre_save.connect(self.rotate_key_if_needed, sender=Sample)
