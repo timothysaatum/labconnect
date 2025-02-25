@@ -131,10 +131,10 @@ class SampleSerializer(serializers.ModelSerializer):
                         f"Being Payment for : {str(referral)} lab works",
                         parent=referral.to_laboratory.id
                     )
-            if instance.sample_status == "Received":
-                txn = Transaction.objects.get(referral=referral)
+            if instance.sample_status == "Rejected":
+                txn = Transaction.objects.filter(referral=referral).first()
                 refund_transaction(txn.reference, amount=total_amount)
-                
+
             ReferralTrackingHistory.objects.create(
                 referral=referral,
                 status="Request Completed",
