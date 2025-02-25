@@ -14,7 +14,7 @@ from labs.models import Test
 from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
 from transactions.utils import transfer_funds_to_lab
-# from decimal import Decimal
+
 
 
 class SampleTestSerializer(serializers.ModelSerializer):
