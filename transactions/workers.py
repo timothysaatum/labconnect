@@ -1,15 +1,18 @@
 import requests
 import logging
 import time
+import uuid
 from django.conf import settings
-from concurrent.futures import ThreadPoolExecutor
+# from concurrent.futures import ThreadPoolExecutor
+from django.db import transaction
 from modelmixins.models import Facility
 from labs.models import Laboratory
-import uuid
-from django.db import transaction
+from .models import Transaction
+ 
+
 
 logger = logging.getLogger(__name__)
-executor = ThreadPoolExecutor(max_workers=10)  # Adjust workers based on traffic
+# executor = ThreadPoolExecutor(max_workers=10)  # Adjust workers based on traffic
 
 def is_internet_available():
     """Check if the internet is available."""
@@ -27,7 +30,17 @@ def process_task(task):
     task.status = "processing"
     task.save(update_fields=["status"])
 
-    url = settings.PAYSTACK_SUBACCOUNT_URL if task.task_type == "create_subaccount" else settings.PAYSTACK_TRANSFER_URL
+    url = {
+        "refund_transaction": settings.PAYSTACK_REFUND_URL,
+        "create_subaccount": settings.PAYSTACK_SUBACCOUNT_URL,
+        "transfer_funds": settings.PAYSTACK_TRANSFER_URL
+    }.get(task.task_type)
+    
+    if not url:
+
+        logger.error(f"Unknown task type: {task.task_type}")
+        return
+
     headers = {
         "Authorization": f"Bearer {settings.PAYSTACK_SECRET}",
         "Content-Type": "application/json",
@@ -42,34 +55,51 @@ def process_task(task):
 
         try:
             response = requests.post(url, json=task.payload, headers=headers, timeout=10)
+            
             response.raise_for_status()
             response_data = response.json()
+            
 
-            if response_data.get("status"):
-                subaccount_id = response_data.get("data", {}).get("subaccount_code")
-                if subaccount_id:  # Ensure subaccount_code exists before updating
-                    # Use transaction.atomic to avoid race conditions
+            if response_data.get("status"):  # API call successful
+                if task.task_type == "create_subaccount":
+                    
+                    subaccount_id = response_data.get("data", {}).get("subaccount_code")
+                    if subaccount_id:
+                        with transaction.atomic():
+                            parent_id = uuid.UUID(task.parent)
+                            facility = Facility.objects.filter(id=parent_id).first()
+                            laboratory = Laboratory.objects.filter(id=parent_id).first()
+
+                            if facility:
+                                facility.subaccount_id = subaccount_id
+                                facility.save(update_fields=["subaccount_id"])
+                                logger.info(f"Facility {facility.id} updated successfully.")
+                            elif laboratory:
+                                laboratory.subaccount_id = subaccount_id
+                                laboratory.save(update_fields=["subaccount_id"])
+                                logger.info(f"Laboratory {laboratory.id} updated successfully.")
+                            else:
+                                logger.error(f"No matching Facility or Laboratory found for task {task.id}")
+
+                elif task.task_type == "transfer_funds":
+                    
+                    logger.info(f"Funds transfer successful for transaction {task.payload.get('transaction')}.")
+
+                elif task.task_type == "refund_transaction":
+                    transaction_ref = task.payload.get("transaction")
                     with transaction.atomic():
-                        # Check if task.parent belongs to Facility or Laboratory
-                        if Facility.objects.filter(id=uuid.UUID(task.parent)).exists():
-                            facility = Facility.objects.get(id=uuid.UUID(task.parent))
-                            facility.subaccount_id = subaccount_id
-                            facility.save(update_fields=["subaccount_id"])
-                            logger.info(f"Facility {facility.id} updated successfully.")
-
-                        elif Laboratory.objects.filter(id=uuid.UUID(task.parent)).exists():
-                            laboratory = Laboratory.objects.get(id=uuid.UUID(task.parent))
-                            laboratory.subaccount_id = subaccount_id
-                            laboratory.save(update_fields=["subaccount_id"])
-                            logger.info(f"Laboratory {laboratory.id} updated successfully.")
-
+                        txn = Transaction.objects.filter(reference=transaction_ref).first()
+                        if txn:
+                            txn.payment_status = "Refunded"
+                            txn.save(update_fields=["payment_status"])
+                            logger.info(f"Transaction {txn.reference} refunded successfully.")
                         else:
-                            logger.error(f"No matching Facility or Laboratory found for task {task.id}")
-                        
+                            logger.error(f"Transaction {transaction_ref} not found.")
+
                 task.status = "completed"
                 task.save(update_fields=["status"])
                 logger.info(f"Task {task.id} completed successfully.")
-                return response_data["data"]  # Return API response
+                return response_data["data"]
 
             logger.warning(f"Task {task.id} failed: {response_data}")
         except requests.RequestException as e:
@@ -77,9 +107,9 @@ def process_task(task):
 
         task.retries += 1
         task.save(update_fields=["retries"])
-        time.sleep(2 ** attempt)  # Exponential backoff (2s, 4s, 8s)
+        time.sleep(2 ** attempt)  # Exponential backoff (2s, 4s, 8s, ...)
 
     task.status = "failed"
     task.save(update_fields=["status"])
-    logger.error(f"Task {task.id} permanently failed after 3 attempts.")
+    logger.error(f"Task {task.id} permanently failed after 10 attempts.")
     return None

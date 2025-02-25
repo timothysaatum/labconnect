@@ -13,7 +13,8 @@ from django.db.models import Q
 from labs.models import Test
 from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
-from transactions.utils import transfer_funds_to_lab
+from transactions.utils import transfer_funds_to_lab, refund_transaction
+from transactions.models import Transaction
 
 
 
@@ -130,6 +131,10 @@ class SampleSerializer(serializers.ModelSerializer):
                         f"Being Payment for : {str(referral)} lab works",
                         parent=referral.to_laboratory.id
                     )
+            if instance.sample_status == "Received":
+                txn = Transaction.objects.get(referral=referral)
+                refund_transaction(txn.reference, amount=total_amount)
+                
             ReferralTrackingHistory.objects.create(
                 referral=referral,
                 status="Request Completed",

@@ -110,6 +110,8 @@ PAYSTACK_SECRET = config("PAYSTACK_SECRET_KEY")
 
 PAYSTACK_BASE_URL = "https://api.paystack.co"
 PAYSTACK_SUBACCOUNT_URL = "https://api.paystack.co/subaccount"
+PAYSTACK_REFUND_URL = "https://api.paystack.co/refund"
+PAYSTACK_TRANSFER_URL = "https://api.paystack.co/transfer"
 
 # Logging configuration
 # LOGGING = {

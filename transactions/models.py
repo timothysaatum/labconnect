@@ -118,7 +118,7 @@ class Incentive(models.Model):
 # 	('Insurance','Insurance')
 # ]
 
-PAYMENT_STATUS = [("Completed", "Completed"), ("Pending", "Pending")]
+PAYMENT_STATUS = [("Completed", "Completed"), ("Pending", "Pending"), ("Refunded", "Refunded"), ("Transferred", "Transferred")]
 class Transaction(models.Model):
     client = models.ForeignKey(
         user_account, on_delete=models.SET_NULL, blank=True, null=True, db_index=True

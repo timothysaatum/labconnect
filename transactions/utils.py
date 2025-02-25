@@ -27,27 +27,7 @@ def wait_for_internet():
         time.sleep(5)  # Check every 5 seconds
     logger.info("Internet restored. Resuming operations.")
 
-# def create_subaccount_request(data):
-#     """Handles the API request for creating a subaccount."""
-#     url = settings.PAYSTACK_SUBACCOUNT_URL
-#     headers = {
-#         "Authorization": f"Bearer {settings.PAYSTACK_SECRET}",
-#         "Content-Type": "application/json"
-#     }
-#     print("Running with executor")
-#     try:
-#         response = requests.post(url, json=data, headers=headers, timeout=10)
-#         print(response)
-#         response.raise_for_status()
-#         subaccount_data = response.json().get("data", {})
-#         return subaccount_data.get("subaccount_code")
 
-#     except RequestException as e:
-#         logger.error(f"Request error while creating subaccount: {str(e)}")
-#     except Exception as e:
-#         logger.error(f"Unexpected error while creating subaccount: {str(e)}")
-
-#     return None
 def create_subaccount_request(data):
     print('executing')
     sys.stdout.flush()
@@ -91,31 +71,6 @@ def create_customer_subaccount(instance):
     return enqueue_task("create_subaccount", data)
 
 
-
-# def commandline_utility(data):
-#     """Handles subaccount creation from CLI input."""
-
-#     try:
-#         facility = Facility.objects.get(pk=data["id"])
-#     except Facility.DoesNotExist:
-#         logger.error(f"Facility with id: {data['id']} -- not found")
-#         return
-
-#     if not all([data.get("account_number"), data.get("bank_code"), data.get("business_name")]):
-#         logger.warning(f"Missing required fields for creating subaccount: {facility}")
-#         return
-
-#     if not is_internet_available():
-#         wait_for_internet()
-
-#     subaccount_id = create_subaccount_request(data)
-#     print(subaccount_id)
-#     if subaccount_id:
-#         facility.subaccount_id = subaccount_id
-#         facility.save(update_fields=['subaccount_id'])
-#     else:
-#         logger.error(f"Failed to create subaccount for {facility}")
-
 def commandline_utility(data):
     """Handles subaccount creation from CLI input."""
     try:
@@ -150,3 +105,15 @@ def transfer_funds_to_lab(lab_subaccount_id, amount, reason, parent):
         "parent": parent
     }
     return enqueue_task("transfer_funds", data)
+
+
+def refund_transaction(transaction_reference, amount=None, currency="GHS"):
+    """Enqueue a refund transaction for processing."""
+    data = {
+        "transaction": transaction_reference,
+        "currency": currency
+    }
+    if amount:
+        data["amount"] = int(Decimal(amount) * 100)  # Convert NGN to kobo
+
+    return enqueue_task("refund_transaction", data)
