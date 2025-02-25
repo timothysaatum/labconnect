@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from modelmixins.models import Facility, SampleType, FacilityWorkingHours
-from labs.models import Branch
-from hospital.models import HospitalLab
+
 
 class FacilityWorkingHoursSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,14 +75,15 @@ class FacilitySerializer(serializers.ModelSerializer):
         if is_branch:
             data["town"] = instance.branch.town
             data["logo"] = instance.branch.laboratory.logo if instance.branch.laboratory else None
-        elif is_hospital_lab:
+
+        if is_hospital_lab:
             data["town"] = instance.hospitallab.hospital_reference.town
 
         # Ensure correct distance calculation
         if gps_coord and instance.gps_coordinates:
             try:
                 user_lat, user_long = map(float, gps_coord.split(","))
-                data["distance"] = f"{instance.get_branch_distance(user_lat, user_long)} km"
+                data["distance"] = f"{instance.get_facility_distance(user_lat, user_long)} km"
             except ValueError:
                 data["distance"] = "Invalid GPS coordinates"
         else:
@@ -116,7 +116,3 @@ class SampleTypeSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["sample_name"] = str(instance)
         return data
-
-
-class FileUploadSerializer(serializers.Serializer):
-    file = serializers.FileField()

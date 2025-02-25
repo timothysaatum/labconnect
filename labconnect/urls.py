@@ -1,7 +1,7 @@
-from django.contrib import admin # type: ignore
-from django.urls import path, include # type: ignore
-from django.conf import settings # type: ignore
-from django.conf.urls.static import static # type: ignore
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 # from django_prometheus import exports
 
 
@@ -14,7 +14,6 @@ urlpatterns = [
     path("laboratory/", include("labs.urls")),
     path("sample/", include("sample.urls")),
     path("transactions/", include("transactions.urls")),
-    path("utils/", include("modelmixins.urls")),
     path("analytics/", include("analytics.urls")),
     # path("metrics/", exports.ExportToDjangoView, name="metrics"),
 ]

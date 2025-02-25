@@ -24,7 +24,6 @@ FACILITY_TYPE = [
 class Facility(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone = models.CharField(max_length=15)
-    # calendar = models.DurationField(blank=True, null=True)
     email = models.EmailField()
     facility_type = models.CharField(max_length=155, choices=FACILITY_TYPE)
     digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
@@ -40,7 +39,7 @@ class Facility(models.Model):
     class Meta:
          unique_together = ("digital_address",)
     
-    def get_branch_distance(self, user_lat, user_lon):
+    def get_facility_distance(self, user_lat, user_lon):
         """
         Calculate distance only if the instance has `gps_coordinates`.
         Works for both Branch and HospitalLab.
@@ -53,14 +52,6 @@ class Facility(models.Model):
             return int(calculate_distance(user_lat, user_lon, lat, lon))  # Convert to int
         except ValueError:
             return None  # Invalid GPS format
-    
-    def account_number_has_changed(self):
-        if not self.pk:
-            return False  # New instance
-        
-        old_account_number = Facility.objects.filter(pk=self.pk).values_list('account_number', flat=True).first()
-        
-        return old_account_number != self.account_number
 
     def get_facility_name(self):
 

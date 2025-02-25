@@ -123,12 +123,13 @@ class SampleSerializer(serializers.ModelSerializer):
             referral = instance.referral
             total_amount = float(sum(sample_test.test.price for sample_test in instance.sample_tests.all()))
             print(total_amount)
-            transfer_funds_to_lab(
-                    referral.to_laboratory.subaccount_id,
-                    total_amount,
-                    f"Being Payment for : {str(referral)} lab works",
-                    parent=referral.to_laboratory.id
-                )
+            if instance.sample_status == "Received":
+                transfer_funds_to_lab(
+                        referral.to_laboratory.subaccount_id,
+                        total_amount,
+                        f"Being Payment for : {str(referral)} lab works",
+                        parent=referral.to_laboratory.id
+                    )
             ReferralTrackingHistory.objects.create(
                 referral=referral,
                 status="Request Completed",

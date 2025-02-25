@@ -3,7 +3,7 @@ from django.dispatch import receiver
 import logging
 from .utils import get_gps_coords
 from .models import Facility
-from labs.models import Branch, Laboratory
+from labs.models import Branch
 from hospital.models import Hospital, HospitalLab
 
 
