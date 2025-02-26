@@ -188,6 +188,7 @@ class BackgroundTask(models.Model):
     payload = models.JSONField()  # Store request data
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     parent = models.UUIDField(null=True, blank=True)
+    transaction_ref = models.UUIDField(null=True, blank=True)
     retries = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

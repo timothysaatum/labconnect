@@ -8,6 +8,7 @@ from django.db import transaction
 from modelmixins.models import Facility
 from labs.models import Laboratory
 from .models import Transaction
+from .process_payment import Paystack
  
 
 
@@ -54,10 +55,32 @@ def process_task(task):
             continue  # Retry after 5 seconds
 
         try:
+            if task.task_type == "create_subaccount":
+                paystack = Paystack()
+                resolved_data = paystack.verify_account(
+                    task.payload.get("account_number"),
+                    task.payload.get("settlement_bank")
+                )
+
+                if not resolved_data.get("status"):  # Check if verification failed
+                    logger.error(f"Account verification failed: {resolved_data}")
+                    task.status = "failed"
+                    task.save(update_fields=["status"])
+                    return
+
+                account_name = resolved_data["data"]["account_name"]
+                task.payload["account_name"] = account_name  # Add verified account name
+
+            if task.task_type == "refund_transaction":
+                task.payload["transaction"] = task.transaction_ref
+                task.payload["customer_note"] = "Refund for rejected sample"
+
+            # print(task.payload)
             response = requests.post(url, json=task.payload, headers=headers, timeout=10)
-            
+            print(response.json())
             response.raise_for_status()
             response_data = response.json()
+            # print(response_data)
             
 
             if response_data.get("status"):  # API call successful
@@ -82,11 +105,11 @@ def process_task(task):
                                 logger.error(f"No matching Facility or Laboratory found for task {task.id}")
 
                 elif task.task_type == "transfer_funds":
-                    
-                    logger.info(f"Funds transfer successful for transaction {task.payload.get('transaction')}.")
+
+                    logger.info(f"Funds transfer successful for transaction {task.transaction_ref}.")
 
                 elif task.task_type == "refund_transaction":
-                    transaction_ref = task.payload.get("transaction")
+                    transaction_ref = task.transaction_ref
                     with transaction.atomic():
                         txn = Transaction.objects.filter(reference=transaction_ref).first()
                         if txn:

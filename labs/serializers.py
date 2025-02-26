@@ -57,7 +57,7 @@ class BranchSerializer(serializers.ModelSerializer):
 	name = serializers.CharField(read_only=True)
 	digital_address = serializers.CharField(validators=[
         RegexValidator(
-            regex=r"^[A-Z]{2}-\d{4}-\d{4}$",
+            regex=r"^[A-Z]{2}-\d{3,4}-\d{4,5}$",
             message="Format must be AA-XXXX-XXXX (e.g., XL-0745-0849)"
         )
     ])

@@ -65,7 +65,8 @@ def create_customer_subaccount(instance):
         "settlement_bank": instance.bank_code,
         "account_number": instance.account_number,
         "percentage_charge": 100,
-        "parent": str(instance.id)
+        "parent": str(instance.id),
+        "is_verified": True
     }
 
     return enqueue_task("create_subaccount", data)
@@ -102,7 +103,7 @@ def transfer_funds_to_lab(lab_subaccount_id, amount, reason, parent):
         "amount": Decimal(amount) * 100,
         "recipient": lab_subaccount_id,
         "reason": reason,
-        "parent": parent
+        "parent": parent,
     }
     return enqueue_task("transfer_funds", data)
 
@@ -110,7 +111,7 @@ def transfer_funds_to_lab(lab_subaccount_id, amount, reason, parent):
 def refund_transaction(transaction_reference, amount=None, currency="GHS"):
     """Enqueue a refund transaction for processing."""
     data = {
-        "transaction": transaction_reference,
+        "transaction_ref": transaction_reference,
         "currency": currency
     }
     if amount:
