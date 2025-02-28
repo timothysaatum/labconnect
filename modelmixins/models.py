@@ -2,7 +2,7 @@ from django.db import models
 import uuid
 from django.core.validators import RegexValidator
 code_validator = RegexValidator(
-    regex=r"^[A-Z]{2}-\d{3,4}-\d{4,5}$",
+    r"^[A-Z]{2}-\d{3,5}-\d{4,5}$",
     message="Format must be AA-XXXX-XXXX (e.g., XL-0745-0849)"
 )
 from .utils import calculate_distance
@@ -21,6 +21,7 @@ FACILITY_TYPE = [
       ('Laboratory', 'Laboratory'),
       ('Hospital', 'Hospital')
 ]
+
 class Facility(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     phone = models.CharField(max_length=15)
