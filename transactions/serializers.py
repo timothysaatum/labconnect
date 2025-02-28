@@ -50,11 +50,13 @@ class BankSerializer(serializers.ModelSerializer):
 
     bank_name = serializers.CharField(read_only=True)
     code = serializers.CharField(read_only=True)
+    bank_type = serializers.CharField(read_only=True)
 
     class Meta:
         model = Bank
 
         fields = (
             "bank_name",
-            "code"
+            "code",
+            "bank_type"
         )
