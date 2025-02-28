@@ -168,6 +168,7 @@ class Transaction(models.Model):
 class Bank(models.Model):
     bank_name = models.CharField(max_length=255)
     code = models.CharField(max_length=155)
+    bank_type = models.CharField(max_length=100, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

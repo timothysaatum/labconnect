@@ -26,7 +26,7 @@ class Command(BaseCommand):
             try:
                 response = requests.get(url, headers=headers, timeout=10)
                 response.raise_for_status()
-                self.stdout.write(self.style.SUCCESS("Successfully connected to Paystack API!"))  # ✅ Success message
+                self.stdout.write(self.style.SUCCESS("Successfully connected to Paystack API!"))
                 break  # Exit the loop if the request is successful
             except requests.ConnectionError:
                 self.stdout.write(self.style.WARNING("No internet connection. Retrying..."))
@@ -55,8 +55,11 @@ class Command(BaseCommand):
         for bank in banks:
             try:
                 Bank.objects.update_or_create(
-                    bank_name=bank["name"],  # Ensure your model has 'bank_name' and 'code'
-                    defaults={"code": bank["code"]}
+                    bank_name=bank["name"],
+                    defaults={
+                        "code": bank["code"],
+                        "bank_type": bank.get("type", "Unknown")
+                    }
                 )
                 total_banks += 1
             except IntegrityError:

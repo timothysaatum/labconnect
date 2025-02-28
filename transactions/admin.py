@@ -49,7 +49,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(Bank)
 class BankAdmin(admin.ModelAdmin):
-    list_display = ("bank_name", "code", "updated_at")
+    list_display = ("bank_name", "code", "bank_type", "updated_at")
 
 
 @admin.register(BackgroundTask)
