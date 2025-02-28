@@ -17,6 +17,13 @@ FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = [
+#     "apis.labconnekt.com",
+#     "api.labconnekt.com",
+#     "labconnekt.com",
+#     "localhost",
+#     "127.0.0.1",
+# ]
 # ALLOWED_HOSTS = ["api.labconnekt.com"]
 # cash.ns.cloudflare.com
 # chelsea.ns.cloudflare.com
@@ -169,6 +176,29 @@ DATABASES = {
     }
 }
 # DATABASES = {
+#      "default": {
+#          "ENGINE": "django.db.backends.mysql",
+#          "NAME": "labconnect",
+#          "USER": "vermithor",
+#          "PASSWORD": "9sg6b4z5hz5",
+#          "HOST": "localhost",
+#          "PORT": "3306",
+#          "OPTIONS": {
+#              "init_command": "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
+#              "charset": "utf8mb4",
+#          },
+#          "CONN_MAX_AGE": 600,
+#      },
+#  #     "honourgh_read_replica": {
+#  #         "ENGINE": "mysql.connector.django",
+#  #         "NAME": "honourgh_read_replica",
+#  #         "USER": "honourgh_vermithor",
+#  #         "PASSWORD": "v?$9Zr!?@Vh_",
+#  #         "HOST": "127.0.0.1",  # IP or hostname of the replica database
+#  #         "PORT": "3306",  # Default MySQL port
+#  #     },
+# }
+# DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.mysql",
 #         "NAME": "labconnect$default",
@@ -271,18 +301,25 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",  # Alternate localhost
     "https://labconnect-eight.vercel.app",  # React production URL if needed
     "https://labconnekt.com",  # Correct frontend URL
-    "https://api.labconnekt.com",
+    "https://apis.labconnekt.com",
 ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https:\/\/.*\.labconnekt\.com$",  # Allows any subdomain (e.g., app.labconnekt.com)
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://apis.labconnekt.com",
+    "https://api.labconnekt.com",
+    "https://labconnekt.com",
+]
 
 # White listing the localhost:3000 port
 # for React
 CORS_ORIGIN_WHITELIST = ("http://localhost:5173", "https://labconnect-eight.vercel.app")
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
+CORS_ALLOW_HEADERS = ["Authorization", "Content-Type", "Accept"]
 
 
 LOGIN_URL = 'client:login'
