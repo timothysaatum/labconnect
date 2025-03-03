@@ -169,7 +169,9 @@ class CreateBranchView(PermissionMixin, generics.CreateAPIView):
 				{'error': 'Invalid user.'},
 				status=status.HTTP_400_BAD_REQUEST
 			)
+
 		return self.create(request)
+
 	def perform_create(self, serializer):
 		"""
 		A data base query to get the laboratory the branch is being added to

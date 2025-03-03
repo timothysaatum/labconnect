@@ -5,13 +5,11 @@ from .models import (
 		BranchManagerInvitation,
 		BranchTest
 	)
-from django.db.models.signals import post_save
 from django.core.validators import RegexValidator
 from modelmixins.models import SampleType, FacilityWorkingHours
 from modelmixins.serializers import SampleTypeSerializer, FacilityWorkingHoursSerializer
 from django.db import transaction
-# from modelmixins.utils import get_gps_coords
-# from transactions.utils import create_customer_subaccount
+
 
 class LaboratorySerializer(serializers.ModelSerializer):
 
@@ -40,14 +38,6 @@ class LaboratorySerializer(serializers.ModelSerializer):
 			'date_modified',
 			'date_added'
 		)
-	
-	# def update(self, instance, validated_data):
-        
-	# 	if "account_number" in validated_data and validated_data["account_number"]:
-	# 		print("Running")
-
-	# 	return instance
-    
 
 
 class BranchSerializer(serializers.ModelSerializer):
@@ -66,7 +56,7 @@ class BranchSerializer(serializers.ModelSerializer):
 	bank_code = serializers.CharField(write_only=True, required=False)
 	gps_coordinates = serializers.CharField(read_only=True)
 	working_hours = FacilityWorkingHoursSerializer(many=True, required=False)
-	
+
 	class Meta:
 		model = Branch
 		fields = (
@@ -91,30 +81,48 @@ class BranchSerializer(serializers.ModelSerializer):
             'date_added',
             'date_modified'
         )
+		
+	def validate_account_number(self, value):
+		"""
+    	If the number starts with +233 or 233, convert it to start with 0.
+    	Otherwise, leave it unchanged (it could be a bank account).
+    	Also removes all whitespace characters.
+    	"""
+		value = value.strip().replace(" ", "").lstrip("+")  # Remove whitespace and leading '+'
+		
+		if value.startswith("233"):
+			value = "0" + value[3:]  # Convert 233XXXXXXX to 0XXXXXXXXX
 	
+		return value
+
+
 	def to_representation(self, instance):
 		data = super().to_representation(instance)
 		data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else instance.laboratory.created_by.full_name
 		data['manager_id'] = instance.branch_manager.id if instance.branch_manager else instance.laboratory.created_by.id
 		data['name'] = instance.branch_name if instance.branch_name else f'{instance.laboratory.name} - {instance.town}'
 		return data
-	
+
 	def create(self, validated_data):
+		if "account_number" in validated_data:
+			validated_data["account_number"] = self.validate_account_number(validated_data["account_number"])
+		print(validated_data)
 		working_hours_data = validated_data.pop('working_hours', None)
+		print(validated_data)
 		branch = super().create(validated_data)
-		
+
 		if working_hours_data:
 			FacilityWorkingHours.objects.bulk_create([
                 FacilityWorkingHours(
-                    facility=branch, 
+                    facility=branch,
                     **working_hour
                 ) for working_hour in working_hours_data
             ])
-		
+
 		return branch
-	
+
 	def update(self, instance, validated_data):
-		
+
 		# Extract working hours data
 		working_hours_data = validated_data.pop('working_hours', None)
 		instance = super().update(instance, validated_data)
@@ -126,29 +134,29 @@ class BranchSerializer(serializers.ModelSerializer):
 		# if "account_number" in validated_data and validated_data["account_number"]:
 		# 	print("Running")
 		# 	create_customer_subaccount(instance)
-			
-		
+
+
 		if working_hours_data:
 			# Fetch existing records in bulk for efficient lookup
 			existing_records_dict = {
                 record.day: record for record in FacilityWorkingHours.objects.filter(facility=instance)
             }
-			
+
 			new_records = []
 			records_to_update = []
-			
+
 			for working_hour in working_hours_data:
 				day = working_hour["day"]
 				start_time = working_hour["start_time"]
 				end_time = working_hour["end_time"]
-				
+
 				if day in existing_records_dict:
 					# Update existing record
 					existing_record = existing_records_dict[day]
 					existing_record.start_time = start_time
 					existing_record.end_time = end_time
 					records_to_update.append(existing_record)
-				
+
 				else:
 					# Create new record
 					new_records.append(FacilityWorkingHours(

@@ -39,7 +39,7 @@ class Facility(models.Model):
 
     class Meta:
          unique_together = ("digital_address",)
-    
+
     def get_facility_distance(self, user_lat, user_lon):
         """
         Calculate distance only if the instance has `gps_coordinates`.
@@ -101,7 +101,7 @@ class FacilityWorkingHours(models.Model):
 class SampleType(models.Model):
 
     '''
-	Sample:Is the various medical samples that can be used to perform a particular test. 
+	Sample:Is the various medical samples that can be used to perform a particular test.
 	This is require to avoid sample mismatched when a test is being requested.
 	'''
     sample_name = models.CharField(max_length=100)
