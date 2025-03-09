@@ -87,7 +87,7 @@ class Branch(Facility):
     """
 	accreditation_number = models.CharField(max_length=155, unique=True)
 	level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
-	branch_name = models.CharField(max_length=155, blank=True, unique=True, default="")
+	branch_name = models.CharField(max_length=155, blank=True)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	town = models.CharField(max_length=200)
 	# digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
