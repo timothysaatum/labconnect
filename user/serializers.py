@@ -115,7 +115,6 @@ class LoginSerializer(serializers.ModelSerializer):
 
 		username = attrs.get('email')
 		password = attrs.get('password')
-
 		request = self.context.get('request')
 				
 		user = authenticate(request, email=username, password=password)
@@ -125,8 +124,6 @@ class LoginSerializer(serializers.ModelSerializer):
 			send_code_to_user(user.email)
 			raise AuthenticationFailed('Unverified user, New verification code sent to your email. Verify your email to login')
 		return user
-	
-
 
 	def to_representation(self, instance):
 
@@ -135,9 +132,12 @@ class LoginSerializer(serializers.ModelSerializer):
 		data['user'] = NaiveUserSerializer(instance).data
 
 		if instance.account_type == 'Laboratory':
+
 			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance.id), many=True).data
 			data['branch'] = BranchSerializer(Branch.objects.filter(Q(laboratory__created_by=instance.id) | Q(branch_manager_id=instance.id)), many=True).data
 
+			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
+			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.id), many=True).data

@@ -235,10 +235,6 @@ class LoginUserView(GenericAPIView):
     throttle_classes = [UserRateThrottle]
     serializer_class = LoginSerializer
 
-    # @axes_dispatch
-    # def dispatch(self, *args, **kwargs):
-    #     return super().dispatch(*args, **kwargs)
-
 
     def post(self, request):
 
@@ -417,18 +413,24 @@ def create_branch_manager_user(invitation, user_data):
     try:
         client = Client.objects.get(email=invitation.receiver_email)
         if not client.is_branch_manager:
+            
+            client.is_admin = False
             client.is_branch_manager = True
             client.save()
+
         branch.branch_manager = client
+
     except Client.DoesNotExist:
+
         with transaction.atomic():  # Ensure atomicity of operations
+
             serializer = UserCreationSerializer(data=user_data)
             serializer.is_valid(raise_exception=True)
             client = serializer.save()
             client.account_type = 'Laboratory'
             client.is_staff = True
             client.is_branch_manager = True
-            # client.is_admin = False
+            client.is_admin = False
             client.save()
 
         branch.branch_manager = client
@@ -464,9 +466,9 @@ class BranchManagerAcceptView(CreateAPIView):
 		if invitation.used:
 			return Response({'error': 'Invitation already used'}, status=status.HTTP_400_BAD_REQUEST)
 
-		pwd = generate_password()
-		print(pwd)
-		print(request.data)
+		# pwd = generate_password()
+		# print(pwd)
+		# print(request.data)
 
 		data = {
 			'email':invitation.receiver_email,
@@ -496,17 +498,21 @@ class InviteBranchManagerView(CreateAPIView):
 
 
 class FetchLabManagers(ListAPIView):
+
     throttle_classes = [UserRateThrottle]
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
 
     def get_queryset(self):
+
         managers = (
             Branch.objects.filter(laboratory_id=self.kwargs.get("pk"))
             .values("branch_manager")
             .distinct()
         )
+
         branch_managers = Client.objects.filter(id__in=Subquery(managers))
+
         return branch_managers
 
 
@@ -536,6 +542,7 @@ class RequestNewOTP(CreateAPIView):
 
 
 class ComplaintViewSet(viewsets.ModelViewSet):
+
     serializer_class = ComplaintSerializer
     permission_classes = [IsAuthenticated]
 
