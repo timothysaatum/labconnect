@@ -204,15 +204,16 @@ class VerifyUserEmail(GenericAPIView):
 
                 user.is_verified = True
                 user.is_admin = True
-                user.save()
+                
 
+                if user.is_branch_manager:
+                     user.is_admin = False
+
+                user.save()
                 return Response(
                     {"message": "Email successfully verified"},
                     status=status.HTTP_200_OK,
                 )
-            if user.is_branch_manager:
-                 user.is_admin = False
-                 user.save()
 
             return Response(
 
