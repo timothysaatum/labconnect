@@ -1,7 +1,7 @@
-from rest_framework.permissions import IsAuthenticated # type: ignore
-from rest_framework.response import Response # type: ignore
-from rest_framework import generics # type: ignore
-from rest_framework import status # type: ignore
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework import status
 from .serializers import (
     NotificationSerializer,
     ReferralSerializer,
@@ -16,8 +16,8 @@ from .models import (
     Referral,
     ReferralTrackingHistory,
 )
-from django.db.models import Case, When, IntegerField, Sum, Q, Count
-from django.utils.timezone import now, timedelta # type: ignore
+from django.db.models import Case, When, IntegerField, Q, Count
+from django.utils.timezone import now, timedelta
 from .paginators import QueryPagination
 import logging
 from django.shortcuts import get_object_or_404
@@ -108,64 +108,6 @@ class UpdateReferral(generics.UpdateAPIView):
         serializer.save()
 
 
-# class GetReferrals(generics.ListAPIView):
-#     permission_classes = [IsAuthenticated]
-#     pagination_class = QueryPagination
-#     serializer_class = ReferralSerializer
-
-#     def get_queryset(self):
-
-#         pk = self.kwargs.get("facility_id")
-#         status = self.request.GET.get("status")
-#         from_date = self.request.GET.get("from_date")
-#         to_date = self.request.GET.get("to_date")
-#         search_term = self.request.GET.get("search")
-#         received = self.request.GET.get("received")
-#         sent = self.request.GET.get("sent")
-#         drafts = self.request.GET.get('drafts')
-#         is_archived = self.request.GET.get("is_archived")
-#         cutoff_date = now() - timedelta(days=30)
-
-#         queryset = Referral.objects.none()  # Default to an empty queryset
-#         logger.info(
-#             f"User: {self.request.user.id} attempted<{search_term}> search on referrals<{pk}>"
-#         )
-
-#         # Filter for received referrals
-#         if received == "true":
-#             queryset = Referral.objects.filter(
-#                 Q(to_laboratory_id=pk) | Q(to_laboratory__branch__laboratory_id=pk),
-#                 is_completed=True,
-#                 date_referred__gte=cutoff_date,
-#             )
-
-#         # Filter for sent referrals
-#         if sent == "true":
-#             queryset = Referral.objects.filter(
-#                 Q(referring_facility_id=pk)
-#                 | Q(referring_facility__branch__laboratory_id=pk),
-#                 date_referred__gte=cutoff_date,
-#             )
-
-#         queryset = filter_referrals(
-#             queryset, from_date, to_date, search_term, status, drafts, is_archived
-#         )
-
-#         if sent == "true" and is_archived == "true":
-#             queryset = Referral.objects.filter(
-#                 Q(referring_facility_id=pk)
-#                 | Q(referring_facility__branch__laboratory_id=pk),
-#                 is_archived=True,
-#             )
-        
-#         if received == "true" and is_archived == "true":
-#             queryset = Referral.objects.filter(
-#                 Q(referring_facility_id=pk)
-#                 | Q(referring_facility__branch__laboratory_id=pk),
-#                 is_archived=True,
-#             )
-
-#         return queryset.order_by("-date_referred")
 class GetReferrals(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = QueryPagination
@@ -204,6 +146,7 @@ class GetReferrals(generics.ListAPIView):
         queryset = filter_referrals(queryset, from_date, to_date, search_term, status, drafts, is_archived)
 
         return queryset.order_by("-date_referred")
+
 
 class ReferralDetailsView(generics.RetrieveAPIView):
 
@@ -274,141 +217,6 @@ class GetNotifications(generics.ListAPIView):
         ).order_by("-date_added").distinct()
 
         return notification
-
-
-# class CountObjects(generics.GenericAPIView):
-
-#     def get(self, request, facility_id, *args, **kwargs):
-#         today = now().date()
-#         thirty_days_ago = today - timedelta(days=30)
-        
-#         # Aggregated query for both today and last month stats
-#         stats = Referral.objects.filter(
-#             Q(referring_facility=facility_id) | Q(to_laboratory=facility_id),
-#             date_referred__date__gte=thirty_days_ago,  # Limits the scope to the last 30 days
-#         ).aggregate(
-#             today_received=Count(
-#                 Case(
-#                     When(
-#                         Q(date_referred__date=today, samples__sample_status="Received"),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#             today_processed=Count(
-#                 Case(
-#                     When(
-#                         Q(
-#                             date_referred__date=today,
-#                             samples__sample_status="Received",
-#                         ),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#             today_pending=Count(
-#                 Case(
-#                     When(
-#                         Q(date_referred__date=today, samples__sample_status="Pending"),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#             today_rejected=Count(
-#                 Case(
-#                     When(
-#                         Q(date_referred__date=today, samples__sample_status="Rejected"),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#             last_month_received=Count(
-#                 Case(
-#                     When(
-#                         Q(
-#                             date_referred__date__lt=today,
-#                             date_referred__date__gte=thirty_days_ago,
-#                             samples__sample_status="Received",
-#                         ),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#             last_month_processed=Count(
-#                 Case(
-#                     When(
-#                         Q(
-#                             date_referred__date__lt=today,
-#                             date_referred__date__gte=thirty_days_ago,
-#                             samples__sample_status="Received",
-#                         ),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#             last_month_pending=Count(
-#                 Case(
-#                     When(
-#                         Q(
-#                             date_referred__date__lt=today,
-#                             date_referred__date__gte=thirty_days_ago,
-#                             samples__sample_status="Pending",
-#                         ),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#             last_month_rejected=Count(
-#                 Case(
-#                     When(
-#                         Q(
-#                             date_referred__date__lt=today,
-#                             date_referred__date__gte=thirty_days_ago,
-#                             samples__sample_status="Rejected",
-#                         ),
-#                         then=1,
-#                     ),
-#                     output_field=IntegerField(),
-#                 )
-#             ),
-#         )
-
-#         # Calculate percentage changes with safe handling for None
-#         def percentage_change(today_count, last_month_count):
-#             print('Last month count',last_month_count, 'Today count', today_count)
-#             if not last_month_count:  # Handle division by zero and None
-#                 return "0" if today_count else 0
-#             return int(abs((today_count - last_month_count) / last_month_count) * 100)
-
-#         # Prepare data
-#         data = {
-#             "samples_received": stats["today_received"] + stats["last_month_received"],
-#             "samples_processed": stats["today_processed"],
-#             "samples_pending": stats["today_pending"] + stats["last_month_pending"],
-#             "samples_rejected": stats["today_rejected"] + stats["last_month_rejected"],
-#             "change_received": percentage_change(
-#                 stats["today_received"], stats["last_month_received"]
-#             ),
-#             "change_processed": percentage_change(
-#                 stats["today_processed"], stats["last_month_processed"]
-#             ),
-#             "change_pending": percentage_change(
-#                 stats["today_pending"], stats["last_month_pending"]
-#             ),
-#             "change_rejected": percentage_change(
-#                 stats["today_rejected"], stats["last_month_rejected"]
-#             ),
-#         }
-
-#         return Response(data)
-
 
 
 class CountObjects(generics.GenericAPIView):

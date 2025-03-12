@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from labs.models import Branch
-from labs.utils import get_gps_coords  # Import the function
+from modelmixins.utils import get_gps_coords
 
 class Command(BaseCommand):
     help = "Recalculate GPS coordinates for labs with missing coordinates"

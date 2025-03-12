@@ -28,6 +28,7 @@ class SampleTestSerializer(serializers.ModelSerializer):
     )
     cost = serializers.DecimalField(decimal_places=2, max_digits=10,read_only=True)
     status = serializers.CharField(required=False)
+    test_result = serializers.FileField(required=False, allow_null=True)
     result = serializers.URLField(required=False)
 
     class Meta:
@@ -41,6 +42,7 @@ class SampleTestSerializer(serializers.ModelSerializer):
             "cost",
             "status",
             "result",
+            "test_result",
             "date_completed",
         )
 
@@ -177,6 +179,7 @@ class SampleSerializer(serializers.ModelSerializer):
         return data
 
 
+
 class ReferralSerializer(serializers.ModelSerializer):
     to_laboratory = serializers.PrimaryKeyRelatedField(
         queryset=Facility.objects.filter(
@@ -195,6 +198,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         queryset=Facility.objects.all(), required=True
     )
     samples = SampleSerializer(many=True, required=False)
+    referral_attachment = serializers.FileField(required=False, allow_null=True)
     attachment = serializers.URLField(required=False)
     facility_type = serializers.CharField(read_only=True)
 
@@ -219,6 +223,7 @@ class ReferralSerializer(serializers.ModelSerializer):
             "sender_email",
             "referral_status",
             "attachment",
+            "referral_attachment",
             "date_referred",
             "samples",
         )
@@ -294,10 +299,12 @@ class ReferralSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
 
         data = super().to_representation(instance)
-
+        request = self.context.get('request')
         data["referring_facility"] = str(instance.referring_facility)
         data["laboratory_contact"] = instance.to_laboratory.phone
         data["to_laboratory"] = str(instance.to_laboratory)
+        if instance.referral_attachment and request:
+            data['attachment'] = request.build_absolute_uri(instance.attachment.url)
 
         return data
 

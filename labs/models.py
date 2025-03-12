@@ -35,6 +35,7 @@ class Laboratory(BaseModel):
 	website = models.URLField(blank=True, null=True, unique=True)
 	date_added = models.DateTimeField(auto_now_add=True)
 	date_modified = models.DateTimeField(auto_now=True)
+	lab_logo = models.ImageField(upload_to='logos/', blank=True, null=True)
 	logo = models.URLField()
 	description = models.CharField(max_length=900)
 

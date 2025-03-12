@@ -9,6 +9,7 @@ from encrypted_model_fields.fields import (
     EncryptedTextField,
     EncryptedBooleanField,
 )
+from django.core.exceptions import ValidationError
 import uuid
 import random, string
 import datetime
@@ -92,6 +93,15 @@ class Patient(models.Model):
     def __str__(self) -> str:
         return self.full_name
 
+def referral_attachment_upload_path(instance, filename):
+    """Generate file upload path for attachments"""
+    return f"referrals/{instance.referral_id}/{filename}"
+
+
+def validate_attachment(value):
+    allowed_types = ["image/jpeg", "image/png", "application/pdf"]
+    if value.content_type not in allowed_types:
+        raise ValidationError("Only JPEG, PNG, and PDF files are allowed.")
 
 class Referral(models.Model):
 
@@ -109,6 +119,7 @@ class Referral(models.Model):
     delivery = models.ForeignKey(
         Delivery, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
+    referral_attachment = models.FileField(upload_to=referral_attachment_upload_path, null=True, blank=True, validators=[validate_attachment])
     attachment = EncryptedCharField(max_length=500, null=True, blank=True)
     requires_phlebotomist = EncryptedBooleanField(default=False)
     sender_full_name = EncryptedCharField(max_length=200, null=True, blank=True)
@@ -177,6 +188,7 @@ class SampleTest(models.Model):
     status = models.CharField(
         max_length=50, choices=TEST_STATUS, default="Pending", db_index=True
     )  # Status of the test
+    test_result = models.FileField(upload_to=referral_attachment_upload_path, null=True, blank=True, validators=[validate_attachment])
     result = EncryptedCharField(
         max_length=500, null=True, blank=True
     )  # To store test result (optional)
