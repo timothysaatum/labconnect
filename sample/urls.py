@@ -12,6 +12,8 @@ from .views import (
     ReferralDetailsView,
     TrackReferralState,
     GetReferralTrackerDetails,
+    DownloadReferralAttachment,
+    DownloadTestResult
 )
 
 app_name = 'sample'
@@ -65,4 +67,6 @@ urlpatterns = [
         UpdateSample.as_view(),
         name="update-sample",
     ),
+    path("referral/<uuid:pk>/download/", DownloadReferralAttachment.as_view(), name="download-referral"),
+    path("test/result/<uuid:pk>/download/", DownloadTestResult.as_view(), name="download-test-result"),
 ]

@@ -15,14 +15,21 @@ from .models import (
     SampleTrackingHistory,
     Referral,
     ReferralTrackingHistory,
+    SampleTest
 )
 from django.db.models import Case, When, IntegerField, Q, Count
 from django.utils.timezone import now, timedelta
 from .paginators import QueryPagination
 import logging
+from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.throttling import UserRateThrottle
+from django.http import FileResponse, HttpResponseForbidden, Http404
+from django.conf import settings
+import os
+import mimetypes
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 logger = logging.getLogger('labs')
@@ -59,6 +66,7 @@ class CreateReferral(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Referral.objects.all()
     serializer_class = ReferralSerializer
+    parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
 
@@ -146,6 +154,24 @@ class GetReferrals(generics.ListAPIView):
         queryset = filter_referrals(queryset, from_date, to_date, search_term, status, drafts, is_archived)
 
         return queryset.order_by("-date_referred")
+    
+    def retrieve(self, request, *args, **kwargs):
+        """Serve referral attachment securely if downloading"""
+        referral_id = kwargs.get("pk")
+        referral = get_object_or_404(Referral, pk=referral_id)
+
+        if "download" in request.path:  # Check if it's a file request
+            # Restrict access: Only referring facility staff or lab staff can download
+            if not request.user.is_staff and request.user != referral.referring_facility:
+                return HttpResponseForbidden("You do not have permission to access this file.")
+
+            if not referral.referral_attachment:
+                raise Http404("File not found")
+
+            file_path = os.path.join(settings.BASE_DIR, "private", referral.referral_attachment.name)
+            return FileResponse(open(file_path, "rb"), as_attachment=True)
+
+        return super().retrieve(request, *args, **kwargs)
 
 
 class ReferralDetailsView(generics.RetrieveAPIView):
@@ -384,3 +410,65 @@ class GetSampleTrackerDetails(generics.ListAPIView):
 
         sample_id = self.kwargs.get("sample_id")
         return SampleTrackingHistory.objects.filter(sample=sample_id).select_related('sample')
+
+
+class DownloadReferralAttachment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            referral = Referral.objects.get(pk=pk)
+
+            if not referral.attachment:
+                raise Http404("No attachment found.")
+
+            file_path = referral.attachment.path
+
+            # Check if the file actually exists
+            if not os.path.exists(file_path):
+                raise Http404("File does not exist on server.")
+
+            content_type, _ = mimetypes.guess_type(file_path)
+
+            return FileResponse(
+                open(file_path, "rb"),
+                content_type=content_type or "application/octet-stream",
+                as_attachment=True,
+                filename=os.path.basename(file_path),
+            )
+
+        except Referral.DoesNotExist:
+            raise Http404("Referral not found.")
+
+
+class DownloadTestResult(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            sample_test = SampleTest.objects.get(pk=pk)
+
+            # Ensure the user has permission to access the test result
+            if not request.user.has_perm("can_view_test_result", sample_test):
+                return Response({"error": "Permission denied"}, status=403)
+
+            if not sample_test.test_result:
+                raise Http404("No test result found.")
+
+            file_path = sample_test.test_result.path  # Get actual file path
+
+            # Check if the file exists on disk
+            if not os.path.exists(file_path):
+                raise Http404("File does not exist on the server.")
+
+            content_type, _ = mimetypes.guess_type(file_path)
+
+            return FileResponse(
+                open(file_path, "rb"),
+                content_type=content_type or "application/octet-stream",
+                as_attachment=True,  # Forces download
+                filename=os.path.basename(file_path),
+            )
+
+        except SampleTest.DoesNotExist:
+            raise Http404("Sample test not found.")

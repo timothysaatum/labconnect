@@ -49,8 +49,11 @@ class SampleTestSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
 
         data = super().to_representation(instance)
+        request = self.context.get('request')
         data["test"] = str(instance.test.name)
         data['cost'] = instance.test.price
+        if instance.test_result and request:
+            data['test_result'] = request.build_absolute_uri(f"test/result/{instance.pk}/download/")
 
         return data
 
@@ -304,7 +307,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         data["laboratory_contact"] = instance.to_laboratory.phone
         data["to_laboratory"] = str(instance.to_laboratory)
         if instance.referral_attachment and request:
-            data['attachment'] = request.build_absolute_uri(instance.attachment.url)
+            data['referral_attachment'] = request.build_absolute_uri(f"/sample/referral/{instance.pk}/download/")
 
         return data
 
