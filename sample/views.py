@@ -29,7 +29,7 @@ from django.http import FileResponse, HttpResponseForbidden, Http404
 from django.conf import settings
 import os
 import mimetypes
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 
 logger = logging.getLogger('labs')
@@ -66,7 +66,7 @@ class CreateReferral(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Referral.objects.all()
     serializer_class = ReferralSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def perform_create(self, serializer):
 
