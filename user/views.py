@@ -127,6 +127,7 @@ class CheckRefreshToken(APIView):
 
         access_token = str(refresh_token.access_token)
         serialized_data = UserSerializer(user)
+        #print(serialized_data.data)
 
         return Response(
             {"access_token": access_token, "data": serialized_data.data},
