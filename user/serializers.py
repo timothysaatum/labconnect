@@ -267,6 +267,8 @@ class UserSerializer(serializers.ModelSerializer):
 		if instance.account_type == 'Laboratory':
 			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance), many=True).data
 			data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance), many=True).data
+			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
+			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance), many=True).data
