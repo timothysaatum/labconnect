@@ -98,16 +98,35 @@ class FacilityWorkingHours(models.Model):
         return f"{self.facility} - {self.day}: {self.start_time} to {self.end_time}"
 
 
-class SampleType(models.Model):
+class BaseSample(models.Model):
+    sample_name = models.CharField(max_length=100)
+    collection_procedure = models.TextField()
+    sample_tube = models.CharField(max_length=100)
+    collection_time = models.CharField(max_length=155, blank=True, null=True)
+    storage_requirements = models.TextField(blank=True, null=True)
+    transport_requirements = models.TextField(blank=True, null=True)
+    collection_volume = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    collection_instructions = models.TextField(blank=True, null=True)
+    required_fasting = models.BooleanField(default=False)
+    storage_temperature = models.CharField(max_length=50, blank=True, null=True)
+    maximum_storage_duration = models.CharField(max_length=50, blank=True, null=True)
+    transport_medium = models.CharField(max_length=100, blank=True, null=True)
+    packaging_requirements = models.TextField(blank=True, null=True)
+    biosafety_level = models.CharField(
+        max_length=10,
+        choices=[('BSL-1', 'BSL-1'), ('BSL-2', 'BSL-2'), ('BSL-3', 'BSL-3')],
+        blank=True,
+        null=True
+    )
+    infectious_risk = models.BooleanField(default=True)
+
+class SampleType(BaseSample):
 
     '''
 	Sample:Is the various medical samples that can be used to perform a particular test.
 	This is require to avoid sample mismatched when a test is being requested.
 	'''
-    sample_name = models.CharField(max_length=100)
-    collection_procedure = models.TextField()
-    sample_tube = models.CharField(max_length=100)
-    collection_time = models.CharField(max_length=155)
+    
 
     def __str__(self):
         return f"{self.sample_name} sample"
@@ -131,3 +150,22 @@ class BasicTest(BaseModel):
 
 	class Meta:
 		abstract = True
+
+
+class SampleTypeTemplate(BaseSample):
+    
+    def __str__(self):
+        return f"{self.sample_name} sample"
+    
+
+class TestTemplate(BasicTest):
+    """
+    A master list of predefined tests that users can use as templates 
+    when creating tests.
+    """
+    sample_type = models.ManyToManyField(SampleTypeTemplate)
+    discount_price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True)
+    discount_percent = models.CharField(max_length=10, blank=True, null=True)
+    
+    def __str__(self):
+        return self.name

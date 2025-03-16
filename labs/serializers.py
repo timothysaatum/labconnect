@@ -199,7 +199,26 @@ class TestSerializer(serializers.ModelSerializer):
 			'date_modified',
 			'date_added'
 		)
-
+		
+	def create(self, validated_data):
+	       branches_data = validated_data.pop('branch', [])  # Extract branch UUIDs
+	       sample_types_data = validated_data.pop('sample_types', [])
+	       # Fetch branch instances in bulk
+	       branches = Branch.objects.filter(id__in=branches_data)
+	       if not branches.exists():
+	           raise serializers.ValidationError({"branch": "One or more branches do not exist."})
+	       # Optimize sample type processing
+	       sample_type_objs = []
+	       for sample_data in sample_types_data:
+	           obj, created = SampleType.objects.get_or_create(**sample_data)
+	           sample_type_objs.append(obj)
+	       # Create the test object
+	       test = Test.objects.create(**validated_data)
+	       test.sample_type.add(*sample_type_objs)
+	       test.branch.add(*branches)
+	       
+	       return test
+		
 	# pagination_class = QueryPagination
 	def get_branch_specific_data(self, obj):
 		branch_id = self.context.get('pk')

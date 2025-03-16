@@ -243,25 +243,42 @@ class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
 
 
 class CreateTestView(PermissionMixin, generics.CreateAPIView):
-    """
-	API endpoint to allow the user to add a test to their Branch,
-	It allows the user to add the test to multiple Branches at a go.
-	"""
     serializer_class = TestSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         if not self.has_laboratory_permission(self.request.user):
-            return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
-        return self.create(request)
+            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def perform_create(self, serializer):
-        test = serializer.save()
+        if not isinstance(request.data, list):  # Ensure batch processing
+            return Response({"error": "Expected a list of tests"}, status=status.HTTP_400_BAD_REQUEST)
 
-        branches = self.request.data.get('branch', [])
-        test.branch.add(*branches)
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+#class CreateTestView(PermissionMixin, generics.CreateAPIView):
+#    """
+#	API endpoint to allow the user to add a test to their Branch,
+#	It allows the user to add the test to multiple Branches at a go.
+#	"""
+#    serializer_class = TestSerializer
+
+#    def post(self, request):
+#        if not self.has_laboratory_permission(self.request.user):
+#            return Response(
+#				{'error': 'Invalid credentials'},
+#				status=status.HTTP_400_BAD_REQUEST
+#			)
+#        return self.create(request)
+
+#    def perform_create(self, serializer):
+#        test = serializer.save()
+
+#        branches = self.request.data.get('branch', [])
+#        test.branch.add(*branches)
 
 
 class TestListView(generics.ListAPIView):

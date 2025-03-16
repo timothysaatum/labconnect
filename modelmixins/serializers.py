@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from modelmixins.models import Facility, SampleType, FacilityWorkingHours
+from modelmixins.models import (
+    Facility, 
+    SampleType, 
+    FacilityWorkingHours, 
+    TestTemplate, 
+    SampleTypeTemplate
+)
 
 
 class FacilityWorkingHoursSerializer(serializers.ModelSerializer):
@@ -97,22 +103,85 @@ class FacilitySerializer(serializers.ModelSerializer):
         return data
 
 
+class BaseSampleTypeSerializer(serializers.ModelSerializer):
+    sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=False)
 
-class SampleTypeSerializer(serializers.ModelSerializer):
+    sample_name = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    collection_procedure = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    sample_tube = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    collection_time = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    storage_requirements = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    transport_requirements = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    collection_volume = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True)
+    collection_instructions = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    required_fasting = serializers.BooleanField(required=False)
+    storage_temperature = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    maximum_storage_duration = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    transport_medium = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    packaging_requirements = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    biosafety_level = serializers.ChoiceField(
+        choices=[('BSL-1', 'BSL-1'), ('BSL-2', 'BSL-2'), ('BSL-3', 'BSL-3')],
+        required=False,
+        allow_null=True
+    )
+    infectious_risk = serializers.BooleanField(required=False)
 
     class Meta:
-
-        model = SampleType
-
         fields = (
-            "id",
-            "sample_name",
-            "sample_tube",
-            "collection_procedure",
-            "collection_time",
+            'sample_type',
+            'sample_name',
+            'collection_procedure',
+            'sample_tube',
+            'collection_time',
+            'storage_requirements',
+            'transport_requirements',
+            'collection_volume',
+            'collection_instructions',
+            'required_fasting',
+            'storage_temperature',
+            'maximum_storage_duration',
+            'transport_medium',
+            'packaging_requirements',
+            'biosafety_level',
+            'infectious_risk',
         )
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["sample_name"] = str(instance)
+        if hasattr(instance, 'sample_type'):
+            data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+        return data
+
+
+class SampleTypeSerializer(BaseSampleTypeSerializer):
+    class Meta(BaseSampleTypeSerializer.Meta):
+        model = SampleType  # Ensure the correct model is used
+
+
+class SampleTypeTemplateSerializer(BaseSampleTypeSerializer):
+    class Meta(BaseSampleTypeSerializer.Meta):
+        model = TestTemplate  # Ensure the correct model is used
+
+
+
+class TestTemplateSerializer(serializers.ModelSerializer):
+    sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleTypeTemplate.objects.all(), required=True)
+    class Meta:
+        model = TestTemplate
+        fields = (
+			'test_code',
+			'name',
+			'turn_around_time',
+			'price',
+			'discount_price',
+			'patient_preparation',
+			'test_status',
+			'date_modified',
+			'date_added',
+			'sample_type'
+		)
+        
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['sample_type'] = SampleTypeTemplateSerializer(instance.sample_type.all(), many=True).data
         return data
