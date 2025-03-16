@@ -175,87 +175,116 @@ class BranchSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class TestSerializer(serializers.ModelSerializer):
 
-	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
-	discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
+    branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
+    sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
+    discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
 
-	class Meta:
+    class Meta:
+        model = Test
+        fields = (
+            'id',
+            'test_code',
+            'name',
+            'turn_around_time',
+            'price',
+            'discount_price',
+            'patient_preparation',
+            'sample_type',
+            'branch',
+            'test_status',
+            'date_modified',
+            'date_added'
+        )
 
-		model = Test
-		fields = (
-			'id',
-			'test_code',
-			'name',
-			'turn_around_time',
-			'price',
-			'discount_price',
-			'patient_preparation',
-			'sample_type',
-			'branch',
-			'test_status',
-			'date_modified',
-			'date_added'
-		)
-		
-	def create(self, validated_data):
-	       branches_data = validated_data.pop('branch', [])  # Extract branch UUIDs
-	       sample_types_data = validated_data.pop('sample_types', [])
-	       # Fetch branch instances in bulk
-	       branches = Branch.objects.filter(id__in=branches_data)
-	       if not branches.exists():
-	           raise serializers.ValidationError({"branch": "One or more branches do not exist."})
-	       # Optimize sample type processing
-	       sample_type_objs = []
-	       for sample_data in sample_types_data:
-	           obj, created = SampleType.objects.get_or_create(**sample_data)
-	           sample_type_objs.append(obj)
-	       # Create the test object
-	       test = Test.objects.create(**validated_data)
-	       test.sample_type.add(*sample_type_objs)
-	       test.branch.add(*branches)
-	       
-	       return test
-		
-	# pagination_class = QueryPagination
-	def get_branch_specific_data(self, obj):
-		branch_id = self.context.get('pk')
+    def create(self, validated_data):
+        test_instances = []
+        test_sample_mappings = []  # Store mappings between tests and sample types
+        test_branch_mappings = []  # Store mappings between tests and branches
 
-		data = {
-			'price': obj.price,
-			'discount_price': obj.discount_price,
-			'discount_percent': obj.discount_percent,
-			'test_status': obj.test_status,
-			'turn_around_time': obj.turn_around_time,
-		}
+        # Extract all branch UUIDs from the request at once
+        branch_ids = {branch_id for test_data in validated_data for branch_id in test_data.get('branch', [])}
+        branches = {branch.id: branch for branch in Branch.objects.filter(id__in=branch_ids)}
 
-		if branch_id:
+        # Extract all sample type data at once
+        all_sample_data = [sample for test_data in validated_data for sample in test_data.get('sample_types', [])]
 
-			try:
+        # Bulk create unique sample types
+        sample_type_instances = {tuple(sample.values()): sample for sample in all_sample_data}
+        created_samples = SampleType.objects.bulk_create(
+            [SampleType(**sample) for sample in sample_type_instances.values()],
+            ignore_conflicts=True
+        )
 
-				branch_test = BranchTest.objects.get(test=obj, branch_id=branch_id)
-				data['price'] = branch_test.price or obj.price
-				data['discount_price'] = branch_test.discount_price or obj.discount_price
-				data['discount_percent'] = branch_test.discount_percent or obj.discount_percent
-				data['test_status'] = branch_test.test_status or obj.test_status
-				data['turn_around_time'] = branch_test.turn_around_time or obj.turn_around_time
+        # Fetch the created sample types and map them
+        sample_types = {tuple(sample.values()): sample for sample in SampleType.objects.filter(id__in=[s.id for s in created_samples])}
 
-			except BranchTest.DoesNotExist:
-				raise('No such branch')
+        # Process tests
+        for test_data in validated_data:
+            branch_ids = test_data.pop('branch', [])
+            sample_types_data = test_data.pop('sample_types', [])
 
-		return data
+            # Create test instance but don't save yet
+            test = Test(**test_data)
+            test_instances.append(test)
 
-	def to_representation(self, instance):
+            # Store test-branch mappings
+            for branch_id in branch_ids:
+                if branch_id in branches:
+                    test_branch_mappings.append((test, branches[branch_id]))
 
-		data = super().to_representation(instance)
-		data['name'] = str(instance)
-		branch_test_details = self.get_branch_specific_data(instance)
-		data.update(branch_test_details)
-		data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+            # Store test-sample mappings
+            for sample_data in sample_types_data:
+                sample_key = tuple(sample_data.values())
+                if sample_key in sample_types:
+                    test_sample_mappings.append((test, sample_types[sample_key]))
 
-		return data
+        # Bulk insert tests
+        created_tests = Test.objects.bulk_create(test_instances)
+
+        # Assign branches in bulk
+        for test, branch in test_branch_mappings:
+            test.branch.add(branch)
+
+        # Assign sample types in bulk
+        for test, sample_type in test_sample_mappings:
+            test.sample_type.add(sample_type)
+
+        return created_tests
+
+    def get_branch_specific_data(self, obj):
+        branch_id = self.context.get('pk')
+
+        data = {
+            'price': obj.price,
+            'discount_price': obj.discount_price,
+            'discount_percent': obj.discount_percent,
+            'test_status': obj.test_status,
+            'turn_around_time': obj.turn_around_time,
+        }
+
+        if branch_id:
+            try:
+                branch_test = BranchTest.objects.get(test=obj, branch_id=branch_id)
+                data['price'] = branch_test.price or obj.price
+                data['discount_price'] = branch_test.discount_price or obj.discount_price
+                data['discount_percent'] = branch_test.discount_percent or obj.discount_percent
+                data['test_status'] = branch_test.test_status or obj.test_status
+                data['turn_around_time'] = branch_test.turn_around_time or obj.turn_around_time
+            except BranchTest.DoesNotExist:
+                raise serializers.ValidationError({'branch': 'No such branch'})
+
+        return data
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['name'] = str(instance)
+        branch_test_details = self.get_branch_specific_data(instance)
+        data.update(branch_test_details)
+        data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+
+        return data
 
 
 class BranchTestSerializer(serializers.ModelSerializer):
