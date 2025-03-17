@@ -4,7 +4,8 @@ from modelmixins.models import (
     SampleType, 
     FacilityWorkingHours, 
     TestTemplate, 
-    SampleTypeTemplate
+    SampleTypeTemplate,
+    Department
 )
 
 
@@ -103,6 +104,20 @@ class FacilitySerializer(serializers.ModelSerializer):
         return data
 
 
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'  # Includes all fields from the model
+
+
+class BulkDepartmentSerializer(serializers.Serializer):
+    departments = DepartmentSerializer(many=True)  # Allows multiple departments
+
+    def create(self, validated_data):
+        departments_data = validated_data['departments']
+        return Department.objects.bulk_create([Department(**data) for data in departments_data])
+
+
 class BaseSampleTypeSerializer(serializers.ModelSerializer):
     sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=False)
 
@@ -113,18 +128,11 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
     storage_requirements = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     transport_requirements = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     collection_volume = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True)
-    collection_instructions = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-    required_fasting = serializers.BooleanField(required=False)
-    storage_temperature = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-    maximum_storage_duration = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-    transport_medium = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-    packaging_requirements = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     biosafety_level = serializers.ChoiceField(
         choices=[('BSL-1', 'BSL-1'), ('BSL-2', 'BSL-2'), ('BSL-3', 'BSL-3')],
         required=False,
         allow_null=True
     )
-    infectious_risk = serializers.BooleanField(required=False)
 
     class Meta:
         fields = (
@@ -136,14 +144,7 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
             'storage_requirements',
             'transport_requirements',
             'collection_volume',
-            'collection_instructions',
-            'required_fasting',
-            'storage_temperature',
-            'maximum_storage_duration',
-            'transport_medium',
-            'packaging_requirements',
             'biosafety_level',
-            'infectious_risk',
         )
 
     def to_representation(self, instance):

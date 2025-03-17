@@ -249,14 +249,22 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
         if not self.has_laboratory_permission(self.request.user):
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not isinstance(request.data, list):  # Ensure batch processing
-            return Response({"error": "Expected a list of tests"}, status=status.HTTP_400_BAD_REQUEST)
+        # Check if the payload is a single object or a list
+        is_batch = isinstance(request.data, list)
 
-        serializer = self.get_serializer(data=request.data, many=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        # Handle single test creation
+        if not is_batch:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Handle batch test creation
+        else:
+            serializer = self.get_serializer(data=request.data, many=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 #class CreateTestView(PermissionMixin, generics.CreateAPIView):

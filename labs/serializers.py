@@ -175,10 +175,10 @@ class BranchSerializer(serializers.ModelSerializer):
         return instance
 
 
-class TestSerializer(serializers.ModelSerializer):
 
+class TestSerializer(serializers.ModelSerializer):
     branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-    sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
+    sample_type = SampleTypeSerializer(many=True)
     discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
 
     class Meta:
@@ -199,62 +199,24 @@ class TestSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        test_instances = []
-        test_sample_mappings = []  # Store mappings between tests and sample types
-        test_branch_mappings = []  # Store mappings between tests and branches
+        print(validated_data)
+        sample_types_data = validated_data.pop('sample_type')
+        branches_data = validated_data.pop('branch')
+        test = Test.objects.create(**validated_data)
 
-        # Extract all branch UUIDs from the request at once
-        branch_ids = {branch_id for test_data in validated_data for branch_id in test_data.get('branch', [])}
-        branches = {branch.id: branch for branch in Branch.objects.filter(id__in=branch_ids)}
-
-        # Extract all sample type data at once
-        all_sample_data = [sample for test_data in validated_data for sample in test_data.get('sample_types', [])]
-
-        # Bulk create unique sample types
-        sample_type_instances = {tuple(sample.values()): sample for sample in all_sample_data}
-        created_samples = SampleType.objects.bulk_create(
-            [SampleType(**sample) for sample in sample_type_instances.values()],
-            ignore_conflicts=True
-        )
-
-        # Fetch the created sample types and map them
-        sample_types = {tuple(sample.values()): sample for sample in SampleType.objects.filter(id__in=[s.id for s in created_samples])}
-
-        # Process tests
-        for test_data in validated_data:
-            branch_ids = test_data.pop('branch', [])
-            sample_types_data = test_data.pop('sample_types', [])
-
-            # Create test instance but don't save yet
-            test = Test(**test_data)
-            test_instances.append(test)
-
-            # Store test-branch mappings
-            for branch_id in branch_ids:
-                if branch_id in branches:
-                    test_branch_mappings.append((test, branches[branch_id]))
-
-            # Store test-sample mappings
-            for sample_data in sample_types_data:
-                sample_key = tuple(sample_data.values())
-                if sample_key in sample_types:
-                    test_sample_mappings.append((test, sample_types[sample_key]))
-
-        # Bulk insert tests
-        created_tests = Test.objects.bulk_create(test_instances)
-
-        # Assign branches in bulk
-        for test, branch in test_branch_mappings:
-            test.branch.add(branch)
-
-        # Assign sample types in bulk
-        for test, sample_type in test_sample_mappings:
+        # Create or get SampleType instances
+        for sample_type_data in sample_types_data:
+            sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
             test.sample_type.add(sample_type)
 
-        return created_tests
+        # Add branches to the test
+        for branch_data in branches_data:
+            test.branch.add(branch_data)
 
+        return test
     def get_branch_specific_data(self, obj):
         branch_id = self.context.get('pk')
+        print(obj)
 
         data = {
             'price': obj.price,
@@ -278,13 +240,9 @@ class TestSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['name'] = str(instance)
-        branch_test_details = self.get_branch_specific_data(instance)
-        data.update(branch_test_details)
-        data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
-
-        return data
+        representation = super().to_representation(instance)
+        representation['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+        return representation
 
 
 class BranchTestSerializer(serializers.ModelSerializer):
