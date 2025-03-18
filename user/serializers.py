@@ -266,10 +266,15 @@ class UserSerializer(serializers.ModelSerializer):
 		data['user'] = NaiveUserSerializer(instance).data
 		if instance.account_type == 'Laboratory':
 			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance), many=True).data
-			data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance), many=True).data
+			#data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance), many=True).data
+			data['branch'] = BranchSerializer(Branch.objects.filter(Q(laboratory__created_by=instance) | Q(branch_manager_id=instance.id)), many=True).data
+			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
+			#print(branch_manager_labs)
+			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance), many=True).data
+			#print(data)
 		return data
 
 

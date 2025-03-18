@@ -15,6 +15,7 @@ urlpatterns = [
     path("sample/", include("sample.urls")),
     path("transactions/", include("transactions.urls")),
     path("analytics/", include("analytics.urls")),
+    path("utils/", include("modelmixins.urls")),
     # path("metrics/", exports.ExportToDjangoView, name="metrics"),
 ]
 

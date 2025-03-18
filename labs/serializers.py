@@ -177,66 +177,80 @@ class BranchSerializer(serializers.ModelSerializer):
 
 
 class TestSerializer(serializers.ModelSerializer):
+    branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
+    sample_type = SampleTypeSerializer(many=True)
+    discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
 
-	branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-	sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=True)
-	discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
+    class Meta:
+        model = Test
+        fields = (
+            'id',
+            'test_code',
+            'name',
+            'turn_around_time',
+            'price',
+            'discount_price',
+            'patient_preparation',
+            'sample_type',
+            'branch',
+            'test_status',
+            'date_modified',
+            'date_added'
+        )
 
-	class Meta:
+    def create(self, validated_data):
+        print(validated_data)
+        sample_types_data = validated_data.pop('sample_type')
+        branches_data = validated_data.pop('branch')
+        test = Test.objects.create(**validated_data)
 
-		model = Test
-		fields = (
-			'id',
-			'test_code',
-			'name',
-			'turn_around_time',
-			'price',
-			'discount_price',
-			'patient_preparation',
-			'sample_type',
-			'branch',
-			'test_status',
-			'date_modified',
-			'date_added'
-		)
+        # Create or get SampleType instances
+        for sample_type_data in sample_types_data:
+            sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
+            test.sample_type.add(sample_type)
 
-	# pagination_class = QueryPagination
-	def get_branch_specific_data(self, obj):
-		branch_id = self.context.get('pk')
+        # Add branches to the test
+        for branch_data in branches_data:
+            test.branch.add(branch_data)
 
-		data = {
-			'price': obj.price,
-			'discount_price': obj.discount_price,
-			'discount_percent': obj.discount_percent,
-			'test_status': obj.test_status,
-			'turn_around_time': obj.turn_around_time,
-		}
+        return test
+        
+    def get_branch_specific_data(self, obj):
+        branch_id = self.context.get('pk')
+       # print(obj)
 
-		if branch_id:
+        data = {
+            'price': obj.price,
+            'discount_price': obj.discount_price,
+            'discount_percent': obj.discount_percent,
+            'test_status': obj.test_status,
+            'turn_around_time': obj.turn_around_time,
+        }
 
-			try:
+        if branch_id:
+            try:
+                branch_test = BranchTest.objects.get(test=obj, branch_id=branch_id)
+                data['price'] = branch_test.price or obj.price
+                data['discount_price'] = branch_test.discount_price or obj.discount_price
+                data['discount_percent'] = branch_test.discount_percent or obj.discount_percent
+                data['test_status'] = branch_test.test_status or obj.test_status
+                data['turn_around_time'] = branch_test.turn_around_time or obj.turn_around_time
+            except BranchTest.DoesNotExist:
+                raise serializers.ValidationError({'branch': 'No such branch'})
 
-				branch_test = BranchTest.objects.get(test=obj, branch_id=branch_id)
-				data['price'] = branch_test.price or obj.price
-				data['discount_price'] = branch_test.discount_price or obj.discount_price
-				data['discount_percent'] = branch_test.discount_percent or obj.discount_percent
-				data['test_status'] = branch_test.test_status or obj.test_status
-				data['turn_around_time'] = branch_test.turn_around_time or obj.turn_around_time
+        return data
 
-			except BranchTest.DoesNotExist:
-				raise('No such branch')
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['name'] = str(instance)
+        branch_test_details = self.get_branch_specific_data(instance)
+        data.update(branch_test_details)
+        data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
 
-		return data
+        # Include the string representation of branches
+        data['branch'] = [str(branch) for branch in instance.branch.all()]
 
-	def to_representation(self, instance):
-
-		data = super().to_representation(instance)
-		data['name'] = str(instance)
-		branch_test_details = self.get_branch_specific_data(instance)
-		data.update(branch_test_details)
-		data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
-
-		return data
+        return data
 
 
 class BranchTestSerializer(serializers.ModelSerializer):
