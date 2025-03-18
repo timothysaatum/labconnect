@@ -1,4 +1,3 @@
-# import requests # type: ignore
 import json
 from uuid import UUID
 # from geographiclib.geodesic import Geodesic
