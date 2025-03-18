@@ -3,7 +3,8 @@ from .models import (
     SampleType, 
     FacilityWorkingHours, 
     TestTemplate,
-    SampleTypeTemplate
+    SampleTypeTemplate,
+    Department
     )
 
 # Register your models here.
@@ -40,7 +41,17 @@ class TestTemplateAdmin(admin.ModelAdmin):
 		'date_added', 
 		'date_modified'
 	)
+
+	
+class DepartmentAdmin(admin.ModelAdmin):
+	list_display = (
+		'id', 
+		"name",
+		"branch",
+	)	
+	
 admin.site.register(SampleType, SampleTypeAdmin)
+admin.site.register(Department, DepartmentAdmin)
 admin.site.register(SampleTypeTemplate, SampleTypeTemplateAdmin)
 admin.site.register(FacilityWorkingHours, FacilityWorkingHoursAdmin)
 admin.site.register(TestTemplate, TestTemplateAdmin)

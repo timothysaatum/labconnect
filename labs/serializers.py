@@ -214,9 +214,10 @@ class TestSerializer(serializers.ModelSerializer):
             test.branch.add(branch_data)
 
         return test
+        
     def get_branch_specific_data(self, obj):
         branch_id = self.context.get('pk')
-        print(obj)
+       # print(obj)
 
         data = {
             'price': obj.price,
@@ -240,9 +241,16 @@ class TestSerializer(serializers.ModelSerializer):
         return data
 
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
-        return representation
+        data = super().to_representation(instance)
+        data['name'] = str(instance)
+        branch_test_details = self.get_branch_specific_data(instance)
+        data.update(branch_test_details)
+        data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+
+        # Include the string representation of branches
+        data['branch'] = [str(branch) for branch in instance.branch.all()]
+
+        return data
 
 
 class BranchTestSerializer(serializers.ModelSerializer):

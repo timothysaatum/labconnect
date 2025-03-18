@@ -91,6 +91,7 @@ class Department(models.Model):
         return f"{self.name} - {self.branch.name}"
 
 
+
 class FacilityWorkingHours(models.Model):
     WEEKDAYS = [
         ("Monday", "Monday"),
@@ -124,12 +125,19 @@ class BaseSample(models.Model):
     storage_requirements = models.TextField(blank=True, null=True)
     transport_requirements = models.TextField(blank=True, null=True)
     collection_volume = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    collection_instructions = models.TextField(blank=True, null=True)
+    required_fasting = models.BooleanField(default=False)
+    storage_temperature = models.CharField(max_length=50, blank=True, null=True)
+    maximum_storage_duration = models.CharField(max_length=50, blank=True, null=True)
+    transport_medium = models.CharField(max_length=100, blank=True, null=True)
+    packaging_requirements = models.TextField(blank=True, null=True)
     biosafety_level = models.CharField(
         max_length=10,
         choices=[('BSL-1', 'BSL-1'), ('BSL-2', 'BSL-2'), ('BSL-3', 'BSL-3')],
         blank=True,
         null=True
     )
+    infectious_risk = models.BooleanField(default=True)
 
 class SampleType(BaseSample):
 
@@ -151,9 +159,9 @@ class BasicTest(BaseModel):
 	]
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+	department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
 	test_code = models.CharField(max_length=100, null=True, blank=True)
 	name = models.CharField(max_length=200, db_index=True)
-	department = models.ForeignKey(Department, on_delete=models.SET_NULL, blank=True, null=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
 	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField(blank=True, null=True)
