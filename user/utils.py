@@ -22,7 +22,7 @@ def send_code_to_user(email):
     user = Client.objects.get(email=email)
 
     # Verification URL (update it to the actual deployment URL when live)
-    verification_url = "https://api.labconnekt.com/user/verify-email/"
+    verification_url = "https://labconnekt.com/user/verify-email/"
 
     # HTML formatted message
     html_message = f"""

@@ -267,28 +267,6 @@ class CreateTestView(PermissionMixin, generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-#class CreateTestView(PermissionMixin, generics.CreateAPIView):
-#    """
-#	API endpoint to allow the user to add a test to their Branch,
-#	It allows the user to add the test to multiple Branches at a go.
-#	"""
-#    serializer_class = TestSerializer
-
-#    def post(self, request):
-#        if not self.has_laboratory_permission(self.request.user):
-#            return Response(
-#				{'error': 'Invalid credentials'},
-#				status=status.HTTP_400_BAD_REQUEST
-#			)
-#        return self.create(request)
-
-#    def perform_create(self, serializer):
-#        test = serializer.save()
-
-#        branches = self.request.data.get('branch', [])
-#        test.branch.add(*branches)
-
-
 class TestListView(generics.ListAPIView):
     """
     API endpoint to fetch tests for a specific laboratory or its branch.
@@ -415,50 +393,6 @@ class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
 		return self.destroy(request, pk, format=None)
 
 
-# class AllLaboratories(generics.ListAPIView):
-#     serializer_class = FacilitySerializer
-#     DEFAULT_MAX_DISTANCE = 25000
-
-#     def get_queryset(self):
-#         max_dist = float(
-#             self.request.GET.get("max_distance", self.DEFAULT_MAX_DISTANCE)
-#         )
-
-#         facility_level = self.request.GET.get("level")
-#         user_lat, user_long = self.request.GET.get("gps_coordinates").split(",")
-#         # user_lat, user_long = gps_coordinates.split(",")
-		
-#         # print(user_lat, user_long)
-
-#         query = Facility.objects.filter(
-#             Q(hospitallab__isnull=False) | Q(branch__isnull=False)
-#         ).select_related("branch", "hospitallab")
-
-#         if facility_level and not (user_lat and user_long):
-#             return filter_by_facility_level(query, facility_level)
-
-#         # If only location is provided
-#         if (user_lat and user_long) and not facility_level:
-#             return get_nearby_branches(
-#                 query=query,
-#                 user_lat=user_lat,
-#                 user_long=user_long,
-#                 max_distance_km=max_dist,
-#             )
-
-#         # If both facility_level and location are provided
-#         if facility_level and (user_lat and user_long):
-#             query = filter_by_facility_level(query, facility_level)
-#             return get_nearby_branches(
-#                 query=query,
-#                 user_lat=user_lat,
-#                 user_long=user_long,
-#                 max_distance_km=max_dist,
-#             )
-
-#         # print(query)
-#         # Return an all labs queryset if no valid param is provided
-#         return query
 
 class AllLaboratories(generics.ListAPIView):
     serializer_class = FacilitySerializer
