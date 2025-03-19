@@ -136,6 +136,7 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
+            "id",
             'sample_type',
             'sample_name',
             'collection_procedure',

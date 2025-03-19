@@ -178,7 +178,8 @@ class BranchSerializer(serializers.ModelSerializer):
 
 class TestSerializer(serializers.ModelSerializer):
     branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-    sample_type = SampleTypeSerializer(many=True)
+    sample_type_data = SampleTypeSerializer(many=True, required=False, allow_null=True, write_only=True)
+    sample_type_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True) 
     discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
 
     class Meta:
@@ -191,20 +192,24 @@ class TestSerializer(serializers.ModelSerializer):
             'price',
             'discount_price',
             'patient_preparation',
-            'sample_type',
+            'sample_type_data',
+            'sample_type_ids',
             'branch',
             'test_status',
             'date_modified',
             'date_added'
         )
-
     def create(self, validated_data):
-        print(validated_data)
-        sample_types_data = validated_data.pop('sample_type')
+        sample_type_ids = validated_data.pop('sample_type_ids', [])
+        sample_types_data = validated_data.pop('sample_type_data', [])
         branches_data = validated_data.pop('branch')
         test = Test.objects.create(**validated_data)
 
-        # Create or get SampleType instances
+        # Process sample_type (IDs)
+        for sample_type_id in sample_type_ids:
+            test.sample_type.add(sample_type_id)
+
+        # Process sample_type_data (full data)
         for sample_type_data in sample_types_data:
             sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
             test.sample_type.add(sample_type)
@@ -214,10 +219,10 @@ class TestSerializer(serializers.ModelSerializer):
             test.branch.add(branch_data)
 
         return test
+
         
     def get_branch_specific_data(self, obj):
         branch_id = self.context.get('pk')
-       # print(obj)
 
         data = {
             'price': obj.price,
