@@ -119,8 +119,8 @@ class BulkDepartmentSerializer(serializers.Serializer):
 
 
 class BaseSampleTypeSerializer(serializers.ModelSerializer):
-    sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=False)
 
+    sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=False)
     sample_name = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     collection_procedure = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     sample_tube = serializers.CharField(required=False, allow_null=True, allow_blank=True)
@@ -136,7 +136,7 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            "id",
+            # "id",
             'sample_type',
             'sample_name',
             'collection_procedure',
@@ -156,8 +156,15 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
 
 
 class SampleTypeSerializer(BaseSampleTypeSerializer):
+    id = serializers.IntegerField(read_only=True)
     class Meta(BaseSampleTypeSerializer.Meta):
-        model = SampleType  # Ensure the correct model is used
+        model = SampleType
+        fields = BaseSampleTypeSerializer.Meta.fields + ('id',)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data.pop('id', None)  # Remove the id field if it exists
+        return data
 
 
 class SampleTypeTemplateSerializer(BaseSampleTypeSerializer):

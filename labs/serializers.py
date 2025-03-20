@@ -202,7 +202,7 @@ class TestSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         sample_type_ids = validated_data.pop('sample_type_ids', [])
         sample_types_data = validated_data.pop('sample_type_data', [])
-        branches_data = validated_data.pop('branch')
+        branches_data = validated_data.pop('branch', [])
         test = Test.objects.create(**validated_data)
 
         # Process sample_type (IDs)
