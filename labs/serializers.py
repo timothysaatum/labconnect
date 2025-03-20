@@ -253,6 +253,7 @@ class TestSerializer(serializers.ModelSerializer):
         data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
 
         # Include the string representation of branches
+        data.pop('branch', None)
         data['branch'] = [str(branch) for branch in instance.branch.all()]
 
         return data

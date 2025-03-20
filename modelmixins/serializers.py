@@ -107,11 +107,11 @@ class FacilitySerializer(serializers.ModelSerializer):
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = '__all__'  # Includes all fields from the model
+        fields = '__all__'
 
 
 class BulkDepartmentSerializer(serializers.Serializer):
-    departments = DepartmentSerializer(many=True)  # Allows multiple departments
+    departments = DepartmentSerializer(many=True)
 
     def create(self, validated_data):
         departments_data = validated_data['departments']
@@ -163,13 +163,13 @@ class SampleTypeSerializer(BaseSampleTypeSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data.pop('id', None)  # Remove the id field if it exists
+        data.pop('id', None) 
         return data
 
 
 class SampleTypeTemplateSerializer(BaseSampleTypeSerializer):
     class Meta(BaseSampleTypeSerializer.Meta):
-        model = TestTemplate  # Ensure the correct model is used
+        model = TestTemplate
 
 
 
