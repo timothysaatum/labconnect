@@ -107,11 +107,11 @@ class FacilitySerializer(serializers.ModelSerializer):
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = '__all__'
+        fields = '__all__'  # Includes all fields from the model
 
 
 class BulkDepartmentSerializer(serializers.Serializer):
-    departments = DepartmentSerializer(many=True)
+    departments = DepartmentSerializer(many=True)  # Allows multiple departments
 
     def create(self, validated_data):
         departments_data = validated_data['departments']
@@ -119,8 +119,8 @@ class BulkDepartmentSerializer(serializers.Serializer):
 
 
 class BaseSampleTypeSerializer(serializers.ModelSerializer):
-
     sample_type = serializers.PrimaryKeyRelatedField(many=True, queryset=SampleType.objects.all(), required=False)
+
     sample_name = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     collection_procedure = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     sample_tube = serializers.CharField(required=False, allow_null=True, allow_blank=True)
@@ -136,7 +136,6 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            # "id",
             'sample_type',
             'sample_name',
             'collection_procedure',
@@ -148,28 +147,27 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
             'biosafety_level',
         )
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if hasattr(instance, 'sample_type'):
-            data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
-        return data
+    #def to_representation(self, instance):
+#        data = super().to_representation(instance)
+#        if hasattr(instance, 'sample_type'):
+#            data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+#        return data
 
 
 class SampleTypeSerializer(BaseSampleTypeSerializer):
-    id = serializers.IntegerField(read_only=True)
     class Meta(BaseSampleTypeSerializer.Meta):
-        model = SampleType
+        model = SampleType  # Ensure the correct model is used
         fields = BaseSampleTypeSerializer.Meta.fields + ('id',)
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data.pop('id', None) 
-        return data
+        
+#    def to_representation(self, instance):
+#        data = super().to_representation(instance)
+#        data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+#        return data
 
 
 class SampleTypeTemplateSerializer(BaseSampleTypeSerializer):
     class Meta(BaseSampleTypeSerializer.Meta):
-        model = TestTemplate
+        model = TestTemplate  # Ensure the correct model is used
 
 
 

@@ -163,8 +163,8 @@ class BasicTest(BaseModel):
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-	test_code = models.CharField(max_length=100, null=True, blank=True)
-	name = models.CharField(max_length=200, db_index=True)
+	test_code = models.CharField(max_length=100, null=True, blank=True, unique=True)
+	name = models.CharField(max_length=200, db_index=True, unique=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
 	turn_around_time = models.CharField(max_length=200)
 	patient_preparation = models.TextField(blank=True, null=True)
@@ -173,6 +173,7 @@ class BasicTest(BaseModel):
 
 	class Meta:
 		abstract = True
+		unique_together = ("department", "test_code", "name")
 
 
 class SampleTypeTemplate(BaseSample):
