@@ -337,39 +337,62 @@ class TestListView(generics.ListAPIView):
         return tests
 
 
+#class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
+#	"""
+#	Api end point for updating test for a laboratory.
+#	It accepts the test id
+#	"""
+#	serializer_class = TestSerializer
+#	def get_queryset(self):
+#		return Test.objects.filter(pk=self.kwargs.get('pk'))
+
+#	def patch(self, request, pk):
+#		if not self.has_laboratory_permission(self.request.user):
+#			return Response(
+#				{'error': 'Invalid credentials'},
+#				status=status.HTTP_401_UNAUTHORIZED
+#			)
+#		return self.partial_update(request, pk)
+
+#	def perform_update(self, serializer):
+
+#		query_dict.update(self.request.data)
+#		branches = query_dict.get('branch')
+#		#Updates the test with the new branches if there is any.
+#		if not branches and len(query_dict) < 1:
+#			raise ValidationError(
+#				{'error': 'Test must have at least one(1) branch'}
+#			)
+
+#		test = serializer.save()
+
+#		if branches:
+#			#Clears the current branch & set the new branches for the tests
+#			test.branch.clear()
+#			test.branch.add(*branches)
+
+
+
 class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
-	"""
-	Api end point for updating test for a laboratory.
-	It accepts the test id
-	"""
-	serializer_class = TestSerializer
-	def get_queryset(self):
-		return Test.objects.filter(pk=self.kwargs.get('pk'))
+    """
+    Api end point for updating test for a laboratory.
+    It accepts the test id
+    """
+    serializer_class = TestSerializer
 
-	def patch(self, request, pk):
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
-		return self.partial_update(request, pk)
+    def get_queryset(self):
+        return Test.objects.filter(pk=self.kwargs.get('pk'))
 
-	def perform_update(self, serializer):
+    def patch(self, request, pk):
+        if not self.has_laboratory_permission(self.request.user):
+            return Response(
+                {'error': 'Invalid credentials'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        return self.partial_update(request, pk)
 
-		query_dict.update(self.request.data)
-		branches = query_dict.get('branch')
-		#Updates the test with the new branches if there is any.
-		if not branches and len(query_dict) < 1:
-			raise ValidationError(
-				{'error': 'Test must have at least one(1) branch'}
-			)
-
-		test = serializer.save()
-
-		if branches:
-			#Clears the current branch & set the new branches for the tests
-			test.branch.clear()
-			test.branch.add(*branches)
+    def perform_update(self, serializer):
+        serializer.save()
 
 
 class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
