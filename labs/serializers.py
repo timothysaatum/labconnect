@@ -178,7 +178,7 @@ class BranchSerializer(serializers.ModelSerializer):
 
 class TestSerializer(serializers.ModelSerializer):
     branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
-    sample_type_data = SampleTypeSerializer(many=True, required=False, allow_null=True, write_only=True)
+    sample_type = SampleTypeSerializer(many=True, required=False, allow_null=True, write_only=True)
     sample_type_ids = serializers.ListField(child=serializers.IntegerField(), required=False, write_only=True) 
     discount_price = serializers.DecimalField(decimal_places=2, max_digits=10, required=False)
 
@@ -192,16 +192,19 @@ class TestSerializer(serializers.ModelSerializer):
             'price',
             'discount_price',
             'patient_preparation',
-            'sample_type_data',
+            'sample_type',
             'sample_type_ids',
             'branch',
             'test_status',
             'date_modified',
             'date_added'
         )
+        
     def create(self, validated_data):
+        print(validated_data)
         sample_type_ids = validated_data.pop('sample_type_ids', [])
-        sample_types_data = validated_data.pop('sample_type_data', [])
+        sample_types_data = validated_data.pop('sample_type', [])
+        print(sample_types_data)
         branches_data = validated_data.pop('branch')
         test = Test.objects.create(**validated_data)
 
@@ -253,7 +256,7 @@ class TestSerializer(serializers.ModelSerializer):
         data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
 
         # Include the string representation of branches
-        #data['branch'] = [str(branch) for branch in instance.branch.all()]
+        #)data['branch'] = [str(branch) for branch in instance.branch.all()]
 
         return data
 
