@@ -287,6 +287,7 @@ class TestSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
+        print(validated_data)
         sample_type_ids = validated_data.pop('sample_type_ids', [])
         sample_types_data = validated_data.pop('sample_type', [])
         branches_data = validated_data.pop('branch')
@@ -298,7 +299,7 @@ class TestSerializer(serializers.ModelSerializer):
 
         # Process sample_type_data (full data)
         for sample_type_data in sample_types_data:
-            sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
+            sample_type = SampleType.objects.create(**sample_type_data)
             test.sample_type.add(sample_type)
 
         # Add branches to the test
@@ -330,7 +331,7 @@ class TestSerializer(serializers.ModelSerializer):
             sample_types_data = validated_data.pop('sample_type')
             instance.sample_type.clear()
             for sample_type_data in sample_types_data:
-                sample_type, created = SampleType.objects.get_or_create(**sample_type_data)
+                sample_type = SampleType.objects.create(**sample_type_data)
                 instance.sample_type.add(sample_type)
 
         # Update branches
