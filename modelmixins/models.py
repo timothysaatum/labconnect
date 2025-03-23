@@ -173,7 +173,7 @@ class BasicTest(BaseModel):
 
 	class Meta:
 		abstract = True
-		unique_together = ("department", "test_code", "name")
+		unique_together = ("test_code", "name")
 
 
 class SampleTypeTemplate(BaseSample):
