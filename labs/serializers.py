@@ -287,7 +287,7 @@ class TestSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        print(validated_data)
+        
         sample_type_ids = validated_data.pop('sample_type_ids', [])
         sample_types_data = validated_data.pop('sample_type', [])
         branches_data = validated_data.pop('branch')
@@ -304,6 +304,7 @@ class TestSerializer(serializers.ModelSerializer):
 
         # Add branches to the test
         for branch_data in branches_data:
+            print(f"Adding {branch_data} to {test.name}")
             test.branch.add(branch_data)
 
         return test
