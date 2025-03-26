@@ -98,10 +98,12 @@ class BranchSerializer(serializers.ModelSerializer):
         return value
 
     def to_representation(self, instance):
+        
         data = super().to_representation(instance)
         data['branch_manager'] = instance.branch_manager.full_name if instance.branch_manager else instance.laboratory.created_by.full_name
         data['manager_id'] = instance.branch_manager.id if instance.branch_manager else instance.laboratory.created_by.id
         data['name'] = instance.branch_name if instance.branch_name else f'{instance.laboratory.name} - {instance.town}'
+        
         return data
 
     def create(self, validated_data):
@@ -175,7 +177,6 @@ class BranchSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class TestSerializer(serializers.ModelSerializer):
     branch = serializers.PrimaryKeyRelatedField(many=True, queryset=Branch.objects.all(), required=True)
     sample_type = SampleTypeSerializer(many=True, required=False, allow_null=True, write_only=True)
@@ -218,12 +219,13 @@ class TestSerializer(serializers.ModelSerializer):
 
         # Add branches to the test
         for branch_data in branches_data:
-            print(f"Adding {branch_data} to {test.name}")
+            #print(f"Adding {branch_data} to {test.name}")
             test.branch.add(branch_data)
 
         return test
 
     def update(self, instance, validated_data):
+        
         # Update the Test instance fields
         instance.test_code = validated_data.get('test_code', instance.test_code)
         instance.name = validated_data.get('name', instance.name)

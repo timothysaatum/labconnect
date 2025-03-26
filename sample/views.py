@@ -117,6 +117,7 @@ class UpdateReferral(generics.UpdateAPIView):
 
 
 class GetReferrals(generics.ListAPIView):
+    
     permission_classes = [IsAuthenticated]
     pagination_class = QueryPagination
     serializer_class = ReferralSerializer

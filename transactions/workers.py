@@ -3,7 +3,6 @@ import logging
 import time
 import uuid
 from django.conf import settings
-# from concurrent.futures import ThreadPoolExecutor
 from django.db import transaction
 from modelmixins.models import Facility
 from labs.models import Laboratory
@@ -13,7 +12,7 @@ from .process_payment import Paystack
 
 
 logger = logging.getLogger(__name__)
-# executor = ThreadPoolExecutor(max_workers=10)  # Adjust workers based on traffic
+
 
 def is_internet_available():
     """Check if the internet is available."""
@@ -75,12 +74,10 @@ def process_task(task):
                 task.payload["transaction"] = task.transaction_ref
                 task.payload["customer_note"] = "Refund for rejected sample"
 
-            # print(task.payload)
             response = requests.post(url, json=task.payload, headers=headers, timeout=10)
             print(response.json())
             response.raise_for_status()
             response_data = response.json()
-            # print(response_data)
             
 
             if response_data.get("status"):  # API call successful
