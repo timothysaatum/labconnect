@@ -117,6 +117,7 @@ class FacilityWorkingHours(models.Model):
         return f"{self.facility} - {self.day}: {self.start_time} to {self.end_time}"
 
 
+
 class BaseSample(models.Model):
     sample_name = models.CharField(max_length=100)
     collection_procedure = models.TextField()
