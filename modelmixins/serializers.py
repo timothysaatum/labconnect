@@ -147,16 +147,22 @@ class BaseSampleTypeSerializer(serializers.ModelSerializer):
             'biosafety_level',
         )
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if hasattr(instance, 'sample_type'):
-            data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
-        return data
+    #def to_representation(self, instance):
+#        data = super().to_representation(instance)
+#        if hasattr(instance, 'sample_type'):
+#            data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+#        return data
 
 
 class SampleTypeSerializer(BaseSampleTypeSerializer):
     class Meta(BaseSampleTypeSerializer.Meta):
         model = SampleType  # Ensure the correct model is used
+        fields = BaseSampleTypeSerializer.Meta.fields + ('id',)
+        
+#    def to_representation(self, instance):
+#        data = super().to_representation(instance)
+#        data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
+#        return data
 
 
 class SampleTypeTemplateSerializer(BaseSampleTypeSerializer):

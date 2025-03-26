@@ -139,6 +139,9 @@ class BaseSample(models.Model):
         null=True
     )
     infectious_risk = models.BooleanField(default=True)
+    
+    class Meta:
+        abstract = True
 
 class SampleType(BaseSample):
 
@@ -171,6 +174,7 @@ class BasicTest(BaseModel):
 
 	class Meta:
 		abstract = True
+
 
 
 class SampleTypeTemplate(BaseSample):

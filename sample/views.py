@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
@@ -413,7 +413,7 @@ class GetSampleTrackerDetails(generics.ListAPIView):
 
 
 class DownloadReferralAttachment(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]  # Only staff users can access
 
     def get(self, request, pk):
         try:
@@ -442,33 +442,19 @@ class DownloadReferralAttachment(APIView):
 
 
 class DownloadTestResult(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminUser]  # Only staff users can access
 
-    def get(self, request, pk):
+    def get(self, request, pk, *args, **kwargs):
         try:
             sample_test = SampleTest.objects.get(pk=pk)
-
-            # Ensure the user has permission to access the test result
-            if not request.user.has_perm("can_view_test_result", sample_test):
-                return Response({"error": "Permission denied"}, status=403)
-
-            if not sample_test.test_result:
-                raise Http404("No test result found.")
-
-            file_path = sample_test.test_result.path  # Get actual file path
-
-            # Check if the file exists on disk
-            if not os.path.exists(file_path):
-                raise Http404("File does not exist on the server.")
-
-            content_type, _ = mimetypes.guess_type(file_path)
-
-            return FileResponse(
-                open(file_path, "rb"),
-                content_type=content_type or "application/octet-stream",
-                as_attachment=True,  # Forces download
-                filename=os.path.basename(file_path),
-            )
-
+            if sample_test.test_result:
+                # Open the file in read-binary mode
+                file = sample_test.test_result.open('rb')
+                # Serve the file for download
+                response = FileResponse(file)
+                response['Content-Disposition'] = f'attachment; filename="{sample_test.test_result.name}"'
+                return response
+            else:
+                raise Http404("File not found.")
         except SampleTest.DoesNotExist:
-            raise Http404("Sample test not found.")
+            raise Http404("SampleTest not found.")
