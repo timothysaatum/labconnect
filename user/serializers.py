@@ -17,8 +17,10 @@ from django.db.models import Q
 
 
 class UserCreationSerializer(serializers.ModelSerializer):
-	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
-	password_confirmation = serializers.CharField(
+    #Serializer for creating users
+
+    password = serializers.CharField(max_length=68, min_length=8, write_only=True)
+    password_confirmation = serializers.CharField(
         max_length=68, min_length=8, write_only=True
     )
     is_admin = serializers.CharField(max_length=10, read_only=True)
