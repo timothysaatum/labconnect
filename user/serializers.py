@@ -56,12 +56,13 @@ class UserCreationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-
+        print(validated_data)
         user = Client.objects.create_user(
             email=validated_data.get("email"),
             first_name=validated_data.get("first_name"),
             last_name=validated_data.get("last_name"),
             phone_number=validated_data.get("phone_number"),
+            is_worker=validated_data.get("is_worker"),
             account_type=validated_data.get("account_type"),
             password=validated_data.get("password"),
         )
@@ -86,7 +87,7 @@ class NaiveUserSerializer(serializers.ModelSerializer):
 					'is_active', 
 					'is_admin',
 					'is_branch_manager',
-					'is_worker',
+					'is_worker'
 					'is_an_individual',
 					'is_verified', 
 					'date_joined', 
@@ -139,16 +140,6 @@ class LoginSerializer(serializers.ModelSerializer):
 
 			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
 			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
-			
-			if instance.is_worker:
-			    worker_branches = instance.work_branches.all()
-			    #worker_lab = worker_branches.first().laboratory
-			    #print(worker_lab)
-			    data['branch'] += BranchSerializer(worker_branches, many=True).data
-			    #data['lab'] += LaboratorySerializer(worker_lab).data
-
-			if instance.is_worker:
-				pass
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.id), many=True).data
@@ -204,7 +195,7 @@ class PasswordResetViewSerializer(serializers.Serializer):
 			}
 
 			send_normal_email(data)
-			# print(abslink)
+			
 			return {
 
 				'user': user,
@@ -282,17 +273,10 @@ class UserSerializer(serializers.ModelSerializer):
 			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
 			#print(branch_manager_labs)
 			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
-			
-			if instance.is_worker:
-			    worker_branches = instance.work_branches.all()
-			    #worker_lab = worker_branches.first().laboratory
-			
-			    data['branch'] += BranchSerializer(worker_branches, many=True).data
-			    #data['lab'] += LaboratorySerializer(worker_lab).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance), many=True).data
-			#print(data)
+			
 		return data
 
 
