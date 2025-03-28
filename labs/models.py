@@ -82,10 +82,11 @@ LEVEL_CHOICES = [
 ]
 
 class Branch(Facility):
-	"""
+    """
     A branch: is a local set up of a particular laboratory that carries out test within that enclave.
     Branch_name: refers to the name of a branch.
     """
+<<<<<<< HEAD
 	accreditation_number = models.CharField(max_length=155, unique=True)
 	level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
 	branch_name = models.CharField(max_length=155, blank=True)
@@ -98,29 +99,42 @@ class Branch(Facility):
 			db_index=True
 		)
 	branch_manager = models.ForeignKey(
+=======
+    accreditation_number = models.CharField(max_length=155, unique=True)
+    level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
+    branch_name = models.CharField(max_length=155, blank=True)
+    region = models.CharField(choices=REGIONS, max_length=100)
+    town = models.CharField(max_length=200)
+    # digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
+    # gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
+    branch_manager = models.ForeignKey(
+>>>>>>> 78f994788225d82e6562c0b325b577c5a1fdd1e7
         user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-	laboratory = models.ForeignKey(
+    laboratory = models.ForeignKey(
         Laboratory, on_delete=models.CASCADE, related_name="branches"
     )
-
-	class Meta:
-		verbose_name_plural = "Branches"
-		unique_together = ("accreditation_number", "branch_name")
-
-	def get_branch_distance(self, user_lat, user_lon):
-
-		if self.gps_coordinates:
-
-			branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
-			d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
-			print(d)
-
-		return d
-
-	def __str__(self) -> str:
-
-		return f"{self.laboratory.name} - {self.town}"
+    worker = models.ManyToManyField(
+        user, related_name='work_branches', db_index=True
+    )
+    
+    class Meta:
+        verbose_name_plural = "Branches"
+        unique_together = ("accreditation_number", "branch_name")
+        
+    def get_branch_distance(self, user_lat, user_lon):
+        
+        if self.gps_coordinates:
+            
+            branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
+            d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
+            print(d)
+            
+        return d
+        
+    def __str__(self) -> str:
+        
+        return f"{self.laboratory.name} - {self.town}"
 
 
 class Test(BasicTest):
