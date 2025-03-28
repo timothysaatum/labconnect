@@ -18,6 +18,7 @@ from django.db.models import Q
 
 
 class UserCreationSerializer(serializers.ModelSerializer):
+    #Serializer for creating users
 
     password = serializers.CharField(max_length=68, min_length=8, write_only=True)
     password_confirmation = serializers.CharField(
