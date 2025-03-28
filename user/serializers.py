@@ -18,20 +18,19 @@ from django.db.models import Q
 
 
 class UserCreationSerializer(serializers.ModelSerializer):
-
-    password = serializers.CharField(max_length=68, min_length=8, write_only=True)
-    password_confirmation = serializers.CharField(
+	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
+	password_confirmation = serializers.CharField(
         max_length=68, min_length=8, write_only=True
     )
-    is_admin = serializers.CharField(max_length=10, read_only=True)
-    is_staff = serializers.CharField(max_length=10, read_only=True)
-    is_active = serializers.CharField(max_length=10, read_only=True)
-
-    class Meta:
-
-        model = Client
-
-        fields = (
+	is_admin = serializers.CharField(max_length=10, read_only=True)
+	is_staff = serializers.CharField(max_length=10, read_only=True)
+	is_active = serializers.CharField(max_length=10, read_only=True)
+	
+	class Meta:
+		
+		model = Client
+		
+		fields = (
             "email",
             "first_name",
             "last_name",
@@ -44,20 +43,19 @@ class UserCreationSerializer(serializers.ModelSerializer):
             "password_confirmation",
         )
 
-    def validate(self, attrs):
-
-        password = attrs.get("password", "")
-        password_confirmation = attrs.get("password_confirmation", "")
-
-        if password != password_confirmation:
-
-            raise serializers.ValidationError("Passwords do not match")
-
-        return attrs
-
-    def create(self, validated_data):
-
-        user = Client.objects.create_user(
+	def validate(self, attrs):
+		password = attrs.get("password", "")
+		password_confirmation = attrs.get("password_confirmation", "")
+			
+		if password != password_confirmation:
+				
+			raise serializers.ValidationError("Passwords do not match")
+			
+		return attrs
+	
+	def create(self, validated_data):
+		
+		user = Client.objects.create_user(
             email=validated_data.get("email"),
             first_name=validated_data.get("first_name"),
             last_name=validated_data.get("last_name"),
@@ -65,8 +63,16 @@ class UserCreationSerializer(serializers.ModelSerializer):
             account_type=validated_data.get("account_type"),
             password=validated_data.get("password"),
         )
+		
+		request = self.context.get("request")
+		branch_id = request.GET.get("branch_id", None)
+		
+		if branch_id and  user.is_worker:
 
-        return user
+			user.work_branches.add(branch_id)
+			user.save()
+			
+		return user
 
 
 class NaiveUserSerializer(serializers.ModelSerializer):
@@ -138,6 +144,9 @@ class LoginSerializer(serializers.ModelSerializer):
 
 			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
 			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
+
+			if instance.is_worker:
+				pass
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.id), many=True).data

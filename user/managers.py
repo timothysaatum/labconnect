@@ -18,7 +18,7 @@ class ClientManager(BaseUserManager):
         )
 
         user.set_password(password)
-        user.is_staff = True
+        # user.is_staff = True
         user.save(using=self._db)
         return user
 

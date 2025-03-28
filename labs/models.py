@@ -91,8 +91,12 @@ class Branch(Facility):
 	branch_name = models.CharField(max_length=155, blank=True)
 	region = models.CharField(choices=REGIONS, max_length=100)
 	town = models.CharField(max_length=200)
-	# digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
-	# gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
+	workers = models.ManyToManyField(
+			user,
+			related_name="work_branches",
+			blank=True,
+			db_index=True
+		)
 	branch_manager = models.ForeignKey(
         user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )

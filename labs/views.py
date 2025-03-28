@@ -1,8 +1,8 @@
-from rest_framework.permissions import IsAuthenticated # type: ignore
-from rest_framework.response import Response # type: ignore
-from rest_framework import generics # type: ignore
-from rest_framework import status # type: ignore
-from rest_framework.parsers import MultiPartParser, FormParser # type: ignore
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import (
 	LaboratorySerializer,
 	TestSerializer,
@@ -12,10 +12,10 @@ from .serializers import (
 from .models import Test, Branch, Laboratory, BranchTest
 from modelmixins.models import SampleType
 from modelmixins.models import Facility
-from django.db.models import Q # type: ignore
-from django.http import QueryDict # type: ignore
-from django.core.cache import cache # type: ignore
-from rest_framework.exceptions import ValidationError # type: ignore
+from django.db.models import Q
+from django.http import QueryDict
+from django.core.cache import cache
+# from rest_framework.exceptions import ValidationError
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .utils import get_nearby_branches, filter_by_facility_level
 
