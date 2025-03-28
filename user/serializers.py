@@ -5,7 +5,6 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import smart_bytes, force_str
-# from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from labs.models import Laboratory, Branch
 from .utils import send_normal_email, send_code_to_user
