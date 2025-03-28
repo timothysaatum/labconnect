@@ -14,7 +14,6 @@ from rest_framework.generics import (
 	UpdateAPIView,
 	ListAPIView
 )
-# from axes.decorators import axes_dispatch
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.conf import settings
@@ -209,6 +208,11 @@ class VerifyUserEmail(GenericAPIView):
 
                 if user.is_branch_manager:
                      user.is_admin = False
+                     user.is_staff = True
+                     
+                if user.is_worker:
+                    user.is_admin = False
+                    user.is_staff = False
 
                 user.save()
                 return Response(
@@ -420,7 +424,7 @@ def create_branch_manager_user(invitation, user_data):
         if not client.is_branch_manager:
             
             client.is_admin = False
-            client.is_branch_manager = True
+            client.is_staff = True
             client.save()
 
         branch.branch_manager = client

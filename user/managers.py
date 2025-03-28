@@ -7,18 +7,18 @@ class ClientManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         """
         Creates and saves a User with the given email, date of
-        birth and password.
+        full name and password.
         """
         if not email:
             raise ValueError(_('User must have an email address'))
-
+        #print(extra_fields)
         user = self.model(
             email=self.normalize_email(email),
             **extra_fields,
         )
 
         user.set_password(password)
-        user.is_staff = True
+        #user.is_staff = True
         user.save(using=self._db)
         return user
 
