@@ -134,15 +134,34 @@ class CheckRefreshToken(APIView):
         )
 
 
+# class CreateUserView(CreateAPIView):
+#     throttle_classes = [UserRateThrottle]
+#     serializer_class = UserCreationSerializer
+
+#     def post(self, request, format=None):
+#         logger.info(
+#             f"Account created for {request.data['last_name']} {request.data['first_name']}"
+#         )
+#         return self.create(request)
+
 class CreateUserView(CreateAPIView):
     throttle_classes = [UserRateThrottle]
     serializer_class = UserCreationSerializer
 
     def post(self, request, format=None):
         logger.info(
-            f"Account created for {request.data['last_name']} {request.data['first_name']}"
+            f"Account created for {request.data.get('last_name', '')} {request.data.get('first_name', '')}"
         )
-        return self.create(request)
+        
+
+        serializer = self.get_serializer(data=request.data, context={"request": request})
+        
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 
 
 class UpdateUserAccount(UpdateAPIView):

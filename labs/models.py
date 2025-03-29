@@ -86,20 +86,6 @@ class Branch(Facility):
     A branch: is a local set up of a particular laboratory that carries out test within that enclave.
     Branch_name: refers to the name of a branch.
     """
-<<<<<<< HEAD
-	accreditation_number = models.CharField(max_length=155, unique=True)
-	level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
-	branch_name = models.CharField(max_length=155, blank=True)
-	region = models.CharField(choices=REGIONS, max_length=100)
-	town = models.CharField(max_length=200)
-	workers = models.ManyToManyField(
-			user,
-			related_name="work_branches",
-			blank=True,
-			db_index=True
-		)
-	branch_manager = models.ForeignKey(
-=======
     accreditation_number = models.CharField(max_length=155, unique=True)
     level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
     branch_name = models.CharField(max_length=155, blank=True)
@@ -108,13 +94,12 @@ class Branch(Facility):
     # digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
     # gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
     branch_manager = models.ForeignKey(
->>>>>>> 78f994788225d82e6562c0b325b577c5a1fdd1e7
         user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
     laboratory = models.ForeignKey(
         Laboratory, on_delete=models.CASCADE, related_name="branches"
     )
-    worker = models.ManyToManyField(
+    workers = models.ManyToManyField(
         user, related_name='work_branches', db_index=True
     )
     

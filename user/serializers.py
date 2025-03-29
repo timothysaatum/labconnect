@@ -17,21 +17,22 @@ from django.db.models import Q
 
 
 class UserCreationSerializer(serializers.ModelSerializer):
-    #Serializer for creating users
-
-    password = serializers.CharField(max_length=68, min_length=8, write_only=True)
-    password_confirmation = serializers.CharField(
+	#Serializer for creating users
+	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
+	password_confirmation = serializers.CharField(
         max_length=68, min_length=8, write_only=True
     )
-    is_admin = serializers.CharField(max_length=10, read_only=True)
-    is_staff = serializers.CharField(max_length=10, read_only=True)
-    is_active = serializers.CharField(max_length=10, read_only=True)
-
-    class Meta:
-
-        model = Client
-
-        fields = (
+	is_admin = serializers.CharField(max_length=10, read_only=True)
+	is_staff = serializers.CharField(max_length=10, read_only=True)
+	is_active = serializers.CharField(max_length=10, read_only=True)
+	is_worker = serializers.BooleanField(default=False, required=False)
+	
+	
+	class Meta:
+		
+		model = Client
+		
+		fields = (
             "email",
             "first_name",
             "last_name",
@@ -44,31 +45,45 @@ class UserCreationSerializer(serializers.ModelSerializer):
             "password",
             "password_confirmation",
         )
+		
+	def validate(self, attrs):
+		
+		password = attrs.get("password", "")
+		password_confirmation = attrs.get("password_confirmation", "")
+		
+		
+		if password != password_confirmation:
+			
+			raise serializers.ValidationError("Passwords do not match")
+		
+		return attrs
+	
+	def create(self, validated_data):
+		_ = validated_data.pop("password_confirmation")
 
-    def validate(self, attrs):
-
-        password = attrs.get("password", "")
-        password_confirmation = attrs.get("password_confirmation", "")
-
-        if password != password_confirmation:
-
-            raise serializers.ValidationError("Passwords do not match")
-
-        return attrs
-
-    def create(self, validated_data):
-        print(validated_data)
-        user = Client.objects.create_user(
-            email=validated_data.get("email"),
-            first_name=validated_data.get("first_name"),
-            last_name=validated_data.get("last_name"),
-            phone_number=validated_data.get("phone_number"),
-            is_worker=validated_data.get("is_worker"),
-            account_type=validated_data.get("account_type"),
-            password=validated_data.get("password"),
+		
+		user = Client.objects.create_user(
+			**validated_data
+            # email=validated_data.get("email"),
+            # first_name=validated_data.get("first_name"),
+            # last_name=validated_data.get("last_name"),
+            # phone_number=validated_data.get("phone_number"),
+            # is_worker=validated_data.get("is_worker"),
+            # account_type=validated_data.get("account_type"),
+            # password=validated_data.get("password"),
         )
 
-        return user
+		
+
+		if user.is_worker:
+			request = self.context.get('request')
+			print(request)
+
+			branch_id = request.GET.getlist("branch_id", []) or [request.GET.get("branch_id")] if request.GET.get("branch_id", []) else []
+
+			user.work_branches.add(*branch_id)
+			
+		return user
 
 
 class NaiveUserSerializer(serializers.ModelSerializer):
@@ -88,7 +103,7 @@ class NaiveUserSerializer(serializers.ModelSerializer):
 					'is_active', 
 					'is_admin',
 					'is_branch_manager',
-					'is_worker'
+					'is_worker',
 					'is_an_individual',
 					'is_verified', 
 					'date_joined', 
@@ -141,6 +156,9 @@ class LoginSerializer(serializers.ModelSerializer):
 
 			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
 			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
+
+			worker_branches = instance.work_branches.all()
+			data['branch'] += BranchSerializer(worker_branches, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.id), many=True).data
@@ -274,6 +292,9 @@ class UserSerializer(serializers.ModelSerializer):
 			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
 			#print(branch_manager_labs)
 			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
+
+			worker_branches = instance.work_branches.all()
+			data['branch'] += BranchSerializer(worker_branches, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance), many=True).data

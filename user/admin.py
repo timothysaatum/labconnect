@@ -28,11 +28,7 @@ class ClientAdmin(UserAdmin):
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number')}),
         ('Account Type', {'fields': ('account_type',)}),
-<<<<<<< HEAD
-        ('Permissions', {'fields': ('is_admin', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_worker', 'is_branch_manager')}),
-=======
         ('Permissions', {'fields': ('is_admin', 'is_active', 'is_staff', 'is_worker', 'is_superuser', 'groups', 'user_permissions', 'is_branch_manager')}),
->>>>>>> 78f994788225d82e6562c0b325b577c5a1fdd1e7
         ('Important Dates', {'fields': ('date_joined',)})
     )
 
