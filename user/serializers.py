@@ -12,9 +12,13 @@ from labs.serializers import LaboratorySerializer, BranchSerializer
 from hospital.models import Hospital
 from hospital.serializers import HospitalSerializer
 from django.db.models import Q
+import uuid
+import logging
+from django.db import transaction
 
 
 
+logger = logging.getLogger(__name__)
 
 class UserCreationSerializer(serializers.ModelSerializer):
 	#Serializer for creating users
@@ -50,18 +54,18 @@ class UserCreationSerializer(serializers.ModelSerializer):
 		
 		password = attrs.get("password", "")
 		password_confirmation = attrs.get("password_confirmation", "")
-		
-		
+
+
 		if password != password_confirmation:
-			
-			raise serializers.ValidationError("Passwords do not match")
-		
-		return attrs
 	
+			raise serializers.ValidationError("Passwords do not match")
+
+		return attrs
+
 	def create(self, validated_data):
 		_ = validated_data.pop("password_confirmation")
 
-		
+
 		user = Client.objects.create_user(
 			**validated_data
             # email=validated_data.get("email"),
@@ -73,17 +77,48 @@ class UserCreationSerializer(serializers.ModelSerializer):
             # password=validated_data.get("password"),
         )
 
-		
 
 		if user.is_worker:
-			request = self.context.get('request')
-			print(request)
+			self._process_worker_branches(user)
 
-			branch_id = request.GET.getlist("branch_id", []) or [request.GET.get("branch_id")] if request.GET.get("branch_id", []) else []
-
-			user.work_branches.add(*branch_id)
-			
 		return user
+
+
+	def _process_worker_branches(self, user):
+		request = self.context.get('request')
+		if not request:
+			return
+
+		branch_uuids = self._get_valid_branch_uuids(request)
+		if not branch_uuids:
+			return
+
+		try:
+			with transaction.atomic():
+				user.work_branches.add(*branch_uuids)
+                    
+		except Exception as e:
+			logger.error(f"Branch assignment failed: {str(e)}")
+
+	def _get_valid_branch_uuids(self, request):
+		"""Extract and validate UUIDs from query params"""
+		branch_param = request.GET.get('branch_id')
+		if not branch_param:
+			return None
+
+        # Handle both comma-separated and multiple params
+		raw_uuids = branch_param.split(',') if ',' in branch_param else request.GET.getlist('branch_id')
+        
+		valid_uuids = []
+		for raw_uuid in raw_uuids:
+			try:
+                # Convert to UUID object (validates format)
+				valid_uuids.append(uuid.UUID(raw_uuid.strip()))
+			except (ValueError, AttributeError):
+				logger.warning(f"Invalid branch UUID format: {raw_uuid}")
+				continue
+
+		return valid_uuids or None
 
 
 class NaiveUserSerializer(serializers.ModelSerializer):
