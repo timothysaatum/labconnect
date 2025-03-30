@@ -21,8 +21,8 @@ from django.db import transaction
 logger = logging.getLogger(__name__)
 
 class UserCreationSerializer(serializers.ModelSerializer):
-	password = serializers.CharField(max_length=68, min_length=8, write_only=True)
-	password_confirmation = serializers.CharField(
+    password = serializers.CharField(max_length=68, min_length=8, write_only=True)
+    password_confirmation = serializers.CharField(
         max_length=68, min_length=8, write_only=True
     )
     is_admin = serializers.BooleanField(read_only=True)
@@ -31,11 +31,11 @@ class UserCreationSerializer(serializers.ModelSerializer):
     is_worker = serializers.BooleanField(required=False)
 	
 	
-	class Meta:
+    class Meta:
 		
-		model = Client
+        model = Client
 		
-		fields = (
+        fields = (
             "email",
             "first_name",
             "last_name",
@@ -49,22 +49,21 @@ class UserCreationSerializer(serializers.ModelSerializer):
             "password_confirmation",
         )
 		
-	def validate(self, attrs):
+    def validate(self, attrs):
 		
-		password = attrs.get("password", "")
-		password_confirmation = attrs.get("password_confirmation", "")
+        password = attrs.get("password", "")
+        password_confirmation = attrs.get("password_confirmation", "")
 
 
-		if password != password_confirmation:
+        if password != password_confirmation:
 	
-			raise serializers.ValidationError("Passwords do not match")
+            raise serializers.ValidationError("Passwords do not match")
 
-		return attrs
+        return attrs
 
-	def create(self, validated_data):
-	    _ = validated_data.pop("password_confirmation")
-	    
-	    user = Client.objects.create_user(
+    def create(self, validated_data):
+        _ = validated_data.pop("password_confirmation")
+        user = Client.objects.create_user(
 			**validated_data
         )
         
