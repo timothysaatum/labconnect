@@ -134,34 +134,15 @@ class CheckRefreshToken(APIView):
         )
 
 
-# class CreateUserView(CreateAPIView):
-#     throttle_classes = [UserRateThrottle]
-#     serializer_class = UserCreationSerializer
-
-#     def post(self, request, format=None):
-#         logger.info(
-#             f"Account created for {request.data['last_name']} {request.data['first_name']}"
-#         )
-#         return self.create(request)
-
 class CreateUserView(CreateAPIView):
     throttle_classes = [UserRateThrottle]
     serializer_class = UserCreationSerializer
 
     def post(self, request, format=None):
         logger.info(
-            f"Account created for {request.data.get('last_name', '')} {request.data.get('first_name', '')}"
+            f"Account created for {request.data['last_name']} {request.data['first_name']}"
         )
-        
-
-        serializer = self.get_serializer(data=request.data, context={"request": request})
-        
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
+        return self.create(request)
 
 
 class UpdateUserAccount(UpdateAPIView):
@@ -471,6 +452,82 @@ def create_branch_manager_user(invitation, user_data):
     return client
 
 
+#def create_user(user_data):
+#    """
+#    Creates a new user or updates an existing user to have `is_worker=True`
+#    and assigns them to the given branches using the serializer.
+#    """
+#    branch_data = user_data.pop("branches", [])
+
+#    # Validate data using serializer
+#    serializer = UserCreationSerializer(data=user_data)
+#    serializer.is_valid(raise_exception=True)
+#    validated_data = serializer.validated_data
+
+#    # Remove password confirmation before proceeding
+#    validated_data.pop("password_confirmation", None)
+
+#    # Use get_or_create to prevent duplicate users
+#    client, created = Client.objects.get_or_create(
+#        email=validated_data["email"],
+#        defaults=validated_data
+#    )
+
+#     # If user exists and is not a worker, update necessary fields
+#    if not client.is_worker:
+#        #client.is_admin = False
+#        client.is_staff = False
+#        client.is_worker = True
+#        for attr, value in validated_data.items():
+#            setattr(client, attr, value)
+#        client.save()
+
+#    # Assign user to branches
+#    client.work_branches.add(*branch_data)
+
+#    return client
+
+
+def create_user(request):
+    """
+    Handles user creation and branch assignment:
+    - If a user_id is provided, assign the user to the specified branches (if not already assigned).
+    - If no user_id is provided, validate data, create a new user using serializer.save(), and assign branches.
+    """
+    user_data = request.data
+    user_id = user_data.get("user_id", None)
+    branch_data = user_data.pop("branches", [])
+
+    if user_id:
+        # Existing user case
+        try:
+            client = Client.objects.get(id=user_id)
+        except Client.DoesNotExist:
+            raise serializers.ValidationError({"user_id": "User not found."})
+
+    else:
+        # New user case - Validate data using serializer
+        user_data["is_admin"] = False
+        user_data["is_staff"] = False
+        user_data["is_worker"] = True
+        user_data["account_type"] = request.user.account_type
+        serializer = UserCreationSerializer(data=user_data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Create user using serializer.save()
+        client = serializer.save()
+
+    # Assign user to branches if not already assigned
+    existing_branches = set(client.work_branches.values_list("id", flat=True))
+    new_branches = set(branch_data) - existing_branches  # Only add new branches
+
+    if new_branches:
+        client.work_branches.add(*new_branches)
+
+    return client
+
+
+
 class BranchManagerAcceptView(CreateAPIView):
 
 	throttle_classes = [UserRateThrottle]
@@ -513,6 +570,33 @@ class BranchManagerAcceptView(CreateAPIView):
 			{'message': f'Invitation accepted, you are now a branch manager at {invitation.branch}'},
       		status=status.HTTP_200_OK
     	)
+
+
+
+class AddUser(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserCreationSerializer
+
+    def post(self, request, *args, **kwargs):
+        branches = request.data.get("branches", [])
+
+        # Check permission
+        if not request.user.is_admin or request.user.is_branch_manager:
+            return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Ensure user can assign the branches
+        user_branches = set(request.user.branch_set.values_list("id", flat=True))
+        if not set(branches).issubset(user_branches):
+            return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create or update the user
+        client = create_user(request)
+
+        return Response(
+            {"message": "User processed successfully", "user_id": client.id},
+            status=status.HTTP_201_CREATED,
+        )
+
 
 
 class InviteBranchManagerView(CreateAPIView):

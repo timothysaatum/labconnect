@@ -17,7 +17,8 @@ from .views import (
 		DeleteUserAccount,
         FetchLabManagers,
         RequestNewOTP,
-        ComplaintViewSet
+        ComplaintViewSet,
+        AddUser
 	)
 
 
@@ -43,4 +44,5 @@ urlpatterns = [
     path('fetch-lab-managers/<uuid:pk>/', FetchLabManagers.as_view(), name='fetch-managers'),
     path('request-new-otp/', RequestNewOTP.as_view(), name='new-otp'),
     path('', include(router.urls)),
+    path('add-worker/', AddUser.as_view(), name='add-user')
 ]
