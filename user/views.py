@@ -446,46 +446,9 @@ def create_branch_manager_user(invitation, user_data):
 
     branch.save()
     invitation.mark_as_used()
-    # invitation.used = True
-    # invitation.save()
+
 
     return client
-
-
-#def create_user(user_data):
-#    """
-#    Creates a new user or updates an existing user to have `is_worker=True`
-#    and assigns them to the given branches using the serializer.
-#    """
-#    branch_data = user_data.pop("branches", [])
-
-#    # Validate data using serializer
-#    serializer = UserCreationSerializer(data=user_data)
-#    serializer.is_valid(raise_exception=True)
-#    validated_data = serializer.validated_data
-
-#    # Remove password confirmation before proceeding
-#    validated_data.pop("password_confirmation", None)
-
-#    # Use get_or_create to prevent duplicate users
-#    client, created = Client.objects.get_or_create(
-#        email=validated_data["email"],
-#        defaults=validated_data
-#    )
-
-#     # If user exists and is not a worker, update necessary fields
-#    if not client.is_worker:
-#        #client.is_admin = False
-#        client.is_staff = False
-#        client.is_worker = True
-#        for attr, value in validated_data.items():
-#            setattr(client, attr, value)
-#        client.save()
-
-#    # Assign user to branches
-#    client.work_branches.add(*branch_data)
-
-#    return client
 
 
 def create_user(request):
