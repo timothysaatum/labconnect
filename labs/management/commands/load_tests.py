@@ -5,11 +5,12 @@ from modelmixins.models import Department, SampleType
 from decimal import Decimal
 import pdfplumber
 
+
 class Command(BaseCommand):
     help = 'Load tests from the ADVANZ Diagnostics PDF into the database'
 
     def handle(self, *args, **kwargs):
-        pdf_path = '/data/data/com.termux/files/home/storage/documents/projects/labconnect/test.pdf'
+        pdf_path = /home/ubuntu/labconnect/test.pdf#'/data/data/com.termux/files/home/storage/documents/projects/labconnect/test.pdf'
 
         with pdfplumber.open(pdf_path) as pdf:
             for page in pdf.pages:
