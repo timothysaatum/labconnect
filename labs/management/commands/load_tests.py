@@ -1,6 +1,7 @@
 import uuid
 from django.core.management.base import BaseCommand
-from labs.models import Test, Department, SampleType
+from labs.models import Test
+from modelmixins.models import Department, SampleType
 from decimal import Decimal
 import pdfplumber
 
