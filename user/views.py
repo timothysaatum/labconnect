@@ -126,7 +126,6 @@ class CheckRefreshToken(APIView):
 
         access_token = str(refresh_token.access_token)
         serialized_data = UserSerializer(user)
-        #print(serialized_data.data)
 
         return Response(
             {"access_token": access_token, "data": serialized_data.data},
@@ -415,11 +414,16 @@ class FetchUserData(APIView):
 
 def create_branch_manager_user(invitation, user_data):
     """
-    Creates a new user with the provided data and sets the account type and staff status.
+    Handles branch_manager creation
+    -If branch_manager_id is provided, assigns the branch_manager to the specified branch
+    -If new branch_manager, creates and assign the branch_manager
     """
     branch = Branch.objects.select_related('branch_manager').get(id=invitation.branch_id)
 
     try:
+        
+        #Existing branch_manager case
+        
         client = Client.objects.get(email=invitation.receiver_email)
         if not client.is_branch_manager:
             
@@ -427,20 +431,25 @@ def create_branch_manager_user(invitation, user_data):
             client.is_staff = True
             client.save()
 
-        branch.branch_manager = client
+        #branch.branch_manager = client
 
     except Client.DoesNotExist:
-
+        
+        #New branch_manager case
         with transaction.atomic():  # Ensure atomicity of operations
-
+            user_data["is_admin"] = False
+            user_data["is_staff"] = True
+            user_data["is_worker"] = False
+            user_data["is_branch_manager"] = True
+            user_data["account_type"] = 'Laboratory'
             serializer = UserCreationSerializer(data=user_data)
             serializer.is_valid(raise_exception=True)
             client = serializer.save()
-            client.account_type = 'Laboratory'
-            client.is_staff = True
-            client.is_branch_manager = True
-            client.is_admin = False
-            client.save()
+           # client.account_type = 'Laboratory'
+#            client.is_staff = True
+#            client.is_branch_manager = True
+#            client.is_admin = False
+#            client.save()
 
         branch.branch_manager = client
 
@@ -458,7 +467,7 @@ def create_user(request):
     - If no user_id is provided, validate data, create a new user using serializer.save(), and assign branches.
     """
     user_data = request.data
-    user_id = user_data.get("user_id", None)
+    user_id = user_data.get("id", None)
     branch_data = user_data.pop("branches", [])
 
     if user_id:
@@ -513,10 +522,6 @@ class BranchManagerAcceptView(CreateAPIView):
 
 		if invitation.used:
 			return Response({'error': 'Invitation already used'}, status=status.HTTP_400_BAD_REQUEST)
-
-		# pwd = generate_password()
-		# print(pwd)
-		# print(request.data)
 
 		data = {
 			'email':invitation.receiver_email,

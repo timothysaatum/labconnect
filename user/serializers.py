@@ -25,6 +25,9 @@ class UserCreationSerializer(serializers.ModelSerializer):
     password_confirmation = serializers.CharField(
         max_length=68, min_length=8, write_only=True
     )
+    account_type = serializers.CharField(
+        max_length=68, min_length=10, required=False
+    )
     is_admin = serializers.BooleanField(read_only=True)
     is_staff = serializers.BooleanField(read_only=True)
     is_active = serializers.BooleanField(read_only=True)
@@ -138,12 +141,16 @@ class LoginSerializer(serializers.ModelSerializer):
 
 			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance.id), many=True).data
 			data['branch'] = BranchSerializer(Branch.objects.filter(Q(laboratory__created_by=instance.id) | Q(branch_manager_id=instance.id)), many=True).data
-
-			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
-			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
-
-			worker_branches = instance.work_branches.all()
-			data['branch'] += BranchSerializer(worker_branches, many=True).data
+			
+			if instance.is_branch_manager:
+			    
+			    branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
+			    data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
+			    
+			if instance.is_worker:
+			    
+			    worker_branches = instance.work_branches.all()
+			    data['branch'] += BranchSerializer(worker_branches, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.id), many=True).data
@@ -270,16 +277,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 		data = super().to_representation(instance)
 		data['user'] = NaiveUserSerializer(instance).data
+		
 		if instance.account_type == 'Laboratory':
+			
 			data['lab'] = LaboratorySerializer(Laboratory.objects.filter(created_by=instance), many=True).data
-			#data['branch'] = BranchSerializer(Branch.objects.filter(laboratory__created_by=instance), many=True).data
 			data['branch'] = BranchSerializer(Branch.objects.filter(Q(laboratory__created_by=instance) | Q(branch_manager_id=instance.id)), many=True).data
-			branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
-			#print(branch_manager_labs)
-			data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
-
-			worker_branches = instance.work_branches.all()
-			data['branch'] += BranchSerializer(worker_branches, many=True).data
+			
+			if instance.is_branch_manager:
+			    
+			    branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
+			    data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
+			    
+			if instance.is_worker:
+			    
+			    worker_branches = instance.work_branches.all()
+			    data['branch'] += BranchSerializer(worker_branches, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance), many=True).data
