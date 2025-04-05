@@ -1,7 +1,7 @@
 import uuid
 from django.core.management.base import BaseCommand
-from labs.models import Test
-from modelmixins.models import Department, SampleType
+#from labs.models import TestTemplate
+from modelmixins.models import Department, SampleType, TestTemplate
 from decimal import Decimal
 import pdfplumber
 
@@ -31,10 +31,10 @@ class Command(BaseCommand):
 
                         department, _ = Department.objects.get_or_create(name=department_name.strip())
 
-                        test, created = Test.objects.get_or_create(
+                        test, created = TestTemplate.objects.get_or_create(
                             name=test_name.strip(),
                             defaults={
-                                "department": department,
+                               # "department": department,
                                 "test_code": test_code.strip() if test_code else None,
                                 "price": Decimal(cash_price.replace(',', '')) if cash_price else 0,
                                 "turn_around_time": "24 hours",  # or extract if available
