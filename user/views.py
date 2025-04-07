@@ -550,13 +550,17 @@ class AddWorker(CreateAPIView):
         branches = request.data.get("branches", [])
 
         # Check permission
+        print(request.user.is_admin or request.user.is_branch_manager)
         if not request.user.is_admin or request.user.is_branch_manager:
+            
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Ensure user can assign the branches
         branches = [uuid.UUID(b_id) for b_id in branches]
         user_branches = set(request.user.branch_set.values_list("id", flat=True))
+        print(set(branches).issubset(user_branches))
         if not set(branches).issubset(user_branches):
+            
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create or update the user
