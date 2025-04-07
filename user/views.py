@@ -26,6 +26,7 @@ from .models import (
     Complaint, 
     OneTimePassword
 )
+import uuid
 import pyotp
 from django.middleware import csrf
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -541,9 +542,9 @@ class BranchManagerAcceptView(CreateAPIView):
 
 
 
-class AddUser(CreateAPIView):
+class AddWorker(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserCreationSerializer
+    #serializer_class = UserCreationSerializer
 
     def post(self, request, *args, **kwargs):
         branches = request.data.get("branches", [])
@@ -553,6 +554,7 @@ class AddUser(CreateAPIView):
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Ensure user can assign the branches
+        branches = [uuid.UUID(b_id) for b_id in branches]
         user_branches = set(request.user.branch_set.values_list("id", flat=True))
         if not set(branches).issubset(user_branches):
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)

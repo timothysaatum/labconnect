@@ -18,7 +18,7 @@ from .views import (
         FetchLabManagers,
         RequestNewOTP,
         ComplaintViewSet,
-        AddUser
+        AddWorker,
 	)
 
 
@@ -44,5 +44,5 @@ urlpatterns = [
     path('fetch-lab-managers/<uuid:pk>/', FetchLabManagers.as_view(), name='fetch-managers'),
     path('request-new-otp/', RequestNewOTP.as_view(), name='new-otp'),
     path('', include(router.urls)),
-    path('add-worker/', AddUser.as_view(), name='add-user')
+    path('add-worker/', AddWorker.as_view(), name='add-worker')
 ]
