@@ -446,11 +446,6 @@ def create_branch_manager_user(invitation, user_data):
             serializer = UserCreationSerializer(data=user_data)
             serializer.is_valid(raise_exception=True)
             client = serializer.save()
-           # client.account_type = 'Laboratory'
-#            client.is_staff = True
-#            client.is_branch_manager = True
-#            client.is_admin = False
-#            client.save()
 
         branch.branch_manager = client
 
@@ -544,13 +539,11 @@ class BranchManagerAcceptView(CreateAPIView):
 
 class AddWorker(CreateAPIView):
     permission_classes = [IsAuthenticated]
-    #serializer_class = UserCreationSerializer
 
     def post(self, request, *args, **kwargs):
         branches = request.data.get("branches", [])
 
         # Check permission
-        print(request.user.is_admin or request.user.is_branch_manager)
         if not request.user.is_admin or request.user.is_branch_manager:
             
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
@@ -558,7 +551,7 @@ class AddWorker(CreateAPIView):
         # Ensure user can assign the branches
         branches = [uuid.UUID(b_id) for b_id in branches]
         user_branches = set(request.user.branch_set.values_list("id", flat=True))
-        print(set(branches).issubset(user_branches))
+        
         if not set(branches).issubset(user_branches):
             
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)

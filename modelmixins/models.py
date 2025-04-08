@@ -77,8 +77,8 @@ class Facility(models.Model):
 class Department(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=200)
-    branch = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="departments")
+    name = models.CharField(max_length=200, null=True, blank=True)
+    branch = models.ForeignKey(Facility, on_delete=models.CASCADE, related_name="departments", null=True, blank=True)
     head_of_department = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True, blank=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
