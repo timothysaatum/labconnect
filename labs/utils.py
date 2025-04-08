@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 from uuid import UUID
 # from geographiclib.geodesic import Geodesic
 from django.db.models import Q
