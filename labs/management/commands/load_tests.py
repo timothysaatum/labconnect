@@ -5,6 +5,7 @@ import pdfplumber
 from django.core.management.base import BaseCommand
 from modelmixins.models import Department, SampleType, TestTemplate
 from decouple import config
+from labs.utils import parse_price
 
 
 ENV = config("DJANGO_ENV", default="development").lower()
@@ -53,7 +54,7 @@ class Command(BaseCommand):
                             name=test_name.strip(),
                             defaults={
                                 "test_code": test_code.strip() if test_code else None,
-                                "price": Decimal(cash_price.replace(',', '')) if cash_price else 0,
+                                "price": parse_price(cash_price) if cash_price else 0,
                                 "turn_around_time": "4 hours",
                                 "department": department
                             }

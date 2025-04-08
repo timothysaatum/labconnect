@@ -5,12 +5,20 @@ from django.db.models import Q
 from .constants import LEVEL_ORDER
 # from concurrent.futures import ThreadPoolExecutor
 import logging
+from decimal import InvalidOperation
 # import socket
 # import time
 from modelmixins.utils import calculate_distance
 
 logger = logging.getLogger(__name__)
 
+
+
+def parse_price(price_str):
+    try:
+        return Decimal(price_str.replace("GH₵", "").replace(",", "").strip())
+    except InvalidOperation:
+        return None
 
 def filter_by_facility_level(query, facility_level):
 
