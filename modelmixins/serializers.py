@@ -156,6 +156,8 @@ class SampleTypeSerializer(BaseSampleTypeSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['sample_name'] = str(instance)
+        
+        return data
 
 
 class SampleTypeTemplateSerializer(BaseSampleTypeSerializer):
