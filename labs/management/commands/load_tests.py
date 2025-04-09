@@ -5,7 +5,7 @@ import pdfplumber
 from django.core.management.base import BaseCommand
 from modelmixins.models import Department, SampleType, TestTemplate
 from decouple import config
-from labs.utils import parse_price, infer_sample_types
+from labs.utils import parse_price, infer_sample_types, guess_patient_preparation
 
 
 ENV = config("DJANGO_ENV", default="development").lower()
@@ -56,7 +56,9 @@ class Command(BaseCommand):
                                 "test_code": test_code.strip() if test_code else None,
                                 "price": parse_price(cash_price) if cash_price else 0,
                                 "turn_around_time": "4 hours",
-                                "department": department
+                                "department": department,
+                                 "discount_price": parse_price(labs_price) if labs_price else None,
+                                 "patient_preparation": guess_patient_preparation(test_name)
                             }
                         )
 

@@ -320,3 +320,27 @@ def infer_sample_types(test_name):
         matched_samples.append(sample_type)
 
     return matched_samples
+    
+    
+    
+def guess_patient_preparation(test_name):
+    name = test_name.lower()
+
+    if "fasting" in name or any(x in name for x in ["glucose", "lipid", "cholesterol", "fbs", "rbs"]):
+        return "Patient should fast for 8–12 hours before sample collection."
+    elif "urine" in name:
+        return "Collect midstream urine sample in a sterile container."
+    elif "stool" in name:
+        return "Provide a fresh stool sample in a sterile container. Avoid contamination."
+    elif "sputum" in name:
+        return "Collect early morning sputum sample before brushing teeth."
+    elif "semen" in name:
+        return "Abstain from sexual activity for 2–5 days before sample collection."
+    elif "blood" in name:
+        return "Patient should remain seated or lying down during sample collection."
+    elif "swab" in name:
+        return "Do not use antibiotics or antiseptics before sample collection."
+    elif "csf" in name:
+        return "Collected via lumbar puncture by a qualified physician."
+    else:
+        return "Follow standard pre-test instructions provided by the lab."
