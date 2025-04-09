@@ -8,6 +8,7 @@ import logging
 from decimal import InvalidOperation,  Decimal
 # import socket
 # import time
+from modelmixins.models import SampleTypeTemplate
 from modelmixins.utils import calculate_distance
 
 logger = logging.getLogger(__name__)
@@ -75,3 +76,41 @@ class UUIDEncoder(json.JSONEncoder):
             # if the obj is uuid, we simply return the value of uuid
             return str(obj)
         return json.JSONEncoder.default(self, obj)
+
+
+
+
+def infer_sample_types(test_name):
+    """
+    Try to infer likely sample types based on keywords in the test name.
+    Returns a list of SampleType objects (creating them if necessary).
+    """
+    sample_keywords = {
+        "blood": "Blood",
+        "urine": "Urine",
+        "stool": "Stool",
+        "sputum": "Sputum",
+        "swab": "Swab",
+        "serum": "Serum",
+        "csf": "CSF",
+        "plasma": "Plasma",
+        "semen": "Semen",
+        "tissue": "Tissue",
+        "aspirate": "Aspirate",
+        "fluid": "Body Fluid"
+    }
+
+    matched_samples = []
+    lower_name = test_name.lower()
+
+    for keyword, sample_name in sample_keywords.items():
+        if keyword in lower_name:
+            sample_type, _ = SampleTypeTemplate.objects.get_or_create(sample_name=sample_name)
+            matched_samples.append(sample_type)
+
+    # Default to Blood if nothing matches
+    if not matched_samples:
+        sample_type, _ = SampleTypeTemplate.objects.get_or_create(sample_name="Blood")
+        matched_samples.append(sample_type)
+
+    return matched_samples

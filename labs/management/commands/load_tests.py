@@ -1,10 +1,11 @@
 import uuid
+#from decimal import Decimal
 import os
 import pdfplumber
 from django.core.management.base import BaseCommand
 from modelmixins.models import Department, SampleType, TestTemplate
 from decouple import config
-from labs.utils import parse_price
+from labs.utils import parse_price, infer_sample_types
 
 
 ENV = config("DJANGO_ENV", default="development").lower()
@@ -69,6 +70,10 @@ class Command(BaseCommand):
                                 self.stdout.write(self.style.WARNING(f"Skipped existing: {test_name}"))
                         else:
                             self.stdout.write(self.style.SUCCESS(f"Added: {test_name}"))
+                        
+                        sample_types = infer_sample_types(test_name)
+                        test.sample_type.set(sample_types)
+                        self.stdout.write(self.style.SUCCESS(f"Assigned sample types to {test_name}: {[s.sample_name for s in sample_types]}"))
 
                     except Exception as e:
                         self.stdout.write(self.style.ERROR(f"Error on row {row}: {e}"))
