@@ -1,12 +1,11 @@
 import json
-from decimal import Decimal
 from uuid import UUID
 # from geographiclib.geodesic import Geodesic
 from django.db.models import Q
 from .constants import LEVEL_ORDER
 # from concurrent.futures import ThreadPoolExecutor
 import logging
-from decimal import InvalidOperation
+from decimal import InvalidOperation,  Decimal
 # import socket
 # import time
 from modelmixins.utils import calculate_distance

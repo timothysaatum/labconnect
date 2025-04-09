@@ -1,5 +1,4 @@
 import uuid
-#from decimal import Decimal
 import os
 import pdfplumber
 from django.core.management.base import BaseCommand

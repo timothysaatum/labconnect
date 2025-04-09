@@ -20,6 +20,9 @@ from django.db import transaction
 
 logger = logging.getLogger(__name__)
 
+
+
+
 class UserCreationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=8, write_only=True)
     password_confirmation = serializers.CharField(

@@ -88,7 +88,7 @@ class Department(models.Model):
         unique_together = ('name', 'branch')  # Ensures a department name is unique within a branch
 
     def __str__(self):
-        return f"{self.name} - {self.branch.name}"
+        return self.name
 
 
 
@@ -119,6 +119,7 @@ class FacilityWorkingHours(models.Model):
 
 
 class BaseSample(models.Model):
+    
     sample_name = models.CharField(max_length=100)
     collection_procedure = models.TextField()
     sample_tube = models.CharField(max_length=100)
@@ -144,16 +145,13 @@ class BaseSample(models.Model):
         abstract = True
 
 class SampleType(BaseSample):
-
-    '''
+	'''
 	Sample:Is the various medical samples that can be used to perform a particular test.
 	This is require to avoid sample mismatched when a test is being requested.
 	'''
-    
-
-    def __str__(self):
-        return f"{self.sample_name} sample"
-
+	def __str__(self):
+	   test_names = [test.name for test in self.test_set.all()]
+	   return f"{self.sample_name}: {', '.join(test_names)}"
 
 class BasicTest(BaseModel):
 

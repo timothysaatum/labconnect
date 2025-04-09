@@ -361,13 +361,14 @@ class TestUpdateView(generics.UpdateAPIView):
         serializer.save()
 
 
-class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
+class TestDeleteView(generics.DestroyAPIView):
 	"""
 	API endpoint foe delete test for a laboratory or Branch.
 	This deletes the test for all the branches where it is being
 	done.
 	Caution must be taken when calling this endpoint.
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	def get_queryset(self):
 		return Test.objects.filter(pk=self.kwargs.get('pk'))
 
@@ -412,20 +413,17 @@ class AllLaboratories(generics.ListAPIView):
 
 
 
-class SampleTypeView(PermissionMixin, generics.CreateAPIView):
+class SampleTypeView(generics.CreateAPIView):
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = SampleTypeSerializer
 
 	def post(self, request):
-		#Checks if the use has the required permission
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
+	
 		return self.create(request)
 
 
-class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
+class SampleTypeUpdateView(generics.UpdateAPIView):
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = SampleTypeSerializer
 
 	def get_queryset(self):
@@ -434,20 +432,15 @@ class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 	def patch(self, request, pk):
 
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
-
 		return self.partial_update(request, pk)
 
 
-class SampleTypeDeleteView(PermissionMixin, generics.DestroyAPIView):
+class SampleTypeDeleteView(generics.DestroyAPIView):
 	'''
 	Deletes a specific sample type.
 	params: sample type id: int
 	'''
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	def get_queryset(self):
 		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
 
@@ -471,7 +464,8 @@ class GetTestSampleType(generics.ListAPIView):
 			).distinct()
 
 
-class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
+class UpdateTestForSpecificBranch(generics.UpdateAPIView):
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = BranchTestSerializer
 
 	def get_object(self):

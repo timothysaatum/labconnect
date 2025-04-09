@@ -232,7 +232,7 @@ class VerifyUserEmail(GenericAPIView):
             return Response(
 
 				{
-					'message': 'Passcode not provided or is inaccurate'
+					'message': 'OTP code not provided or is inaccurate'
 					},
 					status=status.HTTP_404_NOT_FOUND
 
@@ -613,7 +613,7 @@ class RequestNewOTP(CreateAPIView):
 
         if c.is_verified:
             return Response(
-                {"error": f"An error occured"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": f"Already verified"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         send_code_to_user(user_email)
