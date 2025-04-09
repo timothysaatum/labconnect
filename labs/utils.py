@@ -78,39 +78,245 @@ class UUIDEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-
+sample_defaults = {
+    "blood": {
+        "sample_name": "Blood",
+        "sample_tube": "EDTA / Plain Tube",
+        "collection_procedure": "Collect via venipuncture using sterile equipment.",
+        "collection_time": "Morning",
+        "storage_requirements": "Store at 2–8°C.",
+        "transport_requirements": "Cold chain recommended.",
+        "collection_volume": 5.0,
+        "collection_instructions": "Mix with anticoagulant if needed.",
+        "required_fasting": True,
+        "storage_temperature": "2–8°C",
+        "maximum_storage_duration": "48 hours",
+        "transport_medium": "None",
+        "packaging_requirements": "Use biohazard-labeled bags with absorbent material.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "urine": {
+        "sample_name": "Urine",
+        "sample_tube": "Sterile Urine Container",
+        "collection_procedure": "Midstream clean-catch into sterile container.",
+        "collection_time": "First morning sample",
+        "storage_requirements": "Refrigerate if delay > 1hr.",
+        "transport_requirements": "Leak-proof container with cold pack.",
+        "collection_volume": 10.0,
+        "collection_instructions": "Avoid contamination.",
+        "required_fasting": False,
+        "storage_temperature": "2–8°C",
+        "maximum_storage_duration": "24 hours",
+        "transport_medium": "None",
+        "packaging_requirements": "Leak-proof and labeled.",
+        "biosafety_level": "BSL-1",
+        "infectious_risk": False
+    },
+    "stool": {
+        "sample_name": "Stool",
+        "sample_tube": "Sterile Stool Container",
+        "collection_procedure": "Collect fresh stool in sterile container.",
+        "collection_time": "Anytime",
+        "storage_requirements": "Refrigerate within 2 hours.",
+        "transport_requirements": "Cool box with ice pack.",
+        "collection_volume": 5.0,
+        "collection_instructions": "Avoid urine or toilet paper contamination.",
+        "required_fasting": False,
+        "storage_temperature": "2–8°C",
+        "maximum_storage_duration": "24 hours",
+        "transport_medium": "None",
+        "packaging_requirements": "Triple package with biohazard label.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "sputum": {
+        "sample_name": "Sputum",
+        "sample_tube": "Sterile Container",
+        "collection_procedure": "Instruct patient to cough deeply to expectorate.",
+        "collection_time": "Morning before brushing teeth",
+        "storage_requirements": "Refrigerate immediately.",
+        "transport_requirements": "Cool box preferred.",
+        "collection_volume": 3.0,
+        "collection_instructions": "Avoid saliva contamination.",
+        "required_fasting": False,
+        "storage_temperature": "2–8°C",
+        "maximum_storage_duration": "12 hours",
+        "transport_medium": "None",
+        "packaging_requirements": "Use sealed sterile container.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "swab": {
+        "sample_name": "Swab",
+        "sample_tube": "Sterile Swab with Transport Medium",
+        "collection_procedure": "Swab target area with sterile technique.",
+        "collection_time": "Anytime",
+        "storage_requirements": "Use transport medium.",
+        "transport_requirements": "Keep upright in cool box.",
+        "collection_volume": 1.0,
+        "collection_instructions": "Avoid contamination. Use appropriate site.",
+        "required_fasting": False,
+        "storage_temperature": "Room temperature or 4°C",
+        "maximum_storage_duration": "24 hours",
+        "transport_medium": "Transport medium (e.g., Amies)",
+        "packaging_requirements": "Transport in sealed swab holder.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "serum": {
+        "sample_name": "Serum",
+        "sample_tube": "Plain Tube (Red cap)",
+        "collection_procedure": "Allow blood to clot and centrifuge to obtain serum.",
+        "collection_time": "Morning",
+        "storage_requirements": "Store at -20°C for long term.",
+        "transport_requirements": "Frozen if >24h delay.",
+        "collection_volume": 3.0,
+        "collection_instructions": "Ensure proper clotting before centrifugation.",
+        "required_fasting": True,
+        "storage_temperature": "-20°C",
+        "maximum_storage_duration": "7 days (frozen)",
+        "transport_medium": "None",
+        "packaging_requirements": "Secondary container with absorbent.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "csf": {
+        "sample_name": "CSF",
+        "sample_tube": "Sterile CSF Vial",
+        "collection_procedure": "Collected via lumbar puncture by physician.",
+        "collection_time": "Anytime (urgent)",
+        "storage_requirements": "Room temp for microbiology, 2–8°C for chemistry.",
+        "transport_requirements": "Immediate transport preferred.",
+        "collection_volume": 1.0,
+        "collection_instructions": "Label tubes appropriately by order of collection.",
+        "required_fasting": False,
+        "storage_temperature": "Room temp / 2–8°C",
+        "maximum_storage_duration": "1–2 hours",
+        "transport_medium": "None",
+        "packaging_requirements": "Triple package.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "plasma": {
+        "sample_name": "Plasma",
+        "sample_tube": "Heparin / Citrate / EDTA Tube",
+        "collection_procedure": "Centrifuge anticoagulated blood to obtain plasma.",
+        "collection_time": "Morning",
+        "storage_requirements": "Store at -20°C or lower.",
+        "transport_requirements": "Frozen transport if delay >24h.",
+        "collection_volume": 3.0,
+        "collection_instructions": "Ensure prompt separation after collection.",
+        "required_fasting": True,
+        "storage_temperature": "-20°C",
+        "maximum_storage_duration": "7 days",
+        "transport_medium": "None",
+        "packaging_requirements": "Sealed vial in cool box.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "semen": {
+        "sample_name": "Semen",
+        "sample_tube": "Sterile Semen Container",
+        "collection_procedure": "Collected via masturbation into sterile container.",
+        "collection_time": "After 2–7 days abstinence",
+        "storage_requirements": "Maintain at body temp (37°C).",
+        "transport_requirements": "Deliver to lab within 1 hour.",
+        "collection_volume": 2.0,
+        "collection_instructions": "Avoid contamination.",
+        "required_fasting": False,
+        "storage_temperature": "37°C",
+        "maximum_storage_duration": "1 hour",
+        "transport_medium": "None",
+        "packaging_requirements": "Sterile container in biohazard bag.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "tissue": {
+        "sample_name": "Tissue",
+        "sample_tube": "Formalin Container",
+        "collection_procedure": "Excised and preserved in 10% formalin.",
+        "collection_time": "In theatre or biopsy session",
+        "storage_requirements": "Room temp in fixative.",
+        "transport_requirements": "Leak-proof fixative container.",
+        "collection_volume": 1.0,
+        "collection_instructions": "Submerge completely in fixative.",
+        "required_fasting": False,
+        "storage_temperature": "Room temp",
+        "maximum_storage_duration": "7 days",
+        "transport_medium": "Formalin",
+        "packaging_requirements": "Triple packaging with hazard label.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "aspirate": {
+        "sample_name": "Aspirate",
+        "sample_tube": "Sterile Syringe / Tube",
+        "collection_procedure": "Collected via needle aspiration.",
+        "collection_time": "During procedure",
+        "storage_requirements": "Refrigerate or fix as appropriate.",
+        "transport_requirements": "Cold box or appropriate fixative.",
+        "collection_volume": 1.0,
+        "collection_instructions": "Ensure sterility.",
+        "required_fasting": False,
+        "storage_temperature": "2–8°C",
+        "maximum_storage_duration": "24 hours",
+        "transport_medium": "None or fixative",
+        "packaging_requirements": "Leak-proof with absorbent material.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    },
+    "fluid": {
+        "sample_name": "Body Fluid",
+        "sample_tube": "Sterile Container",
+        "collection_procedure": "Aspirated under sterile conditions.",
+        "collection_time": "As clinically indicated",
+        "storage_requirements": "Refrigerate promptly.",
+        "transport_requirements": "Transport within 1 hour.",
+        "collection_volume": 2.0,
+        "collection_instructions": "Avoid contamination.",
+        "required_fasting": False,
+        "storage_temperature": "2–8°C",
+        "maximum_storage_duration": "24 hours",
+        "transport_medium": "None",
+        "packaging_requirements": "Triple packaging.",
+        "biosafety_level": "BSL-2",
+        "infectious_risk": True
+    }
+}
 
 def infer_sample_types(test_name):
-    """
-    Try to infer likely sample types based on keywords in the test name.
-    Returns a list of SampleType objects (creating them if necessary).
-    """
-    sample_keywords = {
-        "blood": "Blood",
-        "urine": "Urine",
-        "stool": "Stool",
-        "sputum": "Sputum",
-        "swab": "Swab",
-        "serum": "Serum",
-        "csf": "CSF",
-        "plasma": "Plasma",
-        "semen": "Semen",
-        "tissue": "Tissue",
-        "aspirate": "Aspirate",
-        "fluid": "Body Fluid"
-    }
-
     matched_samples = []
     lower_name = test_name.lower()
 
-    for keyword, sample_name in sample_keywords.items():
+    for keyword, sample_data in sample_defaults.items():
         if keyword in lower_name:
-            sample_type, _ = SampleTypeTemplate.objects.get_or_create(sample_name=sample_name)
+            sample_type, created = SampleTypeTemplate.objects.get_or_create(
+                sample_name=sample_data["sample_name"],
+                defaults=sample_data
+            )
+
+            if not created:
+                # Optional: update only missing fields
+                for key, value in sample_data.items():
+                    if getattr(sample_type, key) in [None, '', 0]:
+                        setattr(sample_type, key, value)
+                sample_type.save()
+
             matched_samples.append(sample_type)
 
-    # Default to Blood if nothing matches
+    # Default if no match
     if not matched_samples:
-        sample_type, _ = SampleTypeTemplate.objects.get_or_create(sample_name="Blood")
+        sample_data = sample_defaults["blood"]
+        sample_type, created = SampleTypeTemplate.objects.get_or_create(
+            sample_name=sample_data["sample_name"],
+            defaults=sample_data
+        )
+        if not created:
+            for key, value in sample_data.items():
+                if getattr(sample_type, key) in [None, '', 0]:
+                    setattr(sample_type, key, value)
+            sample_type.save()
         matched_samples.append(sample_type)
 
     return matched_samples
