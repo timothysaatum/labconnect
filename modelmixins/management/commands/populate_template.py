@@ -724,7 +724,7 @@ import pdfplumber
 from django.core.management.base import BaseCommand
 from modelmixins.models import Department, SampleType, TestTemplate
 from decouple import config
-from labs.utils import parse_price
+from labs.utils import parse_price, infer_sample_types, guess_patient_preparation
 
 
 ENV = config("DJANGO_ENV", default="development").lower()
@@ -775,7 +775,9 @@ class Command(BaseCommand):
                                 "test_code": test_code.strip() if test_code else None,
                                 "price": parse_price(cash_price) if cash_price else 0,
                                 "turn_around_time": "4 hours",
-                                "department": department
+                                "department": department,
+                                 "discount_price": parse_price(labs_price) if labs_price else None,
+                                 "patient_preparation": guess_patient_preparation(test_name)
                             }
                         )
 
@@ -789,6 +791,10 @@ class Command(BaseCommand):
                                 self.stdout.write(self.style.WARNING(f"Skipped existing: {test_name}"))
                         else:
                             self.stdout.write(self.style.SUCCESS(f"Added: {test_name}"))
+                        
+                        sample_types = infer_sample_types(test_name)
+                        test.sample_type.set(sample_types)
+                        self.stdout.write(self.style.SUCCESS(f"Assigned sample types to {test_name}: {[s.sample_name for s in sample_types]}"))
 
                     except Exception as e:
                         self.stdout.write(self.style.ERROR(f"Error on row {row}: {e}"))

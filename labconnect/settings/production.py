@@ -7,22 +7,34 @@ ALLOWED_HOSTS = [
     "0.0.0.0"
 ]
 
+#DATABASES = {
+#    "default": {
+#        "ENGINE": "django.db.backends.mysql",
+#        "NAME": "labconnect",
+#        "USER": "vermithor",
+#        "PASSWORD": config("DB_PASSWORD"),
+#        "HOST": "localhost",
+#        "PORT": "3306",
+#        "OPTIONS": {
+#            "init_command": "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
+#            "charset": "utf8mb4",
+#        },
+#        "CONN_MAX_AGE": 600,
+#    }
+#}
+
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "labconnect",
         "USER": "vermithor",
         "PASSWORD": config("DB_PASSWORD"),
         "HOST": "localhost",
-        "PORT": "3306",
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
-            "charset": "utf8mb4",
-        },
+        "PORT": "5432",
         "CONN_MAX_AGE": 600,
     }
 }
-
 
 # Logging configuration
 LOGGING = {
