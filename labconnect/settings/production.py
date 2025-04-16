@@ -33,12 +33,13 @@ ALLOWED_HOSTS = [
 #dramatiq_broker = UpstashBroker(redis_url=config(
 #     "UPSTASH_URL"
 #), redis_token=config("UPSTASH_TOKEN"))
-REDIS_URL = config("REDIS_URL")  # now includes password
-
+REDIS_URL = config("REDIS_URL")  # e.g., redis://:password@localhost:6379/0
+print(REDIS_URL)
+# Set up a connection pool to manage Redis connections
 pool = ConnectionPool.from_url(
     REDIS_URL,
-    max_connections=10,
-    ssl_cert_reqs=None
+    max_connections=10,  # Adjust based on your needs
+    ssl_cert_reqs=None  # Set this if you're using SSL (default is None)
 )
 
 DRAMATIQ_BROKER = {
