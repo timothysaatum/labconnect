@@ -52,7 +52,7 @@ DRAMATIQ_BROKER = {
  }
 
 
- DRAMATIQ_RESULT_BACKEND = {
+DRAMATIQ_RESULT_BACKEND = {
      "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
      "BACKEND_OPTIONS": {
          "url": REDIS_URL#"redis://localhost:6379",
