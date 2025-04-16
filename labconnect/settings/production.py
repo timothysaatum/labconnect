@@ -1,6 +1,6 @@
 from .base import *
 from redis.connection import ConnectionPool
-
+from redis import Redis
 DEBUG = False
 ALLOWED_HOSTS = [
     ".labconnekt.com",
@@ -33,36 +33,38 @@ ALLOWED_HOSTS = [
 #dramatiq_broker = UpstashBroker(redis_url=config(
 #     "UPSTASH_URL"
 #), redis_token=config("UPSTASH_TOKEN"))
-REDIS_URL = config("REDIS_URL")
-pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
-DRAMATIQ_BROKER = {
-     "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",
-     "OPTIONS": {
-         "url": REDIS_URL,
-         "ssl": True,  # Enable SSL for secure connection to Upstash
-         "connection_pool": pool,
-         "ssl_cert_reqs": None,
-     },
-     "MIDDLEWARE": [
-         "dramatiq.middleware.AgeLimit",
-         "dramatiq.middleware.TimeLimit",
-         "dramatiq.middleware.Callbacks",
-         "dramatiq.middleware.Retries",
-         "dramatiq.results.Results",
-         "django_dramatiq.middleware.DbConnectionsMiddleware",
-         "django_dramatiq.middleware.AdminMiddleware",
-     ],
- }
+REDIS_URL = config("REDIS_URL")  # now includes password
 
+pool = ConnectionPool.from_url(
+    REDIS_URL,
+    max_connections=10,
+    ssl_cert_reqs=None
+)
+
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.redis.RedisBroker",
+    "OPTIONS": {
+        "connection_pool": pool,
+    },
+    "MIDDLEWARE": [
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
+        "dramatiq.middleware.Callbacks",
+        "dramatiq.middleware.Retries",
+        "dramatiq.results.Results",
+        "django_dramatiq.middleware.DbConnectionsMiddleware",
+        "django_dramatiq.middleware.AdminMiddleware",
+    ],
+}
 
 DRAMATIQ_RESULT_BACKEND = {
-     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
-     "BACKEND_OPTIONS": {
-         "url": REDIS_URL#"redis://localhost:6379",
-     },
-     "MIDDLEWARE_OPTIONS": {
-         "result_ttl": 60000
-      }
+    "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
+    "BACKEND_OPTIONS": {
+        "connection_pool": pool,
+    },
+    "MIDDLEWARE_OPTIONS": {
+        "result_ttl": 60000,
+    },
 }
 
 DATABASES = {
