@@ -25,14 +25,17 @@ ALLOWED_HOSTS = [
 #}
 
 
-REDIS_URL = config(
-     "REDIS_URL"
-)
+#REDIS_URL = config(
+#     "REDIS_URL"
+#)
 # # REDIS_URL = "redis://localhost:6379"
-pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
+#pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 #dramatiq_broker = UpstashBroker(redis_url=config(
 #     "UPSTASH_URL"
 #), redis_token=config("UPSTASH_TOKEN"))
+REDIS_URL = config("REDIS_URL")
+
+pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 DRAMATIQ_BROKER = {
      "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",
      "OPTIONS": {
