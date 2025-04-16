@@ -25,27 +25,31 @@ ALLOWED_HOSTS = [
 #}
 
 
-#REDIS_URL = config(
-#     "REDIS_URL"
-#)
-# # REDIS_URL = "redis://localhost:6379"
-#pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
-#dramatiq_broker = UpstashBroker(redis_url=config(
-#     "UPSTASH_URL"
-#), redis_token=config("UPSTASH_TOKEN"))
 REDIS_URL = config("REDIS_URL")  # e.g., redis://:password@localhost:6379/0
 print(REDIS_URL)
 # Set up a connection pool to manage Redis connections
-pool = ConnectionPool.from_url(
+#pool = ConnectionPool.from_url(
+#    REDIS_URL,
+#    max_connections=10,  # Adjust based on your needs
+#    ssl_cert_reqs=None  # Set this if you're using SSL (default is None)
+#)
+
+broker_pool = ConnectionPool.from_url(
     REDIS_URL,
-    max_connections=10,  # Adjust based on your needs
-    ssl_cert_reqs=None  # Set this if you're using SSL (default is None)
+    max_connections=20,  # Increased for broker
+    ssl_cert_reqs=None
+)
+
+result_pool = ConnectionPool.from_url(
+    REDIS_URL,
+    max_connections=10,  # Separate pool for results
+    ssl_cert_reqs=None
 )
 
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
-        "connection_pool": pool,
+        "connection_pool": broker_pool,
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.AgeLimit",
@@ -61,7 +65,7 @@ DRAMATIQ_BROKER = {
 DRAMATIQ_RESULT_BACKEND = {
     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
     "BACKEND_OPTIONS": {
-        "connection_pool": pool,
+        "connection_pool": result_pool,
     },
     "MIDDLEWARE_OPTIONS": {
         "result_ttl": 60000,
