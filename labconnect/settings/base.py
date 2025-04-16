@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     # "django_multidb_router",
     "analytics",
     "modelmixins",
-    # 'django_dramatiq',
+    'django_dramatiq',
     "sample",
     "user",
     "hospital",
