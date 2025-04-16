@@ -1,5 +1,7 @@
 from django.db import models
 import uuid
+import datetime
+import random, string
 from django.core.validators import RegexValidator
 code_validator = RegexValidator(
     r"^[A-Z]{2}-\d{3,5}-\d{4,5}$",
@@ -153,6 +155,23 @@ class SampleType(BaseSample):
 	   test_names = [test.name for test in self.test_set.all()]
 	   return f"{self.sample_name}: {', '.join(test_names)}"
 
+
+def generate_unique_test_code():
+
+
+
+    '''
+    Generates a unique id that comprises: e3r2-24-10
+    '''
+    date_part = datetime.datetime.now().strftime('%y-%m')
+
+    random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+
+    test_code = f"{random_part}-{date_part}"
+
+    return test_code
+
+
 class BasicTest(BaseModel):
 
 	STATUS_CHOICES = [
@@ -162,7 +181,7 @@ class BasicTest(BaseModel):
 
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
-	test_code = models.CharField(max_length=100, null=True, blank=True)
+	test_code = models.CharField(max_length=50, unique=True, editable=False, default=generate_unique_test_code)
 	name = models.CharField(max_length=200, db_index=True)
 	price = models.DecimalField(decimal_places=2, max_digits=10)
 	turn_around_time = models.CharField(max_length=200)

@@ -10,7 +10,7 @@ def email_user_on_creation(sender, instance, created, **kwargs):
 
     if created:
         email = instance.email
-        send_code_to_user(email)
+        send_code_to_user.send(email)
         if instance.account_type == "Laboratory":
 
             data = {
@@ -66,4 +66,4 @@ def email_user_on_creation(sender, instance, created, **kwargs):
     """
                 ),
             }
-            send_normal_email(data)
+            send_normal_email.send(data)

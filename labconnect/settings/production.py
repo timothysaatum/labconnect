@@ -24,6 +24,44 @@ ALLOWED_HOSTS = [
 #}
 
 
+REDIS_URL = config(
+     "REDIS_URL"
+)
+# # REDIS_URL = "redis://localhost:6379"
+pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
+dramatiq_broker = UpstashBroker(redis_url=config(
+     "UPSTASH_URL"
+), redis_token=config("UPSTASH_TOKEN"))
+DRAMATIQ_BROKER = {
+     "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",
+     "OPTIONS": {
+         "url": REDIS_URL,
+         "ssl": True,  # Enable SSL for secure connection to Upstash
+         "connection_pool": pool,
+         "ssl_cert_reqs": None,
+     },
+     "MIDDLEWARE": [
+         "dramatiq.middleware.AgeLimit",
+         "dramatiq.middleware.TimeLimit",
+         "dramatiq.middleware.Callbacks",
+         "dramatiq.middleware.Retries",
+         "dramatiq.results.Results",
+         "django_dramatiq.middleware.DbConnectionsMiddleware",
+         "django_dramatiq.middleware.AdminMiddleware",
+     ],
+ }
+
+
+ DRAMATIQ_RESULT_BACKEND = {
+     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
+     "BACKEND_OPTIONS": {
+         "url": REDIS_URL#"redis://localhost:6379",
+     },
+     "MIDDLEWARE_OPTIONS": {
+         "result_ttl": 60000
+      }
+}
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

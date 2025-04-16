@@ -26,6 +26,7 @@ from .models import (
     Complaint, 
     OneTimePassword
 )
+from asgiref.sync import sync_to_async
 import uuid
 import pyotp
 from django.middleware import csrf
@@ -538,12 +539,13 @@ class BranchManagerAcceptView(CreateAPIView):
 
 
 class AddWorker(CreateAPIView):
+    
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         branches = request.data.get("branches", [])
 
-        # Check permission
+        # Check If user has the right permission
         if not request.user.is_admin or request.user.is_branch_manager:
             
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)

@@ -34,7 +34,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
     is_admin = serializers.BooleanField(read_only=True)
     is_staff = serializers.BooleanField(read_only=True)
     is_active = serializers.BooleanField(read_only=True)
-    is_worker = serializers.BooleanField(required=False)
+    is_worker = serializers.BooleanField(read_only=True)
 	
 	
     class Meta:
