@@ -34,7 +34,6 @@ ALLOWED_HOSTS = [
 #     "UPSTASH_URL"
 #), redis_token=config("UPSTASH_TOKEN"))
 REDIS_URL = config("REDIS_URL")
-
 pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
 DRAMATIQ_BROKER = {
      "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",

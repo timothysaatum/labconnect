@@ -116,11 +116,10 @@ def generateotp():
 #    except Exception as e:
 #        print(e)
 # tasks.py
-
 @dramatiq.actor
 def send_code_to_user(email):
     subject = "Your One-Time Verification Code"
-    otp_code = generate_otp()
+    otp_code = generateotp()
 
     try:
         # Get the user by email
@@ -198,8 +197,7 @@ def send_code_to_user(email):
 
     except Exception as e:
         print(f"An error occurred while sending email: {e}")
-        
-        
+
 
 @dramatiq.actor
 def send_normal_email(data):
@@ -217,3 +215,4 @@ def send_normal_email(data):
         print(f"Email sent to {data['to_email']}")
     except Exception as e:
         print(f"Error sending email: {e}")
+
