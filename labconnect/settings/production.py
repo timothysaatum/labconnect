@@ -37,13 +37,13 @@ print(REDIS_URL)
 broker_pool = ConnectionPool.from_url(
     REDIS_URL,
     max_connections=20,  # Increased for broker
-    ssl_cert_reqs=None
+    ssl=False
 )
 
 result_pool = ConnectionPool.from_url(
     REDIS_URL,
     max_connections=10,  # Separate pool for results
-    ssl_cert_reqs=None
+    ssl=False
 )
 
 DRAMATIQ_BROKER = {
