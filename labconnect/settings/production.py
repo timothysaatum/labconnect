@@ -1,4 +1,5 @@
 from .base import *
+from redis.connection import ConnectionPool
 
 DEBUG = False
 ALLOWED_HOSTS = [
