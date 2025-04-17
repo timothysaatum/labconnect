@@ -1,6 +1,6 @@
 from .base import *
-from redis.connection import ConnectionPool
-from redis import Redis
+#from redis.connection import ConnectionPool
+#from redis import Redis
 DEBUG = False
 ALLOWED_HOSTS = [
     ".labconnekt.com",
@@ -23,52 +23,6 @@ ALLOWED_HOSTS = [
 #        "CONN_MAX_AGE": 600,
 #    }
 #}
-
-
-REDIS_URL = config("REDIS_URL")  # e.g., redis://:password@localhost:6379/0
-print(REDIS_URL)
-# Set up a connection pool to manage Redis connections
-#pool = ConnectionPool.from_url(
-#    REDIS_URL,
-#    max_connections=10,  # Adjust based on your needs
-#    ssl_cert_reqs=None  # Set this if you're using SSL (default is None)
-#)
-
-broker_pool = ConnectionPool.from_url(
-    REDIS_URL,
-    max_connections=20,
-)
-
-result_pool = ConnectionPool.from_url(
-    REDIS_URL,
-    max_connections=10,  # Separate pool for results
-)
-
-DRAMATIQ_BROKER = {
-    "BROKER": "dramatiq.brokers.redis.RedisBroker",
-    "OPTIONS": {
-        "connection_pool": broker_pool,
-    },
-    "MIDDLEWARE": [
-        "dramatiq.middleware.AgeLimit",
-        "dramatiq.middleware.TimeLimit",
-        "dramatiq.middleware.Callbacks",
-        "dramatiq.middleware.Retries",
-        "dramatiq.results.Results",
-        "django_dramatiq.middleware.DbConnectionsMiddleware",
-        "django_dramatiq.middleware.AdminMiddleware",
-    ],
-}
-
-DRAMATIQ_RESULT_BACKEND = {
-    "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
-    "BACKEND_OPTIONS": {
-        "connection_pool": result_pool,
-    },
-    "MIDDLEWARE_OPTIONS": {
-        "result_ttl": 60000,
-    },
-}
 
 DATABASES = {
     "default": {

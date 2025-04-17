@@ -75,7 +75,7 @@ def mail_one_time_password(sender, instance, created, **kwargs):
     """
             ),
         }
-        send_normal_email(data)
+        send_normal_email.send(data)
 
 
 @receiver(post_save, sender=Laboratory)
@@ -145,4 +145,4 @@ def mail_lab_user(sender, instance, created, **kwargs):
     """
             ),
         }
-        send_normal_email(data)
+        send_normal_email.send(data)

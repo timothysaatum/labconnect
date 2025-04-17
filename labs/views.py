@@ -19,7 +19,7 @@ from django.core.cache import cache
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .utils import get_nearby_branches, filter_by_facility_level
 from rest_framework.permissions import BasePermission
-# from .tasks import copy_test_to_branch
+from .tasks import copy_test_to_branch
 import logging
 from modelmixins.utils import ensure_uuid
 logger = logging.getLogger('labs')
@@ -510,7 +510,7 @@ class CopyTests(generics.CreateAPIView):
             return Response({'error': 'Invalid UUID format'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Call the Dramatiq task
-        # task = copy_test_to_branch.send(test_ids, target_branch_id)
+        task = copy_test_to_branch.send(test_ids, target_branch_id)
 
         return Response({
             'message': f'Copying test to {target_branch_id}',

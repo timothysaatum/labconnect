@@ -1,4 +1,4 @@
-from celery import shared_task
+import dramatiq
 
 # @shared_task
 def add(x, y):

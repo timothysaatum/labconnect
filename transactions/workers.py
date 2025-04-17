@@ -8,6 +8,7 @@ from modelmixins.models import Facility
 from labs.models import Laboratory
 from .models import Transaction
 from .process_payment import Paystack
+import dramatiq
  
 
 
@@ -22,8 +23,12 @@ def is_internet_available():
     except requests.ConnectionError:
         return False
 
-def process_task(task):
+
+@dramatiq.actor(max_retries=5, min_backoff=1000, max_backoff=10000)
+def process_task(task_id):
     """Process API calls asynchronously."""
+    from .models import BackgroundTask
+    task = BackgroundTask.objects.get(id=task_id)
     if task.status != "pending":
         return  # Skip tasks already processed
 

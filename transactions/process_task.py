@@ -1,4 +1,4 @@
-from .workers import process_task
+from .tasks import process_task
 import uuid
 from .models import BackgroundTask
 from concurrent.futures import ThreadPoolExecutor
@@ -32,6 +32,7 @@ def enqueue_task(task_type, payload):
         parent=payload.pop("parent", None),
         transaction_ref=payload.pop("transaction_ref", None),
     )
-    executor.submit(process_task, task)  # Run in background
+    process_task.send(str(task.id))
+    #executor.submit(process_task, task)  # Run in background
     logger.info(f"Task {task.id} submitted for processing.")
     return task.id
