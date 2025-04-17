@@ -159,6 +159,7 @@ DRAMATIQ_RESULT_BACKEND = {
     },
     "MIDDLEWARE_OPTIONS": {
         "result_ttl": 60000,
+        "store_results":True
     },
 }
 
