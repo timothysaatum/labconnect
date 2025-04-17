@@ -9,7 +9,7 @@ from labs.models import Laboratory
 from .models import Transaction
 from .process_payment import Paystack
 import dramatiq
-# from dramatiq import get_current_message
+# from dramatiq import get_message
 
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ min_backoff=1000,
 max_backoff=10000, 
 # message=None
 )
-def process_task(task_id):
+def process_task(task_id, _message=None):
     """Process API calls asynchronously."""
     from .models import BackgroundTask
     task = BackgroundTask.objects.get(id=task_id)
@@ -49,11 +49,12 @@ def process_task(task_id):
         logger.error(f"Unknown task type: {task.task_type}")
         return
 
-    # Update retry attempt from Dramatiq
-    # message = get_current_message()
-    # current_attempt = message.options.get("retries", 0) - message.options.get("retries_remaining", 0)
-    # task.retries = current_attempt
-    # task.save(update_fields=["retries"])
+    if _message:
+        current_attempt = _message.options.get("retries", 0) - _message.options.get("retries_remaining", 0)
+        task.retries = current_attempt
+        task.save(update_fields=["retries"])
+    else:
+        current_attempt = 0
 
     if not is_internet_available():
         raise Exception("No internet connection")
@@ -95,7 +96,7 @@ def process_task(task_id):
                 subaccount_id = response_data.get("data", {}).get("subaccount_code")
                 if subaccount_id:
                     with transaction.atomic():
-                        parent_id = uuid.UUID(task.parent)
+                        parent_id = task.parent
                         facility = Facility.objects.filter(id=parent_id).first()
                         laboratory = Laboratory.objects.filter(id=parent_id).first()
 
