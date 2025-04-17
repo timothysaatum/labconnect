@@ -27,7 +27,7 @@ def is_internet_available():
 @dramatiq.actor(max_retries=5, 
 min_backoff=1000, 
 max_backoff=10000, 
-# message=None
+store_results=True
 )
 def process_task(task_id, _message=None):
     """Process API calls asynchronously."""
