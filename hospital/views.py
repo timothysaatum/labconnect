@@ -20,6 +20,25 @@ class PermissionsMixin(permissions.BasePermission):
 		if request.method in permissions.SAFE_METHODS:
 			return True
 		return request.user.is_authenticated and request.user.account_type == 'Hospital'
+		ticated and request.user.account_type == 'Laboratory'
+
+#    def has_object_permission(self, request, view, obj):
+#        """
+#        Ensures the user is authorized to:
+#        - Edit a hospital if they created it.
+#        - Edit a hospital lab if they are the hospital manager or laboratory manager.
+#        """
+#        user = request.user
+
+#        # Check if object is a laboratory
+#        if hasattr(obj, 'created_by') and obj.__class__.__name__ == "Hospital":
+#            
+#            return obj.created_by == user
+
+#        # Check if object is a branch
+#        if hasattr(obj, 'hospital_reference') and obj.__class__.__name__ == "HospitalLab":
+#            
+#            return obj.hospital_reference.created_by == user or obj.manager == user
 
 
 class HospitalMixin(generics.GenericAPIView):
@@ -52,8 +71,8 @@ class UpdateHospitalView(HospitalMixin, generics.UpdateAPIView):
 
 		return Hospital.objects.filter(created_by=self.request.user)
 
-	def put(self, request, pk):
-		return super().put(request, pk)
+	def patch(self, request, pk):
+		return super().patch(request, pk)
 
 
 

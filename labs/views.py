@@ -18,8 +18,8 @@ from django.core.cache import cache
 # from rest_framework.exceptions import ValidationError
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .utils import get_nearby_branches, filter_by_facility_level
-
-# from .tasks import copy_test_to_branch
+from rest_framework.permissions import BasePermission
+from .tasks import copy_test_to_branch
 import logging
 from modelmixins.utils import ensure_uuid
 logger = logging.getLogger('labs')
@@ -40,7 +40,7 @@ class PermissionMixin(object):
 	Returns a Bool
 	"""
 	def has_laboratory_permission(self, user):
-		return user.account_type == 'Laboratory' and (user.is_admin or user.is_staff)
+		return user.account_type == 'Laboratory' and user.is_admin
 	"""
 	Checks whether the user is the laboratory CEO or general manager,
 	it allows both the laboratory CEO and branch manager to edit the Branch details
@@ -54,6 +54,52 @@ class PermissionMixin(object):
 				(user == branch[0].branch_manager)
 			)
 		)
+	
+	def has_permission_to_edit_lab(self):
+	    return self.request.user
+
+
+class IsLaboratoryOwnerOrManager(BasePermission):
+    """
+    Custom permission for managing laboratories, branches, and tests.
+    """
+    
+    def has_permission(self, request, view):
+        """
+        Grants general permission only to authenticated users with account_type 'Laboratory'.
+        """
+        return request.user.is_authenticated and request.user.account_type == 'Laboratory'
+
+    def has_object_permission(self, request, view, obj):
+        """
+        Ensures the user is authorized to:
+        - Edit a laboratory if they created it.
+        - Edit a branch if they are the lab owner or branch manager.
+        - Edit a test only if they manage ALL its assigned branches or lab owner.
+        """
+        user = request.user
+
+        # Check if object is a laboratory
+        if hasattr(obj, 'created_by') and obj.__class__.__name__ == "Laboratory":
+            
+            return obj.created_by == user
+
+        # Check if object is a branch
+        if hasattr(obj, 'laboratory') and obj.__class__.__name__ == "Branch":
+            
+            return obj.laboratory.created_by == user or obj.branch_manager == user
+
+        # Check if object is a test (M2M: must have permission to ALL its branches)
+        if hasattr(obj, 'branch') and obj.__class__.__name__ == "Test":
+            print("Ancient one")
+            return all(
+                branch.laboratory.created_by == user or branch.branch_manager == user
+                for branch in obj.branch.all()
+            )
+
+        return False
+
+
 
 
 class CacheMixin:
@@ -69,39 +115,28 @@ class CacheMixin:
         return f'view_cache_{request.path}_{request.user.id}'
 
 
-class CreateLaboratoryView(PermissionMixin, generics.CreateAPIView):
+class CreateLaboratoryView(generics.CreateAPIView):
 	"""
 	The API endpoint that allows a user to create a laboratory.
 	Inherits the custom permission class defined at the top of this model.
 	The sign in user is automatically assign as the CEO or General manager unless otherwise
 	"""
-
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	parser_classes = (MultiPartParser, FormParser)
 	serializer_class = LaboratorySerializer
-
-	def post(self, request):
-		"""
-		Checks if the user has the appropriate permission
-		this prevents the situation where a user with the account type as a hospital or delivery adding a lab
-		"""
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid user.'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
-		return self.create(request)
 
 	def perform_create(self, serializer):
 		serializer.save(created_by=self.request.user)
 
 
-class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
+class UpdateLaboratoryDetails(generics.UpdateAPIView):
 
 	"""
 	The API endpoint that allows the user to update their lab,
 	Inherits the custom PermissionMixin class defined at the top of this model.
 	Checks if the user is associated with the lab.
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 
 	serializer_class = LaboratorySerializer
 	def get_queryset(self):
@@ -112,21 +147,16 @@ class UpdateLaboratoryDetails(PermissionMixin, generics.UpdateAPIView):
 		"""
 		Permission check to ensure the right user is interracting with right model.
 		"""
-
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid user'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
 		return self.partial_update(request, pk)
 
 
-class DeleteLaboratory(PermissionMixin, generics.DestroyAPIView):
+class DeleteLaboratory(generics.DestroyAPIView):
 	"""
 	The API endpoint that allows users to delete the lab instance they have created.
 	Inherits from the custom PermissionMixin class defined at the begiining of this
 	model.
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	def get_queryset(self):
 		"""
 		Returns a queryset of the Lab created by the user using the created_by field in the
@@ -135,58 +165,46 @@ class DeleteLaboratory(PermissionMixin, generics.DestroyAPIView):
 		return Laboratory.objects.filter(created_by=self.request.user)
 
 	def delete(self, request, pk):
-		"""
-		Permission check to ensure the right user is the deleting the appropriate object.
-		"""
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
+	
 		return self.destroy(request, pk)
 
 
-class LaboratoryUserVIew(PermissionMixin, generics.ListAPIView):
+class LaboratoryUserVIew(generics.ListAPIView):
 	"""
 	The API endpoint to get Laboratory associated with user
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = LaboratorySerializer
 	def get_queryset(self):
 		return Laboratory.objects.filter(created_by=self.request.user)
 
 
-class CreateBranchView(PermissionMixin, generics.CreateAPIView):
+class CreateBranchView(generics.CreateAPIView):
 
 	"""
 	Api endpoint for adding a branch to the laboratory the user has created.
 	This auto assigns the Branch manager role to the general manager that is the logged in user.
 	The branch manager the option of inviting a branch manager to take over that role as the branch manager.
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = BranchSerializer
-	def post(self, request):
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid user.'},
-				status=status.HTTP_400_BAD_REQUEST
-			)
-
-		return self.create(request)
 
 	def perform_create(self, serializer):
 		"""
 		A data base query to get the laboratory the branch is being added to
 		"""
 		lab = self.request.user.laboratory
-		# print(lab)
+		
 		serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
 
 
-class BranchListView(PermissionMixin, generics.ListAPIView):
+class BranchListView(generics.ListAPIView):
 
 	"""
 	API endpoint that allows either the Laboratory CEO or Branch manager to view their Branch.
 	This returns a list of objects, if the user multiple branches, a query set is returned.
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = BranchSerializer
 	def get_queryset(self):
 		"""
@@ -198,56 +216,42 @@ class BranchListView(PermissionMixin, generics.ListAPIView):
 		).order_by('-date_added')
 
 
-class BranchUpdateView(PermissionMixin, generics.UpdateAPIView):
+class BranchUpdateView(generics.UpdateAPIView):
 	"""
 	API end point that allows the user to update their facility.
 	This allows both the Branch manager or Laboratory CEO to update
 	The Branch
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = BranchSerializer
 	def get_queryset(self):
 		return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
 	def patch(self, request, pk, format=None):
 		branch = self.get_queryset()
-		"""
-		Checks if the user the permisssion to edit the Branch
-		Raises an unauthorized error.
-		"""
-		if not self.has_permission_to_edit_branch(request.user, branch):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
+	
 		return self.partial_update(request, pk, format=None)
 
 
-class BranchDeleteView(PermissionMixin, generics.DestroyAPIView):
+class BranchDeleteView(generics.DestroyAPIView):
 	"""
 	API endpoint for a user to delete the Branch they have created.
 	This allows on the Lab CEO to delete the Branch.
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	def get_queryset(self):
 		return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
 	def delete(self, request, pk, format=None):
-		"""
-		Checks the user roles and deletes the Branch.
-		"""
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
+	
 		return self.destroy(request, pk, format=None)
 
 
-class CreateTestView(PermissionMixin, generics.CreateAPIView):
+class CreateTestView(generics.CreateAPIView):
+    permission_classes = [IsLaboratoryOwnerOrManager]
     serializer_class = TestSerializer
 
     def post(self, request, *args, **kwargs):
-        if not self.has_laboratory_permission(self.request.user):
-            return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if the payload is a single object or a list
         is_batch = isinstance(request.data, list)
@@ -338,45 +342,37 @@ class TestListView(generics.ListAPIView):
 
 
 
-class TestUpdateView(PermissionMixin, generics.UpdateAPIView):
+class TestUpdateView(generics.UpdateAPIView):
     """
     Api end point for updating test for a laboratory.
     It accepts the test id
     """
+    permission_classes = [IsLaboratoryOwnerOrManager]
     serializer_class = TestSerializer
 
     def get_queryset(self):
         return Test.objects.filter(pk=self.kwargs.get('pk'))
 
     def patch(self, request, pk):
-        if not self.has_laboratory_permission(self.request.user):
-            return Response(
-                {'error': 'Invalid credentials'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+    
         return self.partial_update(request, pk)
 
     def perform_update(self, serializer):
         serializer.save()
 
 
-class TestDeleteView(PermissionMixin, generics.DestroyAPIView):
+class TestDeleteView(generics.DestroyAPIView):
 	"""
 	API endpoint foe delete test for a laboratory or Branch.
 	This deletes the test for all the branches where it is being
 	done.
 	Caution must be taken when calling this endpoint.
 	"""
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	def get_queryset(self):
 		return Test.objects.filter(pk=self.kwargs.get('pk'))
 
 	def delete(self, request, pk, format=None):
-
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
 
 		return self.destroy(request, pk, format=None)
 
@@ -417,20 +413,17 @@ class AllLaboratories(generics.ListAPIView):
 
 
 
-class SampleTypeView(PermissionMixin, generics.CreateAPIView):
+class SampleTypeView(generics.CreateAPIView):
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = SampleTypeSerializer
 
 	def post(self, request):
-		#Checks if the use has the required permission
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
+	
 		return self.create(request)
 
 
-class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
+class SampleTypeUpdateView(generics.UpdateAPIView):
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = SampleTypeSerializer
 
 	def get_queryset(self):
@@ -439,20 +432,15 @@ class SampleTypeUpdateView(PermissionMixin, generics.UpdateAPIView):
 
 	def patch(self, request, pk):
 
-		if not self.has_laboratory_permission(self.request.user):
-			return Response(
-				{'error': 'Invalid credentials'},
-				status=status.HTTP_401_UNAUTHORIZED
-			)
-
 		return self.partial_update(request, pk)
 
 
-class SampleTypeDeleteView(PermissionMixin, generics.DestroyAPIView):
+class SampleTypeDeleteView(generics.DestroyAPIView):
 	'''
 	Deletes a specific sample type.
 	params: sample type id: int
 	'''
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	def get_queryset(self):
 		return SampleType.objects.filter(pk=self.kwargs.get('pk'))
 
@@ -476,7 +464,8 @@ class GetTestSampleType(generics.ListAPIView):
 			).distinct()
 
 
-class UpdateTestForSpecificBranch(PermissionMixin, generics.UpdateAPIView):
+class UpdateTestForSpecificBranch(generics.UpdateAPIView):
+	permission_classes = [IsLaboratoryOwnerOrManager]
 	serializer_class = BranchTestSerializer
 
 	def get_object(self):
@@ -521,7 +510,7 @@ class CopyTests(generics.CreateAPIView):
             return Response({'error': 'Invalid UUID format'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Call the Dramatiq task
-        # task = copy_test_to_branch.send(test_ids, target_branch_id)
+        task = copy_test_to_branch.send(test_ids, target_branch_id)
 
         return Response({
             'message': f'Copying test to {target_branch_id}',

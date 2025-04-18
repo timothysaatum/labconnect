@@ -2,11 +2,9 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from decouple import config
+from redis.connection import ConnectionPool
 # import sentry_sdk
 # from sentry_sdk.integrations.django import DjangoIntegration
-
-# from redis.connection import ConnectionPool
-
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,7 +30,7 @@ INSTALLED_APPS = [
     # "django_multidb_router",
     "analytics",
     "modelmixins",
-    # 'django_dramatiq',
+    'django_dramatiq',
     "sample",
     "user",
     "hospital",
@@ -56,6 +54,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    #"django_dramatiq.middleware.DramatiqMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -122,44 +121,47 @@ PAYSTACK_TRANSFER_URL = "https://api.paystack.co/transfer"
 #         'LOCATION': 'key_cache_table',
 #     }
 # }
+ENV = config("DJANGO_ENV").lower()
+REDIS_URL = config("REDIS_URL") if ENV == "production" else "redis://localhost:6379/0" # e.g., redis://:password@localhost:6379/0
 
+broker_pool = ConnectionPool.from_url(
+    REDIS_URL,
+    max_connections=20,
+)
 
-# REDIS_URL = config(
-#     "REDIS_URL"
-# )
+result_pool = ConnectionPool.from_url(
+    REDIS_URL,
+    max_connections=10,
+)
 
-# # REDIS_URL = "redis://localhost:6379"
-# pool = ConnectionPool.from_url(REDIS_URL, max_connections=10)
-# # dramatiq_broker = UpstashBroker(redis_url=UPSTASH_URL, redis_token=UPSTASH_TOKEN)
-# DRAMATIQ_BROKER = {
-#     "BROKER": "dramatiq.brokers.redis.RedisBroker",  # "uptash_broker.UpstashBroker",
-#     "OPTIONS": {
-#         "url": REDIS_URL,
-#         "ssl": True,  # Enable SSL for secure connection to Upstash
-#         "connection_pool": pool,
-#         "ssl_cert_reqs": None,
-#     },
-#     "MIDDLEWARE": [
-#         "dramatiq.middleware.AgeLimit",
-#         "dramatiq.middleware.TimeLimit",
-#         "dramatiq.middleware.Callbacks",
-#         "dramatiq.middleware.Retries",
-#         "dramatiq.results.Results",
-#         "django_dramatiq.middleware.DbConnectionsMiddleware",
-#         "django_dramatiq.middleware.AdminMiddleware",
-#     ],
-# }
+DRAMATIQ_BROKER = {
+    "BROKER": "dramatiq.brokers.redis.RedisBroker",
+    "OPTIONS": {
+        "connection_pool": broker_pool,
+    },
+    "MIDDLEWARE": [
+        "dramatiq.middleware.AgeLimit",
+        "dramatiq.middleware.TimeLimit",
+        "dramatiq.middleware.Callbacks",
+        "dramatiq.middleware.Retries",
+        # "dramatiq.middleware.Prometheus"
+        # "dramatiq.middleware.CurrentMessageMiddleware",
+        "dramatiq.results.Results",
+        "django_dramatiq.middleware.DbConnectionsMiddleware",
+        "django_dramatiq.middleware.AdminMiddleware",
+    ],
+}
 
-
-# DRAMATIQ_RESULT_BACKEND = {
-#     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
-#     "BACKEND_OPTIONS": {
-#         "url": REDIS_URL#"redis://localhost:6379",
-#     },
-#     "MIDDLEWARE_OPTIONS": {
-#         "result_ttl": 60000
-#     }
-# }
+DRAMATIQ_RESULT_BACKEND = {
+    "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
+    "BACKEND_OPTIONS": {
+        "connection_pool": result_pool,
+    },
+    "MIDDLEWARE_OPTIONS": {
+        "result_ttl": 60000,
+        "store_results":True
+    },
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [

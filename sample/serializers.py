@@ -50,8 +50,10 @@ class SampleTestSerializer(serializers.ModelSerializer):
 
         data = super().to_representation(instance)
         request = self.context.get('request')
+        
         data["test"] = str(instance.test.name)
         data['cost'] = instance.test.price
+        
         if instance.test_result and request:
             data['test_result'] = request.build_absolute_uri(f"test/result/{instance.pk}/download/")
 
@@ -94,7 +96,6 @@ class SampleSerializer(serializers.ModelSerializer):
             "sample_tests_data",
         )
 
-
     def validate(self, data):
         """Ensure at least one rejection reason is provided when rejecting a sample."""
         if data.get("sample_status") == "Rejected":
@@ -128,7 +129,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
             referral = instance.referral
             total_amount = float(sum(sample_test.test.price for sample_test in instance.sample_tests.all()))
-            print(total_amount)
+            # print(total_amount)
             if instance.sample_status == "Received":
                 transfer_funds_to_lab(
                         referral.to_laboratory.subaccount_id,
@@ -136,6 +137,7 @@ class SampleSerializer(serializers.ModelSerializer):
                         f"Being Payment for : {str(referral)} lab works",
                         parent=referral.to_laboratory.id
                     )
+                    
             if instance.sample_status == "Rejected":
                 txn = Transaction.objects.filter(referral=referral).first()
                 refund_transaction(txn.reference, amount=total_amount)
@@ -145,7 +147,7 @@ class SampleSerializer(serializers.ModelSerializer):
                 status="Request Completed",
                 location=instance.referral.to_laboratory,
             )
-
+            
             referral.referral_status = "Request Completed"
             referral.save()
 
@@ -182,8 +184,8 @@ class SampleSerializer(serializers.ModelSerializer):
         return data
 
 
-
 class ReferralSerializer(serializers.ModelSerializer):
+    
     to_laboratory = serializers.PrimaryKeyRelatedField(
         queryset=Facility.objects.filter(
             Q(branch__isnull=False) | Q(hospitallab__isnull=False)
@@ -306,6 +308,7 @@ class ReferralSerializer(serializers.ModelSerializer):
         data["referring_facility"] = str(instance.referring_facility)
         data["laboratory_contact"] = instance.to_laboratory.phone
         data["to_laboratory"] = str(instance.to_laboratory)
+        
         if instance.referral_attachment and request:
             data['referral_attachment'] = request.build_absolute_uri(f"/sample/referral/{instance.pk}/download/")
 
