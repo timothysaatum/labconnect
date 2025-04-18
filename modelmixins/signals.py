@@ -68,4 +68,4 @@ def update_gps_on_digital_address_change(sender, instance, created, **kwargs):
         if instance.digital_address:
             model_name = sender.__name__.lower()
             logger.info(f"Queueing GPS update task for {model_name} {instance.pk}")
-            # fetch_gps_coordinates.send(instance.digital_address, model_name, instance.pk)
+            fetch_gps_coordinates.send(instance.digital_address, model_name, instance.pk)
