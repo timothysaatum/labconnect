@@ -3,8 +3,7 @@ import os
 from datetime import timedelta
 from decouple import config
 from redis.connection import ConnectionPool
-# import sentry_sdk
-# from sentry_sdk.integrations.django import DjangoIntegration
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -144,8 +143,6 @@ DRAMATIQ_BROKER = {
         "dramatiq.middleware.TimeLimit",
         "dramatiq.middleware.Callbacks",
         "dramatiq.middleware.Retries",
-        # "dramatiq.middleware.Prometheus"
-        # "dramatiq.middleware.CurrentMessageMiddleware",
         "dramatiq.results.Results",
         "django_dramatiq.middleware.DbConnectionsMiddleware",
         "django_dramatiq.middleware.AdminMiddleware",
@@ -162,7 +159,6 @@ DRAMATIQ_RESULT_BACKEND = {
         "store_results":True
     },
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
