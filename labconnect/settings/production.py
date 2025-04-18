@@ -79,7 +79,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://labconnekt.com",
 ]
 
-# White listing the localhost:3000 port
+
 CORS_ALLOW_METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
 CORS_ALLOW_HEADERS = ["Authorization", "Content-Type", "Accept"]
 
