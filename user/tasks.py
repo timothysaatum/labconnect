@@ -127,14 +127,14 @@ def send_normal_email(data):
     max_backoff=10000, 
     store_results=True
 )
-def create_user(request):
+def create_user(user_data):
     from .serializers import UserCreationSerializer
     """
     Handles user creation and branch assignment:
     - If a user_id is provided, assign the user to the specified branches (if not already assigned).
     - If no user_id is provided, validate data, create a new user using serializer.save(), and assign branches.
     """
-    user_data = request.data
+    # user_data = request.data
     user_id = user_data.get("id", None)
     branch_data = user_data.pop("branches", [])
 
@@ -150,7 +150,7 @@ def create_user(request):
         user_data["is_admin"] = False
         user_data["is_staff"] = False
         user_data["is_worker"] = True
-        user_data["account_type"] = request.user.account_type
+        user_data["account_type"] = "Laboratory"
         serializer = UserCreationSerializer(data=user_data)
         serializer.is_valid(raise_exception=True)
         

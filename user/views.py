@@ -558,7 +558,8 @@ class AddWorker(CreateAPIView):
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create or update the user
-        create_user.send(request)
+        user_data = request.data
+        create_user.send(user_data)
 
         return Response(
             {"message": "User is being processed"},
