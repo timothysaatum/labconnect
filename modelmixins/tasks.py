@@ -3,7 +3,6 @@ import logging
 import requests
 import uuid
 from django.db import transaction
-# from modelmixins.models import Facility
 from labs.models import Branch
 from hospital.models import Hospital, HospitalLab
 

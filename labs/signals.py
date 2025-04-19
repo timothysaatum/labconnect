@@ -1,11 +1,10 @@
-from user.utils import send_normal_email
-from .models import BranchManagerInvitation, Laboratory#, Branch
-# from hospital.models import Hospital, HospitalLab
-from django.db.models.signals import post_save#, pre_save
+from user.tasks import send_normal_email
+from .models import BranchManagerInvitation, Laboratory
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from textwrap import dedent
 import logging
-# from modelmixins.utils import get_gps_coords
+
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +74,7 @@ def mail_one_time_password(sender, instance, created, **kwargs):
     """
             ),
         }
+        print(f"https://labconnekt.com/accept-invite/{instance.id}/{invitation_code}/")
         send_normal_email.send(data)
 
 

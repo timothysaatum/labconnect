@@ -16,7 +16,7 @@ class Command(BaseCommand):
         self.stdout.write(f"Found {total_labs} labs with missing GPS coordinates.")
         for lab in labs_with_missing_gps:
             try:
-                latitude, longitude = get_gps_coords(lab.digital_address, sync=True)  # Sync mode
+                latitude, longitude = get_gps_coords(lab.digital_address)
                 if latitude is not None and longitude is not None:
                     lab.gps_coordinates = f"{latitude}, {longitude}"
                     lab.save(update_fields=['gps_coordinates'])

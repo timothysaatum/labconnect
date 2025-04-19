@@ -1,4 +1,4 @@
-from django.contrib import admin # type: ignore
+from django.contrib import admin
 from .models import (
 		Test,
 		Laboratory, 
@@ -7,7 +7,7 @@ from .models import (
 		BranchTest
 	)
 import csv
-from django.http import HttpResponse # type: ignore
+from django.http import HttpResponse
 
 
 @admin.action

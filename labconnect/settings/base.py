@@ -121,7 +121,7 @@ PAYSTACK_TRANSFER_URL = "https://api.paystack.co/transfer"
 #     }
 # }
 ENV = config("DJANGO_ENV").lower()
-REDIS_URL = config("REDIS_URL") if ENV == "production" else "redis://localhost:6379/0" # e.g., redis://:password@localhost:6379/0
+REDIS_URL = config("REDIS_URL") if ENV == "production" else "redis://localhost:6379/0"
 
 broker_pool = ConnectionPool.from_url(
     REDIS_URL,

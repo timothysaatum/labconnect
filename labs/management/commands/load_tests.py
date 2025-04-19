@@ -1,9 +1,7 @@
-import uuid
-#from decimal import Decimal
 import os
 import pdfplumber
 from django.core.management.base import BaseCommand
-from modelmixins.models import Department, SampleType, TestTemplate
+from modelmixins.models import Department, TestTemplate
 from decouple import config
 from labs.utils import parse_price, infer_sample_types, guess_patient_preparation
 
@@ -12,13 +10,11 @@ ENV = config("DJANGO_ENV", default="development").lower()
 
 
 class Command(BaseCommand):
-    help = 'Load tests from the ADVANZ Diagnostics PDF into the database'
+    help = 'Load tests from PDF into the database'
 
     def handle(self, *args, **kwargs):
-        if ENV == "production":
-            pdf_path = "/home/ubuntu/labconnect/test.pdf"
-        else:
-            pdf_path = '/data/data/com.termux/files/home/storage/documents/projects/labconnect/test.pdf'
+        
+        pdf_path = "/home/ubuntu/labconnect/test.pdf" if ENV == "production" else "C:\\Users\\hashi\\Desktop\\tim\\labconnect\\test.pdf"
 
         if not os.path.exists(pdf_path):
             self.stdout.write(self.style.ERROR(f"PDF file not found at: {pdf_path}"))

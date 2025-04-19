@@ -1,4 +1,4 @@
-import django_filters # type: ignore
+import django_filters
 from labs.models import Test
 
 

@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import smart_bytes, force_str
 from django.urls import reverse
 from labs.models import Laboratory, Branch
-from .utils import send_normal_email, send_code_to_user
+from .tasks import send_normal_email, send_code_to_user
 from labs.serializers import LaboratorySerializer, BranchSerializer
 from hospital.models import Hospital
 from hospital.serializers import HospitalSerializer
@@ -130,7 +130,7 @@ class LoginSerializer(serializers.ModelSerializer):
 		if not user:
 			raise AuthenticationFailed('Invalid Credentials!')
 		if not user.is_verified:
-			send_code_to_user(user.email)
+			send_code_to_user.send(user.email)
 			raise AuthenticationFailed('Unverified user, New verification code sent to your email. Verify your email to login')
 		return user
 
@@ -146,14 +146,12 @@ class LoginSerializer(serializers.ModelSerializer):
 			data['branch'] = BranchSerializer(Branch.objects.filter(Q(laboratory__created_by=instance.id) | Q(branch_manager_id=instance.id)), many=True).data
 			
 			if instance.is_branch_manager:
-			    
-			    branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
-			    data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
+				branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
+				data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
 			    
 			if instance.is_worker:
-			    
-			    worker_branches = instance.work_branches.all()
-			    data['branch'] += BranchSerializer(worker_branches, many=True).data
+				worker_branches = instance.work_branches.all()
+				data['branch'] += BranchSerializer(worker_branches, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance.id), many=True).data
@@ -208,7 +206,7 @@ class PasswordResetViewSerializer(serializers.Serializer):
 				'to_email': user.email
 			}
 
-			send_normal_email(data)
+			send_normal_email.send(data)
 			
 			return {
 
@@ -287,14 +285,12 @@ class UserSerializer(serializers.ModelSerializer):
 			data['branch'] = BranchSerializer(Branch.objects.filter(Q(laboratory__created_by=instance) | Q(branch_manager_id=instance.id)), many=True).data
 			
 			if instance.is_branch_manager:
-			    
-			    branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
-			    data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
+				branch_manager_labs = Laboratory.objects.filter(branches__branch_manager=instance).distinct()
+				data['lab'] += LaboratorySerializer(branch_manager_labs, many=True).data
 			    
 			if instance.is_worker:
-			    
-			    worker_branches = instance.work_branches.all()
-			    data['branch'] += BranchSerializer(worker_branches, many=True).data
+				worker_branches = instance.work_branches.all()
+				data['branch'] += BranchSerializer(worker_branches, many=True).data
 
 		if instance.account_type == 'Hospital':
 			data['hospital'] = HospitalSerializer(Hospital.objects.filter(created_by=instance), many=True).data

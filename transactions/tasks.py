@@ -1,7 +1,5 @@
 import requests
 import logging
-import time
-import uuid
 from django.conf import settings
 from django.db import transaction
 from modelmixins.models import Facility
@@ -9,7 +7,7 @@ from labs.models import Laboratory
 from .models import Transaction
 from .process_payment import Paystack
 import dramatiq
-# from dramatiq import get_message
+
 
 
 logger = logging.getLogger(__name__)
@@ -87,7 +85,7 @@ def process_task(task_id, _message=None):
             task.payload["customer_note"] = "Refund for rejected sample"
 
         response = requests.post(url, json=task.payload, headers=headers, timeout=10)
-        print(response.json())
+        # print(response.json())
         response.raise_for_status()
         response_data = response.json()
 

@@ -1,4 +1,4 @@
-from .utils import send_code_to_user, send_normal_email
+from .tasks import send_code_to_user, send_normal_email
 from .models import Client
 from django.db.models.signals import post_save
 from django.dispatch import receiver

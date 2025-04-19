@@ -26,7 +26,6 @@ from .models import (
     Complaint, 
     OneTimePassword
 )
-from asgiref.sync import sync_to_async
 import uuid
 import pyotp
 from django.middleware import csrf
@@ -41,7 +40,7 @@ from labs.models import (
 from rest_framework.throttling import UserRateThrottle
 from labs.serializers import BranchManagerInvitationSerializer
 import random
-from .utils import send_code_to_user
+from .tasks import send_code_to_user, create_user
 import string
 from django.db.models import Subquery
 import logging
@@ -457,43 +456,43 @@ def create_branch_manager_user(invitation, user_data):
     return client
 
 
-def create_user(request):
-    """
-    Handles user creation and branch assignment:
-    - If a user_id is provided, assign the user to the specified branches (if not already assigned).
-    - If no user_id is provided, validate data, create a new user using serializer.save(), and assign branches.
-    """
-    user_data = request.data
-    user_id = user_data.get("id", None)
-    branch_data = user_data.pop("branches", [])
+# def create_user(request):
+#     """
+#     Handles user creation and branch assignment:
+#     - If a user_id is provided, assign the user to the specified branches (if not already assigned).
+#     - If no user_id is provided, validate data, create a new user using serializer.save(), and assign branches.
+#     """
+#     user_data = request.data
+#     user_id = user_data.get("id", None)
+#     branch_data = user_data.pop("branches", [])
 
-    if user_id:
-        # Existing user case
-        try:
-            client = Client.objects.get(id=user_id)
-        except Client.DoesNotExist:
-            raise serializers.ValidationError({"user_id": "User not found."})
+#     if user_id:
+#         # Existing user case
+#         try:
+#             client = Client.objects.get(id=user_id)
+#         except Client.DoesNotExist:
+#             raise ValidationError({"user_id": "User not found."})
 
-    else:
-        # New user case - Validate data using serializer
-        user_data["is_admin"] = False
-        user_data["is_staff"] = False
-        user_data["is_worker"] = True
-        user_data["account_type"] = request.user.account_type
-        serializer = UserCreationSerializer(data=user_data)
-        serializer.is_valid(raise_exception=True)
+#     else:
+#         # New user case - Validate data using serializer
+#         user_data["is_admin"] = False
+#         user_data["is_staff"] = False
+#         user_data["is_worker"] = True
+#         user_data["account_type"] = request.user.account_type
+#         serializer = UserCreationSerializer(data=user_data)
+#         serializer.is_valid(raise_exception=True)
         
-        # Create user using serializer.save()
-        client = serializer.save()
+#         # Create user using serializer.save()
+#         client = serializer.save()
 
-    # Assign user to branches if not already assigned
-    existing_branches = set(client.work_branches.values_list("id", flat=True))
-    new_branches = set(branch_data) - existing_branches  # Only add new branches
+#     # Assign user to branches if not already assigned
+#     existing_branches = set(client.work_branches.values_list("id", flat=True))
+#     new_branches = set(branch_data) - existing_branches  # Only add new branches
 
-    if new_branches:
-        client.work_branches.add(*new_branches)
+#     if new_branches:
+#         client.work_branches.add(*new_branches)
 
-    return client
+#     return client
 
 
 
@@ -559,10 +558,10 @@ class AddWorker(CreateAPIView):
             return Response({"message": "Illegal request"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create or update the user
-        client = create_user(request)
+        create_user.send(request)
 
         return Response(
-            {"message": "User processed successfully", "user_id": client.id},
+            {"message": "User is being processed"},
             status=status.HTTP_201_CREATED,
         )
 
@@ -618,7 +617,7 @@ class RequestNewOTP(CreateAPIView):
                 {"error": f"Already verified"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        send_code_to_user(user_email)
+        send_code_to_user.send(user_email)
         return Response({"message": f"Code sent"}, status=status.HTTP_200_OK)
 
 

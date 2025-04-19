@@ -15,7 +15,6 @@ from modelmixins.models import Facility
 from django.db.models import Q
 from django.http import QueryDict
 from django.core.cache import cache
-# from rest_framework.exceptions import ValidationError
 from modelmixins.serializers import FacilitySerializer, SampleTypeSerializer
 from .utils import get_nearby_branches, filter_by_facility_level
 from rest_framework.permissions import BasePermission
@@ -24,39 +23,8 @@ import logging
 from modelmixins.utils import ensure_uuid
 logger = logging.getLogger('labs')
 query_dict = QueryDict('', mutable=True)
-# from .constants import LEVEL_ORDER
 from modelmixins.paginators import QueryPagination
 
-
-class PermissionMixin(object):
-	"""
-	Mixin class for laboratory specific permissions.
-
-	Validates whether a user has the right permission to make changes to a specific laboratory and its branches.
-	"""
-	permission_classes = [IsAuthenticated]
-	"""
-	Checks whether the authenticated user has the right account type and roles,
-	Returns a Bool
-	"""
-	def has_laboratory_permission(self, user):
-		return user.account_type == 'Laboratory' and user.is_admin
-	"""
-	Checks whether the user is the laboratory CEO or general manager,
-	it allows both the laboratory CEO and branch manager to edit the Branch details
-	"""
-	def has_permission_to_edit_branch(self, user, branch):
-
-		return (
-			user.is_authenticated and
-			(
-				(user == branch[0].laboratory.created_by) or
-				(user == branch[0].branch_manager)
-			)
-		)
-	
-	def has_permission_to_edit_lab(self):
-	    return self.request.user
 
 
 class IsLaboratoryOwnerOrManager(BasePermission):
@@ -86,7 +54,7 @@ class IsLaboratoryOwnerOrManager(BasePermission):
 
         # Check if object is a branch
         if hasattr(obj, 'laboratory') and obj.__class__.__name__ == "Branch":
-            
+            print("Strange one")
             return obj.laboratory.created_by == user or obj.branch_manager == user
 
         # Check if object is a test (M2M: must have permission to ALL its branches)
