@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "analytics",
     "modelmixins",
     'django_dramatiq',
+    "dramatiq.results",
     "sample",
     "user",
     "hospital",
