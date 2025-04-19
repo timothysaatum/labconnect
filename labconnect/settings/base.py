@@ -3,6 +3,8 @@ import os
 from datetime import timedelta
 from decouple import config
 from redis.connection import ConnectionPool
+from dramatiq.results import Results
+from dramatiq.results.backends import RedisBackend
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -124,27 +126,29 @@ PAYSTACK_TRANSFER_URL = "https://api.paystack.co/transfer"
 ENV = config("DJANGO_ENV").lower()
 REDIS_URL = config("REDIS_URL") if ENV == "production" else "redis://localhost:6379/0"
 
-broker_pool = ConnectionPool.from_url(
+redis_pool = ConnectionPool.from_url(
     REDIS_URL,
     max_connections=20,
 )
 
-result_pool = ConnectionPool.from_url(
-    REDIS_URL,
-    max_connections=10,
+results_backend = RedisBackend(
+    url=REDIS_URL,
+    connection_pool=redis_pool,
 )
 
 DRAMATIQ_BROKER = {
     "BROKER": "dramatiq.brokers.redis.RedisBroker",
     "OPTIONS": {
-        "connection_pool": broker_pool,
+        "url": REDIS_URL,
+        "connection_pool": redis_pool,
     },
     "MIDDLEWARE": [
         "dramatiq.middleware.AgeLimit",
         "dramatiq.middleware.TimeLimit",
         "dramatiq.middleware.Callbacks",
         "dramatiq.middleware.Retries",
-        "dramatiq.results.Results",
+        "dramatiq.results.middleware.Results",
+        # {"class": "dramatiq.results.middleware.Results", "backend": results_backend},
         "django_dramatiq.middleware.DbConnectionsMiddleware",
         "django_dramatiq.middleware.AdminMiddleware",
     ],
@@ -153,7 +157,8 @@ DRAMATIQ_BROKER = {
 DRAMATIQ_RESULT_BACKEND = {
     "BACKEND": "dramatiq.results.backends.redis.RedisBackend",
     "BACKEND_OPTIONS": {
-        "connection_pool": result_pool,
+        "url": REDIS_URL,
+        "connection_pool": redis_pool,
     },
     "MIDDLEWARE_OPTIONS": {
         "result_ttl": 60000,
