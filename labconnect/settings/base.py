@@ -19,7 +19,7 @@ FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 
 # Application definition
 INSTALLED_APPS = [
-    "grappelli",
+    # "grappelli",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -32,7 +32,7 @@ INSTALLED_APPS = [
     "analytics",
     "modelmixins",
     'django_dramatiq',
-    "dramatiq.results",
+    # "dramatiq.results",
     "sample",
     "user",
     "hospital",

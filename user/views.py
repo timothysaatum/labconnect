@@ -438,14 +438,20 @@ def create_branch_manager_user(invitation, user_data):
         
         #New branch_manager case
         with transaction.atomic():  # Ensure atomicity of operations
-            user_data["is_admin"] = False
-            user_data["is_staff"] = True
-            user_data["is_worker"] = False
-            user_data["is_branch_manager"] = True
-            user_data["account_type"] = 'Laboratory'
+            # user_data["is_admin"] = False
+            # user_data["is_staff"] = True
+            # user_data["is_worker"] = False
+            # user_data["is_branch_manager"] = True
+            # user_data["account_type"] = 'Laboratory'
             serializer = UserCreationSerializer(data=user_data)
             serializer.is_valid(raise_exception=True)
-            client = serializer.save()
+            client = serializer.save(
+                 is_branch_manager=True, 
+                 is_admin=False, 
+                 is_staff=True, 
+                 is_worker=False, 
+                 account_type='Laboratory'
+                )
 
         branch.branch_manager = client
 
@@ -454,45 +460,6 @@ def create_branch_manager_user(invitation, user_data):
 
 
     return client
-
-
-# def create_user(request):
-#     """
-#     Handles user creation and branch assignment:
-#     - If a user_id is provided, assign the user to the specified branches (if not already assigned).
-#     - If no user_id is provided, validate data, create a new user using serializer.save(), and assign branches.
-#     """
-#     user_data = request.data
-#     user_id = user_data.get("id", None)
-#     branch_data = user_data.pop("branches", [])
-
-#     if user_id:
-#         # Existing user case
-#         try:
-#             client = Client.objects.get(id=user_id)
-#         except Client.DoesNotExist:
-#             raise ValidationError({"user_id": "User not found."})
-
-#     else:
-#         # New user case - Validate data using serializer
-#         user_data["is_admin"] = False
-#         user_data["is_staff"] = False
-#         user_data["is_worker"] = True
-#         user_data["account_type"] = request.user.account_type
-#         serializer = UserCreationSerializer(data=user_data)
-#         serializer.is_valid(raise_exception=True)
-        
-#         # Create user using serializer.save()
-#         client = serializer.save()
-
-#     # Assign user to branches if not already assigned
-#     existing_branches = set(client.work_branches.values_list("id", flat=True))
-#     new_branches = set(branch_data) - existing_branches  # Only add new branches
-
-#     if new_branches:
-#         client.work_branches.add(*new_branches)
-
-#     return client
 
 
 
