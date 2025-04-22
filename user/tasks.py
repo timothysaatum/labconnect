@@ -147,15 +147,20 @@ def create_user(user_data):
 
     else:
         # New user case - Validate data using serializer
-        user_data["is_admin"] = False
-        user_data["is_staff"] = False
-        user_data["account_type"] = "Laboratory"
+        # user_data["is_admin"] = False
+        # user_data["is_staff"] = False
+        # user_data["account_type"] = "Laboratory"
         # user_data["is_worker"] = True
         serializer = UserCreationSerializer(data=user_data)
         serializer.is_valid(raise_exception=True)
         
         # Create user using serializer.save()
-        client = serializer.save(is_worker=True)
+        client = serializer.save(
+            is_worker=True, 
+            account_type="Laboratory", 
+            is_admin=False,
+            is_staff=False
+        )
 
     # Assign user to branches if not already assigned
     existing_branches = set(client.work_branches.values_list("id", flat=True))
