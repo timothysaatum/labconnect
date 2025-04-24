@@ -29,7 +29,7 @@ class UserCreationSerializer(serializers.ModelSerializer):
         max_length=68, min_length=8, write_only=True
     )
     account_type = serializers.CharField(
-        max_length=68, min_length=10, required=False
+        max_length=68, min_length=8, required=False
     )
     is_admin = serializers.BooleanField(read_only=True)
     is_staff = serializers.BooleanField(read_only=True)
