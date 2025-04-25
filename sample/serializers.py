@@ -10,11 +10,12 @@ from sample.models import (
 from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q
-from labs.models import Test
+from labs.models import Test, BranchTest
 from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
 from transactions.utils import transfer_funds_to_lab, refund_transaction
 from transactions.models import Transaction
+from django.core.exceptions import ValidationError
 
 
 
@@ -185,7 +186,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
 
 class ReferralSerializer(serializers.ModelSerializer):
-    
+
     to_laboratory = serializers.PrimaryKeyRelatedField(
         queryset=Facility.objects.filter(
             Q(branch__isnull=False) | Q(hospitallab__isnull=False)
@@ -246,16 +247,44 @@ class ReferralSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         samples_data = validated_data.pop("samples", [])
         with transaction.atomic():
-            # Create Referral instance
-            # print(validated_data)
+            
             referral = Referral.objects.create(**validated_data)
 
             # Create Samples and associated SampleTests in bulk
             for sample_data in samples_data:
                 sample_tests_data = sample_data.pop("sample_tests", [])
                 sample = Sample.objects.create(referral=referral, **sample_data)
+
+                active_test_ids = set(
+                        Test.objects.filter(id__in=sample_tests_data, test_status='active').values_list('id', flat=True)
+                    )
+
+                active_test_ids = set(
+                    Test.objects.filter(
+                        id__in=sample_tests_data,
+                        test_status='active'
+                        ).values_list('id', flat=True)
+                    )
+
+                # Check the BranchTest table for active tests in specific branches
+                active_test_ids.update(
+                    BranchTest.objects.filter(
+                        test__id__in=sample_tests_data,
+                        branch__id__in=referral.to_laboratory.id,
+                        test__test_status='active'
+                    ).values_list('test__id', flat=True)
+                )
+
+                # Raise an error if any test is inactive
+                inactive_test_ids = set(sample_tests_data) - active_test_ids
+                if inactive_test_ids:
+                    raise ValidationError({
+                    "samples": f"The following tests are inactive in the specified branch or globally: {list(inactive_test_ids)}"
+                    })
+
+                # Create SampleTest objects with the filtered active test IDs
                 SampleTest.objects.bulk_create([
-                    SampleTest(sample=sample, test_id=test_id) for test_id in sample_tests_data
+                    SampleTest(sample=sample, test_id=test_id) for test_id in active_test_ids
                 ])
 
         return referral
@@ -275,8 +304,8 @@ class ReferralSerializer(serializers.ModelSerializer):
                 # Update existing samples or create new ones
                 for sample_data in samples_data:
                     sample, _ = Sample.objects.update_or_create(
-                        id=sample_data.get("id"),  # Find by ID if it exists
-                        referral=instance,  # Always associate it with the current referral
+                        id=sample_data.get("id"),
+                        referral=instance,
                         defaults={
                             "sample_type": sample_data.get("sample_type"),
                             "sample_status": sample_data.get("sample_status"),
@@ -288,10 +317,10 @@ class ReferralSerializer(serializers.ModelSerializer):
                     if sample_data["sample_tests"] is not None:
                         for sample_test_data in sample_data["sample_tests"]:
                             SampleTest.objects.update_or_create(
-                                sample=sample,  # Always associate with the current sample
+                                sample=sample,
                                 test_id=sample_test_data.get(
                                     "test_id"
-                                ),  # Use test ID to match
+                                ), 
                                 defaults={
                                     "result": sample_test_data.get("result"),
                                     "status": "Completed",

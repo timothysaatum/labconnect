@@ -147,13 +147,13 @@ class BaseSample(models.Model):
         abstract = True
 
 class SampleType(BaseSample):
-	'''
+    '''
 	Sample:Is the various medical samples that can be used to perform a particular test.
 	This is require to avoid sample mismatched when a test is being requested.
 	'''
-	def __str__(self):
-	   test_names = [test.name for test in self.test_set.all()]
-	   return f"{self.sample_name}: {', '.join(test_names)}"
+    def __str__(self):
+        test_names = [test.name for test in self.test_set.all()]
+        return f"{self.sample_name}: {', '.join(test_names)}"
 
 
 def generate_unique_test_code():
