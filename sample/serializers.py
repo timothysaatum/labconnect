@@ -16,6 +16,7 @@ from modelmixins.serializers import SampleTypeSerializer
 from transactions.utils import transfer_funds_to_lab, refund_transaction
 from transactions.models import Transaction
 from django.core.exceptions import ValidationError
+from uuid import UUID
 
 
 
@@ -254,7 +255,7 @@ class ReferralSerializer(serializers.ModelSerializer):
             for sample_data in samples_data:
                 sample_tests_data = sample_data.pop("sample_tests", [])
                 sample = Sample.objects.create(referral=referral, **sample_data)
-
+                sample_tests_data = set(UUID(test_id) for test_id in sample_tests_data)
                 active_test_ids = set(
                         Test.objects.filter(id__in=sample_tests_data, test_status='active').values_list('id', flat=True)
                     )
@@ -270,13 +271,15 @@ class ReferralSerializer(serializers.ModelSerializer):
                 active_test_ids.update(
                     BranchTest.objects.filter(
                         test__id__in=sample_tests_data,
-                        branch__id__in=referral.to_laboratory.id,
+                        branch__id=referral.to_laboratory.id,
                         test__test_status='active'
                     ).values_list('test__id', flat=True)
                 )
 
                 # Raise an error if any test is inactive
                 inactive_test_ids = set(sample_tests_data) - active_test_ids
+                print('active',active_test_ids)
+                print('inactive', inactive_test_ids)
                 if inactive_test_ids:
                     raise ValidationError({
                     "samples": f"The following tests are inactive in the specified branch or globally: {list(inactive_test_ids)}"
