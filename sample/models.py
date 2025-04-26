@@ -197,12 +197,12 @@ class SampleTest(models.Model):
     test = models.ForeignKey(Test, related_name='tests', on_delete=models.CASCADE, db_index=True)
     status = models.CharField(
         max_length=50, choices=TEST_STATUS, default="Pending", db_index=True
-    )  # Status of the test
+    )
     test_result = models.FileField(upload_to=protected_file_path, null=True, blank=True, validators=[validate_attachment])
     result = EncryptedCharField(
         max_length=500, null=True, blank=True
-    )  # To store test result (optional)
-    date_completed = models.DateTimeField(null=True, blank=True)  # When the test was completed
+    )
+    date_completed = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.test.name} - Status: {self.status}"

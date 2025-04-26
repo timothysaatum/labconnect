@@ -47,7 +47,7 @@ class Command(BaseCommand):
                         department, _ = Department.objects.get_or_create(name=department_name.strip())
 
                         test, created = TestTemplate.objects.get_or_create(
-                            name=test_name.strip(),
+                            name=test_name.strip().title(),
                             defaults={
                                 "test_code": test_code.strip() if test_code else None,
                                 "price": parse_price(cash_price) if cash_price else 0,
