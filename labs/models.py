@@ -168,6 +168,10 @@ class BranchTest(models.Model):
 	turn_around_time = models.CharField(max_length=200, blank=True, null=True)
 
 
+	class Meta:
+		verbose_name_plural = 'Branch Tests'
+		unique_together = ('branch', 'test')
+
 	@staticmethod
 	def get_active_tests_for_branch(branch_id):
 		"""
@@ -181,9 +185,6 @@ class BranchTest(models.Model):
         Returns tests with discounts for a given branch ID.
         """
 		return BranchTest.objects.filter(branch_id=branch_id).exclude(discount_price__isnull=True)
-
-	class Meta:
-		verbose_name_plural = 'Branch Tests'
 
 	def __str__(self) -> str:
 		return self.test.name

@@ -64,6 +64,7 @@ class Command(BaseCommand):
                                 test.department = department
                                 test.save()
                                 self.stdout.write(self.style.SUCCESS(f"Updated department for: {test_name}"))
+                
                             else:
                                 self.stdout.write(self.style.WARNING(f"Skipped existing: {test_name}"))
                         else:

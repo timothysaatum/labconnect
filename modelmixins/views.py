@@ -3,10 +3,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .serializers import( DepartmentSerializer, BulkDepartmentSerializer, TestTemplateSerializer)
-from .paginators import QueryPagination
+# from .paginators import QueryPagination
 
 class FetchTestTemplates(ListAPIView):
-    pagination_class = QueryPagination
+    # pagination_class = QueryPagination
     serializer_class = TestTemplateSerializer
     queryset = TestTemplate.objects.all()
 

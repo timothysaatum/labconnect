@@ -201,6 +201,28 @@ class TestSerializer(serializers.ModelSerializer):
             'date_added'
         )
 
+    def validate(self, attrs):
+        """
+        Strong validation: prevent duplicate Test creation by same lab owner
+        """
+
+        request = self.context['request']
+        user = request.user
+        branches = attrs.get('branch', [])
+
+        # Assume all branches belong to same lab (your permission class should enforce that already)
+        if not branches:
+            raise serializers.ValidationError({'branch': 'At least one branch must be provided.'})
+
+        first_branch = branches[0]
+        laboratory = first_branch.laboratory
+
+        # Check if Test with the same name already exists under this laboratory
+        if Test.objects.filter(name__iexact=attrs['name'], branch__laboratory=laboratory).exists():
+            raise serializers.ValidationError({'name': 'A test with this name already exists. Please assign it to a branch instead of creating a new one.'})
+
+        return attrs
+
     def create(self, validated_data):
         
         sample_type_ids = validated_data.pop('sample_type_ids', [])
@@ -209,18 +231,45 @@ class TestSerializer(serializers.ModelSerializer):
         test = Test.objects.create(**validated_data)
 
         # Process sample_type (IDs)
-        for sample_type_id in sample_type_ids:
-            test.sample_type.add(sample_type_id)
+        # for sample_type_id in sample_type_ids:
+        #     test.sample_type.add(sample_type_id)
 
-        # Process sample_type_data (full data)
-        for sample_type_data in sample_types_data:
-            sample_type = SampleType.objects.create(**sample_type_data)
-            test.sample_type.add(sample_type)
+        # # Process sample_type_data (full data)
+        # for sample_type_data in sample_types_data:
+        #     sample_type = SampleType.objects.create(**sample_type_data)
+        #     test.sample_type.add(sample_type)
 
-        # Add branches to the test
-        for branch_data in branches_data:
-            #print(f"Adding {branch_data} to {test.name}")
-            test.branch.add(branch_data)
+        # # Add branches to the test
+        # for branch_data in branches_data:
+        #     #print(f"Adding {branch_data} to {test.name}")
+        #     test.branch.add(branch_data)
+        name = validated_data['name']
+        first_branch = branches_data[0]
+        laboratory = first_branch.laboratory
+
+        test_qs = Test.objects.filter(name__iexact=name, branch__laboratory=laboratory)
+
+        if test_qs.exists():
+            # Reuse the existing Test
+            test = test_qs.get()
+        else:
+            # Create a new Test
+            test = Test.objects.create(**validated_data)
+
+            # Add sample types
+            for sample_type_id in sample_type_ids:
+                test.sample_type.add(sample_type_id)
+
+            for sample_type_data in sample_types_data:
+                sample_type = SampleType.objects.create(**sample_type_data)
+                test.sample_type.add(sample_type)
+
+        # Always (re)assign branches
+        for branch in branches_data:
+            test.branch.add(branch)
+
+        return test
+
 
         return test
 
