@@ -16,8 +16,9 @@ from modelmixins.serializers import SampleTypeSerializer
 from transactions.utils import transfer_funds_to_lab, refund_transaction
 from transactions.models import Transaction
 from django.core.exceptions import ValidationError
-from uuid import UUID
-from django.db.models import Prefetch
+from labs.models import Branch
+# from uuid import UUID
+# from django.db.models import Prefetch
 
 
 
@@ -99,11 +100,47 @@ class SampleSerializer(serializers.ModelSerializer):
             "sample_tests_data",
         )
 
+    # def validate(self, data):
+    #     """Ensure at least one rejection reason is provided when rejecting a sample."""
+    #     if data.get("sample_status") == "Rejected":
+    #         if not data.get("rejection_reason_code") and not data.get("rejection_reason"):
+    #             raise serializers.ValidationError("A rejection reason must be provided.")
+
+    #     return data
     def validate(self, data):
-        """Ensure at least one rejection reason is provided when rejecting a sample."""
+        """Ensure at least one rejection reason is provided when rejecting a sample and all tests are active."""
         if data.get("sample_status") == "Rejected":
             if not data.get("rejection_reason_code") and not data.get("rejection_reason"):
                 raise serializers.ValidationError("A rejection reason must be provided.")
+    
+        # Validate that all tests are active
+        sample_tests = data.get('sample_tests', [])
+        if sample_tests:
+            referral = data.get('referral')
+            if referral:
+                to_laboratory = referral.to_laboratory
+                inactive_tests = []
+            
+                for test_id in sample_tests:
+                    # Check if the test is active in the selected laboratory
+                    try:
+                        branch_test = BranchTest.objects.filter(
+                            test_id=test_id, 
+                            branch__in=Branch.objects.filter(facility_ptr=to_laboratory),
+                            test_status='active'
+                        ).first()
+                    
+                        if not branch_test:
+                            # Get test name for error message
+                            test_name = Test.objects.get(id=test_id).name
+                            inactive_tests.append(test_name)
+                    except Test.DoesNotExist:
+                        raise serializers.ValidationError(f"Test with ID {test_id} does not exist.")
+            
+                if inactive_tests:
+                    raise serializers.ValidationError({
+                    "sample_tests": f"The following tests are not active in the selected laboratory: {', '.join(inactive_tests)}"
+                })
 
         return data
 
@@ -236,14 +273,55 @@ class ReferralSerializer(serializers.ModelSerializer):
             "samples",
         )
 
+    # def validate(self, data):
+    #     # Check if referring_facility and to_laboratory are the same
+    #     if data.get("referring_facility") == data.get("to_laboratory"):
+    #         raise serializers.ValidationError(
+    #             {
+    #                 "to_laboratory": "The referring facility and the laboratory cannot be the same."
+    #             }
+    #         )
+    #     return data
     def validate(self, data):
-        # Check if referring_facility and to_laboratory are the same
+        # Existing validation
         if data.get("referring_facility") == data.get("to_laboratory"):
             raise serializers.ValidationError(
                 {
-                    "to_laboratory": "The referring facility and the laboratory cannot be the same."
+                "to_laboratory": "The referring facility and the laboratory cannot be the same."
                 }
             )
+    
+        # Validate tests in samples
+        samples_data = data.get("samples", [])
+        to_laboratory = data.get("to_laboratory")
+    
+        if samples_data and to_laboratory:
+            inactive_tests = []
+        
+            for sample_data in samples_data:
+                sample_tests = sample_data.get("sample_tests", [])
+            
+                for test_id in sample_tests:
+                    # Check if the test is active in the selected laboratory
+                    try:
+                        branch_test = BranchTest.objects.filter(
+                            test_id=test_id, 
+                            branch__in=Branch.objects.filter(facility_ptr=to_laboratory),
+                            test_status='active'
+                        ).first()
+                    
+                        if not branch_test:
+                            # Get test name for error message
+                            test_name = Test.objects.get(id=test_id).name
+                            inactive_tests.append(test_name)
+                    except Test.DoesNotExist:
+                        raise serializers.ValidationError(f"Test with ID {test_id} does not exist.")
+        
+            if inactive_tests:
+                raise serializers.ValidationError({
+                "samples": f"The following tests are not active in the selected laboratory: {', '.join(inactive_tests)}"
+                })
+    
         return data
 
     def create(self, validated_data):
@@ -257,6 +335,7 @@ class ReferralSerializer(serializers.ModelSerializer):
 
                 sample_tests_data = sample_data.pop("sample_tests", [])
                 sample = Sample.objects.create(referral=referral, **sample_data)
+
                 SampleTest.objects.bulk_create(
                     [
                         SampleTest(sample=sample, test_id=test_id) for test_id in sample_tests_data
