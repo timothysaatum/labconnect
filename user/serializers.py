@@ -319,7 +319,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
 class WaitListSerializer(serializers.ModelSerializer):
 
 	full_name = serializers.CharField(required=False)
-	sender_email = serializers.EmailField(required=False)
+	email = serializers.EmailField(required=False)
 	phone_number = serializers.CharField(required=False)
 	facility_name = serializers.CharField(required=False)
 	region = serializers.CharField(required=False)
@@ -328,7 +328,7 @@ class WaitListSerializer(serializers.ModelSerializer):
 		model = WaitList
 		fields = [
 			"full_name",
-			"sender_email",
+			"email",
 			"phone_number",
 			"facility_name",
 			"region"

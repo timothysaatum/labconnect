@@ -50,7 +50,7 @@ class OneTimePasswordAdmin(admin.ModelAdmin):
     list_display = ('code', 'user', 'email_for')
 
 class WaitListAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'sender_email', 'phone_number', 'facility_name', 'region', "date_added")
+    list_display = ('full_name', 'email', 'phone_number', 'facility_name', 'region', "date_added")
 
 
 @admin.register(Complaint)
@@ -66,6 +66,6 @@ class ComplaintAdmin(admin.ModelAdmin):
 
 # Now register the new UserAdmin...
 admin.site.register(Client, ClientAdmin)
-admin.site.register(WaitList, WaitListAdmin)
 admin.site.register(OneTimePassword, OneTimePasswordAdmin)
 admin.site.register(Permission)
+admin.site.register(WaitList, WaitListAdmin)
