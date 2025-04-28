@@ -130,6 +130,7 @@ class WaitList(models.Model):
       email = models.EmailField()
       facility_name = models.CharField(max_length=155, null=True, blank=True)
       region = models.CharField(max_length=155, null=True, blank=True)
+      date_added = models.DateTimeField(auto_now_add=True)
 
 
       def __str__(self):
