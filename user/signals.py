@@ -57,7 +57,7 @@ def email_user_on_creation(sender, instance, created, **kwargs):
                     <h1>Hello {instance.full_name},</h1>
                     <p>You have successfully created your account with us. We are glad to see you.</p>
                     <p>Follow the link below to set up your laboratory in case you have not done that yet.</p>
-                    <a href="https://labconnekt.com/getting-started" class="button">Getting Started</a>
+                    <a href="https://www.labconnekt.com/sign-in" class="button">Getting Started</a>
                     <p>Thank you, kind regards.<br>LabConnect Team</p>
                 </div>
             </div>
