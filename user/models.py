@@ -122,3 +122,15 @@ class Complaint(models.Model):
 
     def __str__(self):
         return f"Complaint by {self.customer} - {self.subject}"
+    
+
+class WaitList(models.Model):
+      full_name = models.CharField(max_length=155, null=True, blank=True)
+      phone_number = models.CharField(max_length=15, null=True, blank=True)
+      email = models.EmailField()
+      facility_name = models.CharField(max_length=155, null=True, blank=True)
+      region = models.CharField(max_length=155, null=True, blank=True)
+
+
+      def __str__(self):
+            return self.facility_name

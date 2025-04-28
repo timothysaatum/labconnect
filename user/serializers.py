@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Client, OneTimePassword, Complaint
+from .models import Client, OneTimePassword, Complaint, WaitList
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -314,3 +314,22 @@ class ComplaintSerializer(serializers.ModelSerializer):
         model = Complaint
         fields = ['id', 'customer', 'subject', 'description', 'status', 'created_at', 'updated_at']
         read_only_fields = ['status', 'created_at', 'updated_at']
+
+
+class WaitListSerializer(serializers.ModelSerializer):
+
+	full_name = serializers.CharField(required=False)
+	sender_email = serializers.EmailField(required=False)
+	phone_number = serializers.CharField(required=False)
+	facility_name = serializers.CharField(required=False)
+	region = serializers.CharField(required=False)
+
+	class Meta:
+		model = WaitList
+		fields = [
+			"full_name",
+			"sender_email",
+			"phone_number",
+			"facility_name",
+			"region"
+		]

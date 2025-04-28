@@ -25,7 +25,7 @@ def send_code_to_user(email):
         user = Client.objects.get(email=email)
 
         # Verification URL (update it to the actual deployment URL when live)
-        verification_url = "https://labconnekt.com/user/verify-email/"
+        verification_url = "https://labconnekt.com/verify-email"
 
         # HTML formatted message
         html_message = f"""
@@ -146,11 +146,7 @@ def create_user(user_data):
             raise ValidationError({"user_id": "User not found."})
 
     else:
-        # New user case - Validate data using serializer
-        # user_data["is_admin"] = False
-        # user_data["is_staff"] = False
-        # user_data["account_type"] = "Laboratory"
-        # user_data["is_worker"] = True
+
         serializer = UserCreationSerializer(data=user_data)
         serializer.is_valid(raise_exception=True)
         

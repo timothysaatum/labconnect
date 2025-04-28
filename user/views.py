@@ -5,7 +5,8 @@ from .serializers import (
 	PasswordResetViewSerializer,
 	SetNewPasswordSerializer,
 	UserSerializer,
-	ComplaintSerializer
+	ComplaintSerializer,
+    WaitListSerializer
 )
 from django.db import transaction
 from rest_framework.generics import (
@@ -24,7 +25,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .models import (
     Client, 
     Complaint, 
-    OneTimePassword
+    OneTimePassword, WaitList
 )
 import uuid
 import pyotp
@@ -132,6 +133,7 @@ class CheckRefreshToken(APIView):
             {"access_token": access_token, "data": serialized_data.data},
             status=status.HTTP_200_OK,
         )
+
 
 
 class CreateUserView(CreateAPIView):
@@ -603,3 +605,9 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         if complaint.status != 'pending':
             return Response({"error": "You can only delete complaints that are pending."}, status=status.HTTP_400_BAD_REQUEST)
         return super().destroy(request, *args, **kwargs)
+    
+
+class WaitListApplicantsViewSet(viewsets.ModelViewSet):
+     throttle_classes = [UserRateThrottle]
+     queryset = WaitList.objects.all().order_by("-date_added")
+     serializer_class = WaitListSerializer

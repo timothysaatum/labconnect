@@ -134,8 +134,7 @@ def mail_lab_user(sender, instance, created, **kwargs):
                     <p>You are this {close_icon} close to finishing your setup.</p>
                     <p>Use the links below to set up your branches and tests, if you haven’t done so already:</p>
                     <p>
-                        <a href="https://labconnekt.com/laboratory/create-branch/" class="button">Create Branches for Laboratory</a><br>
-                        <a href="https://labconnekt.com/laboratory/test/add/" class="button">Add Tests to Your Branch</a>
+                        <a href="https://labconnekt.com/sign-in" class="button">Sign in to Dashboard</a><br>
                     </p>
                     <p>Thank you, kind regards.<br>LabConnect Team</p>
                 </div>

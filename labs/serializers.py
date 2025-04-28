@@ -230,19 +230,6 @@ class TestSerializer(serializers.ModelSerializer):
         branches_data = validated_data.pop('branch')
         test = Test.objects.create(**validated_data)
 
-        # Process sample_type (IDs)
-        # for sample_type_id in sample_type_ids:
-        #     test.sample_type.add(sample_type_id)
-
-        # # Process sample_type_data (full data)
-        # for sample_type_data in sample_types_data:
-        #     sample_type = SampleType.objects.create(**sample_type_data)
-        #     test.sample_type.add(sample_type)
-
-        # # Add branches to the test
-        # for branch_data in branches_data:
-        #     #print(f"Adding {branch_data} to {test.name}")
-        #     test.branch.add(branch_data)
         name = validated_data['name']
         first_branch = branches_data[0]
         laboratory = first_branch.laboratory
