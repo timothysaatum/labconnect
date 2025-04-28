@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Permission
-from .models import Client, OneTimePassword, Complaint
+from .models import Client, OneTimePassword, Complaint, WaitList
 from .forms import ClientCreationForm, ClientChangeForm
 
 
@@ -48,6 +48,9 @@ class ClientAdmin(UserAdmin):
 
 class OneTimePasswordAdmin(admin.ModelAdmin):
     list_display = ('code', 'user', 'email_for')
+
+class WaitListAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'sender_email', 'phone_number', 'facility_name', 'region', "date_added")
 
 
 @admin.register(Complaint)
