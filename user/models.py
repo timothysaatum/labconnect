@@ -125,13 +125,20 @@ class Complaint(models.Model):
     
 
 class WaitList(models.Model):
-      full_name = models.CharField(max_length=155, null=True, blank=True)
-      phone_number = models.CharField(max_length=15, null=True, blank=True)
-      email = models.EmailField()
-      facility_name = models.CharField(max_length=155, null=True, blank=True)
-      region = models.CharField(max_length=155, null=True, blank=True)
-      date_added = models.DateTimeField(auto_now_add=True)
+    full_name = models.CharField(max_length=155, null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField()
+    facility_name = models.CharField(max_length=155, null=True, blank=True)
+    region = models.CharField(max_length=155, null=True, blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+          unique_together = (
+                'full_name', 
+                'phone_number', 
+                'facility_name'
+                )
+    
 
-      def __str__(self):
+    def __str__(self):
             return self.email
