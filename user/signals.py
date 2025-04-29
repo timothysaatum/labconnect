@@ -97,7 +97,7 @@ def email_waitlist_on_creation(sender, instance, created, **kwargs):
         "email":       instance.email,
         "full_name":  instance.full_name or instance.email.split('@')[0],
         "phone_number":    instance.phone_number or "our service",
-        "joint_at":       instance.created_at.strftime("%B %d, %Y at %I:%M %p"),
+        "joint_at":       instance.joint_at.strftime("%B %d, %Y at %I:%M %p"),
     }
 
     # enqueue the job
