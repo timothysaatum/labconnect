@@ -316,20 +316,30 @@ class ComplaintSerializer(serializers.ModelSerializer):
         read_only_fields = ['status', 'created_at', 'updated_at']
 
 
+
 class WaitListSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(required=False, allow_null=True)
+    email = serializers.EmailField(required=False, allow_null=True)
+    phone_number = serializers.CharField(required=False, allow_null=True)
+    facility_name = serializers.CharField(required=False, allow_null=True)
+    region = serializers.CharField(required=False, allow_null=True)
 
-	full_name = serializers.CharField(required=False)
-	email = serializers.EmailField(required=False)
-	phone_number = serializers.CharField(required=False)
-	facility_name = serializers.CharField(required=False)
-	region = serializers.CharField(required=False)
+    class Meta:
+        model = WaitList
+        fields = [
+            "full_name",
+            "email",
+            "phone_number",
+            "facility_name",
+            "region"
+        ]
 
-	class Meta:
-		model = WaitList
-		fields = [
-			"full_name",
-			"email",
-			"phone_number",
-			"facility_name",
-			"region"
-		]
+    def validate_email(self, value):
+        if value and WaitList.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already registered.")
+        return value
+
+    def validate_phone_number(self, value):
+        if value and WaitList.objects.filter(phone_number=value).exists():
+            raise serializers.ValidationError("This phone number is already registered.")
+        return value
