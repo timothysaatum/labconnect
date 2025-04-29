@@ -6,7 +6,8 @@ from .serializers import (
 	SetNewPasswordSerializer,
 	UserSerializer,
 	ComplaintSerializer,
-    WaitListSerializer
+    WaitListSerializer,
+    CustomerSupportSerializer
 )
 from django.db import transaction
 from rest_framework.generics import (
@@ -25,7 +26,9 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .models import (
     Client, 
     Complaint, 
-    OneTimePassword, WaitList
+    OneTimePassword,
+    WaitList,
+    CustomerSupport
 )
 import uuid
 import pyotp
@@ -608,6 +611,17 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     
 
 class WaitListApplicantsViewSet(viewsets.ModelViewSet):
-     throttle_classes = [UserRateThrottle]
-     queryset = WaitList.objects.all().order_by("-joint_at")
-     serializer_class = WaitListSerializer
+    throttle_classes = [UserRateThrottle]
+    queryset = WaitList.objects.all().order_by("-joint_at")
+    serializer_class = WaitListSerializer
+
+
+
+class CustomerSupportMessageViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = CustomerSupport.objects.all().order_by('-created_at')
+    queryset = CustomerSupport.objects.all().order_by("-created_at")
+    serializer_class = CustomerSupportSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

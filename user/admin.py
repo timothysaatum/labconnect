@@ -1,8 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Permission
-from .models import Client, OneTimePassword, Complaint, WaitList
+from .models import Client, OneTimePassword, Complaint, WaitList, CustomerSupport
 from .forms import ClientCreationForm, ClientChangeForm
+import csv
+from django.utils import timezone
+from django.http import HttpResponse
 
 
 
@@ -49,8 +52,45 @@ class ClientAdmin(UserAdmin):
 class OneTimePasswordAdmin(admin.ModelAdmin):
     list_display = ('code', 'user', 'email_for')
 
+@admin.register(WaitList)
 class WaitListAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'email', 'phone_number', 'facility_name', 'region', "joint_at")
+    list_display = ('full_name', 'email', 'phone_number', 'facility_name', 'region', 'contacted', 'contacted_at')
+    list_filter = ('contacted', 'region')
+    search_fields = ('full_name', 'email', 'phone_number', 'facility_name')
+    readonly_fields = ('contacted_at',)
+    actions = ['mark_as_contacted']
+
+    def mark_as_contacted(self, request, queryset):
+        updated_count = queryset.update(contacted=True, contacted_at=timezone.now())
+        self.message_user(request, f"{updated_count} entries marked as contacted.")
+    mark_as_contacted.short_description = "Mark selected as contacted"
+
+
+def export_as_csv(modeladmin, request, queryset):
+    meta = modeladmin.model._meta
+    field_names = [field.name for field in meta.fields]
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename={meta}.csv'
+    writer = csv.writer(response)
+
+    writer.writerow(field_names)
+    for obj in queryset:
+        writer.writerow([getattr(obj, field) for field in field_names])
+
+    return response
+
+export_as_csv.short_description = "Export Selected as CSV"
+
+@admin.register(CustomerSupport)
+class CustomerSupportMessageAdmin(admin.ModelAdmin):
+    list_display = ('client', 'subject', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('name', 'email', 'subject', 'message')
+    readonly_fields = ('created_at',)
+    ordering = ('-created_at',)
+    actions = [export_as_csv]
+
 
 
 @admin.register(Complaint)
@@ -61,11 +101,10 @@ class ComplaintAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('created_at', 'updated_at')
 
-    # Optionally allow inline editing of status
     list_editable = ('status',)
 
 # Now register the new UserAdmin...
 admin.site.register(Client, ClientAdmin)
 admin.site.register(OneTimePassword, OneTimePasswordAdmin)
 admin.site.register(Permission)
-admin.site.register(WaitList, WaitListAdmin)
+# admin.site.register(WaitList, WaitListAdmin)

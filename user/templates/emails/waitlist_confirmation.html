@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      body { font-family: sans-serif; background:#f4f4f7; color:#333; padding:20px }
+      .card { max-width:600px; margin:auto; background:#fff; padding:30px; border-radius:8px;
+              box-shadow:0 2px 6px rgba(0,0,0,0.1) }
+      h2 { color:#2f855a }
+      .footer { margin-top:30px; font-size:14px; color:#777; text-align:center }
+      .footer a { color:#2f855a; text-decoration:none }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Welcome to the Waitlist</h2>
+      <p>Hi {{ full_name }},</p>
+      <p>Thanks for joining our waitlist</p>
+      <p>We received your request on {{ created_at }} and will notify you as soon as a spot opens up.</p>
+      <p>Feel free to reply if you have questions.</p>
+      <div class="footer">
+        <p>LabConnekt Team<br>
+           <a href="mailto:labconnekt@gmail.com">labconnekt@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

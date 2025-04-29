@@ -131,8 +131,35 @@ class WaitList(models.Model):
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     facility_name = models.CharField(max_length=255, null=True, blank=True)
     region = models.CharField(max_length=100, null=True, blank=True)
+    contacted      = models.BooleanField(default=False)
+    contacted_at   = models.DateTimeField(null=True, blank=True)
     joint_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.full_name or "Anonymous"
 
+
+
+class CustomerSupport(models.Model):
+    
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('in_progress', 'In Progress'),
+        ('resolved', 'Resolved'),
+    ]
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="customer_support")
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subject', 'message'],
+                name='unique_support_message'
+            )
+        ]
+
+    def __str__(self):
+        return self.subject

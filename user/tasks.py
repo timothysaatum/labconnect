@@ -5,6 +5,8 @@ from .utils import generateotp
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 import pyotp
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 
@@ -119,6 +121,75 @@ def send_normal_email(data):
     except Exception as e:
         print(f"Error sending email: {e}")
 
+
+@dramatiq.actor(
+    max_retries=5, 
+    min_backoff=1000, 
+    max_backoff=10000
+)
+def send_support_email(data):
+    
+    html_message = render_to_string("emails/support_confirmation.html", {
+        'full_name': data["full_name"],
+        'subject':         data["subject"],
+        'message':         data["message"],
+        'created_at':      data["created_at"],
+    })
+    
+    plain_message = strip_tags(html_message)
+
+    email = EmailMessage(
+        subject=f"We’ve Received Your {data['support_type'].title()} Request",
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[data["email"]],
+    )
+    # tell Django this is HTML
+    email.content_subtype = "html"
+
+    try:
+        email.send(fail_silently=False)
+        print(f"Support email sent to {data['email']}")
+    except Exception as e:
+        print(f"Error sending support email: {e}")
+        # re-raise so Dramatiq will retry
+        raise
+
+
+@dramatiq.actor(
+    max_retries=5,
+    min_backoff=1000,
+    max_backoff=10000
+)
+def send_waitlist_email(data):
+    """
+    data keys:
+      - email
+      - full_name
+      - joint_at (formatted string)
+    """
+    html_message = render_to_string("emails/waitlist_confirmation.html", {
+        'full_name': data["full_name"],
+        'phone_number': data["phone_number"],
+        'joint_at': data["joint_at"],
+    })
+    plain_message = strip_tags(html_message)
+
+    email = EmailMessage(
+        subject="You’ve Been Added to the Waitlist!",
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[data["email"]],
+    )
+
+    email.content_subtype = "html"
+
+    try:
+        email.send(fail_silently=False)
+        print(f"Waitlist email sent to {data['email']}")
+    except Exception as e:
+        print(f"Error sending waitlist email: {e}")
+        raise
 
 
 @dramatiq.actor(

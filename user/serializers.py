@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Client, OneTimePassword, Complaint, WaitList
+from .models import Client, OneTimePassword, Complaint, WaitList, CustomerSupport
+from rest_framework.validators import UniqueTogetherValidator
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -316,30 +317,49 @@ class ComplaintSerializer(serializers.ModelSerializer):
         read_only_fields = ['status', 'created_at', 'updated_at']
 
 
-
 class WaitListSerializer(serializers.ModelSerializer):
-    full_name = serializers.CharField(required=False, allow_null=True)
-    email = serializers.EmailField(required=False, allow_null=True)
-    phone_number = serializers.CharField(required=False, allow_null=True)
-    facility_name = serializers.CharField(required=False, allow_null=True)
-    region = serializers.CharField(required=False, allow_null=True)
 
-    class Meta:
-        model = WaitList
-        fields = [
+	full_name = serializers.CharField(required=False, allow_null=True)
+	email = serializers.EmailField(required=False, allow_null=True)
+	phone_number = serializers.CharField(required=False, allow_null=True)
+	facility_name = serializers.CharField(required=False, allow_null=True)
+	region = serializers.CharField(required=False, allow_null=True)
+	
+
+	class Meta:
+		model = WaitList
+
+		fields = [
             "full_name",
             "email",
             "phone_number",
             "facility_name",
-            "region"
+            "region",
+			"contacted",
+            "contacted_at" 
         ]
+		read_only_fields = ["contacted", "contacted_at"]
 
-    def validate_email(self, value):
-        if value and WaitList.objects.filter(email=value).exists():
-            raise serializers.ValidationError("This email is already registered.")
-        return value
+	def validate_email(self, value):
+		if value and WaitList.objects.filter(email=value).exists():
+			raise serializers.ValidationError("This email is already registered.")
+		return value
 
-    def validate_phone_number(self, value):
-        if value and WaitList.objects.filter(phone_number=value).exists():
-            raise serializers.ValidationError("This phone number is already registered.")
-        return value
+	def validate_phone_number(self, value):
+		if value and WaitList.objects.filter(phone_number=value).exists():
+			raise serializers.ValidationError("This phone number is already registered.")
+		return value
+	
+
+class CustomerSupportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomerSupport
+        fields = ['id', 'client', 'subject', 'message', 'status', 'created_at']
+        read_only_fields = ['id', 'client', 'created_at', 'status']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=CustomerSupport.objects.all(),
+                fields=['email', 'subject', 'message'],
+                message="You have already submitted this exact message."
+            )
+        ]

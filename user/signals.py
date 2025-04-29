@@ -1,5 +1,5 @@
-from .tasks import send_code_to_user, send_normal_email
-from .models import Client
+from .tasks import send_code_to_user, send_normal_email, send_support_email, send_waitlist_email
+from .models import Client, WaitList, CustomerSupport
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from textwrap import dedent
@@ -67,3 +67,38 @@ def email_user_on_creation(sender, instance, created, **kwargs):
                 ),
             }
             send_normal_email.send(data)
+
+
+@receiver(post_save, sender=CustomerSupport)
+def email_user_on_creation(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    # build a simple data payload for the task
+    data = {
+        "email": instance.client.email,
+        "full_name":  instance.client.first_name + instance.client.last_name,
+        "subject": instance.subject,
+        "message": instance.message,
+        "created_at": instance.created_at.strftime("%B %d, %Y at %I:%M %p")
+    }
+
+    send_support_email.send(data)
+
+
+
+@receiver(post_save, sender=WaitList)
+def email_waitlist_on_creation(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    # build payload
+    data = {
+        "email":       instance.email,
+        "full_name":  instance.full_name or instance.email.split('@')[0],
+        "phone_number":    instance.phone_number or "our service",
+        "joint_at":       instance.created_at.strftime("%B %d, %Y at %I:%M %p"),
+    }
+
+    # enqueue the job
+    send_waitlist_email.send(data)

@@ -19,7 +19,8 @@ from .views import (
         RequestNewOTP,
         ComplaintViewSet,
         AddWorker,
-        WaitListApplicantsViewSet
+        WaitListApplicantsViewSet,
+        CustomerSupportMessageViewSet
 	)
 
 
@@ -28,6 +29,7 @@ app_name='user'
 router = DefaultRouter()
 router.register(r'complaints', ComplaintViewSet, basename='complaint')
 router.register(r'join-waitlist', WaitListApplicantsViewSet, basename='join-waitlist')
+router.register(r'support', CustomerSupportMessageViewSet, basename='support')
 
 urlpatterns = [
 	path('create-account/', CreateUserView.as_view(), name='sign-up'),

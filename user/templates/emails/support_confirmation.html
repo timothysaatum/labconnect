@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Support Confirmation</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f7;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #2f855a;
+      margin-bottom: 10px;
+    }
+    .info {
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+    .info b {
+      color: #555;
+    }
+    .footer {
+      font-size: 14px;
+      color: #777;
+      margin-top: 40px;
+      text-align: center;
+    }
+    .footer a {
+      color: #2f855a;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>We've received your {{ support_type|title }} request</h2>
+
+    <p>Hi {{ user.first_name|default:user.username }},</p>
+
+    <p>Thank you for reaching out to us. Your message has been received, and we're already reviewing it. We'll do our best to get back to you as soon as possible.</p>
+
+    <div class="info">
+      <p><b>Subject:</b> {{ subject }}</p>
+      <p><b>Message:</b> {{ message }}</p>
+      <p><b>Submitted on:</b> {{ created_at|date:"l, F j, Y @ H:i A" }}</p>
+    </div>
+
+    <p>If you have any updates or further information to share, just reply to this email.</p>
+
+    <p>Warm regards,<br>
+    <b>LabConnekt Support Team</b></p>
+
+    <div class="footer">
+      <p>Email: <a href="mailto:labconnekt@gmail.com">labconnekt@gmail.com</a><br>
+      Website: <a href="https://www.labconnekt.com">www.labconnekt.com</a></p>
+    </div>
+  </div>
+</body>
+</html>
