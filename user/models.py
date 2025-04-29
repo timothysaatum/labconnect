@@ -134,4 +134,4 @@ class WaitList(models.Model):
 
 
       def __str__(self):
-            return self.facility_name
+            return self.email
