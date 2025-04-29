@@ -50,7 +50,7 @@ class OneTimePasswordAdmin(admin.ModelAdmin):
     list_display = ('code', 'user', 'email_for')
 
 class WaitListAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'email', 'phone_number', 'facility_name', 'region', "date_added")
+    list_display = ('full_name', 'email', 'phone_number', 'facility_name', 'region', "joint_at")
 
 
 @admin.register(Complaint)

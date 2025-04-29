@@ -609,5 +609,5 @@ class ComplaintViewSet(viewsets.ModelViewSet):
 
 class WaitListApplicantsViewSet(viewsets.ModelViewSet):
      throttle_classes = [UserRateThrottle]
-     queryset = WaitList.objects.all().order_by("-date_added")
+     queryset = WaitList.objects.all().order_by("-joint_at")
      serializer_class = WaitListSerializer
