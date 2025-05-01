@@ -83,14 +83,17 @@ LEVEL_CHOICES = [
 
 
 ACCREDITATION_BODIES = [
-	("HeFRA", "Health Facilities Regulatory Agency (HeFRA)"),
+    # Ghana-specific accreditation bodies
+    ("HeFRA", "Health Facilities Regulatory Agency (HeFRA) - Ghana"),
     ("GSA", "Ghana Standards Authority (GSA)"),
     ("GHS", "Ghana Health Service (GHS)"),
-    ("GTEC", "Ghana Tertiary Education Commission (GTEC)"),
+    # African accreditation bodies
     ("SANAS", "South African National Accreditation System (SANAS)"),
-    ("CAP", "College of American Pathologists (CAP)"),
-    ("ISO", "ISO 15189 Accreditation (Other)"),
-    ("OTHER", "Other"),
+    ("NAFDAC", "National Agency for Food and Drug Administration and Control - Nigeria"),
+    # International accreditation bodies
+    ("ISO", "ISO 15189 Medical Laboratories"),
+    ("WHO", "World Health Organization (WHO)"),
+    ("ILAC", "International Laboratory Accreditation Cooperation (ILAC)")
 ]
 
 class Branch(Facility):
