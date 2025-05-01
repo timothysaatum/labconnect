@@ -81,45 +81,59 @@ LEVEL_CHOICES = [
     ("Tertiary", "Tertiary"),
 ]
 
+
+ACCREDITATION_BODIES = [
+	("HeFRA", "Health Facilities Regulatory Agency (HeFRA)"),
+    ("GSA", "Ghana Standards Authority (GSA)"),
+    ("GHS", "Ghana Health Service (GHS)"),
+    ("GTEC", "Ghana Tertiary Education Commission (GTEC)"),
+    ("SANAS", "South African National Accreditation System (SANAS)"),
+    ("CAP", "College of American Pathologists (CAP)"),
+    ("ISO", "ISO 15189 Accreditation (Other)"),
+    ("OTHER", "Other"),
+]
+
 class Branch(Facility):
-    """
+	"""
     A branch: is a local set up of a particular laboratory that carries out test within that enclave.
     Branch_name: refers to the name of a branch.
     """
-    accreditation_number = models.CharField(max_length=155, unique=True)
-    level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
-    branch_name = models.CharField(max_length=155, blank=True)
-    region = models.CharField(choices=REGIONS, max_length=100)
-    town = models.CharField(max_length=200)
+	accreditation_number = models.CharField(max_length=155, unique=True)
+	issuing_body = models.CharField(max_length=255, null=True, blank=True, choices=ACCREDITATION_BODIES)
+	expiry_date = models.DateField(null=True, blank=True)
+	level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
+	branch_name = models.CharField(max_length=155, blank=True)
+	region = models.CharField(choices=REGIONS, max_length=100)
+	town = models.CharField(max_length=200)
     # digital_address = models.CharField(max_length=15, unique=True, validators=[code_validator])
     # gps_coordinates = models.CharField(max_length=100, null=True, blank=True)
-    branch_manager = models.ForeignKey(
+	branch_manager = models.ForeignKey(
         user, on_delete=models.SET_NULL, null=True, blank=True, db_index=True
     )
-    laboratory = models.ForeignKey(
+	laboratory = models.ForeignKey(
         Laboratory, on_delete=models.CASCADE, related_name="branches"
     )
-    workers = models.ManyToManyField(
+	workers = models.ManyToManyField(
         user, related_name='work_branches', db_index=True
     )
-    
-    class Meta:
-        verbose_name_plural = "Branches"
-        unique_together = ("accreditation_number", "branch_name")
+
+	class Meta:
+		verbose_name_plural = "Branches"
+		unique_together = ("accreditation_number", "branch_name")
         
-    def get_branch_distance(self, user_lat, user_lon):
+	def get_branch_distance(self, user_lat, user_lon):
         
-        if self.gps_coordinates:
+		if self.gps_coordinates:
             
-            branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
-            d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
-            print(d)
+			branch_lat, branch_long = map(float, self.gps_coordinates.split(","))
+			d = int(calculate_distance(user_lat, user_lon, branch_lat, branch_long))
+			print(d)
             
-        return d
+		return d
         
-    def __str__(self) -> str:
+	def __str__(self) -> str:
         
-        return f"{self.laboratory.name} - {self.town}"
+		return f"{self.laboratory.name} - {self.town}"
 
 
 class Test(BasicTest):

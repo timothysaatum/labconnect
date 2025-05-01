@@ -54,6 +54,8 @@ class BranchSerializer(serializers.ModelSerializer):
         )
     ])
     account_number = serializers.CharField(write_only=True, required=False)
+    issuing_body = serializers.CharField(write_only=True, required=False)
+    expiry_date = serializers.DateField(required=False, allow_null=True)
     bank_name = serializers.CharField(write_only=True, required=False)
     bank_code = serializers.CharField(write_only=True, required=False)
     gps_coordinates = serializers.CharField(read_only=True)
@@ -62,12 +64,15 @@ class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
         fields = (
+
             'id',
             'branch_name',
             "account_number",
             "bank_name",
             "bank_code",
             'accreditation_number',
+            'issuing_body',
+            'expiry_date',
             'level',
             'branch_manager',
             'manager_id',
@@ -82,6 +87,7 @@ class BranchSerializer(serializers.ModelSerializer):
             "working_hours",
             'date_added',
             'date_modified'
+        
         )
     
     def validate_account_number(self, value):
