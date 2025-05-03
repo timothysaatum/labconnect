@@ -1,4 +1,3 @@
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
@@ -84,57 +83,57 @@ class CacheMixin:
 
 
 class CreateLaboratoryView(generics.CreateAPIView):
-	"""
+    """
 	The API endpoint that allows a user to create a laboratory.
 	Inherits the custom permission class defined at the top of this model.
 	The sign in user is automatically assign as the CEO or General manager unless otherwise
 	"""
-	permission_classes = [IsLaboratoryOwnerOrManager]
-	parser_classes = (MultiPartParser, FormParser)
-	serializer_class = LaboratorySerializer
+    permission_classes = [IsLaboratoryOwnerOrManager]
+    parser_classes = (MultiPartParser, FormParser)
+    serializer_class = LaboratorySerializer
 
-	def perform_create(self, serializer):
-		serializer.save(created_by=self.request.user)
+    def perform_create(self, serializer):
+        logger.warning(f"User<{self.request.user.id}> created Lab object({self.request.data})")
+        serializer.save(created_by=self.request.user)
 
 
 class UpdateLaboratoryDetails(generics.UpdateAPIView):
-
-	"""
+    """
 	The API endpoint that allows the user to update their lab,
 	Inherits the custom PermissionMixin class defined at the top of this model.
 	Checks if the user is associated with the lab.
 	"""
-	permission_classes = [IsLaboratoryOwnerOrManager]
+    permission_classes = [IsLaboratoryOwnerOrManager]
 
-	serializer_class = LaboratorySerializer
-	def get_queryset(self):
-		return Laboratory.objects.filter(created_by=self.request.user)
+    serializer_class = LaboratorySerializer
+    def get_queryset(self):
+        return Laboratory.objects.filter(created_by=self.request.user)
 
-	def patch(self, request, pk):
-
-		"""
+    def patch(self, request, pk):
+        """
 		Permission check to ensure the right user is interracting with right model.
 		"""
-		return self.partial_update(request, pk)
+        logger.warning(f"User<{self.request.user.id}> updated Lab object({self.request.data})")
+        return self.partial_update(request, pk)
 
 
 class DeleteLaboratory(generics.DestroyAPIView):
-	"""
+    """
 	The API endpoint that allows users to delete the lab instance they have created.
 	Inherits from the custom PermissionMixin class defined at the begiining of this
 	model.
 	"""
-	permission_classes = [IsLaboratoryOwnerOrManager]
-	def get_queryset(self):
-		"""
+    permission_classes = [IsLaboratoryOwnerOrManager]
+    def get_queryset(self):
+        """
 		Returns a queryset of the Lab created by the user using the created_by field in the
 		Lab table
 		"""
-		return Laboratory.objects.filter(created_by=self.request.user)
+        return Laboratory.objects.filter(created_by=self.request.user)
 
-	def delete(self, request, pk):
-	
-		return self.destroy(request, pk)
+    def delete(self, request, pk):
+        logger.warning(f"User<{self.request.user.id}> updated Lab object({self.request.data})")
+        return self.destroy(request, pk)
 
 
 class LaboratoryUserVIew(generics.ListAPIView):
@@ -148,22 +147,22 @@ class LaboratoryUserVIew(generics.ListAPIView):
 
 
 class CreateBranchView(generics.CreateAPIView):
-
-	"""
+    """
 	Api endpoint for adding a branch to the laboratory the user has created.
 	This auto assigns the Branch manager role to the general manager that is the logged in user.
 	The branch manager the option of inviting a branch manager to take over that role as the branch manager.
 	"""
-	permission_classes = [IsLaboratoryOwnerOrManager]
-	serializer_class = BranchSerializer
+    permission_classes = [IsLaboratoryOwnerOrManager]
+    serializer_class = BranchSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
-	def perform_create(self, serializer):
-		"""
+    def perform_create(self, serializer):
+        """
 		A data base query to get the laboratory the branch is being added to
 		"""
-		lab = self.request.user.laboratory
-		
-		serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
+        logger.warning(f"User<{self.request.user.id}> created Branch object({self.request.data})")
+        lab = self.request.user.laboratory
+        serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
 
 
 class BranchListView(generics.ListAPIView):
@@ -185,34 +184,35 @@ class BranchListView(generics.ListAPIView):
 
 
 class BranchUpdateView(generics.UpdateAPIView):
-	"""
+    """
 	API end point that allows the user to update their facility.
 	This allows both the Branch manager or Laboratory CEO to update
 	The Branch
 	"""
-	permission_classes = [IsLaboratoryOwnerOrManager]
-	serializer_class = BranchSerializer
-	def get_queryset(self):
-		return Branch.objects.filter(pk=self.kwargs.get('pk'))
+    permission_classes = [IsLaboratoryOwnerOrManager]
+    parser_classes = (MultiPartParser, FormParser)
+    serializer_class = BranchSerializer
+    def get_queryset(self):
+        return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
-	def patch(self, request, pk, format=None):
-		branch = self.get_queryset()
-	
-		return self.partial_update(request, pk, format=None)
+    def patch(self, request, pk, format=None):
+        # branch = self.get_queryset()
+        logger.warning(f"User<{self.request.user.id}> updated Lab object({self.request.data})")
+        return self.partial_update(request, pk, format=None)
 
 
 class BranchDeleteView(generics.DestroyAPIView):
-	"""
+    """
 	API endpoint for a user to delete the Branch they have created.
 	This allows on the Lab CEO to delete the Branch.
 	"""
-	permission_classes = [IsLaboratoryOwnerOrManager]
-	def get_queryset(self):
-		return Branch.objects.filter(pk=self.kwargs.get('pk'))
+    permission_classes = [IsLaboratoryOwnerOrManager]
+    def get_queryset(self):
+        return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
-	def delete(self, request, pk, format=None):
-	
-		return self.destroy(request, pk, format=None)
+    def delete(self, request, pk, format=None):
+        logger.warning(f"User<{self.request.user.id}> deleted Lab object({pk})")
+        return self.destroy(request, pk, format=None)
 
 
 class CreateTestView(generics.CreateAPIView):
@@ -229,6 +229,7 @@ class CreateTestView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            logger.warning(f"User<{request.user.id}> created Test object({serializer.data})")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # Handle batch test creation
@@ -236,6 +237,7 @@ class CreateTestView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data, many=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            logger.warning(f"User<{request.user.id}> created Test object({serializer.data})")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -322,7 +324,7 @@ class TestUpdateView(generics.UpdateAPIView):
         return Test.objects.filter(pk=self.kwargs.get('pk'))
 
     def patch(self, request, pk):
-    
+        logger.warning(f"User<{request.user.id}> created Test object({request.data})")
         return self.partial_update(request, pk)
 
     def perform_update(self, serializer):
@@ -330,19 +332,19 @@ class TestUpdateView(generics.UpdateAPIView):
 
 
 class TestDeleteView(generics.DestroyAPIView):
-	"""
+    """
 	API endpoint foe delete test for a laboratory or Branch.
 	This deletes the test for all the branches where it is being
 	done.
 	Caution must be taken when calling this endpoint.
 	"""
-	permission_classes = [IsLaboratoryOwnerOrManager]
-	def get_queryset(self):
-		return Test.objects.filter(pk=self.kwargs.get('pk'))
+    permission_classes = [IsLaboratoryOwnerOrManager]
+    def get_queryset(self):
+        return Test.objects.filter(pk=self.kwargs.get('pk'))
 
-	def delete(self, request, pk, format=None):
-
-		return self.destroy(request, pk, format=None)
+    def delete(self, request, pk, format=None):
+        logger.warning(f"User<{request.user.id}> deleted Test object({pk})")
+        return self.destroy(request, pk, format=None)
 
 
 

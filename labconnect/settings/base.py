@@ -56,7 +56,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    #"django_dramatiq.middleware.DramatiqMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -69,7 +68,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# MIDDLEWARE += ["axes.middleware.AxesMiddleware"]
 # MIDDLEWARE = (
 #     ["django_prometheus.middleware.PrometheusBeforeMiddleware"]
 #     + MIDDLEWARE
@@ -148,7 +146,6 @@ DRAMATIQ_BROKER = {
         "dramatiq.middleware.Callbacks",
         "dramatiq.middleware.Retries",
         "dramatiq.results.middleware.Results",
-        # {"class": "dramatiq.results.middleware.Results", "backend": results_backend},
         "django_dramatiq.middleware.DbConnectionsMiddleware",
         "django_dramatiq.middleware.AdminMiddleware",
     ],
@@ -184,10 +181,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # React dev server
-    "http://127.0.0.1:5173",  # Alternate localhost
-    "https://labconnect-eight.vercel.app",  # React production URL if needed
-    "https://labconnekt.com",  # Correct frontend URL
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://labconnect-eight.vercel.app",
+    "https://labconnekt.com",
     "https://apis.labconnekt.com",
 ]
 

@@ -21,6 +21,7 @@ class SubscriptionCreationView(CreateAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer
+    throttle_classes = [UserRateThrottle]
 
     def post(self, request):
 
@@ -38,6 +39,7 @@ class UpdateSubscriptionView(UpdateAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializer
+    throttle_classes = [UserRateThrottle]
 
     def put(self, request, format=None):
 
@@ -216,28 +218,6 @@ class FetchBanks(ListAPIView):
     serializer_class = BankSerializer
     queryset = Bank.objects.all()
 
-
-# class VerifyAccountView(APIView):
-#     throttle_classes = [UserRateThrottle]
-#     def post(self, request):
-#         account_number = request.data.get("account_number")
-#         bank_code = request.data.get("bank_code")
-
-#         paystack = Paystack()  # Initialize Paystack instance
-#         result = paystack.verify_account(account_number, bank_code)
-
-#         if "error" in result:
-#             return Response({"success": False, "error": result["error"]}, status=status.HTTP_400_BAD_REQUEST)
-
-#         if result.get("status"):
-#             return Response({
-#                 "success": True,
-#                 "account_name": result["data"]["account_name"],
-#                 "account_number": result["data"]["account_number"],
-#                 "bank_code": bank_code
-#             })
-
-#         return Response({"success": False, "error": "Invalid account details"}, status=status.HTTP_400_BAD_REQUEST)
 
 class VerifyAccountView(APIView):
     """

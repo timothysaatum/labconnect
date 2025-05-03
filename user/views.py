@@ -96,7 +96,7 @@ def verify_token(refresh_token):
 	try:
 		payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
 		user = Client.objects.get(id=payload['user_id'])
-		logger.info(f'{user.full_name} verified successfully')
+		logger.info(f'{user.id} verified successfully')
 
 	except jwt.ExpiredSignatureError:
 		return Response({'error': 'token has expired'}, status=status.HTTP_400_BAD_REQUEST)
@@ -120,11 +120,11 @@ class CheckRefreshToken(APIView):
 
         try:
             user = verify_token(cookie_token)
-            logger.info(f"{user.full_name} token check sucessful")
+            logger.info(f"User: {user.id} token check sucessful")
             refresh_token = RefreshToken.for_user(user)
 
         except AttributeError:
-            logger.warning("Token pass was not valid")
+            logger.warning(f"Token pass was not valid: {cookie_token}")
             return Response(
                 {"error": "Session expired"}, status=status.HTTP_403_FORBIDDEN
             )
@@ -157,10 +157,11 @@ class UpdateUserAccount(UpdateAPIView):
     partial = True
 
     def get_queryset(self):
-        logger.info(f"{self.request.user} requesting account update")
+        logger.info(f"{self.request.user.id} requesting account update")
         return Client.objects.filter(pk=self.kwargs.get("pk"))
 
     def patch(self, request, pk):
+        logger.info(f"Udated {pk}: payload={request.data}")
         return super().partial_update(request, pk)
 
 
@@ -174,6 +175,7 @@ class DeleteUserAccount(UpdateAPIView):
         return Client.objects.filter(id=self.request.user)
 
     def delete(self, request, pk):
+        logger.warning(f"Deleted {pk}: initiator={request.user.id}")
         return super().delete(request, pk)
 
 
@@ -191,13 +193,14 @@ class VerifyUserEmail(GenericAPIView):
             totp = pyotp.TOTP(secret_key, interval=180, digits=10)
 
             if user_code_obj.is_expired():
+                logger.warning(f"Possible malicious code submiited: {code}")
                 return Response(
                     {"message": "Code has expired code"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if not totp.verify(totp.now()):
-
+                logger.warning(f"Possible malicious code submiited: {code}")
                 return Response(
                     {"message": "Invalid or expired code"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -220,6 +223,7 @@ class VerifyUserEmail(GenericAPIView):
                     user.is_staff = False
 
                 user.save()
+                logger.info(f"User: {user.id} verification successful: code: {code}")
                 return Response(
                     {"message": "Email successfully verified"},
                     status=status.HTTP_200_OK,
@@ -268,7 +272,7 @@ class LoginUserView(GenericAPIView):
                 )
 
             user_tokens = user.tokens()
-            logger.info(f"Logged in {user.full_name}")
+            logger.info(f"authenticated in {user.id}")
 
             response = Response(
                 {"data": serializer.data, "access_token": user_tokens.get("access")},
@@ -304,12 +308,13 @@ class PasswordResetView(GenericAPIView):
             serializer.is_valid(raise_exception=True)
 
         except AssertionError:
-
+            logger.warning(f"Failed attempt to reset email: payload=({request.data})")
             return Response(
                 {"error": "Invalid email"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        logger.info(f"Initialized link for password reset={request.data}")
         return Response({
 					'message': 'A link has been sent to your email to reset your password'},
 					status=status.HTTP_200_OK)
@@ -324,9 +329,10 @@ class PasswordResetConfirm(GenericAPIView):
 
             user_id = smart_str(urlsafe_base64_decode(uidb64))
             user = Client.objects.get(id=user_id)
-            logger.warning(f"{user.full_name} confirming password reset request")
+            logger.warning(f"{user.id} password reset")
             if not PasswordResetTokenGenerator().check_token(user, token):
 
+                logger.warning(f"Inavlid token submitted for password reset{token}")
                 return Response(
                     {
                         "message": "Token is invalid",
@@ -404,7 +410,7 @@ class FetchUserData(APIView):
 			try:
 
 				user = verify_token(user_cookie_token)
-				logger.warning(f'{user.full_name} accessed user dats')
+				logger.warning(f'{user.id} accessed profile')
 				serialized_data = UserSerializer(user)
 
 				return Response(serialized_data.data, status=status.HTTP_200_OK)
@@ -437,12 +443,11 @@ def create_branch_manager_user(invitation, user_data):
             client.is_staff = True
             client.save()
 
-        #branch.branch_manager = client
 
     except Client.DoesNotExist:
 
         #New branch_manager case
-        with transaction.atomic():  # Ensure atomicity of operations
+        with transaction.atomic():
             serializer = UserCreationSerializer(data=user_data)
             serializer.is_valid(raise_exception=True)
             client = serializer.save(

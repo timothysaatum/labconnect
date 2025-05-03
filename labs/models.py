@@ -104,6 +104,7 @@ class Branch(Facility):
 	accreditation_number = models.CharField(max_length=155, unique=True)
 	issuing_body = models.CharField(max_length=255, null=True, blank=True, choices=ACCREDITATION_BODIES)
 	expiry_date = models.DateField(null=True, blank=True)
+	accreditation_document = models.FileField(upload_to='accreditation_documents/', null=True, blank=True)
 	level = models.CharField(max_length=100, db_index=True, choices=LEVEL_CHOICES)
 	branch_name = models.CharField(max_length=155, blank=True)
 	region = models.CharField(choices=REGIONS, max_length=100)

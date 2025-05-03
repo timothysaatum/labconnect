@@ -56,6 +56,7 @@ class BranchSerializer(serializers.ModelSerializer):
     account_number = serializers.CharField(write_only=True, required=False)
     issuing_body = serializers.CharField(write_only=True, required=False)
     expiry_date = serializers.DateField(required=False, allow_null=True)
+    accreditation_document = serializers.FileField(required=False, allow_null=True)
     bank_name = serializers.CharField(write_only=True, required=False)
     bank_code = serializers.CharField(write_only=True, required=False)
     gps_coordinates = serializers.CharField(read_only=True)
@@ -73,6 +74,7 @@ class BranchSerializer(serializers.ModelSerializer):
             'accreditation_number',
             'issuing_body',
             'expiry_date',
+            'accreditation_document',
             'level',
             'branch_manager',
             'manager_id',

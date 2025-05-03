@@ -99,25 +99,27 @@ class CreateReferral(generics.CreateAPIView):
             })
 
         referral = serializer.save(**referral_data)
-        logger.info(f"User: <{self.request.user.id}> inserted <{referral.id}>")
+        logger.info(f"User: <{self.request.user.id}> submitting referral: <{referral.id}>")
 
 
 class UpdateReferral(generics.UpdateAPIView):
 
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
     queryset = Referral.objects.all()
     lookup_url_kwarg = 'referral_id'
     serializer_class = ReferralSerializer
 
     def perform_update(self, serializer):
         logger.info(
-            f"User {self.request.user.id} updated referral {self.lookup_url_kwarg}: {self.request.data}"
+            f"User {self.request.user.id} changed object {self.lookup_url_kwarg}: {self.request.data}"
         )
         serializer.save()
 
 
 class GetReferrals(generics.ListAPIView):
     
+    throttle_classes = [UserRateThrottle]
     permission_classes = [IsAuthenticated]
     pagination_class = QueryPagination
     serializer_class = ReferralSerializer
@@ -134,7 +136,7 @@ class GetReferrals(generics.ListAPIView):
         is_archived = self.request.GET.get("is_archived") == "true"
         cutoff_date = now() - timedelta(days=30)
 
-        logger.info(f"User: {self.request.user.id} searched referrals<{pk}> with term: {search_term}")
+        logger.info(f"User: {self.request.user.id} viewed object <{pk}>: params: {search_term}")
 
         filters = Q()
         
@@ -190,12 +192,14 @@ class ReferralDetailsView(generics.RetrieveAPIView):
 
 class UpdateSample(generics.UpdateAPIView):
 
+    throttle_classes = [UserRateThrottle]
     permission_classes = [IsAuthenticated]
     serializer_class = SampleSerializer
     lookup_url_kwarg = "sample_id"
     queryset = Sample.objects.all()
 
     def perform_update(self, serializer):
+        logger.warning(f"{self.request.user.id} changed object {self.lookup_url_kwarg}")
         serializer.save()
 
 
@@ -414,23 +418,27 @@ class GetSampleTrackerDetails(generics.ListAPIView):
 
 
 class DownloadReferralAttachment(APIView):
-    permission_classes = [IsAdminUser]  # Only staff users can access
+    throttle_classes = [UserRateThrottle]
+    permission_classes = [IsAdminUser]
 
     def get(self, request, pk):
         try:
             referral = Referral.objects.get(pk=pk)
 
             if not referral.attachment:
+                logger.warning(f"Warning possible unauthorized attempt: user<{request.user.id}> payload={pk}")
                 raise Http404("No attachment found.")
 
             file_path = referral.attachment.path
 
             # Check if the file actually exists
             if not os.path.exists(file_path):
+                logger.warning(f"Warning possible unauthorized attempt: user<{request.user.id}> payload={pk}")
                 raise Http404("File does not exist on server.")
 
             content_type, _ = mimetypes.guess_type(file_path)
 
+            logger.warning(f"File access by: user<{request.user.id}> payload={file_path}")
             return FileResponse(
                 open(file_path, "rb"),
                 content_type=content_type or "application/octet-stream",
@@ -443,19 +451,26 @@ class DownloadReferralAttachment(APIView):
 
 
 class DownloadTestResult(APIView):
-    permission_classes = [IsAdminUser]  # Only staff users can access
+
+    throttle_classes = [UserRateThrottle]
+    permission_classes = [IsAdminUser]
 
     def get(self, request, pk, *args, **kwargs):
         try:
             sample_test = SampleTest.objects.get(pk=pk)
             if sample_test.test_result:
-                # Open the file in read-binary mode
+
                 file = sample_test.test_result.open('rb')
-                # Serve the file for download
                 response = FileResponse(file)
+                logger.warning(f"File access by: user<{request.user.id}> payload={response}")
                 response['Content-Disposition'] = f'attachment; filename="{sample_test.test_result.name}"'
+
                 return response
+
             else:
+                logger.warning(f"Invalid file request: user<{request.user.id}> payload={pk}")
                 raise Http404("File not found.")
+
         except SampleTest.DoesNotExist:
+            logger.warning(f"Invalid file request: user<{request.user.id}> payload={pk}")
             raise Http404("SampleTest not found.")
