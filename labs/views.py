@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from .serializers import (
 	LaboratorySerializer,
 	TestSerializer,
@@ -89,12 +89,22 @@ class CreateLaboratoryView(generics.CreateAPIView):
 	The sign in user is automatically assign as the CEO or General manager unless otherwise
 	"""
     permission_classes = [IsLaboratoryOwnerOrManager]
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
     serializer_class = LaboratorySerializer
 
     def perform_create(self, serializer):
-        logger.warning(f"User<{self.request.user.id}> created Lab object({self.request.data})")
-        serializer.save(created_by=self.request.user)
+        user = self.request.user
+        data = self.request.data
+        logger.info(
+        f"User<{user.id}> (alias: '{user.email}') has summoned a new Laboratory | "
+            f"Lab Name: '{data.get('name')}', Realm: 'Unkown' | "
+            f"From IP: {self.request.META.get('REMOTE_ADDR')}"
+        )
+        instance = serializer.save(created_by=user)
+        logger.info(
+            f"Laboratory '{instance.name}' (ID: {instance.id}) successfully conjured into existence by "
+            f"User<{user.id}> (alias: '{user.email}')!"
+        )
 
 
 class UpdateLaboratoryDetails(generics.UpdateAPIView):
@@ -113,8 +123,18 @@ class UpdateLaboratoryDetails(generics.UpdateAPIView):
         """
 		Permission check to ensure the right user is interracting with right model.
 		"""
-        logger.warning(f"User<{self.request.user.id}> updated Lab object({self.request.data})")
-        return self.partial_update(request, pk)
+        user = request.user
+        data = request.data
+        logger.info(
+            f"User<{user.id}> (alias: '{user.email}') is reforging Laboratory<{pk}> with new data: "
+            f"{ {k: data[k] for k in data.keys()} } | "
+            f"From IP: {request.META.get('REMOTE_ADDR')}"
+        )
+        response = self.partial_update(request, pk)
+        logger.info(
+            f"Laboratory<{pk}> has been reforged by User<{user.id}>!"
+        )
+        return response
 
 
 class DeleteLaboratory(generics.DestroyAPIView):
@@ -132,8 +152,16 @@ class DeleteLaboratory(generics.DestroyAPIView):
         return Laboratory.objects.filter(created_by=self.request.user)
 
     def delete(self, request, pk):
-        logger.warning(f"User<{self.request.user.id}> updated Lab object({self.request.data})")
-        return self.destroy(request, pk)
+        user = request.user
+        logger.warning(
+            f"User<{user.id}> (alias: '{user.email}') has wielded the axe on Laboratory<{pk}> | "
+            f"Awaiting obliteration..."
+        )
+        response = self.destroy(request, pk)
+        logger.info(
+            f"Laboratory<{pk}> has been vanquished by User<{user.id}>!"
+        )
+        return response
 
 
 class LaboratoryUserVIew(generics.ListAPIView):
@@ -154,15 +182,24 @@ class CreateBranchView(generics.CreateAPIView):
 	"""
     permission_classes = [IsLaboratoryOwnerOrManager]
     serializer_class = BranchSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def perform_create(self, serializer):
         """
 		A data base query to get the laboratory the branch is being added to
 		"""
-        logger.warning(f"User<{self.request.user.id}> created Branch object({self.request.data})")
-        lab = self.request.user.laboratory
-        serializer.save(branch_manager=self.request.user, laboratory=lab, facility_type='Laboratory')
+        user = self.request.user
+        data = self.request.data
+        logger.info(
+            f"User<{user.id}> (alias: '{user.email}') is planting a new Branch | "
+            f"Branch Name: '{data.get('branch_name')}', Territory: '{data.get('town')}' | "
+            f"Associated Lab: {user.laboratory.id} | IP: {self.request.META.get('REMOTE_ADDR')}"
+        )
+        lab = user.laboratory
+        instance = serializer.save(branch_manager=user, laboratory=lab, facility_type='Laboratory')
+        logger.info(
+            f"Branch '{instance.branch_name}' (ID: {instance.id}) successfully rooted under Lab<{lab.id}>."
+        )
 
 
 class BranchListView(generics.ListAPIView):
@@ -185,20 +222,39 @@ class BranchListView(generics.ListAPIView):
 
 class BranchUpdateView(generics.UpdateAPIView):
     """
-	API end point that allows the user to update their facility.
-	This allows both the Branch manager or Laboratory CEO to update
-	The Branch
-	"""
+    API endpoint that allows the user to update their branch facility.
+    Both the Branch Manager and Laboratory CEO can update the Branch.
+    """
     permission_classes = [IsLaboratoryOwnerOrManager]
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
     serializer_class = BranchSerializer
+
     def get_queryset(self):
         return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
     def patch(self, request, pk, format=None):
-        # branch = self.get_queryset()
-        logger.warning(f"User<{self.request.user.id}> updated Lab object({self.request.data})")
-        return self.partial_update(request, pk, format=None)
+        user = request.user
+        incoming_data = request.data
+
+        logger.info(
+            f"User<{user.id}> (alias: '{user.email}') is attempting to update Branch<{pk}> "
+            f"with data: { {k: incoming_data[k] for k in incoming_data.keys()} } | "
+            f"IP: {request.META.get('REMOTE_ADDR')}"
+        )
+
+        response = self.partial_update(request, pk, format=format)
+
+        # Optional: log the updated instance if you want to confirm
+        try:
+            updated_branch = Branch.objects.get(pk=pk)
+            logger.info(
+                f"Branch<{pk}> successfully updated by User<{user.id}> | "
+                f"New name: '{updated_branch.branch_name}', Location: '{updated_branch.town}'"
+            )
+        except Branch.DoesNotExist:
+            logger.error(f"Branch<{pk}> not found after update attempt by User<{user.id}>")
+
+        return response
 
 
 class BranchDeleteView(generics.DestroyAPIView):
@@ -211,8 +267,15 @@ class BranchDeleteView(generics.DestroyAPIView):
         return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
     def delete(self, request, pk, format=None):
-        logger.warning(f"User<{self.request.user.id}> deleted Lab object({pk})")
-        return self.destroy(request, pk, format=None)
+        user = request.user
+        logger.warning(
+        f"User<{user.id}> (alias: '{user.email}') is dismantling Branch<{pk}>... Preparing for removal."
+            )
+        response = self.destroy(request, pk, format=None)
+        logger.info(
+        f"Branch<{pk}> has been successfully dismantled by User<{user.id}>."
+            )
+        return response
 
 
 class CreateTestView(generics.CreateAPIView):
@@ -229,7 +292,10 @@ class CreateTestView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            logger.warning(f"User<{request.user.id}> created Test object({serializer.data})")
+            logger.info(
+                f"Wizard<{request.user.id}> conjured a new Test scroll (ID: {instance.id}). "
+                f"Spell details: {serializer.data}"
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # Handle batch test creation
@@ -237,7 +303,10 @@ class CreateTestView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data, many=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            logger.warning(f"User<{request.user.id}> created Test object({serializer.data})")
+            logger.info(
+                f"Wizard<{request.user.id}> unleashed a batch of {len(instances)} Test spells! "
+                f"Scroll IDs: {[obj.id for obj in instances]}"
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -324,8 +393,22 @@ class TestUpdateView(generics.UpdateAPIView):
         return Test.objects.filter(pk=self.kwargs.get('pk'))
 
     def patch(self, request, pk):
-        logger.warning(f"User<{request.user.id}> created Test object({request.data})")
-        return self.partial_update(request, pk)
+        # logger.warning(f"User<{request.user.id}> created Test object({request.data})")
+        # return self.partial_update(request, pk)
+        logger.info(
+            f"Wizard<{request.user.id}> is enchanting Test<{pk}> with new runes: {request.data}"
+        )
+        response = self.partial_update(request, pk)
+        try:
+            updated_test = Test.objects.get(pk=pk)
+            logger.info(
+                f"Test<{pk}> has been successfully transformed! New spellbook: {updated_test.__dict__}"
+            )
+        except Test.DoesNotExist:
+            logger.warning(
+                f"Test<{pk}> vanished into thin air after update attempt by Wizard<{request.user.id}>"
+            )
+        return response
 
     def perform_update(self, serializer):
         serializer.save()
@@ -343,7 +426,16 @@ class TestDeleteView(generics.DestroyAPIView):
         return Test.objects.filter(pk=self.kwargs.get('pk'))
 
     def delete(self, request, pk, format=None):
-        logger.warning(f"User<{request.user.id}> deleted Test object({pk})")
+        test_obj = self.get_queryset().first()
+        if test_obj:
+            logger.info(
+                f"Wizard<{request.user.id}> has banished Test<{pk}> "
+                f"(Name: '{test_obj.name}') to the shadow realm."
+            )
+        else:
+            logger.warning(
+                f"Wizard<{request.user.id}> attempted to banish non-existent Test<{pk}>—mystical error!"
+            )
         return self.destroy(request, pk, format=None)
 
 
