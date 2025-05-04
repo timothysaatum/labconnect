@@ -291,7 +291,7 @@ class CreateTestView(generics.CreateAPIView):
         if not is_batch:
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            instance = serializer.save()
             logger.info(
                 f"Wizard<{request.user.id}> conjured a new Test scroll (ID: {instance.id}). "
                 f"Spell details: {serializer.data}"
@@ -302,7 +302,7 @@ class CreateTestView(generics.CreateAPIView):
         else:
             serializer = self.get_serializer(data=request.data, many=True)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            instances = serializer.save()
             logger.info(
                 f"Wizard<{request.user.id}> unleashed a batch of {len(instances)} Test spells! "
                 f"Scroll IDs: {[obj.id for obj in instances]}"
