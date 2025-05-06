@@ -56,7 +56,7 @@ class BranchSerializer(serializers.ModelSerializer):
     account_number = serializers.CharField(write_only=True, required=False)
     issuing_body = serializers.CharField(write_only=True, required=False)
     expiry_date = serializers.DateField(required=False, allow_null=True)
-    accreditation_document = serializers.FileField(required=False, allow_null=True)
+    accreditation_certificate = serializers.FileField(required=False, allow_null=True)
     bank_name = serializers.CharField(write_only=True, required=False)
     bank_code = serializers.CharField(write_only=True, required=False)
     gps_coordinates = serializers.CharField(read_only=True)
@@ -74,7 +74,7 @@ class BranchSerializer(serializers.ModelSerializer):
             'accreditation_number',
             'issuing_body',
             'expiry_date',
-            'accreditation_document',
+            'accreditation_certificate',
             'level',
             'branch_manager',
             'manager_id',
@@ -119,6 +119,7 @@ class BranchSerializer(serializers.ModelSerializer):
             validated_data["account_number"] = self.validate_account_number(validated_data["account_number"])
         
         working_hours_data = validated_data.pop('working_hours', None)
+        print(validated_data)
         branch = super().create(validated_data)
 
         if working_hours_data:

@@ -88,26 +88,26 @@ def generate_password(length=12):
 
 
 def verify_token(refresh_token):
+    if not 'refresh_token':
 
-	if not 'refresh_token':
+        raise InvalidToken('Unauthorized')
 
-		raise InvalidToken('Unauthorized')
+    try:
+        payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
+        user = Client.objects.get(id=payload['user_id'])
 
-	try:
-		payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
-		user = Client.objects.get(id=payload['user_id'])
-		logger.info(f'{user.id} verified successfully')
+    except jwt.ExpiredSignatureError:
+        logger.warning(f"A mortal's token has expired in the sands of time.refresh t{refresh_token}")
+        return Response({'error': 'token has expired'}, status=status.HTTP_400_BAD_REQUEST)
 
-	except jwt.ExpiredSignatureError:
-		return Response({'error': 'token has expired'}, status=status.HTTP_400_BAD_REQUEST)
+    except jwt.DecodeError:
+        logger.warning(f"Stale token—likely lost in Tartarus: refresh=>{refresh_token}.")
+        return Response({'error': 'stale request'}, status=status.HTTP_403_FORBIDDEN)
 
-	except jwt.DecodeError:
-		return Response({'error': 'stale request'}, status=status.HTTP_403_FORBIDDEN)
+    except Client.DoesNotExist:
+        return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)
 
-	except Client.DoesNotExist:
-		return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)
-
-	return user
+    return user
 
 
 class CheckRefreshToken(APIView):
@@ -120,11 +120,11 @@ class CheckRefreshToken(APIView):
 
         try:
             user = verify_token(cookie_token)
-            logger.info(f"User: {user.id} token check sucessful")
+            logger.info(f"Hero {user.id} renewed their aegis (token refreshed) successfully.")
             refresh_token = RefreshToken.for_user(user)
 
         except AttributeError:
-            logger.warning(f"Token pass was not valid: {cookie_token}")
+            logger.warning(f"The aegis bearer’s power has faded: {cookie_token}")
             return Response(
                 {"error": "Session expired"}, status=status.HTTP_403_FORBIDDEN
             )
@@ -193,14 +193,14 @@ class VerifyUserEmail(GenericAPIView):
             totp = pyotp.TOTP(secret_key, interval=180, digits=10)
 
             if user_code_obj.is_expired():
-                logger.warning(f"Possible malicious code submiited: {code}")
+                logger.warning(f"The Oracle rejected the sacred code: {code}")
                 return Response(
                     {"message": "Code has expired code"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
             if not totp.verify(totp.now()):
-                logger.warning(f"Possible malicious code submiited: {code}")
+                logger.warning(f"The Oracle rejected the sacred code: {code}")
                 return Response(
                     {"message": "Invalid or expired code"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -223,7 +223,7 @@ class VerifyUserEmail(GenericAPIView):
                     user.is_staff = False
 
                 user.save()
-                logger.info(f"User: {user.id} verification successful: code: {code}")
+                logger.info(f"Hero {user.id} has been blessed by the gods. Verification successful: code {code}")
                 return Response(
                     {"message": "Email successfully verified"},
                     status=status.HTTP_200_OK,

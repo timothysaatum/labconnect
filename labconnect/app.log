@@ -1,0 +1,424 @@
+INFO 2025-05-06 04:04:48,236 autoreload 18444 15352 Watching for file changes with StatReloader
+INFO 2025-05-06 04:06:23,553 basehttp 18444 20296 "OPTIONS /user/create-account/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:06:23,657 views 18444 14368 Account created for Dee Don
+INFO 2025-05-06 04:06:29,818 basehttp 18444 14368 "POST /user/create-account/ HTTP/1.1" 201 200
+INFO 2025-05-06 04:06:45,327 basehttp 18444 9716 "GET /admin/v1/manager/labconnect/user/onetimepassword/ HTTP/1.1" 200 31023
+INFO 2025-05-06 04:06:45,676 basehttp 18444 9716 "GET /admin/v1/manager/labconnect/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-05-06 04:06:45,740 basehttp 18444 13776 - Broken pipe from ('127.0.0.1', 53667)
+INFO 2025-05-06 04:06:45,741 basehttp 18444 22024 "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-05-06 04:07:00,939 basehttp 18444 20296 "OPTIONS /user/verify-email/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:07:01,574 views 18444 14368 Hero 3 has been blessed by the gods. Verification successful: code 772686
+INFO 2025-05-06 04:07:01,577 basehttp 18444 14368 "POST /user/verify-email/ HTTP/1.1" 200 41
+INFO 2025-05-06 04:07:25,735 views 18444 21220 authenticated in 3
+INFO 2025-05-06 04:07:25,738 basehttp 18444 21220 "POST /user/login/ HTTP/1.1" 200 648
+INFO 2025-05-06 04:09:16,387 basehttp 18444 21676 "OPTIONS /laboratory/create/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:09:16,424 views 18444 21220 User ID: 3, Email: 'saatumtimothy@gmail.com' initiated laboratory creation | Lab Name: 'Advans Research Center' | IP: 127.0.0.1
+INFO 2025-05-06 04:09:16,908 views 18444 21220 Laboratory 'Advans Research Center' (ID: c9971282-5da1-49f1-aa8f-66fa69076dc4) successfully created by User ID: 3, Email: 'saatumtimothy@gmail.com'
+INFO 2025-05-06 04:09:16,911 basehttp 18444 21220 "POST /laboratory/create/ HTTP/1.1" 201 299
+INFO 2025-05-06 04:09:17,469 basehttp 18444 21676 "OPTIONS /transactions/fetch-banks-list/?type=mobile_money HTTP/1.1" 200 0
+INFO 2025-05-06 04:09:17,736 basehttp 18444 21220 "GET /transactions/fetch-banks-list/?type=mobile_money HTTP/1.1" 200 2
+INFO 2025-05-06 04:15:21,135 views 18444 3896 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:15:21,136 views 18444 20584 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:15:22,071 basehttp 18444 3896 "GET /user/refresh/token/ HTTP/1.1" 200 947
+INFO 2025-05-06 04:15:22,665 basehttp 18444 20584 "GET /user/refresh/token/ HTTP/1.1" 200 947
+INFO 2025-05-06 04:15:24,940 basehttp 18444 3896 "GET /transactions/fetch-banks-list/?type=mobile_money HTTP/1.1" 200 3598
+INFO 2025-05-06 04:16:43,414 basehttp 18444 20908 "GET /transactions/verify-account/?bank_code=MTN&account_number=233594438287 HTTP/1.1" 200 98
+INFO 2025-05-06 04:16:45,511 basehttp 18444 20908 "OPTIONS /laboratory/create-branch/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:16:45,634 views 18444 3896 User ID: 3, Email: 'saatumtimothy@gmail.com' creating new branch | Branch Name: 'SDA Hospital Branch', Location: 'Tamale' | Parent Lab ID: c9971282-5da1-49f1-aa8f-66fa69076dc4 | IP: 127.0.0.1
+INFO 2025-05-06 04:16:46,470 views 18444 3896 Branch 'SDA Hospital Branch' (ID: be562fba-ecfb-48a0-b9b5-501db71ad8d4) successfully created under Laboratory ID: c9971282-5da1-49f1-aa8f-66fa69076dc4
+INFO 2025-05-06 04:16:46,606 basehttp 18444 3896 "POST /laboratory/create-branch/ HTTP/1.1" 201 559
+INFO 2025-05-06 04:17:22,128 basehttp 18444 20908 "OPTIONS /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:17:22,140 basehttp 18444 3896 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:17:26,904 basehttp 18444 20908 "OPTIONS /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 0
+INFO 2025-05-06 04:17:26,956 basehttp 18444 20908 "OPTIONS /utils/list-test-templates/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:17:27,492 basehttp 18444 3896 "GET /utils/list-test-templates/ HTTP/1.1" 200 76525
+INFO 2025-05-06 04:17:29,260 basehttp 18444 3896 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 42
+INFO 2025-05-06 04:17:46,671 basehttp 18444 20908 "OPTIONS /laboratory/test/add/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:17:49,947 views 18444 3896 User ID: 3 created batch of 2 Tests | Test IDs: [UUID('8fc6ade6-9b4b-4d63-a15b-2f4c54a471c0'), UUID('0995bc47-093d-4868-881b-860d8544a0a7')]
+INFO 2025-05-06 04:17:49,972 basehttp 18444 3896 "POST /laboratory/test/add/ HTTP/1.1" 201 1607
+INFO 2025-05-06 04:17:50,011 basehttp 18444 3896 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1647
+INFO 2025-05-06 04:18:17,220 basehttp 18444 20908 "OPTIONS /laboratory/get-test/sample-type/c9971282-5da1-49f1-aa8f-66fa69076dc4/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:18:17,240 basehttp 18444 3896 "GET /laboratory/get-test/sample-type/c9971282-5da1-49f1-aa8f-66fa69076dc4/ HTTP/1.1" 200 717
+INFO 2025-05-06 04:18:43,121 basehttp 18444 20908 "OPTIONS /laboratory/test/update/0995bc47-093d-4868-881b-860d8544a0a7/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:18:43,128 views 18444 3896 User ID: 3 updating Test ID: 0995bc47-093d-4868-881b-860d8544a0a7 | Update data: {'branch': ['be562fba-ecfb-48a0-b9b5-501db71ad8d4'], 'test_code': 'J5T9M-25-05', 'name': 'Sputum For Afb', 'turn_around_time': '4 Hours', 'patient_preparation': 'Collect early morning sputum sample before brushing teeth.', 'price': 75, 'sample_type': [2]}
+WARNING 2025-05-06 04:18:43,146 basehttp 18444 3896 "PATCH /laboratory/test/update/0995bc47-093d-4868-881b-860d8544a0a7/ HTTP/1.1" 400 92
+INFO 2025-05-06 04:19:01,098 basehttp 18444 20908 "OPTIONS /laboratory/update/test-for-branch/be562fba-ecfb-48a0-b9b5-501db71ad8d4/0995bc47-093d-4868-881b-860d8544a0a7/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:19:01,349 basehttp 18444 3896 "PATCH /laboratory/update/test-for-branch/be562fba-ecfb-48a0-b9b5-501db71ad8d4/0995bc47-093d-4868-881b-860d8544a0a7/ HTTP/1.1" 200 109
+INFO 2025-05-06 04:19:01,416 basehttp 18444 3896 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1649
+INFO 2025-05-06 04:19:14,561 basehttp 18444 3896 "PATCH /laboratory/update/test-for-branch/be562fba-ecfb-48a0-b9b5-501db71ad8d4/0995bc47-093d-4868-881b-860d8544a0a7/ HTTP/1.1" 200 107
+INFO 2025-05-06 04:19:14,628 basehttp 18444 3896 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1647
+INFO 2025-05-06 04:19:47,466 basehttp 18444 20908 "OPTIONS /laboratory/branch/all/?level=Basic HTTP/1.1" 200 0
+INFO 2025-05-06 04:19:47,490 basehttp 18444 3896 "GET /laboratory/branch/all/?level=Basic HTTP/1.1" 200 335
+INFO 2025-05-06 04:21:04,729 basehttp 18444 20908 "OPTIONS /user/add-worker/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:21:05,508 basehttp 18444 3896 "POST /user/add-worker/ HTTP/1.1" 201 37
+INFO 2025-05-06 04:21:32,661 basehttp 18444 5876 "GET /admin/v1/manager/labconnect/user/client/ HTTP/1.1" 200 36541
+INFO 2025-05-06 04:21:32,705 basehttp 18444 5876 "GET /admin/v1/manager/labconnect/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-05-06 04:22:09,729 basehttp 18444 3896 "GET /transactions/fetch-banks-list/?type=mobile_money HTTP/1.1" 200 3598
+INFO 2025-05-06 04:22:22,349 basehttp 18444 3896 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:25:17,069 basehttp 18444 20888 "GET /transactions/verify-account/?bank_code=VOD&account_number=233203051134 HTTP/1.1" 200 98
+WARNING 2025-05-06 04:25:19,459 basehttp 18444 4608 "POST /laboratory/create-branch/ HTTP/1.1" 400 82
+WARNING 2025-05-06 04:25:25,789 basehttp 18444 4608 "POST /laboratory/create-branch/ HTTP/1.1" 400 82
+INFO 2025-05-06 04:25:38,639 views 18444 4608 User ID: 3, Email: 'saatumtimothy@gmail.com' creating new branch | Branch Name: 'Opposite Korlebu Hospital', Location: 'Tamale' | Parent Lab ID: c9971282-5da1-49f1-aa8f-66fa69076dc4 | IP: 127.0.0.1
+INFO 2025-05-06 04:25:39,195 views 18444 4608 Branch 'Opposite Korlebu Hospital' (ID: 3df5ae7e-36c3-4424-b921-b31d0f905616) successfully created under Laboratory ID: c9971282-5da1-49f1-aa8f-66fa69076dc4
+INFO 2025-05-06 04:25:39,201 basehttp 18444 4608 "POST /laboratory/create-branch/ HTTP/1.1" 201 573
+INFO 2025-05-06 04:25:46,289 basehttp 18444 21408 "GET /admin/v1/manager/labconnect/labs/branch/ HTTP/1.1" 200 35975
+INFO 2025-05-06 04:25:46,346 basehttp 18444 21408 "GET /admin/v1/manager/labconnect/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-05-06 04:25:49,321 basehttp 18444 21408 "GET /admin/v1/manager/labconnect/labs/branch/be562fba-ecfb-48a0-b9b5-501db71ad8d4/change/ HTTP/1.1" 200 47443
+INFO 2025-05-06 04:25:49,357 basehttp 18444 19184 "GET /admin/v1/manager/labconnect/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-05-06 04:25:49,359 basehttp 18444 21408 "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+INFO 2025-05-06 04:25:49,447 basehttp 18444 21408 "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO 2025-05-06 04:25:49,463 basehttp 18444 21408 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO 2025-05-06 04:25:49,505 basehttp 18444 19184 - Broken pipe from ('127.0.0.1', 52497)
+WARNING 2025-05-06 04:25:49,558 basehttp 18444 21408 "GET /favicon.ico HTTP/1.1" 404 3617
+INFO 2025-05-06 04:26:24,094 basehttp 18444 15476 "GET /admin/v1/manager/labconnect/labs/branch/ HTTP/1.1" 200 35975
+INFO 2025-05-06 04:26:24,135 basehttp 18444 15476 "GET /admin/v1/manager/labconnect/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-05-06 04:26:25,719 basehttp 18444 15476 "GET /admin/v1/manager/labconnect/labs/branch/3df5ae7e-36c3-4424-b921-b31d0f905616/change/ HTTP/1.1" 200 47443
+INFO 2025-05-06 04:26:25,760 basehttp 18444 20528 "GET /admin/v1/manager/labconnect/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-05-06 04:26:38,689 basehttp 18444 4608 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1647
+INFO 2025-05-06 04:26:39,273 basehttp 18444 3312 "GET /utils/list-test-templates/ HTTP/1.1" 200 76525
+INFO 2025-05-06 04:26:46,205 basehttp 18444 3312 "GET /laboratory/branch/all/?level=Basic HTTP/1.1" 200 680
+INFO 2025-05-06 04:26:58,213 basehttp 18444 20888 "OPTIONS /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:26:58,223 basehttp 18444 3312 "GET /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:27:40,847 basehttp 18444 3312 "GET /laboratory/branch/all/ HTTP/1.1" 200 680
+INFO 2025-05-06 04:28:04,591 basehttp 18444 20888 "OPTIONS /laboratory/branch/all/?level=Primary HTTP/1.1" 200 0
+INFO 2025-05-06 04:28:04,600 basehttp 18444 3312 "GET /laboratory/branch/all/?level=Primary HTTP/1.1" 200 346
+INFO 2025-05-06 04:28:27,243 basehttp 18444 3312 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:29:19,060 views 18444 3312 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:29:19,489 views 18444 20868 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:29:20,191 basehttp 18444 20868 "GET /user/refresh/token/ HTTP/1.1" 200 2148
+INFO 2025-05-06 04:29:20,232 basehttp 18444 3312 "GET /user/refresh/token/ HTTP/1.1" 200 2148
+INFO 2025-05-06 04:29:20,261 basehttp 18444 20888 "OPTIONS /laboratory/branch/all/?gps_coordinates=7.532050749538008,+-2.067809299126229 HTTP/1.1" 200 0
+INFO 2025-05-06 04:29:20,276 basehttp 18444 3312 "GET /laboratory/branch/all/?gps_coordinates=7.532050749538008,+-2.067809299126229 HTTP/1.1" 200 682
+INFO 2025-05-06 04:29:20,319 basehttp 18444 3312 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:29:38,026 basehttp 18444 20888 "OPTIONS /laboratory/branch/all/?level=Basic&gps_coordinates=7.532050749538008,+-2.067809299126229 HTTP/1.1" 200 0
+INFO 2025-05-06 04:29:38,054 basehttp 18444 3312 "GET /laboratory/branch/all/?level=Basic&gps_coordinates=7.532050749538008,+-2.067809299126229 HTTP/1.1" 200 682
+INFO 2025-05-06 04:29:38,102 basehttp 18444 20888 "OPTIONS /laboratory/get-test/sample-type/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:29:38,115 basehttp 18444 3312 "GET /laboratory/get-test/sample-type/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:30:04,392 basehttp 18444 20868 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1647
+INFO 2025-05-06 04:30:04,849 basehttp 18444 3312 "GET /utils/list-test-templates/ HTTP/1.1" 200 76525
+WARNING 2025-05-06 04:30:25,117 basehttp 18444 3312 "POST /laboratory/test/add/ HTTP/1.1" 400 223
+WARNING 2025-05-06 04:30:53,214 basehttp 18444 3312 "POST /laboratory/test/add/ HTTP/1.1" 400 223
+INFO 2025-05-06 04:31:18,564 views 18444 3312 User ID: 3 created batch of 2 Tests | Test IDs: [UUID('79e8f9e9-a85c-45ba-96d2-d82c905347af'), UUID('da30e45d-d447-4420-a340-5f054562f0d8')]
+INFO 2025-05-06 04:31:18,580 basehttp 18444 3312 "POST /laboratory/test/add/ HTTP/1.1" 201 1626
+INFO 2025-05-06 04:31:18,649 basehttp 18444 3312 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 3272
+INFO 2025-05-06 04:31:39,748 basehttp 18444 22432 "OPTIONS /laboratory/test/delete/0995bc47-093d-4868-881b-860d8544a0a7/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:31:39,771 views 18444 3312 User ID: 3 initiated deletion of Test ID: 0995bc47-093d-4868-881b-860d8544a0a7 | Test Name: 'Sputum For Afb' | IP: 127.0.0.1
+INFO 2025-05-06 04:31:39,957 views 18444 3312 Test ID: 0995bc47-093d-4868-881b-860d8544a0a7 successfully deleted by User ID: 3
+INFO 2025-05-06 04:31:39,959 basehttp 18444 3312 "DELETE /laboratory/test/delete/0995bc47-093d-4868-881b-860d8544a0a7/ HTTP/1.1" 204 0
+INFO 2025-05-06 04:31:40,049 basehttp 18444 3312 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 2472
+INFO 2025-05-06 04:31:43,881 basehttp 18444 22432 "OPTIONS /laboratory/test/delete/8fc6ade6-9b4b-4d63-a15b-2f4c54a471c0/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:31:43,903 views 18444 3312 User ID: 3 initiated deletion of Test ID: 8fc6ade6-9b4b-4d63-a15b-2f4c54a471c0 | Test Name: 'Aspirate For Afb' | IP: 127.0.0.1
+INFO 2025-05-06 04:31:44,125 views 18444 3312 Test ID: 8fc6ade6-9b4b-4d63-a15b-2f4c54a471c0 successfully deleted by User ID: 3
+INFO 2025-05-06 04:31:44,128 basehttp 18444 3312 "DELETE /laboratory/test/delete/8fc6ade6-9b4b-4d63-a15b-2f4c54a471c0/ HTTP/1.1" 204 0
+INFO 2025-05-06 04:31:44,198 basehttp 18444 3312 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1666
+INFO 2025-05-06 04:32:02,057 basehttp 18444 22432 "OPTIONS /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 0
+INFO 2025-05-06 04:32:02,068 basehttp 18444 3312 "GET /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 42
+INFO 2025-05-06 04:32:02,092 basehttp 18444 3312 "GET /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:32:11,964 views 18444 3312 User ID: 3 created batch of 2 Tests | Test IDs: [UUID('44ddf916-3bf5-4b59-86e6-d06f4224091d'), UUID('61c4e7f8-d413-4be9-9d0f-8b860261b5a3')]
+INFO 2025-05-06 04:32:11,991 basehttp 18444 3312 "POST /laboratory/test/add/ HTTP/1.1" 201 1607
+INFO 2025-05-06 04:32:12,054 basehttp 18444 3312 "GET /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1647
+INFO 2025-05-06 04:32:27,293 basehttp 18444 3312 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1666
+INFO 2025-05-06 04:33:10,372 views 18444 3312 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:33:11,480 views 18444 21536 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:33:11,499 basehttp 18444 3312 "GET /user/refresh/token/ HTTP/1.1" 200 2148
+INFO 2025-05-06 04:33:12,250 basehttp 18444 3312 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:33:12,279 basehttp 18444 21536 "GET /user/refresh/token/ HTTP/1.1" 200 2148
+INFO 2025-05-06 04:33:12,286 basehttp 18444 17956 "GET /laboratory/branch/all/?level=Basic&gps_coordinates=7.532050749538008,+-2.067809299126229 HTTP/1.1" 200 682
+INFO 2025-05-06 04:33:15,381 basehttp 18444 3312 "GET /laboratory/get-test/sample-type/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 717
+INFO 2025-05-06 04:33:32,583 basehttp 18444 22432 "OPTIONS /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?sample_type=5 HTTP/1.1" 200 0
+INFO 2025-05-06 04:33:32,612 basehttp 18444 3312 "GET /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?sample_type=5 HTTP/1.1" 200 847
+INFO 2025-05-06 04:34:05,522 basehttp 18444 22432 "OPTIONS /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?sample_type=6 HTTP/1.1" 200 0
+INFO 2025-05-06 04:34:05,553 basehttp 18444 3312 "GET /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?sample_type=6 HTTP/1.1" 200 841
+INFO 2025-05-06 04:34:53,236 basehttp 18444 22432 "OPTIONS /sample/create-referral/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:34:53,861 views 18444 3312 User: <3> submitting referral: <96b9ee91-c869-4713-9c26-5120bf69c566>
+INFO 2025-05-06 04:34:53,900 basehttp 18444 3312 "POST /sample/create-referral/ HTTP/1.1" 201 2098
+INFO 2025-05-06 04:34:54,028 basehttp 18444 22432 "OPTIONS /sample/referral-details/96b9ee91-c869-4713-9c26-5120bf69c566/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:34:54,096 basehttp 18444 3312 "GET /sample/referral-details/96b9ee91-c869-4713-9c26-5120bf69c566/ HTTP/1.1" 200 2098
+INFO 2025-05-06 04:35:03,563 basehttp 18444 22432 "OPTIONS /transactions/pay/initialize/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:05,603 basehttp 18444 22432 "POST /transactions/pay/initialize/ HTTP/1.1" 201 213
+INFO 2025-05-06 04:35:32,006 basehttp 18444 22432 "POST /transactions/verify-payment/62c42804-afe6-4c21-a5bc-bab14a65350a/ HTTP/1.1" 200 51
+INFO 2025-05-06 04:35:32,164 basehttp 18444 22432 "OPTIONS /sample/get-sample-counts-for-facility/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:32,172 basehttp 18444 22432 "OPTIONS /sample/get-referrals/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:32,198 views 18444 19972 User: 3 viewed object <be562fba-ecfb-48a0-b9b5-501db71ad8d4>: params: 
+INFO 2025-05-06 04:35:32,218 basehttp 18444 3312 "GET /sample/get-sample-counts-for-facility/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 165
+INFO 2025-05-06 04:35:32,225 basehttp 18444 19972 "GET /sample/get-referrals/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2025-05-06 04:35:36,592 basehttp 18444 22432 "OPTIONS /sample/get-referrals/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:36,599 views 18444 3312 User: 3 viewed object <be562fba-ecfb-48a0-b9b5-501db71ad8d4>: params: 
+INFO 2025-05-06 04:35:36,661 basehttp 18444 3312 "GET /sample/get-referrals/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 2140
+INFO 2025-05-06 04:35:50,235 basehttp 18444 22432 "OPTIONS /sample/get-sample-counts-for-facility/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:50,242 basehttp 18444 22432 "OPTIONS /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:50,276 basehttp 18444 3312 "GET /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 260
+INFO 2025-05-06 04:35:50,277 basehttp 18444 19972 "GET /sample/get-sample-counts-for-facility/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 163
+INFO 2025-05-06 04:35:50,288 views 18444 9636 User: 3 viewed object <3df5ae7e-36c3-4424-b921-b31d0f905616>: params: 
+INFO 2025-05-06 04:35:50,293 basehttp 18444 9636 "GET /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 42
+INFO 2025-05-06 04:35:51,647 basehttp 18444 22432 "OPTIONS /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:51,653 views 18444 3312 User: 3 viewed object <3df5ae7e-36c3-4424-b921-b31d0f905616>: params: 
+INFO 2025-05-06 04:35:51,692 basehttp 18444 3312 "GET /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 2140
+INFO 2025-05-06 04:35:58,821 basehttp 18444 22432 "OPTIONS /sample/update-notification/1/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:35:58,948 basehttp 18444 3312 "PATCH /sample/update-notification/1/ HTTP/1.1" 200 257
+INFO 2025-05-06 04:35:58,985 basehttp 18444 3312 "GET /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:36:27,346 basehttp 18444 22432 "OPTIONS /sample/update-sample/1/ HTTP/1.1" 200 0
+WARNING 2025-05-06 04:36:27,362 views 18444 3312 3 changed object sample_id
+INFO 2025-05-06 04:36:29,215 basehttp 18444 3312 "PATCH /sample/update-sample/1/ HTTP/1.1" 200 734
+INFO 2025-05-06 04:36:29,240 views 18444 3312 User: 3 viewed object <3df5ae7e-36c3-4424-b921-b31d0f905616>: params: 
+INFO 2025-05-06 04:36:29,295 basehttp 18444 3312 "GET /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 2146
+INFO 2025-05-06 04:36:31,127 basehttp 18444 22432 "OPTIONS /sample/update-sample/2/ HTTP/1.1" 200 0
+WARNING 2025-05-06 04:36:31,138 views 18444 3312 3 changed object sample_id
+INFO 2025-05-06 04:36:33,127 basehttp 18444 3312 "PATCH /sample/update-sample/2/ HTTP/1.1" 200 740
+INFO 2025-05-06 04:36:33,263 views 18444 3312 User: 3 viewed object <3df5ae7e-36c3-4424-b921-b31d0f905616>: params: 
+INFO 2025-05-06 04:36:33,402 basehttp 18444 3312 "GET /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 2147
+INFO 2025-05-06 04:37:33,048 views 18444 3312 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:37:33,051 views 18444 19972 Hero 3 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:37:34,062 basehttp 18444 3312 "GET /user/refresh/token/ HTTP/1.1" 200 2148
+INFO 2025-05-06 04:37:34,626 views 18444 19284 User: 3 viewed object <3df5ae7e-36c3-4424-b921-b31d0f905616>: params: 
+INFO 2025-05-06 04:37:34,673 basehttp 18444 19972 "GET /user/refresh/token/ HTTP/1.1" 200 2148
+INFO 2025-05-06 04:37:34,677 basehttp 18444 3312 "GET /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:37:34,732 basehttp 18444 9636 "GET /sample/get-sample-counts-for-facility/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 163
+INFO 2025-05-06 04:37:34,762 basehttp 18444 19284 "GET /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 2147
+INFO 2025-05-06 04:37:40,043 views 18444 19284 User: 3 viewed object <be562fba-ecfb-48a0-b9b5-501db71ad8d4>: params: 
+INFO 2025-05-06 04:37:40,067 basehttp 18444 19284 "GET /sample/get-referrals/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?status=All&search=&page_size=5&received=true HTTP/1.1" 200 42
+INFO 2025-05-06 04:37:40,072 basehttp 18444 19972 "GET /sample/get-sample-counts-for-facility/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 165
+INFO 2025-05-06 04:37:40,074 basehttp 18444 3312 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:37:42,492 views 18444 3312 User: 3 viewed object <be562fba-ecfb-48a0-b9b5-501db71ad8d4>: params: 
+INFO 2025-05-06 04:37:42,543 basehttp 18444 3312 "GET /sample/get-referrals/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 2147
+INFO 2025-05-06 04:37:45,950 basehttp 18444 22432 "OPTIONS /sample/get-referral-tracker-details/96b9ee91-c869-4713-9c26-5120bf69c566/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:37:46,069 basehttp 18444 3312 "GET /sample/get-referral-tracker-details/96b9ee91-c869-4713-9c26-5120bf69c566/ HTTP/1.1" 200 5457
+INFO 2025-05-06 04:39:28,716 basehttp 18444 3312 "GET /laboratory/test/list/be562fba-ecfb-48a0-b9b5-501db71ad8d4/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1666
+INFO 2025-05-06 04:39:29,319 basehttp 18444 19972 "GET /utils/list-test-templates/ HTTP/1.1" 200 76525
+INFO 2025-05-06 04:39:50,409 basehttp 18444 3312 "GET /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1647
+WARNING 2025-05-06 04:40:08,099 basehttp 18444 19972 "POST /laboratory/test/add/ HTTP/1.1" 400 223
+INFO 2025-05-06 04:40:26,612 basehttp 18444 22400 "OPTIONS /laboratory/branch/all/?level=Primary&gps_coordinates=6.68158071695047,+-1.62211021280568 HTTP/1.1" 200 0
+INFO 2025-05-06 04:40:26,633 basehttp 18444 3312 "GET /laboratory/branch/all/?level=Primary&gps_coordinates=6.68158071695047,+-1.62211021280568 HTTP/1.1" 200 346
+INFO 2025-05-06 04:42:47,491 basehttp 18444 9836 "GET /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:42:53,447 basehttp 18444 9836 "POST /user/logout/ HTTP/1.1" 200 29
+INFO 2025-05-06 04:43:01,679 views 18444 9836 authenticated in 1
+INFO 2025-05-06 04:43:01,681 basehttp 18444 9836 "POST /user/login/ HTTP/1.1" 200 1052
+INFO 2025-05-06 04:43:01,840 basehttp 18444 9836 "GET /sample/notifications/5f947446-9d21-4a28-887a-ee5e27ef9195/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:43:01,869 basehttp 18444 9836 "GET /sample/get-sample-counts-for-facility/5f947446-9d21-4a28-887a-ee5e27ef9195/ HTTP/1.1" 200 163
+INFO 2025-05-06 04:43:01,879 views 18444 18780 User: 1 viewed object <5f947446-9d21-4a28-887a-ee5e27ef9195>: params: 
+INFO 2025-05-06 04:43:01,888 basehttp 18444 18780 "GET /sample/get-referrals/5f947446-9d21-4a28-887a-ee5e27ef9195/?search=&page_size=5&cursor=&sent=true HTTP/1.1" 200 42
+INFO 2025-05-06 04:43:04,378 basehttp 18444 9836 "GET /laboratory/branch/all/?gps_coordinates=9.373808935262408,+-0.883964393490846 HTTP/1.1" 200 684
+INFO 2025-05-06 04:43:09,316 basehttp 18444 18952 "OPTIONS /laboratory/get-test/sample-type/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 0
+INFO 2025-05-06 04:43:09,332 basehttp 18444 9836 "GET /laboratory/get-test/sample-type/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 727
+INFO 2025-05-06 04:43:42,182 views 18444 9836 Hero 1 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:43:42,185 views 18444 18780 Hero 1 renewed their aegis (token refreshed) successfully.
+INFO 2025-05-06 04:43:42,511 basehttp 18444 9836 "GET /user/refresh/token/ HTTP/1.1" 200 1052
+INFO 2025-05-06 04:43:42,632 basehttp 18444 18780 "GET /user/refresh/token/ HTTP/1.1" 200 1052
+INFO 2025-05-06 04:43:42,703 basehttp 18444 9836 "GET /sample/notifications/5f947446-9d21-4a28-887a-ee5e27ef9195/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:43:42,714 basehttp 18444 18780 "GET /laboratory/branch/all/?gps_coordinates=9.373808935262408,+-0.883964393490846 HTTP/1.1" 200 684
+INFO 2025-05-06 04:43:49,813 basehttp 18444 9836 "GET /laboratory/get-test/sample-type/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 717
+INFO 2025-05-06 04:45:02,996 views 18444 18780 User: 1 viewed object <5f947446-9d21-4a28-887a-ee5e27ef9195>: params: 
+INFO 2025-05-06 04:45:03,002 basehttp 18444 18780 "GET /sample/get-referrals/5f947446-9d21-4a28-887a-ee5e27ef9195/?search=&page_size=5&cursor=&sent=true HTTP/1.1" 200 42
+INFO 2025-05-06 04:45:03,008 basehttp 18444 9836 "GET /sample/get-sample-counts-for-facility/5f947446-9d21-4a28-887a-ee5e27ef9195/ HTTP/1.1" 200 163
+INFO 2025-05-06 04:46:10,153 autoreload 18444 15352 C:\Users\hashi\Desktop\tim\labconnect\labs\serializers.py changed, reloading.
+INFO 2025-05-06 04:46:12,146 autoreload 13040 19984 Watching for file changes with StatReloader
+INFO 2025-05-06 04:46:22,310 autoreload 13040 19984 C:\Users\hashi\Desktop\tim\labconnect\labs\serializers.py changed, reloading.
+INFO 2025-05-06 04:46:23,988 autoreload 7880 17892 Watching for file changes with StatReloader
+INFO 2025-05-06 04:46:28,474 autoreload 7880 17892 C:\Users\hashi\Desktop\tim\labconnect\labs\serializers.py changed, reloading.
+INFO 2025-05-06 04:46:30,188 autoreload 20932 2036 Watching for file changes with StatReloader
+INFO 2025-05-06 04:46:32,427 autoreload 20932 2036 C:\Users\hashi\Desktop\tim\labconnect\labs\serializers.py changed, reloading.
+INFO 2025-05-06 04:46:33,855 autoreload 14908 17412 Watching for file changes with StatReloader
+INFO 2025-05-06 04:46:44,693 basehttp 14908 18540 "POST /user/logout/ HTTP/1.1" 200 29
+INFO 2025-05-06 04:46:55,281 views 14908 18540 authenticated in 3
+INFO 2025-05-06 04:46:55,285 basehttp 14908 18540 "POST /user/login/ HTTP/1.1" 200 2148
+INFO 2025-05-06 04:46:55,460 basehttp 14908 18540 "GET /sample/notifications/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:46:55,476 views 14908 20584 User: 3 viewed object <3df5ae7e-36c3-4424-b921-b31d0f905616>: params: 
+INFO 2025-05-06 04:46:55,481 basehttp 14908 9284 "GET /sample/get-sample-counts-for-facility/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 163
+INFO 2025-05-06 04:46:55,483 basehttp 14908 20584 "GET /sample/get-referrals/3df5ae7e-36c3-4424-b921-b31d0f905616/?status=All&search=&page_size=5&sent=true HTTP/1.1" 200 42
+INFO 2025-05-06 04:47:05,066 basehttp 14908 9284 "GET /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?test_status=Active&search=&page_size=5 HTTP/1.1" 200 1647
+INFO 2025-05-06 04:47:05,372 basehttp 14908 18540 "GET /utils/list-test-templates/ HTTP/1.1" 200 76525
+INFO 2025-05-06 04:47:09,877 basehttp 14908 18540 "GET /transactions/fetch-banks-list/?type=mobile_money HTTP/1.1" 200 3598
+INFO 2025-05-06 04:48:19,486 basehttp 14908 704 "GET /transactions/verify-account/?bank_code=VOD&account_number=233203051134 HTTP/1.1" 200 98
+INFO 2025-05-06 04:48:40,232 views 14908 18540 User ID: 3, Email: 'saatumtimothy@gmail.com' creating new branch | Branch Name: 'TTH Main', Location: 'Tamale' | Parent Lab ID: c9971282-5da1-49f1-aa8f-66fa69076dc4 | IP: 127.0.0.1
+INFO 2025-05-06 04:48:44,416 views 14908 18540 Branch 'TTH Main' (ID: bd3c3bdd-f037-4032-8219-6ae25c0bdd79) successfully created under Laboratory ID: c9971282-5da1-49f1-aa8f-66fa69076dc4
+INFO 2025-05-06 04:48:44,421 basehttp 14908 18540 "POST /laboratory/create-branch/ HTTP/1.1" 201 537
+INFO 2025-05-06 04:50:20,108 basehttp 14908 9924 "OPTIONS /laboratory/branch/delete/bd3c3bdd-f037-4032-8219-6ae25c0bdd79/ HTTP/1.1" 200 0
+WARNING 2025-05-06 04:50:20,118 views 14908 18540 User ID: 3, Email: 'saatumtimothy@gmail.com' requested deletion of Branch ID: bd3c3bdd-f037-4032-8219-6ae25c0bdd79 | IP: 127.0.0.1
+INFO 2025-05-06 04:50:20,380 views 14908 18540 Branch ID: bd3c3bdd-f037-4032-8219-6ae25c0bdd79 successfully deleted by User ID: 3
+INFO 2025-05-06 04:50:20,382 basehttp 14908 18540 "DELETE /laboratory/branch/delete/bd3c3bdd-f037-4032-8219-6ae25c0bdd79/ HTTP/1.1" 204 0
+INFO 2025-05-06 04:50:20,492 basehttp 14908 18540 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:51:25,649 basehttp 14908 9924 "GET /transactions/verify-account/?bank_code=VOD&account_number=233203051134 HTTP/1.1" 200 98
+INFO 2025-05-06 04:51:27,626 views 14908 18540 User ID: 3, Email: 'saatumtimothy@gmail.com' creating new branch | Branch Name: 'TTH Mains', Location: 'Tamale' | Parent Lab ID: c9971282-5da1-49f1-aa8f-66fa69076dc4 | IP: 127.0.0.1
+INFO 2025-05-06 04:51:28,311 views 14908 18540 Branch 'TTH Mains' (ID: 6b5324ab-f5c5-4234-b328-749ae0d56a55) successfully created under Laboratory ID: c9971282-5da1-49f1-aa8f-66fa69076dc4
+INFO 2025-05-06 04:51:28,324 basehttp 14908 18540 "POST /laboratory/create-branch/ HTTP/1.1" 201 541
+INFO 2025-05-06 04:57:24,662 autoreload 14908 17412 C:\Users\hashi\Desktop\tim\labconnect\labs\serializers.py changed, reloading.
+INFO 2025-05-06 04:57:27,035 autoreload 18316 22232 Watching for file changes with StatReloader
+INFO 2025-05-06 04:57:59,748 autoreload 18316 22232 C:\Users\hashi\Desktop\tim\labconnect\labs\models.py changed, reloading.
+INFO 2025-05-06 04:58:01,394 autoreload 11288 3144 Watching for file changes with StatReloader
+INFO 2025-05-06 04:59:21,950 basehttp 11288 16372 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 04:59:36,416 basehttp 11288 16744 "OPTIONS /laboratory/branch/delete/6b5324ab-f5c5-4234-b328-749ae0d56a55/ HTTP/1.1" 200 0
+WARNING 2025-05-06 04:59:36,430 views 11288 16372 User ID: 3, Email: 'saatumtimothy@gmail.com' requested deletion of Branch ID: 6b5324ab-f5c5-4234-b328-749ae0d56a55 | IP: 127.0.0.1
+ERROR 2025-05-06 04:59:37,120 log 11288 16372 Internal Server Error: /laboratory/branch/delete/6b5324ab-f5c5-4234-b328-749ae0d56a55/
+Traceback (most recent call last):
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: labs_branch.accreditation_certificate
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\decorators\csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "C:\Users\hashi\Desktop\tim\labconnect\labs\views.py", line 286, in delete
+    response = self.destroy(request, pk, format=None)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\mixins.py", line 90, in destroy
+    instance = self.get_object()
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\generics.py", line 100, in get_object
+    obj = get_object_or_404(queryset, **filter_kwargs)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\rest_framework\generics.py", line 19, in get_object_or_404
+    return _get_object_or_404(queryset, *filter_args, **filter_kwargs)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\shortcuts.py", line 86, in get_object_or_404
+    return queryset.get(*args, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\query.py", line 645, in get
+    num = len(clone)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\query.py", line 382, in __len__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\query.py", line 1928, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+        chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size
+    )
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\models\sql\compiler.py", line 1574, in execute_sql
+    cursor.execute(sql, params)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\utils.py", line 122, in execute
+    return super().execute(sql, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\hashi\AppData\Local\Programs\Python\Python313\Lib\site-packages\django\db\backends\sqlite3\base.py", line 354, in execute
+    return super().execute(query, params)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: labs_branch.accreditation_certificate
+ERROR 2025-05-06 04:59:37,128 basehttp 11288 16372 "DELETE /laboratory/branch/delete/6b5324ab-f5c5-4234-b328-749ae0d56a55/ HTTP/1.1" 500 206904
+INFO 2025-05-06 05:00:52,202 autoreload 12388 20188 Watching for file changes with StatReloader
+WARNING 2025-05-06 05:01:14,920 views 12388 4088 User ID: 3, Email: 'saatumtimothy@gmail.com' requested deletion of Branch ID: 6b5324ab-f5c5-4234-b328-749ae0d56a55 | IP: 127.0.0.1
+INFO 2025-05-06 05:01:15,079 views 12388 4088 Branch ID: 6b5324ab-f5c5-4234-b328-749ae0d56a55 successfully deleted by User ID: 3
+INFO 2025-05-06 05:01:15,080 basehttp 12388 4088 "DELETE /laboratory/branch/delete/6b5324ab-f5c5-4234-b328-749ae0d56a55/ HTTP/1.1" 204 0
+INFO 2025-05-06 05:01:18,626 basehttp 12388 4088 "GET /transactions/fetch-banks-list/?type=mobile_money HTTP/1.1" 200 3598
+INFO 2025-05-06 05:02:52,461 basehttp 12388 6084 "GET /transactions/verify-account/?bank_code=VOD&account_number=233203051134 HTTP/1.1" 200 98
+WARNING 2025-05-06 05:02:54,556 basehttp 12388 4088 "POST /laboratory/create-branch/ HTTP/1.1" 400 105
+WARNING 2025-05-06 05:03:00,083 basehttp 12388 4088 "POST /laboratory/create-branch/ HTTP/1.1" 400 105
+INFO 2025-05-06 05:04:22,105 basehttp 12388 4088 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+WARNING 2025-05-06 05:04:25,405 basehttp 12388 4088 "POST /laboratory/create-branch/ HTTP/1.1" 400 105
+INFO 2025-05-06 05:09:57,273 autoreload 12388 20188 C:\Users\hashi\Desktop\tim\labconnect\labs\views.py changed, reloading.
+INFO 2025-05-06 05:09:59,722 autoreload 1264 21820 Watching for file changes with StatReloader
+INFO 2025-05-06 05:10:03,719 basehttp 1264 21108 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+WARNING 2025-05-06 05:10:11,818 basehttp 1264 21108 "POST /laboratory/create-branch/ HTTP/1.1" 415 68
+INFO 2025-05-06 05:13:08,821 autoreload 1264 21820 C:\Users\hashi\Desktop\tim\labconnect\labs\views.py changed, reloading.
+INFO 2025-05-06 05:13:10,830 autoreload 2504 16388 Watching for file changes with StatReloader
+INFO 2025-05-06 05:15:38,732 basehttp 2504 22540 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 05:22:45,374 autoreload 2504 16388 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:23:08,933 autoreload 8204 23644 Watching for file changes with StatReloader
+INFO 2025-05-06 05:23:50,520 basehttp 8204 24692 "GET /sample/notifications/be562fba-ecfb-48a0-b9b5-501db71ad8d4/ HTTP/1.1" 200 2
+INFO 2025-05-06 05:23:53,714 basehttp 8204 24692 "GET /laboratory/branch/all/?level=Basic&gps_coordinates=7.532050749538008,+-2.067809299126229 HTTP/1.1" 200 682
+INFO 2025-05-06 05:23:56,578 basehttp 8204 24692 "GET /laboratory/get-test/sample-type/3df5ae7e-36c3-4424-b921-b31d0f905616/ HTTP/1.1" 200 717
+INFO 2025-05-06 05:24:07,393 basehttp 8204 24692 "GET /laboratory/test/list/3df5ae7e-36c3-4424-b921-b31d0f905616/?sample_type=5 HTTP/1.1" 200 847
+INFO 2025-05-06 05:24:13,715 views 8204 24692 Referral creation attempt | User ID: 3 | Type: Laboratory | IP: 127.0.0.1
+DEBUG 2025-05-06 05:24:13,716 views 8204 24692 Request content type: application/json
+DEBUG 2025-05-06 05:24:13,716 views 8204 24692 Request data keys: ['patient_name', 'patient_age', 'patient_sex', 'referring_facility', 'to_laboratory', 'samples', 'requires_phlebotomist', 'hardcopy_report', 'clinical_history', 'share_with']
+DEBUG 2025-05-06 05:24:13,780 views 8204 24692 Laboratory account referral | User ID: 3
+INFO 2025-05-06 05:24:14,212 views 8204 24692 Referral created successfully | ID: 61c81171-baf4-4ecb-82fa-a99bb6839638 | User: 3 | From: be562fba-ecfb-48a0-b9b5-501db71ad8d4 | To: 3df5ae7e-36c3-4424-b921-b31d0f905616
+INFO 2025-05-06 05:24:14,213 views 8204 24692 Referral 61c81171-baf4-4ecb-82fa-a99bb6839638 | Patient: John K. | User: 3
+INFO 2025-05-06 05:24:14,224 basehttp 8204 24692 "POST /sample/create-referral/ HTTP/1.1" 201 1364
+INFO 2025-05-06 05:24:14,329 basehttp 8204 13012 "OPTIONS /sample/referral-details/61c81171-baf4-4ecb-82fa-a99bb6839638/ HTTP/1.1" 200 0
+INFO 2025-05-06 05:24:14,350 basehttp 8204 24692 "GET /sample/referral-details/61c81171-baf4-4ecb-82fa-a99bb6839638/ HTTP/1.1" 200 1364
+INFO 2025-05-06 05:27:42,979 autoreload 8204 23644 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:27:44,482 autoreload 25980 25976 Watching for file changes with StatReloader
+INFO 2025-05-06 05:27:46,517 autoreload 25980 25976 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:27:48,092 autoreload 25000 25012 Watching for file changes with StatReloader
+INFO 2025-05-06 05:27:50,194 autoreload 25000 25012 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:27:51,721 autoreload 25396 21852 Watching for file changes with StatReloader
+INFO 2025-05-06 05:28:36,437 autoreload 25396 21852 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:28:37,990 autoreload 26196 26164 Watching for file changes with StatReloader
+INFO 2025-05-06 05:28:42,922 autoreload 26196 26164 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:28:44,153 autoreload 25080 25940 Watching for file changes with StatReloader
+INFO 2025-05-06 05:33:15,084 autoreload 25080 25940 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:33:16,621 autoreload 27596 27620 Watching for file changes with StatReloader
+INFO 2025-05-06 05:33:21,907 autoreload 27596 27620 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:33:23,214 autoreload 27044 25684 Watching for file changes with StatReloader
+INFO 2025-05-06 05:37:22,984 autoreload 27044 25684 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:37:24,460 autoreload 27176 28000 Watching for file changes with StatReloader
+INFO 2025-05-06 05:37:28,253 autoreload 27176 28000 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:37:29,626 autoreload 27044 27580 Watching for file changes with StatReloader
+INFO 2025-05-06 05:37:31,639 autoreload 27044 27580 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:37:32,942 autoreload 28208 28212 Watching for file changes with StatReloader
+INFO 2025-05-06 05:37:56,014 autoreload 28208 28212 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:37:57,603 autoreload 27068 22808 Watching for file changes with StatReloader
+INFO 2025-05-06 05:38:20,540 autoreload 27068 22808 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:38:21,750 autoreload 28600 27580 Watching for file changes with StatReloader
+INFO 2025-05-06 05:38:23,892 autoreload 28600 27580 C:\Users\hashi\Desktop\tim\labconnect\sample\views.py changed, reloading.
+INFO 2025-05-06 05:38:25,381 autoreload 28624 28576 Watching for file changes with StatReloader
+INFO 2025-05-06 05:41:17,560 autoreload 28624 28576 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:41:20,397 autoreload 28148 28660 Watching for file changes with StatReloader
+INFO 2025-05-06 05:41:30,113 autoreload 28148 28660 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:41:31,467 autoreload 29084 22868 Watching for file changes with StatReloader
+INFO 2025-05-06 05:41:36,677 autoreload 29084 22868 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:41:38,230 autoreload 29132 29468 Watching for file changes with StatReloader
+INFO 2025-05-06 05:42:03,812 autoreload 29132 29468 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:42:05,267 autoreload 8752 28224 Watching for file changes with StatReloader
+INFO 2025-05-06 05:42:31,504 autoreload 8752 28224 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:42:32,877 autoreload 26376 29196 Watching for file changes with StatReloader
+INFO 2025-05-06 05:42:51,212 autoreload 26376 29196 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:42:52,618 autoreload 28928 28876 Watching for file changes with StatReloader
+INFO 2025-05-06 05:42:57,790 autoreload 28928 28876 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:42:59,127 autoreload 28064 25596 Watching for file changes with StatReloader
+INFO 2025-05-06 05:43:01,097 autoreload 28064 25596 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:43:02,838 autoreload 29136 29508 Watching for file changes with StatReloader
+INFO 2025-05-06 05:43:28,873 autoreload 29136 29508 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:43:30,234 autoreload 27980 29464 Watching for file changes with StatReloader
+INFO 2025-05-06 05:43:32,288 autoreload 27980 29464 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:43:33,723 autoreload 29408 24824 Watching for file changes with StatReloader
+INFO 2025-05-06 05:43:47,731 autoreload 29408 24824 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:43:48,951 autoreload 28768 27076 Watching for file changes with StatReloader
+INFO 2025-05-06 05:44:06,397 autoreload 28768 27076 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:44:07,696 autoreload 29844 29848 Watching for file changes with StatReloader
+INFO 2025-05-06 05:44:09,853 autoreload 29844 29848 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:44:11,212 autoreload 30212 30216 Watching for file changes with StatReloader
+INFO 2025-05-06 05:44:34,055 autoreload 30212 30216 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:44:35,615 autoreload 30076 30084 Watching for file changes with StatReloader
+INFO 2025-05-06 05:44:54,251 autoreload 30076 30084 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:44:55,548 autoreload 28164 26212 Watching for file changes with StatReloader
+INFO 2025-05-06 05:45:14,410 autoreload 28164 26212 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:45:16,056 autoreload 30220 30224 Watching for file changes with StatReloader
+INFO 2025-05-06 05:45:37,697 autoreload 30220 30224 C:\Users\hashi\Desktop\tim\labconnect\hospital\views.py changed, reloading.
+INFO 2025-05-06 05:45:38,936 autoreload 30176 27244 Watching for file changes with StatReloader

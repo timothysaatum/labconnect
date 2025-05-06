@@ -42,7 +42,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "verbose": {
-            "format": "{levelname} {asctime} {module} {message}",
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
             "style": "{",
         },
         "simple": {
@@ -52,18 +52,20 @@ LOGGING = {
     },
     "handlers": {
         "file": {
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
             "filename": os.path.join(BASE_DIR, "app.log"),
             "formatter": "verbose",
+            "maxBytes": 10485760,  # 10MB
+            "backupCount": 5,      # Keep 5 backup files
         },
         "console": {
             "class": "logging.StreamHandler",
             "formatter": "simple",
         },
-        # "mail_admins": {
-        #     "class": "django.utils.log.AdminEmailHandler",
-        #     "level": "Error",
-        # },
+        "mail_admins": {
+            "class": "django.utils.log.AdminEmailHandler",
+            "level": "ERROR",
+        },
     },
     "loggers": {
         "django": {
@@ -80,6 +82,11 @@ LOGGING = {
             "handlers": ["file", "console"],
             "level": "DEBUG",
             "propagate": True,
+        },
+        "labs.critical": {  
+            "handlers": ["file", "console", "mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
         },
     },
 }
