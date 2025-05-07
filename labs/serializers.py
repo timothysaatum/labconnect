@@ -215,8 +215,8 @@ class TestSerializer(serializers.ModelSerializer):
         Strong validation: prevent duplicate Test creation by same lab owner
         """
 
-        request = self.context['request']
-        user = request.user
+        # request = self.context['request']
+        # user = request.user
         branches = attrs.get('branch', [])
 
         # Assume all branches belong to same lab (your permission class should enforce that already)
@@ -226,9 +226,14 @@ class TestSerializer(serializers.ModelSerializer):
         first_branch = branches[0]
         laboratory = first_branch.laboratory
 
-        # Check if Test with the same name already exists under this laboratory
-        if Test.objects.filter(name__iexact=attrs['name'], branch__laboratory=laboratory).exists():
+        queryset = Test.objects.filter(name__iexact=attrs['name'], branch__laboratory=laboratory)
+
+        if self.instance:
+            queryset = queryset.exclude(pk=self.instance.pk)
+
+        if queryset.exists():
             raise serializers.ValidationError({'name': 'A test with this name already exists. Please assign it to a branch instead of creating a new one.'})
+
 
         return attrs
 
@@ -266,8 +271,6 @@ class TestSerializer(serializers.ModelSerializer):
 
         return test
 
-
-        return test
 
     def update(self, instance, validated_data):
         
@@ -337,8 +340,6 @@ class TestSerializer(serializers.ModelSerializer):
         data['sample_type'] = SampleTypeSerializer(instance.sample_type.all(), many=True).data
 
         return data
-
-
 
 
 class BranchTestSerializer(serializers.ModelSerializer):

@@ -209,7 +209,7 @@ class CreateBranchView(generics.CreateAPIView):
 
 
 class BranchListView(generics.ListAPIView):
-    
+
     """
 	API endpoint that allows either the Laboratory CEO or Branch manager to view their Branch.
 	This returns a list of objects, if the user multiple branches, a query set is returned.
@@ -232,6 +232,7 @@ class BranchListView(generics.ListAPIView):
 
 
 class BranchUpdateView(generics.UpdateAPIView):
+
     """
     API endpoint that allows the user to update their branch facility.
     Both the Branch Manager and Laboratory CEO can update the Branch.
@@ -244,6 +245,7 @@ class BranchUpdateView(generics.UpdateAPIView):
         return Branch.objects.filter(pk=self.kwargs.get('pk'))
 
     def patch(self, request, pk, format=None):
+
         user = request.user
         incoming_data = request.data
 
