@@ -7,6 +7,9 @@ from rest_framework.exceptions import ValidationError
 import pyotp
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from sample.models import Notification
+from uuid import UUID
+from modelmixins.models import Facility
 
 
 
@@ -237,3 +240,15 @@ def create_user(user_data):
         client.work_branches.add(*new_branches)
 
     return True
+
+
+@dramatiq.actor(max_retries=5, min_backoff=1000, max_backoff=10000)
+def notify_user(*args):
+    facility, title, message = args
+    _facility = Facility.objects.get(id=facility)
+    Notification.objects.create(
+        facility= _facility,
+        title=title,
+        message=message
+    )
+

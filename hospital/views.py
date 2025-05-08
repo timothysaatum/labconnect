@@ -273,6 +273,6 @@ class GetHospitalLabTest(generics.ListAPIView):
     def get_queryset(self):
         h_lab_id = self.kwargs.get('h_lab_id')
         logger.info(
-            f"Hospital Lab Test list view | User ID: {self.request.user.id} | Hospital Lab ID: {h_lab_id}"
+            f"Hospital Lab Test list view | User ID: {self.request.user.id} | Hospital Lab ID: {h_lab_id} | IP: {self.request.META.get('REMOTE_ADDR')}"
         )
         return HospitalLabTest.objects.filter(hospital_lab=h_lab_id)

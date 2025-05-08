@@ -1,6 +1,4 @@
 from .base import *
-#from redis.connection import ConnectionPool
-#from redis import Redis
 DEBUG = False
 ALLOWED_HOSTS = [
     ".labconnekt.com",

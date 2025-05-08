@@ -3,7 +3,6 @@ import os
 from datetime import timedelta
 from decouple import config
 from redis.connection import ConnectionPool
-from dramatiq.results import Results
 from dramatiq.results.backends import RedisBackend
 
 
@@ -14,10 +13,6 @@ SECRET_KEY = config('SECRET_KEY')
 FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 
 
-# DEBUG = True
-# ALLOWED_HOSTS = ["*"]
-
-# Application definition
 INSTALLED_APPS = [
     # "grappelli",
     "django.contrib.admin",
@@ -32,7 +27,6 @@ INSTALLED_APPS = [
     "analytics",
     "modelmixins",
     'django_dramatiq',
-    # "dramatiq.results",
     "sample",
     "user",
     "hospital",
@@ -183,7 +177,7 @@ AUTH_PASSWORD_VALIDATORS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://labconnect-eight.vercel.app",
+    # "https://labconnect-eight.vercel.app",
     "https://labconnekt.com",
     "https://apis.labconnekt.com",
 ]
@@ -194,7 +188,10 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 
 # White listing the localhost:3000 port
 # for React
-CORS_ORIGIN_WHITELIST = ("http://localhost:5173", "https://labconnect-eight.vercel.app")
+CORS_ORIGIN_WHITELIST = (
+    "http://localhost:5173", 
+    # "https://labconnect-eight.vercel.app"
+    )
 CORS_ALLOW_CREDENTIALS = True
 
 LOGIN_URL = 'client:login'
@@ -204,7 +201,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_USER')
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")  # "nkbdtufounzmcmxd"
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 
 LANGUAGE_CODE = 'en-us'

@@ -15,10 +15,9 @@ from modelmixins.models import Facility, SampleType
 from modelmixins.serializers import SampleTypeSerializer
 from transactions.utils import transfer_funds_to_lab, refund_transaction
 from transactions.models import Transaction
-from django.core.exceptions import ValidationError
+from user.tasks import notify_user
 from labs.models import Branch
-# from uuid import UUID
-# from django.db.models import Prefetch
+
 
 
 
@@ -100,13 +99,6 @@ class SampleSerializer(serializers.ModelSerializer):
             "sample_tests_data",
         )
 
-    # def validate(self, data):
-    #     """Ensure at least one rejection reason is provided when rejecting a sample."""
-    #     if data.get("sample_status") == "Rejected":
-    #         if not data.get("rejection_reason_code") and not data.get("rejection_reason"):
-    #             raise serializers.ValidationError("A rejection reason must be provided.")
-
-    #     return data
     def validate(self, data):
         """Ensure at least one rejection reason is provided when rejecting a sample and all tests are active."""
         if data.get("sample_status") == "Rejected":
@@ -169,7 +161,7 @@ class SampleSerializer(serializers.ModelSerializer):
 
             referral = instance.referral
             total_amount = float(sum(sample_test.test.price for sample_test in instance.sample_tests.all()))
-            # print(total_amount)
+
             if instance.sample_status == "Received":
                 transfer_funds_to_lab(
                         referral.to_laboratory.subaccount_id,
@@ -177,10 +169,18 @@ class SampleSerializer(serializers.ModelSerializer):
                         f"Being Payment for : {str(referral)} lab works",
                         parent=referral.to_laboratory.id
                     )
-                    
+
             if instance.sample_status == "Rejected":
                 txn = Transaction.objects.filter(referral=referral).first()
                 refund_transaction(txn.reference, amount=total_amount)
+                
+                notify_user.send(
+                    str(referral.referring_facility.id),
+                    f'{instance.sample_type} Rejected',
+                    f'We could not accept the {instance.sample_type} for processing due to {instance.get_rejection_reason()}'
+                )
+
+
 
             ReferralTrackingHistory.objects.create(
                 referral=referral,
@@ -198,7 +198,6 @@ class SampleSerializer(serializers.ModelSerializer):
                 # Update existing samples or create new ones
                 for sample_test in sample_tests_data:
 
-                    # _, created =
                     SampleTest.objects.update_or_create(
                         id=sample_test.get("test_id"),  # Find by ID if it exists
                         sample=instance,  # Always associate it with the current referral
@@ -273,15 +272,6 @@ class ReferralSerializer(serializers.ModelSerializer):
             "samples",
         )
 
-    # def validate(self, data):
-    #     # Check if referring_facility and to_laboratory are the same
-    #     if data.get("referring_facility") == data.get("to_laboratory"):
-    #         raise serializers.ValidationError(
-    #             {
-    #                 "to_laboratory": "The referring facility and the laboratory cannot be the same."
-    #             }
-    #         )
-    #     return data
     def validate(self, data):
         # Existing validation
         if data.get("referring_facility") == data.get("to_laboratory"):
@@ -464,8 +454,8 @@ class SampleTrackingSerializer(serializers.ModelSerializer):
         )
 
     def get_sample_data(self, obj):
-        # Serialize the related Sample object
-        if obj.sample:  # Ensure sample exists
+
+        if obj.sample:
             return SampleSerializer(obj.sample).data
         return None
 

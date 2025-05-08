@@ -50,7 +50,7 @@ class SampleAdmin(admin.ModelAdmin):
         "referral",
         "sample_type",
         "sample_status",
-        "rejection_reason",
+        "get_rejection_reason",
         # "is_emmergency",
         "date_collected",
     )
@@ -80,21 +80,8 @@ class ReferralTrackingHistoryAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         # Get the base queryset
         queryset = super().get_queryset(request)
-        print(queryset)
+        # print(queryset)
         return queryset
-    #     # If the user is a superuser, return all records
-    #     if request.user.is_superuser:
-    #         return queryset
-
-    #     # If the user is not a superuser, filter the samples by the user's associated Branch or Lab
-    #     # Assuming `branch` is related to `Sample` and `branch.laboratory` is related to `Lab`, which is linked to `User`.
-
-    #     return queryset.filter(
-    #         Q(
-    #             referral__to_laboratory__created_by_id=request.user
-    #         )  # Branch linked to the user's Lab
-    #         | Q(referral__to_laboratory__created_by_id=request.user)  # User's own branch
-    #     )
 
     list_display = ("referral", "status", "location", "updated_at")
 

@@ -34,6 +34,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Transaction
+
         fields = (
             "client",
             "referral",

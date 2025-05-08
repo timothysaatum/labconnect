@@ -52,49 +52,21 @@ import logging
 logger = logging.getLogger('labs')
 
 
-def generate_password(length=12):
-	"""Generates a random password of the given length.
-	Args:
-	length: The desired length of the password (default: 12).
-	Returns:
-	A random password string.
-	"""
-	# Define all character sets to be used in the password
-	lowercase = string.ascii_lowercase
-	uppercase = string.ascii_uppercase
-	digits = string.digits
-	symbols = string.punctuation
 
-	# Combine all character sets
-	char_sets = [lowercase, uppercase, digits, symbols]
 
-	# Shuffle the character sets for more randomness
-	random.shuffle(char_sets)
-
-	# Create a password by selecting characters from each set
-	password = []
-	for char_set in char_sets:
-		password.append(random.choice(char_set))
-
-		# Ensure the password meets the minimum length requirement
-	while len(password) < length:
-		password.append(random.choice(random.choice(char_sets)))
-
-	# Shuffle the password characters for additional security
-	random.shuffle(password)
-	# Return the generated password as a string
-
-	return ''.join(password)
 
 
 def verify_token(refresh_token):
     if not 'refresh_token':
-
+        logger.warning(f"Attempted unauthorized access with token: {refresh_token}")
         raise InvalidToken('Unauthorized')
 
     try:
+        logger.info(f"Submmiting token : {refresh_token} for validation")
         payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=['HS256'])
+        logger.info(f"Token : {payload} successfully decoded")
         user = Client.objects.get(id=payload['user_id'])
+        logger.info(f"User: {user} retrieved using token data")
 
     except jwt.ExpiredSignatureError:
         logger.warning(f"A mortal's token has expired in the sands of time.refresh t{refresh_token}")
@@ -105,6 +77,7 @@ def verify_token(refresh_token):
         return Response({'error': 'stale request'}, status=status.HTTP_403_FORBIDDEN)
 
     except Client.DoesNotExist:
+        logger.warning(f"Attempted retrieval of none existen user data using jwt decoded token data: {payload}")
         return Response({'error': 'user does exist'}, status=status.HTTP_404_NOT_FOUND)
 
     return user
@@ -145,7 +118,7 @@ class CreateUserView(CreateAPIView):
 
     def post(self, request, format=None):
         logger.info(
-            f"Account created for {request.data['last_name']} {request.data['first_name']}"
+            f"Account created. Payload: {request.data}"
         )
         return self.create(request)
 
@@ -161,7 +134,7 @@ class UpdateUserAccount(UpdateAPIView):
         return Client.objects.filter(pk=self.kwargs.get("pk"))
 
     def patch(self, request, pk):
-        logger.info(f"Udated {pk}: payload={request.data}")
+        logger.info(f"Updated User, ID: {pk} |payload={request.data}")
         return super().partial_update(request, pk)
 
 
@@ -175,7 +148,7 @@ class DeleteUserAccount(UpdateAPIView):
         return Client.objects.filter(id=self.request.user)
 
     def delete(self, request, pk):
-        logger.warning(f"Deleted {pk}: initiator={request.user.id}")
+        logger.warning(f"Deleted User, ID: {pk} | initiator={request.user.id}")
         return super().delete(request, pk)
 
 
@@ -223,7 +196,7 @@ class VerifyUserEmail(GenericAPIView):
                     user.is_staff = False
 
                 user.save()
-                logger.info(f"Hero {user.id} has been blessed by the gods. Verification successful: code {code}")
+                logger.info(f"Hero with User ID: {user.id} has been blessed by the gods. Verification successful: code {code}")
                 return Response(
                     {"message": "Email successfully verified"},
                     status=status.HTTP_200_OK,
@@ -255,7 +228,8 @@ class LoginUserView(GenericAPIView):
 
 
     def post(self, request):
-
+        
+        logger.warning(f"Visitor: {request.data} is requesting audience with your majesty")
         serializer = self.serializer_class(
             data=request.data, context={"request": request}
         )
@@ -266,13 +240,14 @@ class LoginUserView(GenericAPIView):
                 user = Client.objects.get(id=serializer.data["user"].get("id"))
 
             except Client.DoesNotExist:
+                logger.warning(f"Request denied for none existent guest, guest info: {request.data}")
                 return Response(
                     {"error": "An error occured, try again."},
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
             user_tokens = user.tokens()
-            logger.info(f"authenticated in {user.id}")
+            logger.info(f"His majesty has granted access for {user.id}")
 
             response = Response(
                 {"data": serializer.data, "access_token": user_tokens.get("access")},
@@ -321,6 +296,7 @@ class PasswordResetView(GenericAPIView):
 
 
 class PasswordResetConfirm(GenericAPIView):
+
     throttle_classes = [UserRateThrottle]
 
     def get(self, request, uidb64, token):
@@ -329,7 +305,7 @@ class PasswordResetConfirm(GenericAPIView):
 
             user_id = smart_str(urlsafe_base64_decode(uidb64))
             user = Client.objects.get(id=user_id)
-            logger.warning(f"{user.id} password reset")
+            logger.warning(f"Confirming password reset for user: {user_id}")
             if not PasswordResetTokenGenerator().check_token(user, token):
 
                 logger.warning(f"Inavlid token submitted for password reset{token}")
@@ -340,6 +316,8 @@ class PasswordResetConfirm(GenericAPIView):
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
 
+            logger.info(f"Password reset request confirmation success for user: {user}")
+
             return Response({
 						'success': True,
 						'message': 'Valid credentials',
@@ -349,6 +327,7 @@ class PasswordResetConfirm(GenericAPIView):
 
         except DjangoUnicodeDecodeError:
 
+            logger.warning(f"Attempted user password reset with invalid token data: {uidb64 | token}")
             return Response(
 					{'message': 'Decode Error'},
 					status=status.HTTP_401_UNAUTHORIZED)
@@ -361,8 +340,9 @@ class SetNewPassword(GenericAPIView):
     def patch(self, request):
 
         serializer = self.serializer_class(data=request.data)
+        logger.warning(f"Resetting the user password: New Password = {serializer.data}")
         if serializer.is_valid(raise_exception=True):
-
+            logger.info(f"Password reset success: data={serializer.data}")
             return Response(
                 {"message": "Password reset successful"}, status=status.HTTP_200_OK
             )
@@ -616,6 +596,7 @@ class ComplaintViewSet(viewsets.ModelViewSet):
     
 
 class WaitListApplicantsViewSet(viewsets.ModelViewSet):
+    
     throttle_classes = [UserRateThrottle]
     queryset = WaitList.objects.all().order_by("-joint_at")
     serializer_class = WaitListSerializer
@@ -623,6 +604,7 @@ class WaitListApplicantsViewSet(viewsets.ModelViewSet):
 
 
 class CustomerSupportMessageViewSet(viewsets.ModelViewSet):
+
     permission_classes = [IsAuthenticated]
     queryset = CustomerSupport.objects.all().order_by('-created_at')
     queryset = CustomerSupport.objects.all().order_by("-created_at")
