@@ -188,7 +188,7 @@ class CreateBranchView(generics.CreateAPIView):
 	"""
     permission_classes = [IsLaboratoryOwnerOrManager]
     serializer_class = BranchSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def perform_create(self, serializer):
         """

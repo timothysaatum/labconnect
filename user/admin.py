@@ -11,7 +11,7 @@ from django.http import HttpResponse
 
 
 class ClientAdmin(UserAdmin):
-    # The forms to add and change user instances
+
     form = ClientChangeForm
     add_form = ClientCreationForm
 
@@ -25,8 +25,10 @@ class ClientAdmin(UserAdmin):
         'date_joined', 
         'last_login'
     )
+
     list_editable = ('is_verified', )
     list_filter = ('email', 'phone_number', 'account_type')
+
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number')}),
@@ -92,9 +94,9 @@ class CustomerSupportMessageAdmin(admin.ModelAdmin):
     actions = [export_as_csv]
 
 
-
 @admin.register(Complaint)
 class ComplaintAdmin(admin.ModelAdmin):
+
     list_display = ('customer', 'subject', 'status', 'created_at', 'updated_at')
     list_filter = ('status', 'created_at')
     search_fields = ('user__email', 'subject', 'message')
@@ -103,8 +105,7 @@ class ComplaintAdmin(admin.ModelAdmin):
 
     list_editable = ('status',)
 
-# Now register the new UserAdmin...
+
 admin.site.register(Client, ClientAdmin)
 admin.site.register(OneTimePassword, OneTimePasswordAdmin)
 admin.site.register(Permission)
-# admin.site.register(WaitList, WaitListAdmin)
