@@ -6,6 +6,11 @@ from .forms import ClientCreationForm, ClientChangeForm
 import csv
 from django.utils import timezone
 from django.http import HttpResponse
+from .admin_actions import (
+    mark_as_contacted, 
+    export_as_csv, 
+    email_selected_participants
+)
 
 
 
@@ -60,7 +65,11 @@ class WaitListAdmin(admin.ModelAdmin):
     list_filter = ('contacted', 'region')
     search_fields = ('full_name', 'email', 'phone_number', 'facility_name')
     readonly_fields = ('contacted_at',)
-    actions = ['mark_as_contacted']
+    actions = [
+        mark_as_contacted,  # Mark selected as contacted
+        export_as_csv,      # Export selected to CSV
+        email_selected_participants  # Send emails to selected
+    ]
 
     def mark_as_contacted(self, request, queryset):
         updated_count = queryset.update(contacted=True, contacted_at=timezone.now())

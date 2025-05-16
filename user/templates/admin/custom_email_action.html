@@ -1,0 +1,127 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div id="content-main">
+    <h1>Schedule Meetings with {{ total_count }} Selected Participant(s)</h1>
+    
+    <div class="help-text">
+        <p><strong>Proposed Meeting Dates:</strong></p>
+        <ul>
+            {% for date in proposed_dates %}
+            <li>{{ date }} - Morning (10:00 AM) or Afternoon (2:00 PM)</li>
+            {% endfor %}
+        </ul>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <label for="id_subject" class="required">Subject:</label>
+            {{ form.subject }}
+            {% if form.subject.errors %}
+                <div class="error-message">{{ form.subject.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <label for="id_message" class="required">Plain Text Message:</label>
+            {{ form.message }}
+            {% if form.message.errors %}
+                <div class="error-message">{{ form.message.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <label for="id_html_message">HTML Message:</label>
+            {{ form.html_message }}
+            {% if form.html_message.errors %}
+                <div class="error-message">{{ form.html_message.errors }}</div>
+            {% endif %}
+            <div class="help-text">{{ form.html_message.help_text }}</div>
+        </div>
+        
+        <div class="form-row">
+            <label for="id_sender_name">Sender Name:</label>
+            {{ form.sender_name }}
+            {% if form.sender_name.errors %}
+                <div class="error-message">{{ form.sender_name.errors }}</div>
+            {% endif %}
+            <div class="help-text">{{ form.sender_name.help_text }}</div>
+        </div>
+        
+        <div class="form-row checkbox-row">
+            {{ form.use_html }}
+            <label for="id_use_html">Send as HTML email</label>
+            {% if form.use_html.errors %}
+                <div class="error-message">{{ form.use_html.errors }}</div>
+            {% endif %}
+            <div class="help-text">{{ form.use_html.help_text }}</div>
+        </div>
+        
+        <div class="submit-row">
+            <input type="submit" value="Send Meeting Invitations" class="default">
+            <a href="../" class="button cancel-link">Cancel</a>
+        </div>
+    </form>
+    
+    <div class="help-text">
+        <p>You are about to send meeting invitations to {{ total_count }} participants.</p>
+        <p>Using the HTML template will generate a professional email with your contact information (Phone: 0594438287, Address: Adjacent SDA Hospital, Tamale).</p>
+        <p>Sending these emails will automatically mark the recipients as contacted in the system.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_content_css %}
+<style>
+    .form-row {
+        margin-bottom: 15px;
+    }
+    .form-row label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .form-row input[type="text"],
+    .form-row textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .form-row textarea {
+        min-height: 150px;
+    }
+    .checkbox-row {
+        display: flex;
+        align-items: center;
+    }
+    .checkbox-row label {
+        margin-left: 10px;
+        margin-bottom: 0;
+    }
+    .error-message {
+        color: red;
+        margin-top: 5px;
+    }
+    .help-text {
+        font-size: 0.85em;
+        color: #666;
+        margin-top: 5px;
+    }
+    .submit-row {
+        margin-top: 20px;
+    }
+    div.help-text {
+        margin: 20px 0;
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 4px;
+        font-size: 1em;
+        color: #333;
+    }
+    ul {
+        margin: 10px 0;
+    }
+</style>
+{% endblock %}

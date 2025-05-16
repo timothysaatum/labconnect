@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Invitation from LabConnekt</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 25px 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 24px;
+            letter-spacing: 0.5px;
+        }
+        .content {
+            padding: 30px 25px;
+            border: 1px solid #eeeeee;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            line-height: 1.7;
+        }
+        .contact-info {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .contact-info p {
+            margin: 5px 0;
+        }
+        .contact-info strong {
+            color: #4CAF50;
+        }
+        .contact-item {
+            display: inline-block;
+            margin: 5px 15px;
+        }
+        .footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 13px;
+            color: #777777;
+            padding-top: 15px;
+            border-top: 1px solid #eeeeee;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .meeting-dates {
+            padding: 15px;
+            background-color: #f0f8f0;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .meeting-dates p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Meeting Invitation</h1>
+            <div style="font-size: 14px; margin-top: 5px; opacity: 0.9;">From LabConnekt Medical Sample Referral System</div>
+        </div>
+        <div class="content">
+            <p>Dear <strong>{{ recipient_name }}</strong>,</p>
+            
+            <p>We hope this message finds you well. I'm reaching out on behalf of <strong>LabConnekt</strong>, a medical sample referral system designed to streamline laboratory processes and improve patient care in Ghana.</p>
+            
+            <p>We understand the challenges healthcare facilities face with sample management and referrals, and we've developed a solution that can help your organization:</p>
+            
+            <ul style="padding-left: 25px; line-height: 1.8;">
+                <li>Reduce sample transit times</li>
+                <li>Improve tracking and documentation</li>
+                <li>Enhance communication between referring and receiving facilities</li>
+                <li>Decrease errors in sample handling</li>
+                <li>Access consolidated testing results faster</li>
+            </ul>
+            
+            <p>As your facility is on our wait list, <strong>we would like to schedule a meeting</strong> to discuss further on our system and further engagement with your facility. It will be a very brief 30 minutes meeting.</p>
+            
+            <p>Please let us know which of the following times would work for your team:</p>
+            
+            <div class="meeting-dates">
+                <p style="margin: 5px 0;"><strong>Proposed Meeting Dates:</strong></p>
+                <p style="margin: 5px 0;">• {{ proposed_date_1 }} - Morning (07:00 AM) or Afternoon (2:00 PM)</p>
+                <p style="margin: 5px 0;">• {{ proposed_date_2 }} - Morning (07:00 AM) or Afternoon (2:00 PM)</p>
+                <p style="margin: 5px 0;">• {{ proposed_date_3 }} - Morning (07:00 AM) or Afternoon (2:00 PM)</p>
+            </div>
+            
+            <p>If none of these times work for you, please suggest an alternative that would be more convenient <strong>(in-person meeting or different date)</strong>.</p>
+            
+            <p>We're excited about the opportunity to work with your facility and contribute to improving healthcare delivery in our community.</p>
+            <p> <strong>Hoping to hear from you soon.</strong></p>
+            <p>Thank you for your time and consideration.</p>
+            
+            <p style="margin-top: 20px;">Warm regards,</p>
+            <p style="margin: 0;"><strong>{{ sender_name }}</strong></p>
+            <p style="margin: 0;">LabConnekt</p>
+            
+            <div class="contact-info">
+                <h3 style="color: #4CAF50; margin-bottom: 15px;">Contact Us</h3>
+                <div class="contact-item">
+                    <p><strong>Phone:</strong> 0594438287</p>
+                </div>
+                <div class="contact-item">
+                    <p><strong>Address:</strong> Adjacent SDA Hospital, Tamale</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+           <!--  <p>Feel free to reply to this email if you need any clarification.</p>-->
+            <p>&copy; {% now "Y" %} <span style="color: #4CAF50; font-weight: bold;">LabConnekt</span>. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
