@@ -41,7 +41,9 @@ INSTALLED_APPS = [
 ]
 
 # INSTALLED_APPS += ["django_prometheus"]
-
+ADMIN_INTERFACE_THEME_DEFAULT = 'Material Red'
+# ADMIN_INTERFACE_THEME_ACTIVE = 'Default'  # Start with the default theme
+# ADMIN_INTERFACE_THEME_SELECTOR = True
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
