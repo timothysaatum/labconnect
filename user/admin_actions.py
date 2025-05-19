@@ -117,7 +117,7 @@ def email_selected_participants(modeladmin, request, queryset):
                     if hasattr(participant, 'full_name'):
                         recipient_name = participant.full_name
                     elif hasattr(participant, 'first_name') and hasattr(participant, 'last_name'):
-                        recipient_name = f"{participant.first_name} {participant.last_name}"
+                        recipient_name = f"{participant.first_name} {participant.last_name}" or "Valued Healthcare Provider"
                     else:
                         recipient_name = "Valued Healthcare Provider"
                     

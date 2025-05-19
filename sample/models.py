@@ -146,6 +146,7 @@ class Referral(models.Model):
 
 
 class Sample(models.Model):
+
     REJECTION_REASONS = [
         (1, "Incorrect Patient Identification"),
         (2, "Improper Labeling"),

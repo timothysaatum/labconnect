@@ -14,7 +14,8 @@ FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 
 
 INSTALLED_APPS = [
-    # "grappelli",
+    "admin_interface",
+    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
